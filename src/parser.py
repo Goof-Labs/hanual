@@ -2,8 +2,9 @@ class Parser:
     def __init__(self):
         self._rules = {}
         self._stream = []
+        self._backup = None
 
-    def rule(self, *rules):
+    def rule(self, *rules, carry: bool = False, allow_jump: bool = False):
         """
         This function is a decorator and can be used with the decorator syntax.
 
@@ -13,6 +14,7 @@ class Parser:
         """
 
         def decor(fn):
+            fn._carry = carry
             self._rules[rules] = fn
 
         return decor
@@ -23,24 +25,31 @@ class Parser:
         pattern = ""
         self.stream = stream
 
-        self._recursive_parse(t_patern, pattern)
+        self._parse(t_patern, pattern)
 
         return self._tree
 
-    def _recursive_parse(self, t_patern, pattern):
-        for matches, fn in self._rules.items():
-            if pattern.strip() in matches:
-                self._tree.append(fn(t_patern))
-                pattern = ""
-                t_patern = []
+    def _parse(self, t_patern, pattern):
+        while True:
+            for matches, fn in self._rules.items():
+                if pattern.strip() in matches:
+                    res = fn(t_patern)
 
-        else:
-            next_token = next(self.stream, None)
-            if not next_token:
-                return
+                    pattern = ""
+                    t_patern = []
 
-            t_patern.append(next_token)
-            pattern += " " + next_token.type
+                    if fn._carry:
+                        pattern += fn.__name__
+                        t_patern.append(res)
 
-        return self._recursive_parse(t_patern, pattern)
+                    else:
+                        self._tree.append(res)
+
+            else:
+                next_token = next(self.stream, None)
+                if not next_token:
+                    return
+
+                t_patern.append(next_token)
+                pattern += " " + next_token.type
 

@@ -63,6 +63,7 @@ class MyLex(Lexer):
         ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
         ("SHOUT", kw("SHOUT")),
 
+        ("OP", rx(r"[\+\-\\\*]")),
         ("NUM", rx(r"\d+(\.\d*)?")),
 
         # special cases

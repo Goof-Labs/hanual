@@ -21,35 +21,50 @@ class Parser:
 
     def parse(self, stream) -> None:
         self._tree = []
-        t_patern = []
-        pattern = ""
         self.stream = stream
 
-        self._parse(t_patern, pattern)
+        self._parse()
 
         return self._tree
 
-    def _parse(self, t_patern, pattern):
+    def _parse(self):
+        pattern = ""
+        t_patern = []
+
         while True:
             for matches, fn in self._rules.items():
                 if pattern.strip() in matches:
                     res = fn(t_patern)
 
-                    pattern = ""
-                    t_patern = []
-
                     if fn._carry:
-                        pattern += fn.__name__
-                        t_patern.append(res)
+                        pattern = fn.__name__
+                        t_patern = [res]
 
                     else:
+                        pattern = ""
+                        t_patern = []
                         self._tree.append(res)
 
             else:
                 next_token = next(self.stream, None)
+
                 if not next_token:
+
+                    if pattern: #  if there is still stuff to parse
+                        for matches, fn in self._rules.items():
+                            if pattern.strip() in matches:
+                                res = fn(t_patern)
+
+                            if fn._carry:
+                                pattern = fn.__name__
+                                t_patern = [res]
+
+                            else:
+                                pattern = ""
+                                t_patern = []
+                                self._tree.append(res)
+
                     return
 
                 t_patern.append(next_token)
                 pattern += " " + next_token.type
-

@@ -2,8 +2,12 @@ from typing import NamedTuple
 import re
 
 
-def kw(reg): return reg, "kw"
-def rx(reg): return reg, "rx"
+def kw(reg):
+    return reg, "kw"
+
+
+def rx(reg):
+    return reg, "rx"
 
 
 class Token(NamedTuple):
@@ -24,7 +28,6 @@ class Lexer:
 
             else:
                 self._rules.append((rule[0], rule[1][0]))
-
 
     def tokenize(self, stream: str) -> None:
         tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
@@ -62,16 +65,13 @@ class MyLex(Lexer):
     rules = (
         ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
         ("SHOUT", kw("SHOUT")),
-
         ("OP", rx(r"[\+\-\\\*]")),
         ("NUM", rx(r"\d+(\.\d*)?")),
-
         # special cases
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+")),
-        ("MISMATCH", rx(r"."))
+        ("MISMATCH", rx(r".")),
     )
 
-    def t_NUM(self, kind: str, valu: str, line_no: int , col: int) -> Token:
+    def t_NUM(self, kind: str, valu: str, line_no: int, col: int) -> Token:
         return Token(kind, float(valu) if "." in valu else int(valu), line_no, col)
-

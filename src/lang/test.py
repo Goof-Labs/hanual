@@ -1,11 +1,11 @@
 rules = {
-    "num": "T",
-    "T op T": "expr",
+    "A B": "1",
+    "A B C": "1",
 }
 
 
 stk = []
-stream = (i for i in ["num", "op", "num"])
+stream = (i for i in ["A", "B", "C", "D", "E", "F"])
 
 
 while True:
@@ -14,29 +14,28 @@ while True:
     if not token:
         break
 
-    print()
-    for rule, reducer in rules.items():
-        rule = rule.split(" ")
-        rule.reverse()
-
-        pattern = stk.copy()
-        pattern.reverse()
-
-        for idx, (left_token, right_token) in enumerate(zip(pattern, rule)):
-            print(left_token, " ", right_token)
-
-            if left_token != right_token:
-                if not idx >= 1:
-                    break
-
-                for _ in range(idx):
-                    stk.pop()
-
-                stk.append(reducer)
-
-                print(f"{pattern} -> {rule}")
-
     stk.append(token)
 
+    pattern = stk.copy()
+    pattern.reverse()
 
-print(stk)
+    for rule, reducer in rules.items():
+        rule = rule.split(" ")
+        print(rule, " => ", reducer)
+
+        rule.reverse()
+
+        max_deb = 0
+        for i, (r, p) in enumerate(zip(rule, pattern)):
+            max_deb = i
+
+            if r != p:
+                break
+
+        else:  # The pattern matched perfectly
+            [
+                stk.pop() for _ in range(max_deb + 1)
+            ]  # pop the top n elements of the stack
+            stk.append(reducer)
+
+    print("stk ~ ", pattern, "\n")

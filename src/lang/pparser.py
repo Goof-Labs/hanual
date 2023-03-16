@@ -1,10 +1,52 @@
+from typing import Dict, Callable
+
+
+class Rule:
+    def __init__(self: "Rule", rules, fn) -> None:
+        self.rules = []
+
+        rule: str
+        for rule in rules:
+            s_rule = rule.split(" ")
+            s_rule.reverse()
+            self.rules.append(s_rule)
+
+        self._fn = fn
+
+    def match(self: "Rule", pattern: list[str]) -> bool:
+        p = pattern.copy()
+        p.reverse()
+
+        max_deb = 0
+
+        rule: str
+        for rule in self.rules:
+            debth = 0
+            for j, k in zip(p, rule):
+                if j != k:
+                    break
+
+                debth += 1
+
+            max_deb = debth if debth > max_deb else max_deb
+
+        return max_deb
+
+    def call(self: "Rule", rgs):
+        return self._fn(rgs)
+
+    @property
+    def name(self: "Rule") -> None:
+        return self._fn.__name__
+
+
 class Parser:
-    def __init__(self):
-        self._rules = {}
+    def __init__(self: "Parser"):
+        self._rules = []
         self._stream = []
         self._backup = None
 
-    def rule(self, *rules, carry: bool = False, allow_jump: bool = False):
+    def rule(self: "Parser", *rules):
         """
         This function is a decorator and can be used with the decorator syntax.
 
@@ -13,9 +55,8 @@ class Parser:
         >>> @par.rule("some rule", "another rule")
         """
 
-        def decor(fn):
-            fn._carry = carry
-            self._rules[rules] = fn
+        def decor(fn: Callable):
+            self._rules.append(Rule(rules, fn))
 
         return decor
 
@@ -28,43 +69,29 @@ class Parser:
         return self._tree
 
     def _parse(self):
-        pattern = ""
+        pattern = []
         t_patern = []
 
         while True:
-            for matches, fn in self._rules.items():
-                if pattern.strip() in matches:
-                    res = fn(t_patern)
+            next_t = next(self.stream, None)
 
-                    if fn._carry:
-                        pattern = fn.__name__
-                        t_patern = [res]
+            if not next_t:
+                break
 
-                    else:
-                        pattern = ""
-                        t_patern = []
-                        self._tree.append(res)
+            for rule in self._rules:
+                deb = rule.match(pattern)
+
+                if not deb > 0:
+                    continue
+
+                rgs = []
+                for _ in range(deb):
+                    rgs.append(t_patern.pop())
+                    pattern.pop()
+
+                pattern.append(rule.name)
+                t_patern.append(rule.call(rgs))
 
             else:
-                next_token = next(self.stream, None)
-
-                if not next_token:
-
-                    if pattern: #  if there is still stuff to parse
-                        for matches, fn in self._rules.items():
-                            if pattern.strip() in matches:
-                                res = fn(t_patern)
-
-                            if fn._carry:
-                                pattern = fn.__name__
-                                t_patern = [res]
-
-                            else:
-                                pattern = ""
-                                t_patern = []
-                                self._tree.append(res)
-
-                    return
-
-                t_patern.append(next_token)
-                pattern += " " + next_token.type
+                t_patern.append(next_t)
+                pattern.append(next_t.type)

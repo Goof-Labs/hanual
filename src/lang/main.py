@@ -1,5 +1,5 @@
 from pparser import Parser
-from lexer import Lexer, MyLex
+from lexer import MyLex
 
 
 lex = MyLex()
@@ -12,23 +12,27 @@ def expr(ts):
     return ("SHOUT",)
 
 
-# @par.rule("NUM NUM")
+@par.rule(
+    "NUM",
+    "ID",
+)
+def expr(ts):
+    return "dt", ts[0]
+
+
+@par.rule("expr OP expr", "expr OP NUM", "NUM OP expr", "NUM OP NUM")
 def expr(ts):
     return ts
 
 
-@par.rule("NUM OP NUM", carry=True)
+@par.rule(
+    "expr OP expr",
+)
 def expr(ts):
-    return ts[1].value, ts[0].value, ts[2].value
+    return ts
 
 
-@par.rule("expr OP NUM", carry=True)
-def expr(ts):
-    return ts[1].value, ts[0], ts[2].value
+stream = lex.tokenize("9.9 + 699 +")
 
-
-stream = lex.tokenize("SHOUT\n9.9 + 699 + 9")
-
-# print(list(stream))
 
 print(par.parse(stream))

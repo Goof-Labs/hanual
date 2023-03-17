@@ -1,97 +1,108 @@
-from typing import Dict, Callable
+"""
+This is a temporary file created to thest parsing
+"""
+
+from typing import List, Dict, Tuple, Callable, Generator, NamedTuple, Any, Optional
 
 
-class Rule:
-    def __init__(self: "Rule", rules, fn) -> None:
-        self.rules = []
+class PParser:
+    """
+    The PParser class is used to create a parser.
+    The class is initialised with no params. A
+    decorator syntax is then used to create new
+    rules for the parser. Finally parser function
+    is called to parse the input.
+    """
 
-        rule: str
-        for rule in rules:
-            s_rule = rule.split(" ")
-            s_rule.reverse()
-            self.rules.append(s_rule)
+    def __init__(self) -> None:
+        self.rules: Dict[str, Tuple[str, Callable[..., Any]]] = {}
+        self.debug = False
 
-        self._fn = fn
-
-    def match(self: "Rule", pattern: list[str]) -> bool:
-        p = pattern.copy()
-        p.reverse()
-
-        max_deb = 0
-
-        rule: str
-        for rule in self.rules:
-            debth = 0
-            for j, k in zip(p, rule):
-                if j != k:
-                    break
-
-                debth += 1
-
-            max_deb = debth if debth > max_deb else max_deb
-
-        return max_deb
-
-    def call(self: "Rule", rgs):
-        return self._fn(rgs)
-
-    @property
-    def name(self: "Rule") -> None:
-        return self._fn.__name__
-
-
-class Parser:
-    def __init__(self: "Parser"):
-        self._rules = []
-        self._stream = []
-        self._backup = None
-
-    def rule(self: "Parser", *rules):
+    def tougle_debug_messages(self: "PParser", setting: Optional[bool] = None) -> None:
         """
-        This function is a decorator and can be used with the decorator syntax.
-
-        The rules are the cases in wich the function should be used.
-
-        >>> @par.rule("some rule", "another rule")
+        This will tougle debug messages on or off.
+        The user should explicitly provide what the
+        setting should be.
         """
 
-        def decor(fn: Callable):
-            self._rules.append(Rule(rules, fn))
+        if setting is None:
+            self.debug = not self.debug
 
-        return decor
+        elif not setting is True or not setting is False:
+            # Although setting should be a boolean The user
+            self.debug = setting
 
-    def parse(self, stream) -> None:
-        self._tree = []
-        self.stream = stream
+        else:
+            self.debug = bool(setting)
 
-        self._parse()
+    def rule(self, *rules):
+        """
+        This function is a decorator so it can be used with the following syntax:
+        >>> ...
+        >>> @parser.parse("rule_1", "rule_2")
+        >>> def my_rule(*token_stream):
+        >>>     return "whatever I feel like"
+        >>> ...
+        """
 
-        return self._tree
+        def inner(func):
+            # expand all rules so they have their own individual function asociated
+            for rule in rules:
+                self.rules[rule] = (func.__name__, func)
 
-    def _parse(self):
-        pattern = []
-        t_patern = []
+        return inner
+
+    def parse(
+        self,
+        stream: Generator[NamedTuple, None, None],
+    ) -> List[str]:
+        if self.debug:
+            print("__RULES__")
+            for rule, (reducer, reducer_fn) in self.rules.items():
+                print(rule.ljust(100), " =>", reducer)
+
+            print("__END_RULES__\n")
+
+        tree = []
+        stk = []
 
         while True:
-            next_t = next(self.stream, None)
+            token = next(stream, None)
 
-            if not next_t:
+            if not token:
                 break
 
-            for rule in self._rules:
-                deb = rule.match(pattern)
+            stk.append(token)
 
-                if not deb > 0:
-                    continue
+            if self.debug:
+                print(" ".join(stk).ljust(100), " # pushed new token")
 
-                rgs = []
-                for _ in range(deb):
-                    rgs.append(t_patern.pop())
-                    pattern.pop()
+            pattern = stk.copy()
+            pattern.reverse()
 
-                pattern.append(rule.name)
-                t_patern.append(rule.call(rgs))
+            for rule, (reducer, reducer_fn) in self.rules.items():
+                rule = rule.split(" ")
 
-            else:
-                t_patern.append(next_t)
-                pattern.append(next_t.type)
+                rule.reverse()
+
+                max_deb = 0
+                for i, (left, right) in enumerate(zip(rule, pattern)):
+                    max_deb = i
+
+                    if left != right:
+                        break
+
+                else:  # The pattern matched perfectly
+                    if self.debug:
+                        print(
+                            " ".join(stk).ljust(50),
+                            " => ",
+                            reducer,
+                            " # Stack reduction",
+                        )
+
+                    tree.append(reducer_fn(*[stk.pop() for _ in range(max_deb + 1)]))
+                    # The list comp removes
+                    stk.append(reducer)
+
+        return tree

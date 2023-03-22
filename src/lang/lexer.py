@@ -65,6 +65,20 @@ class MyLex(Lexer):
     rules = (
         ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
         ("SHOUT", kw("SHOUT")),
+        # KEYWORDS
+        ("FN", kw("fn")),
+        ("IF", kw("if")),
+        ("ITR", kw("iter")),
+        ("WHL", kw("while")),
+        ("FOR", kw("for"))
+        ("EIF", kw("elif")),
+        ("ELSE", kw("else"))
+        ("LET", kw("let")),
+        ("VAL", kw("val")),
+        ("END", kw("end")),
+        # SYMBOLS
+        ("REF", rx(r"\&")),
+        ("PIPE", rx(r"\<\|")),
         ("OP", rx(r"[\+\-\\\*]")),
         ("NUM", rx(r"\d+(\.\d*)?")),
         # special cases

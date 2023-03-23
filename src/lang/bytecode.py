@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass()
 class Bytecode:
     STOP_CODE = 0x00

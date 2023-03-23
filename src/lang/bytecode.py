@@ -1,7 +1,3 @@
-from dataclasses import dataclass
-
-
-@dataclass()
 class Bytecode:
     STOP_CODE = 0x00
     POP_TOP = 0x01

@@ -23,4 +23,3 @@ class ProductionGen:
 class ProductionMangle:
     def __init__(self, tokens: List[T]) -> None:
         self.tokens
-

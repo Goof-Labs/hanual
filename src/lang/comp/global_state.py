@@ -22,7 +22,7 @@ class GlobalState:
         self._position += obj.getsize
 
     def get_const_val(self, name):
-        if (val := self._const_pool.get(name, None)) is None
+        if (val := self._const_pool.get(name, None)) is None:
             return val
 
         raise KeyError("'%s' is not a name", (val,))

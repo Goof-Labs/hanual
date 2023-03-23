@@ -26,3 +26,5 @@ if not args.files:
     parser.exit()
     # stop the program execution
 
+
+print("goofy")

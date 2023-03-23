@@ -70,9 +70,9 @@ class MyLex(Lexer):
         ("IF", kw("if")),
         ("ITR", kw("iter")),
         ("WHL", kw("while")),
-        ("FOR", kw("for"))
+        ("FOR", kw("for")),
         ("EIF", kw("elif")),
-        ("ELSE", kw("else"))
+        ("ELSE", kw("else")),
         ("LET", kw("let")),
         ("VAL", kw("val")),
         ("END", kw("end")),
@@ -89,4 +89,3 @@ class MyLex(Lexer):
 
     def t_NUM(self, kind: str, valu: str, line_no: int, col: int) -> Token:
         return Token(kind, float(valu) if "." in valu else int(valu), line_no, col)
-

@@ -69,12 +69,13 @@ class PParser:
     def rule(self, *rules, types=None):
         """
         This function is a decorator so it can be used with the following syntax:
+
         >>> ...
         >>> @parser.rule("rule_1", "rule_2")
         >>> def my_rule(*token_stream):
         >>>     return "whatever I feel like"
         >>> ...
-        
+   
         The types keyword argument is used to show what type of rules we have used,
         this is something usefull because if we have multiple rules defined to point
         to one function, it can get messy tring to figure out which case caused the
@@ -125,7 +126,6 @@ class PParser:
             tstk.append(token)
             stk.append(token.type)
 
-            print(tstk)
             if self.debug:
                 print(" ".join([str(s) for s in stk]).ljust(50), " # pushed new token")
 
@@ -165,4 +165,3 @@ class PParser:
 
 
         return tree
-

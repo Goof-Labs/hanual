@@ -65,10 +65,10 @@ class ProductionGen:
 
                 elif char == "t":
                     string += str(self.peek())
-                
+
                 elif char == "l":
                     string += str(self.get_len())
-                
+
                 elif char == "r":
                     string += str(self.slice)
 

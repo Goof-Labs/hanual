@@ -8,14 +8,12 @@ par = PParser()
 par.tougle_debug_messages(True)
 
 
-@par.rule("NUM", types={
-    "NUM": 1
-})
+@par.rule("NUM", "ID")
 def expr(*ts, **kwargs):
-    return ts[0]
+    return ts
 
 
-@par.rule("expr OP expr")
+@par.rule("expr")
 def expr(*ts):
     return ts
 

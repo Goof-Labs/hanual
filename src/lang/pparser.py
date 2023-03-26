@@ -44,8 +44,8 @@ class PParser:
         used, this can be used to keep the
         codebase clean.
         """
-        def_tokens = [] # tokens defined by the user
-        use_tokens = [] # tokens actualy used
+        def_tokens = []  # tokens defined by the user
+        use_tokens = []  # tokens actualy used
 
         for token in self.rules:
             def_tokens.extend(token.split(" "))
@@ -75,7 +75,7 @@ class PParser:
         >>> def my_rule(*token_stream):
         >>>     return "whatever I feel like"
         >>> ...
-   
+
         The types keyword argument is used to show what type of rules we have used,
         this is something usefull because if we have multiple rules defined to point
         to one function, it can get messy tring to figure out which case caused the
@@ -113,55 +113,44 @@ class PParser:
 
             print("__END_RULES__\n")
 
-        tree = []
-        tstk = []
-        stk = []
+        pattern = []
+        t_stack = []
 
         while True:
             token = next(stream, None)
 
+            for r_pattern, (reducer, fn) in self.rules.items():
+                if not pattern:
+                    continue
+
+                rule_pattern = r_pattern.split(" ")
+                rule_pattern.reverse()
+
+                glob_pattern = pattern.copy()
+                glob_pattern.reverse()
+
+                if len(glob_pattern) < len(rule_pattern):
+                    continue
+
+                for debth, (r, g) in enumerate(zip(rule_pattern, glob_pattern)):
+                    if r != g:
+                        break
+
+                else:
+                    print(pattern, " - ", rule_pattern, " ", debth + 1)
+
+                    args = []
+                    for _ in range(debth + 1):
+                        pattern.pop()
+                        args.append(t_stack.pop())
+
+                    pattern.append(reducer)
+                    t_stack.append(fn(args))
+
             if not token:
                 break
 
-            tstk.append(token)
-            stk.append(token.type)
+            pattern.append(token.type)
+            t_stack.append(token)
 
-            if self.debug:
-                print(" ".join([str(s) for s in stk]).ljust(50), " # pushed new token")
-
-            pattern = stk.copy()
-            pattern.reverse()
-
-            for rule, (reducer, reducer_fn) in self.rules.items():
-                rule = rule.split(" ")
-
-                rule.reverse()
-
-                for i, (left, right) in enumerate(zip(rule, pattern)):
-                    if left != right:
-                        break
-
-                else:  # The pattern matched perfectly
-                    # pass the ray tokens to the function but still pop the same
-                    # amount of items in the stack, I just found this to be a more
-                    # readable way to do this
-                    old_stk = stk.copy()
-                    tstk.reverse()
-
-                    tree.append(reducer_fn(*[
-                        (stk.pop(), tstk.pop())
-                        for _ in range(i+1)
-                    ]))
-                    stk.append(reducer)
-                    tstk.reverse()
-
-                    if self.debug:
-                        print(
-                            " ".join(old_stk).ljust(50),
-                            " => ",
-                            stk,
-                            " # Stack reduction",
-                        )
-
-
-        return tree
+        return t_stack

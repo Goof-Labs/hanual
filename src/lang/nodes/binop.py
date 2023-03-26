@@ -3,9 +3,9 @@ from __future__ import annotations
 from abc import ABC
 
 from typing import TypeVar, Union, Any
-from base_node import BaseNode
-from context import Context
-from ..lexer import Token
+from .base_node import BaseNode
+from .context import Context
+from lexer import Token
 
 
 T = TypeVar("T", bound=BaseNode)
@@ -19,6 +19,56 @@ class BinOpNode(BaseNode, ABC):
         self._op: Token = op
         self._left: Union[Token, T] = left
         self._right: Union[Token, T] = right
+
+    @property
+    def left(self):
+        """The left property."""
+        return self._left
+
+    @property
+    def right(self):
+        """The right property."""
+        return self._right
+
+    @property
+    def op(self):
+        """The op property."""
+        return self._op
+
+    def __format__(self, spec: str) -> str:
+        """
+        %l => left operator
+        %r => right operator
+        %o => operator
+        """
+
+        perc = False
+        res = ""
+
+        for char in spec:
+            if perc: # then check characters
+                perc = False
+
+                if char == "l":
+                    res += self.left
+
+                elif char == "r":
+                    res += self.right
+
+                elif char == "o":
+                    res += self.op
+
+                elif char == "%":
+                    res += "%"
+
+                else:
+                    res += "%" + char
+
+            if char == "%":
+                perc == True
+
+        return res
+
 
     def eval(self: BinOpNode, context: Context) -> int:
         # LEFT
@@ -79,8 +129,10 @@ class BinOpNode(BaseNode, ABC):
         evaluate the expression, or the result
         of the expression if it can be.
         >>> 1+(2*3)
+        
         could be evaluated as 7, but if we had
         >>> 1+(foo * 3)
+        
         this expression would not be evaluated,
         because it contains a variable.
         """

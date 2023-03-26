@@ -1,25 +1,26 @@
+from nodes.binop import BinOpNode
+from lexer import MyLex, Token
 from pparser import PParser
-from lexer import MyLex
+from typing import List
 
 
 lex = MyLex()
 
 par = PParser()
-par.tougle_debug_messages(True)
+# par.tougle_debug_messages(True)
 
 
 @par.rule("NUM", "ID")
-def expr(*ts, **kwargs):
-    return ts
+def expr(t):
+    return t[0].value
 
 
-@par.rule("expr")
-def expr(*ts):
-    return ts
+@par.rule("expr OP expr")
+def expr(l: List[Token]):
+    return l[1].value, l[0], l[2]
 
 
 stream = lex.tokenize("9.9 + 699")
 
 
-print(par.parse(stream))
-
+print("END ", par.parse(stream))

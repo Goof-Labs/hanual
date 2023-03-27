@@ -1,8 +1,9 @@
-"""
-This is a temporary file created to thest parsing
-"""
+from __future__ import annotations
 
-from typing import List, Dict, Tuple, Callable, Generator, NamedTuple, Any, Optional
+from typing import List, Dict, Tuple, Callable, Generator, Any, Optional
+from .productions import DefaultProduction
+from .proxy import Proxy
+from .lexer import Token
 import logging
 
 
@@ -11,19 +12,19 @@ class PParser:
     The PParser class is used to create a parser.
     The class is initialised with no params. A
     decorator syntax is then used to create new
-    rules for the parser. Finally parser function
+    rules for the parser. Finally, parser function
     is called to parse the input.
     """
 
     def __init__(self) -> None:
-        self.rules: Dict[str, Tuple[str, Callable[..., Any]]] = {}
+        self.rules: Dict[str, Tuple[str, Proxy]] = {}
         self.debug = False
 
         logging.basicConfig(level=logging.DEBUG)
 
-    def tougle_debug_messages(self: "PParser", setting: Optional[bool] = None) -> None:
+    def toggle_debug_messages(self: PParser, setting: Optional[bool] = None) -> None:
         """
-        This will tougle debug messages on or off.
+        This will toggle debug messages on or off.
         The user should explicitly provide what the
         setting should be.
         """
@@ -31,13 +32,13 @@ class PParser:
         if setting is None:
             self.debug = not self.debug
 
-        elif not setting is True or not setting is False:
+        elif setting is False or setting is True:
             self.debug = setting
 
         else:
             self.debug = bool(setting)
 
-    def check_redundancy(self) -> None:
+    def check_redundancy(self: PParser) -> None:
         """
         This function checks for redundancy. It
         will warn the user about any tokens not
@@ -45,7 +46,7 @@ class PParser:
         codebase clean.
         """
         def_tokens = []  # tokens defined by the user
-        use_tokens = []  # tokens actualy used
+        use_tokens = []  # tokens actually used
 
         for token in self.rules:
             def_tokens.extend(token.split(" "))
@@ -63,13 +64,14 @@ class PParser:
             logging.debug("No clashes found :)")
 
         elif unused_tokens and undef_tokens:
-            logging.warn("unused tokens: %s", unused_tokens)
+            logging.warning("unused tokens: %s", unused_tokens)
             logging.critical("undefined tokens: %s", undef_tokens)
 
-    def rule(self, *rules, types=None):
+    def rule(self: PParser, *rules, **kwargs):
         """
-        This function is a decorator so it can be used with the following syntax:
+        This function is a decorator, so it can be used with the following syntax:
 
+        >>> parser = PParser()
         >>> ...
         >>> @parser.rule("rule_1", "rule_2")
         >>> def my_rule(*token_stream):
@@ -91,21 +93,23 @@ class PParser:
         >>>     elif case == 3: # third case
         """
 
-        if not types:
-            types = {}
+        types = kwargs.get("types", {})
+        prod = kwargs.get("prod", DefaultProduction)
 
         def inner(func):
-            func._types = types
-            # expand all rules so they have their own individual function asociated
+            prox = Proxy(func, types, prod)
+            # expand all rules, so they have their own individual function associated
             for rule in rules:
-                self.rules[rule] = (func.__name__, func)
+                self.rules[rule] = func.__name__, prox
 
         return inner
 
+    def _make_nice(self):...
+
     def parse(
-        self,
-        stream: Generator[NamedTuple, None, None],
-    ) -> List[str]:
+            self: PParser,
+            stream: Generator[Token, None, None],
+    ) -> List[Any]:
         if self.debug:
             print("__RULES__")
             for rule, (reducer, reducer_fn) in self.rules.items():
@@ -117,9 +121,9 @@ class PParser:
         t_stack = []
 
         while True:
-            token = next(stream, None)
+            token: Token = next(stream, None)
 
-            for r_pattern, (reducer, fn) in self.rules.items():
+            for r_pattern, (reducer, prox) in self.rules.items():
                 if not pattern:
                     continue
 
@@ -132,20 +136,21 @@ class PParser:
                 if len(glob_pattern) < len(rule_pattern):
                     continue
 
-                for debth, (r, g) in enumerate(zip(rule_pattern, glob_pattern)):
+                depth = 0
+                for depth, (r, g) in enumerate(zip(rule_pattern, glob_pattern)):
                     if r != g:
                         break
 
                 else:
-                    print(pattern, " - ", rule_pattern, " ", debth + 1)
+                    print(pattern, " - ", rule_pattern, " ", depth + 1)
 
                     args = []
-                    for _ in range(debth + 1):
+                    for _ in range(depth + 1):
                         pattern.pop()
                         args.append(t_stack.pop())
 
                     pattern.append(reducer)
-                    t_stack.append(fn(args))
+                    t_stack.append(prox.call(args))
 
             if not token:
                 break

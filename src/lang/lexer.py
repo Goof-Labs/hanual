@@ -18,6 +18,8 @@ class Token(NamedTuple):
 
 
 class Lexer:
+    __slots__ = "rules", "_rules", "_kwrds"
+
     def __init__(self):
         self._rules = []
         self._kwrds = []

@@ -1,10 +1,32 @@
-from typing import TypeVar, List, LiteralString, Optional, Any
+from typing import TypeVar, List, Optional, Any
+from abc import ABC
 
 
 T = TypeVar("T")
 
 
-class ProductionGen:
+class _ProductionInterface(ABC):
+    def get(self, *args, **kwargs) -> T:
+        raise NotImplementedError
+
+    def __format__(self, format_spec: Any) -> None:
+        pass
+
+
+PInterface = TypeVar("PInterface", bound=_ProductionInterface)
+
+
+class DefaultProduction(_ProductionInterface, ABC):
+    __slots__ = "ts",
+
+    def __init__(self, ts: List[T]) -> None:
+        self.ts: List[T] = ts
+
+    def __getitem__(self, item: int) -> T:
+        return self.ts[item]
+
+
+class ProductionGen(_ProductionInterface, ABC):
     """
     This is a genorator production. This is one of many
     productions. Here we get elements out one after the
@@ -75,7 +97,7 @@ class ProductionGen:
         return string
 
 
-class ProductionDict:
+class ProductionDict(_ProductionInterface):
     def __init__(self, tokens: List[T]) -> None:
         self._dct = {}
         appierence = {}
@@ -85,7 +107,7 @@ class ProductionDict:
         # >>> prod.num2
         # >>> prod.num3
 
-        for t in self.tokens:
+        for t in tokens:
             if t.type in appierence.items():
                 appierences = appierence.get(t.type, 0) + 1
 
@@ -101,7 +123,7 @@ class ProductionDict:
             # only py311+
             e.add_note(
                 "Could not get key '%s', did you mean one of: %s",
-                (__key, ", ".join(self._dct.keys)),
+                (__key, ", ".join(self._dct.keys())),
             )
             # display error message
             raise e

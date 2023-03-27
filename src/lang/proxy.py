@@ -16,9 +16,14 @@ This class will store:
 class Proxy:
     __slots__ = "_fn", "_types", "_prod"
 
-    def __init__(self: Self, fn: Callable[[Any], Any], types: Dict[str, Any], prod: PInterface = None) -> None:
+    def __init__(
+        self: Self,
+        fn: Callable[[Any], Any],
+        types: Dict[str, Any],
+        prod: PInterface = None,
+    ) -> None:
         self._prod = prod or DefaultProduction
-        self._types = types
+        self._types = types or {}
         self._fn = fn
 
     @property

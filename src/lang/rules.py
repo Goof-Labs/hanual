@@ -1,24 +1,24 @@
 from __future__ import annotations
 
+from productions import DefaultProduction
+from typing import Self, Dict, Any
 from pparser import PParser
-from typing import Self
+from proxy import Proxy
 
 
 class Rules:
     def rule(*args, **kwargs):
-        conf = {}
-
         def wrapper(self: Rules, fn):
-            fn._conf = conf
+            prox: Proxy = Proxy(
+                fn,
+                kwargs.get("types", {}),
+                kwargs.get("prod", DefaultProduction),
+            )
 
             for r in args:
-                self.parser.rules[r] = fn
+                self.parser.rules[r] = prox
 
         return wrapper
-
-    @rule(1, 2, 3, 4, 5, 6, 7, 8, 9)
-    def some_rule(self):
-        ...
 
     def __init__(self: Self, parser: PParser) -> None:
         self.parser: PParser = parser

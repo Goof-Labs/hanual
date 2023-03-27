@@ -25,6 +25,3 @@ if not args.files:
     print("No input files")
     parser.exit()
     # stop the program execution
-
-
-print("goofy")

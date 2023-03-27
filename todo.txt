@@ -1,8 +1,15 @@
 language-features
 =================
 
-general-features
-================
+[ ] Basic syntax
+[ ] Implement functions
+[ ] Add controll flow
+[ ] Create standard libruary
+
 
 interface/api-features
 ======================
+
+
+bug-fixes
+=========

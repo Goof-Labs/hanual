@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, NamedTuple, Dict, Any
+from typing import List, NamedTuple, Dict, Any
 
 
 class VariableRef(NamedTuple):

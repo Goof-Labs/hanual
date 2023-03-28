@@ -1,18 +1,23 @@
-from typing import NamedTuple
+from __future__ import annotations
+
+from typing import NamedTuple, Union, TypeVar, Tuple, LiteralString
 import re
 
 
-def kw(reg):
+T = TypeVar("T")
+
+
+def kw(reg: T) -> Tuple[T, LiteralString]:
     return reg, "kw"
 
 
-def rx(reg):
+def rx(reg: T) -> Tuple[T, LiteralString]:
     return reg, "rx"
 
 
 class Token(NamedTuple):
     type: str
-    value: str
+    value: Union[str, int, float]
     line: int
     colm: int
 
@@ -23,8 +28,10 @@ class Lexer:
     def __init__(self):
         self._rules = []
         self._kwrds = []
+        self._update_rules()
 
-        for rule in self.rules:
+    def _update_rules(self, rules=None):
+        for rule in (self.rules if not rules else rules):
             if rule[1][1] == "kw":
                 self._kwrds.append(rule[0])
 
@@ -64,7 +71,7 @@ class Lexer:
 
 
 class MyLex(Lexer):
-    rules = (
+    rules = [
         ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
         ("SHOUT", kw("SHOUT")),
         # KEYWORDS
@@ -87,7 +94,7 @@ class MyLex(Lexer):
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+")),
         ("MISMATCH", rx(r".")),
-    )
+    ]
 
     def t_NUM(self, kind: str, valu: str, line_no: int, col: int) -> Token:
         return Token(kind, float(valu) if "." in valu else int(valu), line_no, col)

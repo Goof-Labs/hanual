@@ -1,35 +1,22 @@
 from __future__ import annotations
 
-from typing import Protocol, Callable, Dict, Any
-
-
-class _NodeSpec(Protocol):
-    getsize: Callable[[], int]
-
 
 class GlobalState:
-    __slots__ = "_position", "_const_pool"
+    __slots__ = "_vals", "_vars"
 
-    def __init__(self) -> None:
-        self._position: int = 0
-        self._const_pool: Dict[str, Any] = {}
+    """
+    The _vals in the class holds the values of the code
+    these are constants and can not be changed, so we
+    can be more efficient when it comes to runtime
+    performance. These can be substituted at compile-time
+    
+    But what if another program wants to borrow the
+    constant? The vals data is a table that is stored at the
+    file header. This is identical to a constant pool count.
+    The only difference is that the val pool should be
+    faster to access. This means that we take less time when
+    it comes to borrowing constants from other files.
+    """
 
-    @property
-    def position(self) -> int:
-        return self._position
-
-    def position_advance(self, obj: _NodeSpec) -> None:
-        self._position += obj.getsize
-
-    def get_const_val(self, name):
-        if (val := self._const_pool.get(name, None)) is None:
-            return val
-
-        raise KeyError("'%s' is not a name", (val,))
-
-    def get_const_index(self, name):
-        for i, itr_name in self._const_pool:
-            if itr_name == name:
-                return i
-
-        return KeyError("'%s' is not a name", (name,))
+    def __init__(self):
+        ...

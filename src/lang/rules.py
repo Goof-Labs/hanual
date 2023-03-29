@@ -4,6 +4,7 @@ from productions import DefaultProduction
 from typing import Self, Dict, Any
 from pparser import PParser
 from proxy import Proxy
+from typing import Self
 
 
 class Rules:
@@ -16,7 +17,7 @@ class Rules:
             )
 
             for r in args:
-                self.parser.rules[r] = prox
+                self.parser.rules[r] = fn.__name__, prox
 
         return wrapper
 

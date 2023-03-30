@@ -3,7 +3,8 @@ Make sure you read this
 
 ## Hello World
 
-## Conditions
+Welccome to the hanual language. 
+## Conditions+
 
 ## Iterables
 

@@ -23,3 +23,7 @@ class Rules:
 
     def __init__(self: Self, parser: PParser) -> None:
         self.parser: PParser = parser
+
+    @rule("INT", "ID")
+    def dt(self):
+        ...

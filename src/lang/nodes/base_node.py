@@ -8,7 +8,6 @@ T = TypeVar("T")
 
 
 class BaseNode(ABC):
-    @abstractmethod
     def __init__(self: BaseNode, *nodes: Tuple[T]) -> None:
         """
         This method should take n amount of arguments,
@@ -29,6 +28,6 @@ class BaseNode(ABC):
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,
-        that corresponds to valid python bytecode.
+        that corresponds to valid hanual bytecode.
         """
         raise NotImplementedError

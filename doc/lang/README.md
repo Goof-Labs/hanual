@@ -1,5 +1,5 @@
-# Hanual Semantics Docs
- Make sure you read this
+# Hanual Language Docs
+Make sure you read this
 
 ## Hello World
 

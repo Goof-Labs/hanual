@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 
 
 T = TypeVar("T")
+N = TypeVar("N", bound="BaseNode")
 
 
 class BaseNode(ABC):
@@ -19,7 +20,7 @@ class BaseNode(ABC):
     def eval(self: BaseNode, context) -> Any:
         """
         This method takes the current context which is
-        the program state. The 
+        the program state. The
         """
         raise NotImplementedError
 
@@ -31,3 +32,20 @@ class BaseNode(ABC):
         that corresponds to valid hanual bytecode.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def nice_print(self, __indent: int) -> str:
+        """
+        A nice way of printing the node | class instance
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """
+        represent class as string.
+        """
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return str(self)

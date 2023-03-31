@@ -6,7 +6,8 @@ This language is compiled to a custom bytecode, with file size and speed in mind
 
 ## File specification
 
-|-----------------------------|
+| File                        |
+| --------------------------- |
 | Magic "LOL" as ascii bytes  |
 | Major version 1 byte        |
 | Minor version 1 byte        |
@@ -62,4 +63,3 @@ The last nibble is a unique id for that catagory of instruction. So if we had se
 ## Metta data
 
 This is to be decided.
-

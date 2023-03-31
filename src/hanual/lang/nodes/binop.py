@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from abc import ABC
 
+from hanual.lang.context import Context
 from typing import TypeVar, Union, Any
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
-from .context import Context
-from lexer import Token
 
 
 T = TypeVar("T", bound=BaseNode)
@@ -118,3 +118,24 @@ class BinOpNode(BaseNode, ABC):
 
         else:
             raise Exception("'%s' is not an arithmatic operation", (self._op.value,))
+
+    def compile(self) -> Any:
+        return super().compile()
+
+    def nice_print(self, __indent: int) -> str:
+        return (
+            f"{type(self).__name__}(".rjust(__indent)
+            + "\n"
+            + f" {self.op=}".rjust(__indent)
+            + "\n"
+            + f" {self.left.nice_print(__indent+1) if hasattr(self.left, 'nice_print') else repr(self.left).rjust(__indent)}".rjust(
+                __indent
+            )
+            + "\n"
+            + f" {self.right.nice_print(__indent+1) if hasattr(self.left, 'nice_print') else repr(self.left).rjust(__indent)})".rjust(
+                __indent
+            )
+        )
+
+    def __str__(self) -> str:
+        return f"{type(self).__name__}({self.op=} {self.left=} {self.right=})"

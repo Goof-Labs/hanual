@@ -104,11 +104,9 @@ class PParser:
 
         return inner
 
-    def _make_nice(self):...
-
     def parse(
-            self: PParser,
-            stream: Generator[Token, None, None],
+        self: PParser,
+        stream: Generator[Token, None, None],
     ) -> List[Any]:
         if self.debug:
             print("__RULES__")
@@ -122,6 +120,9 @@ class PParser:
 
         while True:
             token: Token = next(stream, None)
+
+            if self.debug:
+                print(f"PUSH NEW TOKEN {token}")
 
             for r_pattern, (reducer, prox) in self.rules.items():
                 if not pattern:
@@ -142,7 +143,8 @@ class PParser:
                         break
 
                 else:
-                    print(pattern, " - ", rule_pattern, " ", depth + 1)
+                    if self.debug:
+                        print(pattern, " - ", rule_pattern, " ", depth + 1)
 
                     args = []
                     for _ in range(depth + 1):

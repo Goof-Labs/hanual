@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import List, Union, TypeVar
-from base_node import BaseNode
+from typing import List, Union, TypeVar, Any, Tuple
+from .base_node import BaseNode
 from abc import ABC
 
 

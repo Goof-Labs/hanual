@@ -31,7 +31,7 @@ class Lexer:
         self._update_rules()
 
     def _update_rules(self, rules=None):
-        for rule in (self.rules if not rules else rules):
+        for rule in self.rules if not rules else rules:
             if rule[1][1] == "kw":
                 self._kwrds.append(rule[0])
 
@@ -68,33 +68,3 @@ class Lexer:
                 continue
 
             yield Token(kind, valu, line_no, col)
-
-
-class MyLex(Lexer):
-    rules = [
-        ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
-        ("SHOUT", kw("SHOUT")),
-        # KEYWORDS
-        ("FN", kw("fn")),
-        ("IF", kw("if")),
-        ("ITR", kw("iter")),
-        ("WHL", kw("while")),
-        ("FOR", kw("for")),
-        ("EIF", kw("elif")),
-        ("ELSE", kw("else")),
-        ("LET", kw("let")),
-        ("VAL", kw("val")),
-        ("END", kw("end")),
-        # SYMBOLS
-        ("REF", rx(r"\&")),
-        ("PIPE", rx(r"\<\|")),
-        ("OP", rx(r"[\+\-\\\*]")),
-        ("NUM", rx(r"\d+(\.\d*)?")),
-        # special cases
-        ("NEWLINE", rx(r"\n")),
-        ("SKIP", rx(r"[ \t]+")),
-        ("MISMATCH", rx(r".")),
-    ]
-
-    def t_NUM(self, kind: str, valu: str, line_no: int, col: int) -> Token:
-        return Token(kind, float(valu) if "." in valu else int(valu), line_no, col)

@@ -17,10 +17,19 @@ PInterface = TypeVar("PInterface", bound=_ProductionInterface)
 
 
 class DefaultProduction(_ProductionInterface, ABC):
-    __slots__ = "ts",
+    __slots__ = ("ts",)
 
     def __init__(self, ts: List[T]) -> None:
         self.ts: List[T] = ts
+
+    def __str__(self) -> str:
+        inner: str = "\n ".join(
+            "[{}] = '{}'".format(idx, str(token)) for idx, token in enumerate(self.ts)
+        )
+        return f"""{type(self).__name__}(\n {inner }\n)"""
+
+    def __repr__(self) -> str:
+        return str(self)
 
     def __getitem__(self, item: int) -> T:
         return self.ts[item]

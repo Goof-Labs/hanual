@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from productions import DefaultProduction
-from typing import Self, Dict, Any
-from pparser import PParser
-from proxy import Proxy
+from .productions import DefaultProduction
+from typing import Self
+from .pparser import PParser
+from .proxy import Proxy
 from typing import Self
 
 
@@ -23,7 +23,3 @@ class Rules:
 
     def __init__(self: Self, parser: PParser) -> None:
         self.parser: PParser = parser
-
-    @rule("INT", "ID")
-    def dt(self):
-        ...

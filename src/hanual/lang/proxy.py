@@ -22,7 +22,7 @@ class Proxy:
         types: Dict[str, Any],
         prod: PInterface = None,
     ) -> None:
-        self._prod = prod or DefaultProduction
+        self._prod: PInterface = prod or DefaultProduction
         self._types = types or {}
         self._fn = fn
 
@@ -38,5 +38,8 @@ class Proxy:
     def fn(self) -> Callable[[Any], Any]:
         return self._fn
 
-    def call(self, *args, **kwargs):
-        return self._fn(*args, **kwargs)
+    def call(self: Proxy, *args, **kwargs):
+        return self._fn(
+            self.prod(*args),
+            **kwargs,
+        )

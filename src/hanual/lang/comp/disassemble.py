@@ -137,7 +137,7 @@ class Disassembeler:
     def _interperate_bytes_complex(self):
         """
         This method will create a complex datatype such as
-        a struct. This is verry diffeent to the primitive
+        a struct. This is verry different to the primitive
         types because we need to take care of custom
         attributes and so on.
         """

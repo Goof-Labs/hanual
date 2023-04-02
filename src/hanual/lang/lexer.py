@@ -33,7 +33,7 @@ class Lexer:
     def _update_rules(self, rules=None):
         for rule in self.rules if not rules else rules:
             if rule[1][1] == "kw":
-                self._kwrds.append(rule[0])
+                self._kwrds.append((rule[0], rule[1][0]))
 
             else:
                 self._rules.append((rule[0], rule[1][0]))
@@ -49,10 +49,11 @@ class Lexer:
             valu = pat.group()
             col = pat.start() - line_start
 
-            if valu in self._kwrds:
-                kind = valu
+            for n, v in self._kwrds:
+                if v == valu:
+                    kind = n
 
-            elif kind == "NEWLINE":
+            if kind == "NEWLINE":
                 line_start = pat.end()
                 line_no += 1
                 continue

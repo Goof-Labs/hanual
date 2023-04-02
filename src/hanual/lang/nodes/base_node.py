@@ -34,14 +34,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def nice_print(self, __indent: int) -> str:
-        """
-        A nice way of printing the node | class instance
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def __str__(self) -> str:
+    def __str__(self, *args, **kwargs) -> str:
         """
         represent class as string.
         """

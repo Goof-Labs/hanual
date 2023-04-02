@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from .productions import DefaultProduction
-from typing import Self
 from .pparser import PParser
 from .proxy import Proxy
 from typing import Self

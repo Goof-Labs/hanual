@@ -10,6 +10,8 @@ language-features
 interface/api-features
 ======================
 
+[x] make installable
+
 
 bug-fixes
 =========

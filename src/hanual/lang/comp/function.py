@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .instructions import
+from .instructions import Instructions
 from uuid import uuid4
 from io import BytesIO
 
@@ -27,6 +27,5 @@ class Function:
 
             return {
                 "code": buffer.getvalue(),
-                "access": self._flags.get("private", False)
+                "access": self._flags.get("private", False),
             }
-

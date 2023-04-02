@@ -13,10 +13,12 @@ class HanualLexer(Lexer):
         ("FOR", kw("for")),
         ("EIF", kw("elif")),
         ("ELSE", kw("else")),
+        ("FREEZE", kw("freeze")),
         ("LET", kw("let")),
         ("VAL", kw("val")),
         ("END", kw("end")),
         # SYMBOLS
+        ("EQ", rx(r"\=")),
         ("LPAR", rx(r"\(")),
         ("RPAR", rx(r"\)")),
         ("REF", rx(r"\&")),

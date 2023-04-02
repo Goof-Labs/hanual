@@ -117,6 +117,7 @@ class PParser:
 
         pattern = []
         t_stack = []
+        token = None
 
         while True:
             token: Token = next(stream, None)
@@ -150,6 +151,8 @@ class PParser:
                     for _ in range(depth + 1):
                         pattern.pop()
                         args.append(t_stack.pop())
+
+                    args.reverse()
 
                     pattern.append(reducer)
                     t_stack.append(prox.call(args))

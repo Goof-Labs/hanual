@@ -18,6 +18,10 @@ This language is compiled to a custom bytecode, with file size and speed in mind
 | Instructions                |
 | Metta data                  |
 
+## Magic
+
+The top level LOL bytes shows this file is useable by the hanual runtime.
+
 ## Major version
 
 The majour version is the major version of the language with big features, this is a single byte which has an upper bound of 255 and a lower bound of 0.

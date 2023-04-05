@@ -16,6 +16,7 @@ This language is compiled to a custom bytecode, with file size and speed in mind
 | Constants                   |
 | Padding 0 byte              |
 | Instructions                |
+| 5 padding 0 bytes           |
 | Metta data                  |
 
 ## Magic

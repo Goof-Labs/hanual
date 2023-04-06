@@ -16,3 +16,14 @@ with open("test.txt", "wb") as f:
     f.write(b"\001")  # const 2
 
     f.write(b"\x00")
+
+    f.write(b"\xFF")
+    f.write(b"\xFF")
+    f.write(b"\xFF")
+    f.write(b"\xFF")
+
+    f.write(b"\x00")
+    f.write(b"\x00")
+    f.write(b"\x00")
+    f.write(b"\x00")
+    f.write(b"\x00")

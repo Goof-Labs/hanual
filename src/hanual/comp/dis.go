@@ -40,17 +40,20 @@ type FunctionStatus struct {
 }
 
 func FromBytes(bytes []byte) HanualFileFormat {
+
 	magic := [3]byte{bytes[0], bytes[1], bytes[2]}
 
 	// combine two bytes e.g 01011000 0101010 into a uint32 010110000101010
 	var count uint32 = uint32(uint16(bytes[6]) | uint16(bytes[5])<<8)
+	var start uint32
 
 	var fileformat = HanualFileFormat{
-		magic:     magic,
-		major:     bytes[3],
-		minor:     bytes[4],
-		const_len: uint32(count),
-		consts:    *LoadConsts(&bytes, 7, uint16(count)),
+		magic:        magic,
+		major:        bytes[3],
+		minor:        bytes[4],
+		const_len:    uint32(count),
+		consts:       *LoadConsts(&bytes, 7, uint16(count), &start),
+		instructions: *ParseInstructionPool(&bytes, start),
 	}
 
 	return fileformat
@@ -60,12 +63,20 @@ func FromBytes(bytes []byte) HanualFileFormat {
 ///////////// LOAD CONSTANTS /////////////
 //////////////////////////////////////////
 
-func LoadConsts(bytes *[]byte, startfrom uint8, num_consts uint16) *list.List {
+func LoadConsts(bytes *[]byte, startfrom uint8, num_consts uint16, modstart *uint32) *list.List {
 	constants := list.New()
 	buildup := list.New()
 	escape := false
 
+	*modstart = uint32(startfrom)
+
 	for _, byte_ := range (*bytes)[startfrom:] {
+		if uint16(constants.Len()) == num_consts {
+			constants.PushBack(ProcessBytes(buildup))
+			break
+		}
+
+		*modstart++
 
 		if byte_ == 0 && !escape { // push buildup
 
@@ -100,15 +111,16 @@ func LoadConsts(bytes *[]byte, startfrom uint8, num_consts uint16) *list.List {
 
 func ProcessBytes(bytes *list.List) *HanualConstant {
 	var Type uint8
-
-	if MettaData := bytes.Front().Value; MettaData != nil {
-		Type = uint8(MettaData.(uint8))
-	}
+	var fst bool = true
 
 	DataBytes := []byte{}
 
 	for BByte := bytes.Front(); BByte != nil; BByte = BByte.Next() {
-		DataBytes = append(DataBytes, BByte.Value.(uint8))
+		if fst {
+			Type = BByte.Value.(uint8)
+		} else {
+			DataBytes = append(DataBytes, BByte.Value.(uint8))
+		}
 	}
 
 	return &HanualConstant{
@@ -130,36 +142,20 @@ func ParseMettaDatta(bytes byte) *HanualConstantMettaData {
 ////////////////////////////////////////////
 
 func ParseInstructionPool(pool *[]uint8, start uint32) *list.List {
+	for i := 0; i < len((*pool)); i++ {
+		println("rb ", start, " ", i, " - ", (*pool)[i])
+	}
+
 	var idx uint32 = 0
-	ippool := *pool
+
+	ippool := (*pool)[start:]
 
 	instructions := list.New()
 
-	var i uint32
-	var f bool // break flag
-
 	for {
-		f = false
+		println("INS ", (ippool)[idx])
 
-		for i = 0; i <= 5; i++ { // next 5 bytes are 0
-			if ippool[idx+i] != 0 {
-				f = true
-				break
-			}
-		}
-
-		if f { // next 5 bytes are 0 we break
-			break
-		}
-
-		err, res := ParseInstruction(&ippool, &idx)
-
-		if err != nil {
-			// eof
-			break
-		}
-
-		instructions.PushBack(res)
+		idx++
 	}
 
 	return instructions

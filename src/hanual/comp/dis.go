@@ -142,34 +142,35 @@ func ParseMettaDatta(bytes byte) *HanualConstantMettaData {
 ////////////////////////////////////////////
 
 func ParseInstructionPool(pool *[]uint8, start uint32) *list.List {
-	for i := 0; i < len((*pool)); i++ {
-		println("rb ", start, " ", i, " - ", (*pool)[i])
-	}
-
-	var idx uint32 = 0
-
-	ippool := (*pool)[start:]
+	end := false
 
 	instructions := list.New()
 
 	for {
-		println("INS ", (ippool)[idx])
+		end = true
+		for idx := 0; idx < 5; idx++ {
+			if (*pool)[idx+int(start)] != 0 {
+				end = false
+				break
+			}
+		}
 
-		idx++
+		if end {
+			break
+		}
+
+		// if the next 5 bytes are 0
+
+		instructions.PushBack(ParseInstruction(pool, &start))
+
+		start++
 	}
 
 	return instructions
 }
 
-func ParseInstruction(instructions *[]uint8, idx *uint32) (*FunctionStatus, *HanualInstruction) {
+func ParseInstruction(instructions *[]uint8, idx *uint32) *HanualInstruction {
 	(*idx)++ // increment to current instruction
-
-	if int(*idx) < len(*instructions) {
-		return &FunctionStatus{
-			msg: "index out of bounds",
-			sts: 1,
-		}, nil
-	}
 
 	raw_instruction := (*instructions)[int(*idx)]
 
@@ -192,5 +193,5 @@ func ParseInstruction(instructions *[]uint8, idx *uint32) (*FunctionStatus, *Han
 
 	instr.Raw = raw_instruction
 
-	return nil, &instr
+	return &instr
 }

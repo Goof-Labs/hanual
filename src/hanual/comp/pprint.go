@@ -21,11 +21,12 @@ func pprint(targ HanualFileFormat) {
 	println("\ninstructions\n")
 
 	for ins := targ.instructions.Front(); ins != nil; ins = ins.Next() {
-		i := ins.Value.(HanualInstruction)
+		i := *(ins.Value.(*HanualInstruction))
 
+		println()
 		println(" ID=", i.id)
 		println(" HP=", i.HopToOther)
-		println(" ID=", i.id)
+		println(" IX=", i.Idx)
 		println(" NL=", i.LoadNext)
 		println(" NX=", i.Next)
 		println(" RW=", i.Raw)

@@ -27,3 +27,4 @@ with open("test.txt", "wb") as f:
     f.write(b"\x00")
     f.write(b"\x00")
     f.write(b"\x00")
+    f.write(b"test")

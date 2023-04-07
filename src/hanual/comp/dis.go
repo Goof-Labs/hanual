@@ -30,8 +30,8 @@ type HanualFileFormat struct {
 	major        uint8
 	minor        uint8
 	const_len    uint32
-	consts       list.List
-	instructions list.List
+	consts       *list.List
+	instructions *list.List
 }
 
 type FunctionStatus struct {
@@ -39,7 +39,7 @@ type FunctionStatus struct {
 	sts uint8
 }
 
-func FromBytes(bytes []byte) HanualFileFormat {
+func FromBytes(bytes []byte) *HanualFileFormat {
 
 	magic := [3]byte{bytes[0], bytes[1], bytes[2]}
 
@@ -52,11 +52,11 @@ func FromBytes(bytes []byte) HanualFileFormat {
 		major:        bytes[3],
 		minor:        bytes[4],
 		const_len:    uint32(count),
-		consts:       *LoadConsts(&bytes, 7, uint16(count), &start),
-		instructions: *ParseInstructionPool(&bytes, start),
+		consts:       LoadConsts(&bytes, 7, uint16(count), &start),
+		instructions: ParseInstructionPool(&bytes, start),
 	}
 
-	return fileformat
+	return &fileformat
 }
 
 //////////////////////////////////////////

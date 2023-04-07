@@ -13,5 +13,5 @@ func main() {
 	}
 
 	ff := FromBytes(bytes)
-	pprint(ff)
+	pprint(*ff)
 }

@@ -9,6 +9,7 @@ N = TypeVar("N", bound="BaseNode")
 
 
 class BaseNode(ABC):
+    @abstractmethod
     def __init__(self: BaseNode, *nodes: Tuple[T]) -> None:
         """
         This method should take n amount of arguments,

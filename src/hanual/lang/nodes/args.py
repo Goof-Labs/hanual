@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-
+from abc import ABC
 from typing import Any, Tuple, TypeVar
 from .base_node import BaseNode
 
@@ -8,7 +8,7 @@ from .base_node import BaseNode
 T = TypeVar("T")
 
 
-class Arguments(BaseNode):
+class Arguments(BaseNode, ABC):
     def __init__(self: BaseNode, *nodes: Tuple[T]) -> None:
         ...
 

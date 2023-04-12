@@ -18,9 +18,13 @@ class CodeBlock(BaseNode, ABC):
         else:  # This is just another node that we have chucked into a list
             self._children = [children]
 
-    def add_child(self, child):
-        self._children.append(child)
+    def add_child(self, child: CodeBlock):
+        self._children.extend(child.children)
         return self
+
+    @property
+    def children(self):
+        return self._children
 
     def eval(self: BaseNode, context) -> Any:
         pass

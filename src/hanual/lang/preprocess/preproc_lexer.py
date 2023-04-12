@@ -1,4 +1,4 @@
-from hanual.lang.lexer import Lexer, rx, kw
+from hanual.lang.lexer import Lexer, rx
 from typing import List
 
 # doing string parsing manualy on preprocessers is too much effort so I am

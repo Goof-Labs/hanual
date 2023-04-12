@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import NamedTuple, Union, TypeVar, Tuple, LiteralString
+from typing import NamedTuple, Union, TypeVar, Tuple, LiteralString, Generator
 import re
 
 
@@ -38,7 +38,7 @@ class Lexer:
             else:
                 self._rules.append((rule[0], rule[1][0]))
 
-    def tokenize(self, stream: str) -> None:
+    def tokenize(self, stream: str) -> Generator[Token, None, None]:
         tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
 
         line_no = 1

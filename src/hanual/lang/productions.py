@@ -20,7 +20,7 @@ class _ProductionInterface(ABC):
         pass
 
 
-PInterface = TypeVar("PInterface", bound=_ProductionInterface)
+P = TypeVar("P", bound=_ProductionInterface)
 
 
 class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):

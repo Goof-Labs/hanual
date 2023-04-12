@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 from hanual.lang.lexer import Token
+from .arguments import Arguments
 from .base_node import BaseNode
-from typing import Union, Any
-from .binop import BinOpNode
-from .args import Arguments
+from typing import Any
 
 
 class FunctionCall(BaseNode):
-    def __init__(
-        self: BaseNode, name: Token, arguments: Union[Arguments, BinOpNode]
-    ) -> None:
-        self._args: Union[Arguments, BinOpNode] = arguments
+    def __init__(self: BaseNode, name: Token, arguments: Arguments) -> None:
+        self._args: Arguments = arguments
         self._name: Token = name
 
     def compile(self) -> Any:
@@ -25,7 +22,7 @@ class FunctionCall(BaseNode):
         return self._name
 
     @property
-    def args(self) -> Union[Arguments, BinOpNode]:
+    def args(self) -> Arguments:
         return self._args
 
     def __str__(self: FunctionCall, level=0) -> str:

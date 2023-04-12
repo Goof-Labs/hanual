@@ -1,7 +1,10 @@
-from typing import Union, List, Tuple, Dict
-from .preproc_lexer import generate_lexer
+from typing import Union, List, Tuple, Dict, TypeVar
+from .preproc_lexer import generate_lexer, Lexer
 from dataclasses import dataclass, field
 from io import TextIOWrapper, StringIO
+
+
+L = TypeVar("L", bound=Lexer)
 
 
 @dataclass()
@@ -73,6 +76,8 @@ class PrePeoccesser:
             "if": "if",
         }
 
+        lexer = generate_lexer(prefix, names.keys())
+
         # This is more suited for what we are doing
         final_code = StringIO()
 
@@ -83,24 +88,32 @@ class PrePeoccesser:
                 for k, v in names.items():
                     # The line begins with a preprocesser
                     if line.startswith(prefix + k):
-                        getattr(self, f"dispatch_{v}", self.dispatch_default)(line)
+                        getattr(self, f"dispatch_{v}", self.dispatch_default)(
+                            line, lexer
+                        )
 
             elif not self._flags.ignore:
                 final_code.write(line)
 
         return final_code.close()
 
-    def dispatch_def(self, line: str) -> None:
+    def dispatch_def(self, line: str, lexer: L) -> None:
+        # The definition is only a name that we append onto a list
+        stream = tuple(lexer.tokenize(line))
+
+        if stream[1].type != "ID":
+            raise TypeError("should be a name got %s", (stream[1].type,))
+
+        self._flags.definitions.append(stream[1].value)
+
+    def dispatch_mcr(self, line: str, lexer: L) -> None:
         ...
 
-    def dispatch_mcr(self, line: str) -> None:
+    def dispatch_end(self, line: str, lexer: L) -> None:
         ...
 
-    def dispatch_end(self, line: str) -> None:
+    def dispatch_if(self, line: str, lexer: L) -> None:
         ...
 
-    def dispatch_if(self, line: str) -> None:
-        ...
-
-    def dispatch_default(self, line: str) -> None:
+    def dispatch_default(self, line: str, lexer: L) -> None:
         ...

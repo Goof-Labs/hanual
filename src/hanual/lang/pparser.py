@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Callable, Generator, Any, Optional
-from .productions import DefaultProduction
+from typing import List, Dict, Tuple, Generator, Any, Optional, TypeVar
+from .productions import DefaultProduction, P
 from .proxy import Proxy
 from .lexer import Token
 import logging
+
+
+T = TypeVar("T")
 
 
 class PParser:
@@ -67,7 +70,12 @@ class PParser:
             logging.warning("unused tokens: %s", unused_tokens)
             logging.critical("undefined tokens: %s", undef_tokens)
 
-    def rule(self: PParser, *rules, **kwargs):
+    def rule(
+        self: PParser,
+        *rules,
+        prod: Optional[P] = DefaultProduction,
+        types: Optional[Dict[str, T]] = None,
+    ):
         """
         This function is a decorator, so it can be used with the following syntax:
 
@@ -93,9 +101,6 @@ class PParser:
         >>>     elif case == 3: # third case
         """
 
-        types = kwargs.get("types", {})
-        prod = kwargs.get("prod", DefaultProduction)
-
         def inner(func):
             prox = Proxy(func, types, prod)
             # expand all rules, so they have their own individual function associated
@@ -104,17 +109,7 @@ class PParser:
 
         return inner
 
-    def parse(
-        self: PParser,
-        stream: Generator[Token, None, None],
-    ) -> List[Any]:
-        if self.debug:
-            print("__RULES__")
-            for rule, (reducer, reducer_fn) in self.rules.items():
-                print(f"{rule!r}".ljust(50), " =>", reducer)
-
-            print("__END_RULES__\n")
-
+    def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
         pattern = []
         t_stack = []
         token = None

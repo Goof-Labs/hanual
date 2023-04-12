@@ -3,7 +3,6 @@ from __future__ import annotations
 from abc import ABC
 
 from typing import TypeVar, Any, Generic
-from hanual.lang.context import Context
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
@@ -71,56 +70,8 @@ class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
 
         return res
 
-    def eval(self: BinOpNode, context: Context) -> int:
-        # LEFT
-        if isinstance(self._left, Token):
-            left = self._left.value
-
-        # elif context.is_variable(self._left.value):
-        #     left = context.get_variable_value(self._left.value)
-
-        else:
-            left = self._left.eval(context)
-
-        # RIGHT
-        if isinstance(self._right, Token):
-            right = self._right.value
-
-        # elif context.is_variable(self._right.value):
-        #     right = context.get_variable_value(self._right.value)
-
-        else:
-            right = self._right.eval(context)
-
-        if self._op.value == "+":
-            return left + right
-
-        elif self._op.value == "-":
-            return left - right
-
-        elif self._op.value == "/":
-            return left / right
-
-        elif self._op.value == "*":
-            return left * right
-
-        elif self._op.value == "%":
-            return left % right
-
-        elif self._op.value == "//":
-            return left // right
-
-        elif self._op.value == "^":
-            return left**right
-
-        elif self._op.value == "<<":
-            return left << right
-
-        elif self._op.value == ">>":
-            return left >> right
-
-        else:
-            raise Exception("'%s' is not an arithmatic operation", (self._op.value,))
+    def eval(self: BinOpNode) -> int:
+        return super().eval()
 
     def compile(self) -> Any:
         return super().compile()

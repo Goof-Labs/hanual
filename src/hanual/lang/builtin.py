@@ -18,6 +18,7 @@ class HanualLexer(Lexer):
         ("VAL", kw("val")),
         ("END", kw("end")),
         # SYMBOLS
+        ("STR", rx(r"\".*?\"")),
         ("EL", rx(r"\=\=|\!\=|\>|\<|\<\=|\>\=")),
         ("EQ", rx(r"\=")),
         ("LPAR", rx(r"\(")),
@@ -26,6 +27,7 @@ class HanualLexer(Lexer):
         ("PIPE", rx(r"\<\|")),
         ("OP", rx(r"[\+\-\\\*]")),
         ("NUM", rx(r"\d+(\.\d*)?")),
+        ("COM", rx(r"\,")),
         # special cases
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+")),

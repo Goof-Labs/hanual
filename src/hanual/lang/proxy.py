@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .productions import DefaultProduction, PInterface
+from .productions import DefaultProduction, P
 from typing import Self, Callable, Any, Dict
 
 """
@@ -20,14 +20,14 @@ class Proxy:
         self: Self,
         fn: Callable[[Any], Any],
         types: Dict[str, Any],
-        prod: PInterface = None,
+        prod: P = None,
     ) -> None:
-        self._prod: PInterface = prod or DefaultProduction
+        self._prod: P = prod or DefaultProduction
         self._types = types or {}
         self._fn = fn
 
     @property
-    def prod(self) -> PInterface:
+    def prod(self) -> P:
         return self._prod
 
     @property
@@ -39,4 +39,10 @@ class Proxy:
         return self._fn
 
     def call(self: Proxy, args, pattern):
-        return self._fn(self.prod(args), case=self.types.get(" ".join(pattern), None))
+        # dont want to pass case
+        if self._types != {}:
+            return self._fn(
+                self.prod(args), case=self.types.get(" ".join(pattern), None)
+            )
+
+        return self._fn(self.prod(args))

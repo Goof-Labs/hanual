@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from hanual.lang.nodes import (
+    FunctionDefinition,
     AssighnmentNode,
     FunctionCall,
     IfStatement,
@@ -41,17 +42,22 @@ def arg(ts: DefaultProduction[Any, Arguments]):
 
 
 @par.rule(
+    "ID LPAR RPAR",  # NO ARGS
     "ID LPAR expr RPAR",
     "ID LPAR ID RPAR",
     "ID LPAR STR RPAR",
     "ID LPAR arg RPAR",
-    types={"ID LPAR args RPAR": True},
+    types={"ID LPAR args RPAR": 1, "ID LPAR RPAR": 2},
 )
 def f_call(ts: DefaultProduction, case):
-    if case:  # already an argument
+    if case is None:  # single arg
+        return FunctionCall(ts[0], Arguments(ts[2]))
+
+    elif case == 1:  # multiple args
         return FunctionCall(ts[0], ts[2])
 
-    return FunctionCall(ts[0], Arguments(ts[2]))
+    elif case == 2:  # no args
+        return FunctionCall(ts[0], None)
 
 
 @par.rule("LET ID EQ NUM")
@@ -86,7 +92,27 @@ def if_statement(ts: DefaultProduction, case: int):
     return IfStatement(condition=ts[2], if_true=ts[4])
 
 
-@par.rule("f_call", "assighnment", "if_statement", "freeze")
+@par.rule("FN f_call")
+def function_marker(ts: DefaultProduction):
+    return ts[1]
+
+
+@par.rule(
+    "function_marker END",
+    "function_marker line END",
+    "function_marker lines END",
+    types={
+        "function_marker END": False,
+    },
+)
+def function_definition(ts: DefaultProduction[FunctionCall], hasend: bool):
+    if hasend is False:
+        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=None)
+
+    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
+
+
+@par.rule("f_call", "assighnment", "if_statement", "freeze", "function_definition")
 def line(ts):
     return CodeBlock(ts[0])
 
@@ -100,15 +126,12 @@ print(
     par.parse(
         lex.tokenize(
             """
-let x = 100
-freeze x
-
-if (x == 100)
-    print("HERE")
+fn test(a, z)
+    print("hey")
+    print("hey")
+    print("hey")
 end
 
-
-print(x, x)
 """
         )
     )

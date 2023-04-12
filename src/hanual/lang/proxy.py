@@ -41,8 +41,6 @@ class Proxy:
     def call(self: Proxy, args, pattern):
         # dont want to pass case
         if self._types != {}:
-            return self._fn(
-                self.prod(args), case=self.types.get(" ".join(pattern), None)
-            )
+            return self._fn(self.prod(args), self.types.get(" ".join(pattern), None))
 
         return self._fn(self.prod(args))

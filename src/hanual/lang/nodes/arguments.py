@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TypeVar, Union, List, Any
 from hanual.lang.builtin import Token
 from .base_node import BaseNode
-from .block import CodeBlock
 from io import StringIO
 
 T = TypeVar("T")

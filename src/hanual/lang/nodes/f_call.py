@@ -29,4 +29,4 @@ class FunctionCall(BaseNode):
         return self._args
 
     def __str__(self: FunctionCall, level=0) -> str:
-        return f"\n{type(self).__name__}(\n{' '.rjust(level)}name = {self.name.__str__(level+1) if issubclass(type(self.name), BaseNode) else str(self.name)}\n{' '.rjust(level)}args = {self.args.__str__(level+1) if issubclass(type(self.args), BaseNode) else str(str(self.args))})"
+        return f"{type(self).__name__}(\n{' '.rjust(level)}name = {self.name.__str__(level+1) if issubclass(type(self.name), BaseNode) else str(self.name)}\n{' '.rjust(level)}args = {self.args.__str__(level+1) if issubclass(type(self.args), BaseNode) else str(str(self.args))})\n"

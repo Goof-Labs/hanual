@@ -1,0 +1,34 @@
+use PY::local::py_util
+use PY::local::py_IO
+use HUL::status
+
+fn print(object)
+  /*
+   * This function is used to print a message to the standard output.
+   * Any argument can be passed to this function as long it has one
+   * of the following methods.
+   * - repr
+   * - default obj repr
+   * - as_str
+   * - [ERROR]
+   * The print will first try to call the pepr, if it fails it will
+   * move on to the str method to try and convert it to a string and
+   * then print it, finaly the default print method on the object is
+   * called, but if that fails this function will error saying it
+   * could not find a function that it can use to display the object
+   */
+
+  if H_hasattr(object, "repr")
+    py_IO.H_print(object)
+  elif H_hasattr(object, "as_str")
+    py_IO.H_print(object.toString())
+  else
+    status(1, "bad print argument")
+end
+
+fn input([transform])
+  if (%1)
+    transform()
+  end
+end
+

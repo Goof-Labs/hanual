@@ -26,4 +26,4 @@ class FreezeNode(BaseNode):
         return self._var
 
     def __str__(self, level=0) -> str:
-        return f"\n{type(self).__name__}(\n{' '.rjust(level+1)}freeze = {self.target})"
+        return f"{type(self).__name__}(\n{' '.rjust(level+1)}freeze = {self.target})\n"

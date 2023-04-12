@@ -6,7 +6,6 @@ from typing import Any
 from lexer import Token
 
 
-
 class Literal(BaseNode):
     def __init__(self: Literal, token: Token) -> None:
         self._token = token
@@ -21,4 +20,3 @@ class Literal(BaseNode):
 
     def eval(self: Literal) -> Any:
         return self.value
-

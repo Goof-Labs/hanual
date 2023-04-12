@@ -35,6 +35,10 @@ class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
         )
         return f"""{type(self).__name__}(\n {inner }\n)"""
 
+    @property
+    def raw(self) -> List[T]:
+        return self.ts
+
     def __repr__(self: Self) -> str:
         return str(self)
 

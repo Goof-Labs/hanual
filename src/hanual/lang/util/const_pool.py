@@ -10,9 +10,10 @@ class InterfaceConstPoolAdd(ABC):
 
 
 CLS = TypeVar("CLS", bound=InterfaceConstPoolAdd)
+VALUE = TypeVar("VALUE")
 
 
-class ConstPoolMod(Generic[CLS]):
+class ConstPoolMod(Generic[CLS, VALUE]):
     """
     This class is used to add constants to a HanualFileFormat, this is sort of a proxy class, this just prevented me
     from having to implement all these methods directly on the main class, I can also use this class for an external
@@ -22,11 +23,11 @@ class ConstPoolMod(Generic[CLS]):
     this is like overloading in other strongly typed languages.
     """
     def __init__(self, instance: CLS) -> None:
-        self._const_pool: Dict[str, Any] = {}
+        self._const_pool: Dict[str, VALUE] = {}
         self._instance = instance
 
     @dispatch(None, dict)
-    def add_const(self, consts: Dict[str, Any]) -> Self:
+    def add_const(self, consts: Dict[str, VALUE]) -> Self:
         for name, value in consts.items():
             assert isinstance(name, str) is True
 
@@ -35,12 +36,12 @@ class ConstPoolMod(Generic[CLS]):
         return self
 
     @dispatch(None, str, None)
-    def add_const(self, name: str, value: Any) -> Self:
+    def add_const(self, name: str, value: VALUE) -> Self:
         self._const_pool[name] = value
         return self
 
     @dispatch(None, list)
-    def add_const(self, consts: list[str, Any]) -> Self:
+    def add_const(self, consts: list[str, VALUE]) -> Self:
         for name, value in consts:
             assert isinstance(name, str)
 
@@ -49,13 +50,16 @@ class ConstPoolMod(Generic[CLS]):
         return self
 
     @dispatch(None, tuple)
-    def add_const(self, consts: tuple[str, Any]) -> Self:
+    def add_const(self, consts: tuple[str, VALUE]) -> Self:
         for name, value in consts:
             assert isinstance(name, str)
 
             self._const_pool[name] = value
 
         return self
+
+    def get_instances(self) -> Dict[str, VALUE]:
+        return self._const_pool
 
     def remove(self, name: str) -> Self:
         if name in self._const_pool.keys():

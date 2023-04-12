@@ -31,4 +31,4 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
         return self._value
 
     def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}target = {self.target.__str__(level+1) if issubclass(type(self.target), BaseNode) else str(str(self.target))}\n{' '.rjust(level)}value = {self.value.__str__(level+1) if issubclass(type(self.value), BaseNode) else str(str(self.value))}\n{' '.rjust(level)})"
+        return f"{type(self).__name__.rjust(level+1)}(\n{' '.rjust(level)}target = {self.target.__str__(level+1) if issubclass(type(self.target), BaseNode) else str(str(self.target))}\n{' '.rjust(level)}value = {self.value.__str__(level+1) if issubclass(type(self.value), BaseNode) else str(str(self.value))}\n{' '.rjust(level)})\n"

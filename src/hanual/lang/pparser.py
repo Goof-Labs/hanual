@@ -148,14 +148,17 @@ class PParser:
                         print(pattern, " - ", rule_pattern, " ", depth + 1)
 
                     args = []
+                    arg_pattern = []
+
                     for _ in range(depth + 1):
-                        pattern.pop()
+                        arg_pattern.append(pattern.pop())
                         args.append(t_stack.pop())
 
+                    arg_pattern.reverse()
                     args.reverse()
 
                     pattern.append(reducer)
-                    t_stack.append(prox.call(args))
+                    t_stack.append(prox.call(args, arg_pattern))
 
             if not token:
                 break

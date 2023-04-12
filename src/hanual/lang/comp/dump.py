@@ -32,7 +32,7 @@ class HanualFileDumps(InterfaceConstPoolAdd, LabelInterface, ABC, Singleton):
         return self._idx
 
     def const_pool(self):
-        return ConstPoolMod[HanualFileDumps](self)
+        return ConstPoolMod[HanualFileDumps, Any](self)
 
     def labels(self):
         return Label[HanualFileDumps](self)

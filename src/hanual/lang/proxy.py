@@ -38,8 +38,5 @@ class Proxy:
     def fn(self) -> Callable[[Any], Any]:
         return self._fn
 
-    def call(self: Proxy, *args, **kwargs):
-        return self._fn(
-            self.prod(*args),
-            **kwargs,
-        )
+    def call(self: Proxy, args, pattern):
+        return self._fn(self.prod(args), case=self.types.get(" ".join(pattern), None))

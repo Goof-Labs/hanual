@@ -18,6 +18,7 @@ class HanualLexer(Lexer):
         ("VAL", kw("val")),
         ("END", kw("end")),
         # SYMBOLS
+        ("EL", rx(r"\=\=|\!\=|\>|\<|\<\=|\>\=")),
         ("EQ", rx(r"\=")),
         ("LPAR", rx(r"\(")),
         ("RPAR", rx(r"\)")),

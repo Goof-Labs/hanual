@@ -14,6 +14,8 @@ R = TypeVar("R", Token, Any)  # Right
 
 
 class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
+    __slots__ = "_right", "_left", "_op"
+
     def __init__(self, op: O, left: L, right: R) -> None:
         self._right: R = right
         self._left: L = left
@@ -124,4 +126,4 @@ class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
         return super().compile()
 
     def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}op = {self.op.__str__(level+1) if issubclass(type(self.op), BaseNode) else str(str(self.op))}\n{' '.rjust(level)} left = {self.left.__str__(level+1) if issubclass(type(self.left), BaseNode) else str(str(self.left))}\n{' '.rjust(level)} right = {self.right.__str__(level+1) if issubclass(type(self.right), BaseNode) else str(str(self.right))})"
+        return f"{type(self).__name__}(\n{' '.rjust(level)}op = {self.op.__str__(level+1) if issubclass(type(self.op), BaseNode) else str(str(self.op))}\n{' '.rjust(level)} left = {self.left.__str__(level+1) if issubclass(type(self.left), BaseNode) else str(str(self.left))}\n{' '.rjust(level)} right = {self.right.__str__(level+1) if issubclass(type(self.right), BaseNode) else str(str(self.right))})\n"

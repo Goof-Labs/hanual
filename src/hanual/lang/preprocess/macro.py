@@ -1,7 +1,8 @@
 from hanual.lang.productions import DefaultProduction
+from hanual.lang.lexer import Lexer, rx, Token
+from typing import NamedTuple, Union, List
 from hanual.lang.pparser import PParser
-from hanual.lang.lexer import Lexer, rx
-from typing import NamedTuple
+from io import StringIO
 
 
 class MacroLexer(Lexer):
@@ -23,7 +24,7 @@ class MacroLexer(Lexer):
 
 
 class _LeftRegForm(NamedTuple):
-    type: str
+    type: Token
     name: str
 
 
@@ -32,43 +33,19 @@ class _RightRegForm(NamedTuple):
 
 
 def make_parser():
+    # This is the simplest possible parser
     par = PParser()
 
     @par.rule("LAB SPC CLN ID RAB")
-    def form(ts: DefaultProduction, case):
+    def _(ts: DefaultProduction):
         return _LeftRegForm(ts[1], ts[3])
 
     @par.rule("LAB ID RAB")
-    def form(ts: DefaultProduction, case):
+    def _(ts: DefaultProduction):
         return _RightRegForm(ts[1])
 
     return par
 
 
 class Macro:
-    """
-    Macros are a mix of regular expressions and well macros, in a nutshel macros are matched with parts of the code, then
-    the macros are expanded, this essencially lets the programmers create their own syntax for the language. Regarding the
-    regular expressions aspect of the Macro. There are many cases that we need to deal with, we may just want to replace
-    the fn keyword with `function`, or just replace a token. This is where a macro type system is neccessery.
-     + T -> Token
-     + N -> Number
-     + I -> Name, Identifier
-     + E -> Expression on left
-    """
-
-    def __init__(self, pattern: str, target: str) -> None:
-        lex = MacroLexer()
-        self._pattern = lex.tokenize(pattern)
-        self._target = lex.tokenize(target)
-
-    def apply(self, transform: str, lex):
-        parser = make_parser()
-
-        print(parser.parse(self._pattern))
-        print(parser.parse(self._target))
-
-
-mac = Macro("<T:left> contains <N:right>", "<right> in <left>")
-
-print(mac.apply("[4, 1234] contains 5"))
+    ...

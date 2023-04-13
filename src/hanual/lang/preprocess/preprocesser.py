@@ -1,17 +1,8 @@
-from typing import Union, List, Tuple, Dict, TypeVar
-from .preproc_lexer import generate_lexer, Lexer
-from dataclasses import dataclass, field
-from io import TextIOWrapper, StringIO
-
+from .preproc_lexer import Lexer
+from typing import Dict, TypeVar
+from io import StringIO
 
 L = TypeVar("L", bound=Lexer)
-
-
-@dataclass()
-class _MettaData:
-    definitions: List[str] = field(default=[])  # definitions
-    macros: List[str] = field(default=[])  # any macros we have
-    ignore: bool = field(default=False)  # If we are ignoring the code
 
 
 class PrePeoccesser:
@@ -42,32 +33,11 @@ class PrePeoccesser:
     tokens we want to replace in angel brackets <>
     """
 
-    def __init__(self, file: Union[TextIOWrapper, str, List[str], Tuple[str]]) -> None:
-        self._flags: _MettaData = _MettaData()
-        self._file: Tuple[str] = ()
+    def __init__(self) -> None:
+        self._definitions: list[str] = []
+        self._ignore_code: bool = False
 
-        if isinstance(file, str):
-            self._file = open(file, "r").readlines()
-
-        elif isinstance(file, list):
-            self._file = tuple(file)
-
-        elif isinstance(file, tuple):
-            self._file = file
-
-        elif isinstance(file, str):
-            self._file = tuple(file.split("\n"))
-
-        else:
-            raise TypeError(
-                "Expected one of str list[str] tuple[str] got %s",
-                (type(file).__name__,),
-            )
-
-    def process(self) -> str:
-        if not self._file:
-            raise ValueError("self._file is falsy")
-
+    def process(self, text: str) -> str:
         prefix: str = "@"
         names: Dict[str, str] = {
             "def": "def",
@@ -76,44 +46,40 @@ class PrePeoccesser:
             "if": "if",
         }
 
-        lexer = generate_lexer(prefix, names.keys())
+        out = StringIO()
 
-        # This is more suited for what we are doing
-        final_code = StringIO()
-
-        for line in self._file:
-            # we only want to check the code if it starts with the prefix or we will be looking at quadratic time, not good
+        for line in text.split("\n"):
             if line.startswith(prefix):
+                type_ = None
 
-                for k, v in names.items():
-                    # The line begins with a preprocesser
-                    if line.startswith(prefix + k):
-                        getattr(self, f"dispatch_{v}", self.dispatch_default)(
-                            line, lexer
-                        )
+                for pos in names.keys():
+                    if line.startswith(prefix + pos):
+                        type_ = pos
 
-            elif not self._flags.ignore:
-                final_code.write(line)
+                if type_ is None:
+                    raise ValueError("'%s' is not a pre processer", (line,))
 
-        return final_code.close()
+                # get class function
+                getattr(self, f"get_{names[type_]}")(line)
 
-    def dispatch_def(self, line: str, lexer: L) -> None:
-        # The definition is only a name that we append onto a list
-        stream = tuple(lexer.tokenize(line))
+            elif not self._ignore_code:
+                out.write(line)
 
-        if stream[1].type != "ID":
-            raise TypeError("should be a name got %s", (stream[1].type,))
+        return out.getvalue()
 
-        self._flags.definitions.append(stream[1].value)
+    def get_def(self, line: str) -> None:
+        # TODO use lexer
+        name: str = line.split(" ")[1]  # Get the definition name
 
-    def dispatch_mcr(self, line: str, lexer: L) -> None:
-        ...
+        self._definitions.append(name)
 
-    def dispatch_end(self, line: str, lexer: L) -> None:
-        ...
+    def get_end(self, line: str) -> None:
+        # We will just reset it
+        self._ignore_code = False
 
-    def dispatch_if(self, line: str, lexer: L) -> None:
-        ...
+    def get_if(self, line: str) -> None:
+        # TODO: add better support for this stuff
+        self._ignore_code = line.split(" ")[1] in self._definitions
 
-    def dispatch_default(self, line: str, lexer: L) -> None:
-        ...
+    def get_mcr(self, line: str) -> None:
+        raise NotImplementedError

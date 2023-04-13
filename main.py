@@ -12,11 +12,13 @@ from hanual.lang.nodes import (
     Arguments,
 )
 
+from hanual.lang.preprocess.preprocesser import PrePeoccesser
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.builtin import HanualLexer
 from hanual.lang.pparser import PParser
 from typing import Any
 
+pre = PrePeoccesser()
 lex = HanualLexer()
 par = PParser()
 
@@ -125,14 +127,18 @@ def lines(ts: DefaultProduction[CodeBlock, Any]):
 print(
     par.parse(
         lex.tokenize(
-            """
-fn test(a, z)
-    print("hey")
-    print("hey")
-    print("hey")
-end
+            pre.process(
+                """
+@def YAY
+
+@if YAY
+
+print("hey")
+
+@end
 
 """
+            )
         )
     )
 )

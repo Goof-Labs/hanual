@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from hanual.lang.nodes import (
     FunctionDefinition,
+    NamespaceAcessor,
     AssighnmentNode,
     FunctionCall,
     IfStatement,
@@ -14,7 +15,7 @@ from hanual.lang.nodes import (
 
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
 from hanual.lang.productions import DefaultProduction
-from hanual.lang.builtin import HanualLexer
+from hanual.lang.builtin import HanualLexer, Token
 from hanual.lang.pparser import PParser
 from typing import Any
 
@@ -40,6 +41,16 @@ def arg(ts: DefaultProduction):
 
 @par.rule("ID arg", "expr arg", "f_call arg", "ID arg")
 def arg(ts: DefaultProduction[Any, Arguments]):
+    return ts[1].add_child(ts[0])
+
+
+@par.rule("NSA ID")
+def namespace_acesssor(ts: DefaultProduction[Token]):
+    return NamespaceAcessor(ts[1])
+
+
+@par.rule("ID namespace_acesssor")
+def namespace_acesssor(ts: DefaultProduction[NamespaceAcessor, Token]):
     return ts[1].add_child(ts[0])
 
 
@@ -114,7 +125,14 @@ def function_definition(ts: DefaultProduction[FunctionCall], hasend: bool):
     return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
 
 
-@par.rule("f_call", "assighnment", "if_statement", "freeze", "function_definition")
+@par.rule("USE namespace_acesssor")
+def using(ts: DefaultProduction[Token, NamespaceAcessor]):
+    return ts[1]
+
+
+@par.rule(
+    "f_call", "assighnment", "if_statement", "freeze", "function_definition", "using"
+)
 def line(ts):
     return CodeBlock(ts[0])
 
@@ -124,4 +142,4 @@ def lines(ts: DefaultProduction[CodeBlock, Any]):
     return ts[0].add_child(ts[1])
 
 
-print(par.parse(lex.tokenize(pre.process(...))))
+print(par.parse(lex.tokenize(pre.process("use src::hanual"))))

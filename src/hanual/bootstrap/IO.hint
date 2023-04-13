@@ -1,6 +1,9 @@
-use PY::local::py_util
-use PY::local::py_IO
-use HUL::status
+print("Hi")
+
+@def use
+
+@if use
+
 
 fn print(object)
   /*
@@ -32,3 +35,4 @@ fn input([transform])
   end
 end
 
+@endif

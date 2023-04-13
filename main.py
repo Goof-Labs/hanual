@@ -124,21 +124,4 @@ def lines(ts: DefaultProduction[CodeBlock, Any]):
     return ts[0].add_child(ts[1])
 
 
-print(
-    par.parse(
-        lex.tokenize(
-            pre.process(
-                """
-@def YAY
-
-@if YAY
-
-print("hey")
-
-@end
-
-"""
-            )
-        )
-    )
-)
+print(par.parse(lex.tokenize(pre.process(...))))

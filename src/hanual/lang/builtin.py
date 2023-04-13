@@ -30,7 +30,7 @@ class HanualLexer(Lexer):
         ("COM", rx(r"\,")),
         # special cases
         ("NEWLINE", rx(r"\n")),
-        ("SKIP", rx(r"[ \t]+")),
+        ("SKIP", rx(r"[ \t]+|\\*.*\\")),
         ("MISMATCH", rx(r".")),
     ]
 

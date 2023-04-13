@@ -63,7 +63,7 @@ class PrePeoccesser:
                 getattr(self, f"get_{names[type_]}")(line)
 
             elif not self._ignore_code:
-                out.write(line)
+                out.write(line + "\n")
 
         return out.getvalue()
 
@@ -79,7 +79,7 @@ class PrePeoccesser:
 
     def get_if(self, line: str) -> None:
         # TODO: add better support for this stuff
-        self._ignore_code = line.split(" ")[1] in self._definitions
+        self._ignore_code = not (line.split(" ")[1] in self._definitions)
 
     def get_mcr(self, line: str) -> None:
         raise NotImplementedError

@@ -5,19 +5,25 @@ from sys import exit
 
 
 class Error:
-    def __init__(self: Error) -> None:
-        pass
-
-    def be_raised(self: Error, sample_code: str) -> None:
+    def be_raised(
+        self: Error, stage: str, sample_code: str, line: int, col: int, explain: str
+    ) -> None:
         init(autoreset=True)
 
         code = sample_code.strip(" ")
 
-        print(f"{Fore.RED}ERROR: {type(self).__name__}")
+        print(f"{Fore.RED}{stage}-ERROR: {type(self).__name__}, at line {line}")
         print()
-        print(f"{Fore.YELLOW}{'-'*len(code)}")
-        print(f"{Fore.YELLOW}{code}")
-        print(f"{Fore.YELLOW}{'-'*len(code)}")
+        print(f"{Fore.YELLOW}{'-'*50}")
+        print(f"|{str(line).zfill(5)}> {Fore.YELLOW}{code}")
+        print(f"^".rjust(col + 9))
+        print(f"{Fore.YELLOW}{'-'*50}")
         print()
 
+        print(explain)
+
         exit()
+
+
+class IligalCharacterError(Error):
+    ...

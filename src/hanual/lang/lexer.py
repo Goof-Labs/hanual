@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import NamedTuple, Union, TypeVar, Tuple, LiteralString, Generator
+from .errors import IligalCharacterError
+from io import StringIO
 import re
 
 
@@ -39,6 +41,7 @@ class Lexer:
                 self._rules.append((rule[0], rule[1][0]))
 
     def tokenize(self, stream: str) -> Generator[Token, None, None]:
+        lines = stream.split("\n")
         tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
 
         line_no = 1
@@ -62,7 +65,13 @@ class Lexer:
                 continue
 
             elif kind == "MISMATCH":
-                raise RuntimeError(f"{valu!r} was unexpected on line {line_no}")
+                IligalCharacterError().be_raised(
+                    "LEXING",
+                    lines[line_no - 1],
+                    line_no,
+                    col,
+                    f"{valu!r} was unexpected at this time",
+                )
 
             if hasattr(self, f"t_{kind}"):
                 yield getattr(self, f"t_{kind}")(kind, valu, line_no, col)

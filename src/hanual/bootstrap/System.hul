@@ -1,0 +1,6 @@
+use py::base::py_print
+
+
+fn print(x) {
+    py_print(x)
+}

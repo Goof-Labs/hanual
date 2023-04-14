@@ -1,5 +1,7 @@
+from __future__ import annotations
+
+from typing import Dict, TypeVar, Set
 from .preproc_lexer import Lexer
-from typing import Dict, TypeVar
 from io import StringIO
 
 L = TypeVar("L", bound=Lexer)
@@ -34,12 +36,26 @@ class PrePeoccesser:
     """
 
     def __init__(self) -> None:
-        self._definitions: list[str] = []
+        self._definitions: Set[str] = []
         self._ignore_code: bool = False
+        self._prefix: str = "@"
+
+    @property
+    def prefix(self: PrePeoccesser) -> str:
+        return self._prefix
+
+    @prefix.setter
+    def prefix(self: PrePeoccesser, new: str) -> None:
+        assert isinstance(new, str)
+        self._prefix = new
+
+    def add_definition(self: PrePeoccesser, name: str) -> None:
+        assert isinstance(name, str)
+
+        self._definitions.add(name)
 
     def process(self, text: str) -> str:
-        prefix: str = "@"
-        names: Dict[str, str] = {
+        names: Dict[str, str] = {  # TODO: make this modifiable too
             "def": "def",
             "mcr": "mcr",
             "end": "end",
@@ -49,11 +65,11 @@ class PrePeoccesser:
         out = StringIO()
 
         for line in text.split("\n"):
-            if line.startswith(prefix):
+            if line.startswith(self.prefix):
                 type_ = None
 
                 for pos in names.keys():
-                    if line.startswith(prefix + pos):
+                    if line.startswith(self.prefix + pos):
                         type_ = pos
 
                 if type_ is None:
@@ -71,7 +87,7 @@ class PrePeoccesser:
         # TODO use lexer
         name: str = line.split(" ")[1]  # Get the definition name
 
-        self._definitions.append(name)
+        self._definitions.add(name)
 
     def get_end(self, line: str) -> None:
         # We will just reset it

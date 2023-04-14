@@ -1,4 +1,4 @@
-from hanual.lang.builtin import HanualLexer
+from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.pparser import PParser
 from hanual.lang.nodes import BinOpNode
 

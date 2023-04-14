@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.lang.builtin import Token
+from hanual.lang.builtin_lexer import Token
 from typing import TypeVar, List, Any
 from .base_node import BaseNode
 

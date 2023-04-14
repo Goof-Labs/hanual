@@ -14,12 +14,13 @@ class HanualLexer(Lexer):
         ("EIF", kw("elif")),
         ("ELSE", kw("else")),
         ("FREEZE", kw("freeze")),
+        ("RET", kw("return")),
         ("LET", kw("let")),
         ("VAL", kw("val")),
         ("END", kw("end")),
         ("USE", kw("use")),
         # SYMBOLS
-        ("STR", rx(r"\".*?\"")),
+        ("STR", rx(r"(\".*?(?<!\\)(\\\\)*\"|'.*?(?<!\\)(\\\\)*')")),
         ("EL", rx(r"\=\=|\!\=|\>|\<|\<\=|\>\=")),
         ("EQ", rx(r"\=")),
         ("LPAR", rx(r"\(")),
@@ -32,7 +33,7 @@ class HanualLexer(Lexer):
         ("NSA", rx(r"\:\:")),  # name space acesser
         # special cases
         ("NEWLINE", rx(r"\n")),
-        ("SKIP", rx(r"[ \t]+|\\*.*\\")),
+        ("SKIP", rx(r"[ \t]+|//.*")),
         ("MISMATCH", rx(r".")),
     ]
 

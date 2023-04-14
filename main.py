@@ -4,6 +4,7 @@ from hanual.lang.nodes import (
     FunctionDefinition,
     NamespaceAcessor,
     AssighnmentNode,
+    ReturnStatement,
     FunctionCall,
     IfStatement,
     FreezeNode,
@@ -83,7 +84,12 @@ def freeze(ts: DefaultProduction):
     return FreezeNode(ts[1])
 
 
-@par.rule("ID EL NUM", "ID EL f_call", "ID EL expr")
+@par.rule("RET")
+def ret(ts):
+    return ReturnStatement(None)
+
+
+@par.rule("ID EL NUM", "ID EL f_call", "ID EL expr", "ID EL ID")
 def condition(ts: DefaultProduction):
     return Condition(op=ts[1], left=ts[0], right=ts[2])
 
@@ -91,23 +97,50 @@ def condition(ts: DefaultProduction):
 @par.rule(
     "IF LPAR condition RPAR line END",
     "IF LPAR condition RPAR lines END",
+    "IF LPAR condition RPAR lines END",
     "IF LPAR condition RPAR END",
+    "IF cond_f_call line END",
+    "IF cond_f_call lines END",
+    "IF cond_f_call lines END",
+    "IF cond_f_call END",
     types={
         "IF LPAR condition RPAR line END": 1,
-        "IF LPAR condition RPAR lines END": 2,
-        "IF LPAR condition RPAR END": 3,
+        "IF LPAR condition RPAR lines END": 1,
+        "IF LPAR condition RPAR lines END": 1,
+        "IF LPAR condition RPAR END": 2,
+        "IF cond_f_call line END": 3,
+        "IF cond_f_call lines END": 3,
+        "IF cond_f_call lines END": 3,
+        "IF cond_f_call END": 4,
     },
 )
-def if_statement(ts: DefaultProduction, case: int):
-    if case == 3:
+def if_statement(ts: DefaultProduction, type: int):
+    if type == 1:
+        return IfStatement(condition=ts[2], if_true=ts[4])
+
+    elif type == 2:
         return IfStatement(condition=ts[2], if_true=None)
 
-    return IfStatement(condition=ts[2], if_true=ts[4])
+    elif type == 3:
+        return IfStatement(condition=ts[1], if_true=ts[2])
+
+    elif type == 4:
+        return IfStatement(condition=ts[1], if_true=None)
 
 
 @par.rule("FN f_call")
 def function_marker(ts: DefaultProduction):
     return ts[1]
+
+
+@par.rule("LPAR f_call")
+def par_f_mark(ts):
+    return ts[1]
+
+
+@par.rule("par_f_mark RPAR")
+def cond_f_call(ts):
+    return ts[0]
 
 
 @par.rule(
@@ -131,7 +164,13 @@ def using(ts: DefaultProduction[Token, NamespaceAcessor]):
 
 
 @par.rule(
-    "f_call", "assighnment", "if_statement", "freeze", "function_definition", "using"
+    "f_call",
+    "assighnment",
+    "if_statement",
+    "freeze",
+    "function_definition",
+    "using",
+    "ret",
 )
 def line(ts):
     return CodeBlock(ts[0])
@@ -142,4 +181,12 @@ def lines(ts: DefaultProduction[CodeBlock, Any]):
     return ts[0].add_child(ts[1])
 
 
-print(par.parse(lex.tokenize(pre.process("use src::hanual"))))
+print(
+    par.parse(
+        lex.tokenize(
+            pre.process(
+                open(r"D:\programing\hanual\hanual\src\hanual\bootstrap\IO.hint").read()
+            )
+        )
+    )
+)

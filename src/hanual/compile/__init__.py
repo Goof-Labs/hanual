@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
+from typing import Union, List, Literal, Self
 from hanual.lang.builtin_lexer import Lexer
 from hanual.lang.pparser import PParser
-from typing import Union, List, Literal
 from hanual.lang import builtin_parser
+from .varpool import VarPool
+from .labels import Labels
 
 
 class _CompilerFlags:
@@ -13,6 +15,29 @@ class _CompilerFlags:
     # the stage we would stop compilation, e.g after preprocessers
     stop_at: Union[int, None] = None
     preproc_prefix: str = "@"
+
+
+class GlobalState:
+    __slots__ = ("_vars", "_labels")
+
+    __instance = None
+
+    def __new__(cls) -> Self:
+        if cls.__instance is None:
+            cls.__instance = type(cls).__init__()
+
+        return cls.__instance
+
+    def __init__(self) -> None:
+        self._vars = VarPool()
+
+    @property
+    def vars(self) -> VarPool:
+        return self._vars
+
+    @property
+    def labels(self) -> Labels:
+        return self._labels
 
 
 class Compiler:
@@ -52,6 +77,6 @@ class Compiler:
             whisper = self.parser.parse(whisper)
 
         if self._flags.stop_at >= 5:
-            whisper = self.compiler.compile(whisper)  # TODO: this as well
+            whisper = whisper.compile()  # TODO: this as well
 
         return whisper

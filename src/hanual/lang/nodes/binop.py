@@ -3,11 +3,11 @@ from __future__ import annotations
 from abc import ABC
 
 from typing import TypeVar, Any, Generic
+from hanual.compile import GlobalState
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
-
-O = TypeVar("O", Token, ...)  # Operator
+O = TypeVar("O", Token, None)  # Operator
 L = TypeVar("L", Token, Any)  # Left
 R = TypeVar("R", Token, Any)  # Right
 
@@ -70,11 +70,8 @@ class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
 
         return res
 
-    def eval(self: BinOpNode) -> int:
-        return super().eval()
-
-    def compile(self) -> Any:
-        return super().compile()
+    def compile(self, global_state: GlobalState) -> Any:
+        return super().compile(global_state)
 
     def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}op = {self.op.__str__(level+1) if issubclass(type(self.op), BaseNode) else str(str(self.op))}\n{' '.rjust(level)} left = {self.left.__str__(level+1) if issubclass(type(self.left), BaseNode) else str(str(self.left))}\n{' '.rjust(level)} right = {self.right.__str__(level+1) if issubclass(type(self.right), BaseNode) else str(str(self.right))})\n"
+        return f"{type(self).__name__}(\n{' '.rjust(level)}op = {self.op.__str__(level=level + 1) if issubclass(type(self.op), BaseNode) else str(str(self.op))}\n{' '.rjust(level)} left = {self.left.__str__(level=level + 1) if issubclass(type(self.left), BaseNode) else str(str(self.left))}\n{' '.rjust(level)} right = {self.right.__str__(level=level + 1) if issubclass(type(self.right), BaseNode) else str(str(self.right))})\n"

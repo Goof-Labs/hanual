@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.compile import GlobalState
 from typing import Tuple, TypeVar, Any
 from abc import ABC, abstractmethod
 
@@ -18,15 +19,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def eval(self: BaseNode, context) -> Any:
-        """
-        This method takes the current context which is
-        the program state. The
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def compile(self) -> Any:
+    def compile(self, global_state: GlobalState) -> Any:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.compile import GlobalState
 from hanual.lang.lexer import Token
 from .arguments import Arguments
 from .base_node import BaseNode
@@ -11,11 +12,8 @@ class FunctionCall(BaseNode):
         self._args: Arguments = arguments
         self._name: Token = name
 
-    def compile(self) -> Any:
-        return super().compile()
-
-    def eval(self: BaseNode, context) -> Any:
-        return super().eval(context)
+    def compile(self, global_state: GlobalState) -> Any:
+        return super().compile(global_state)
 
     @property
     def name(self) -> Token:

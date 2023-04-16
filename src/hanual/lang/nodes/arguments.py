@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TypeVar, Union, List, Any
 from hanual.lang.builtin_lexer import Token
+from hanual.compile import GlobalState
 from .base_node import BaseNode
 from io import StringIO
 
@@ -32,11 +33,8 @@ class Arguments(BaseNode):
     def children(self):
         return self._children
 
-    def eval(self: BaseNode, context) -> Any:
-        pass
-
-    def compile(self) -> Any:
-        pass
+    def compile(self, global_state: GlobalState) -> Any:
+        return super().compile(global_state)
 
     def __str__(self, level=1) -> str:
         string = StringIO()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import List, Union, TypeVar, Any
+from hanual.compile import GlobalState
 from .base_node import BaseNode
 from io import StringIO
 from abc import ABC
@@ -26,10 +27,7 @@ class CodeBlock(BaseNode, ABC):
     def children(self):
         return self._children
 
-    def eval(self: BaseNode, context) -> Any:
-        pass
-
-    def compile(self) -> Any:
+    def compile(self, global_state: GlobalState) -> Any:
         pass
 
     def __str__(self, level=1) -> str:

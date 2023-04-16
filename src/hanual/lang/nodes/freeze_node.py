@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-
+from hanual.compile import GlobalState
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from typing import TypeVar, Any
@@ -15,11 +15,8 @@ class FreezeNode(BaseNode):
     def __init__(self: BaseNode, var: T) -> None:
         self._var: T = var
 
-    def eval(self: BaseNode, context) -> Any:
-        return super().eval(context)
-
-    def compile(self) -> Any:
-        return super().compile()
+    def compile(self, global_state: GlobalState) -> Any:
+        return super().compile(global_state)
 
     @property
     def target(self):

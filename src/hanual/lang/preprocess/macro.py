@@ -1,8 +1,11 @@
+from __future__ import annotations
+
+from typing import NamedTuple, Union, List, Self, Optional
 from hanual.lang.productions import DefaultProduction
+from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.lexer import Lexer, rx, Token
-from typing import NamedTuple, Union, List
 from hanual.lang.pparser import PParser
-from io import StringIO
+from hanual.lang.proxy import Proxy
 
 
 class MacroLexer(Lexer):
@@ -10,17 +13,15 @@ class MacroLexer(Lexer):
     We also need to lex the macros and eventually parse them to make it easier to work with.
     """
 
-    rules = (
-        ("LAB", rx(r"\<")),
-        ("RAB", rx(r"\>")),
+    rules = [
+        ("LT", rx(r"\<")),
+        ("GT", rx(r"\>")),
         ("SPC", rx(r"T|N|I|E")),
         ("CLN", rx(r"\:")),
-        ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
+        ("ARR", rx(r"\-\>")),
         # specials
-        ("NEWLINE", rx(r"\n")),
-        ("SKIP", rx(r"[ \t]+")),
-        ("MISMATCH", rx(r".")),
-    )
+        *HanualLexer.rules,
+    ]
 
 
 class _LeftRegForm(NamedTuple):
@@ -35,17 +36,57 @@ class _RightRegForm(NamedTuple):
 def make_parser():
     # This is the simplest possible parser
     par = PParser()
+    found_arrow = False
 
-    @par.rule("LAB SPC CLN ID RAB")
+    @par.rule("LT SPC CLN ID GT")
     def _(ts: DefaultProduction):
         return _LeftRegForm(ts[1], ts[3])
 
-    @par.rule("LAB ID RAB")
+    @par.rule("ARR")
+    def _(ts: DefaultProduction):
+        if found_arrow:
+            raise Exception(
+                f"MACRO-ERROR: arrow can't be used twice in one parser {ts[0].line}:{ts[0].colm}"
+            )
+
+        return "SPLIT"
+
+    @par.rule("LT ID GT")
     def _(ts: DefaultProduction):
         return _RightRegForm(ts[1])
 
     return par
 
+class SubstituteMacro:
+    """
+    NOTE: This macro substituter will only work if, the initial prefix has been removed.
 
-class Macro:
-    ...
+    This is class that will search through the tokens and find specific token patterns and
+    replace them. This class will make one parse over 
+    """
+    def __init__(Self: SubstituteMacro,
+                 text: str,
+                 lexer: Optional[HanualLexer]=None,
+                 parser: Optional[PParser]=None) -> None:
+
+        assert isinstance(text, str)
+
+        if lexer is None:
+            lexer = HanualLexer()
+
+        if parser is None:
+            parser = make_parser()
+
+        split = False
+        left = right = []
+
+        for fragment in parser.parse(lexer.tokenize(text)):
+            if fragment == "SPLIT":
+                split = True
+
+            if split: # aka we are ont he right side of expr
+                left.append(fragment)
+
+            else:
+                right.append(fragment)
+

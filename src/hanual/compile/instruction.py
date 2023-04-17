@@ -51,7 +51,7 @@ class InstructionEnum(Enum):
     CAL = 0b0100_0001  # Call function
 
 
-class Instruction:
+class InstructionInfo:
     def __init__(self, opcode: int, argument: Optional[int] = None):
         self._opcode: int = opcode
 
@@ -79,3 +79,8 @@ class Instruction:
     def id(self) -> bool:
         # 7th bit
         return self._opcode & 0x0F
+
+
+class Instruction(InstructionInfo):
+    def __init__(self, opcode: int, argument: int | None = None):
+        super().__init__(opcode, argument)

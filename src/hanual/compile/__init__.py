@@ -30,6 +30,7 @@ class GlobalState:
 
     def __init__(self) -> None:
         self._vars = VarPool()
+        self._idx = 0
 
     @property
     def vars(self) -> VarPool:
@@ -38,6 +39,13 @@ class GlobalState:
     @property
     def labels(self) -> Labels:
         return self._labels
+
+    @property
+    def position(self):
+        return self._idx
+
+    def advance(self):
+        self._idx += 1
 
 
 class Compiler:
@@ -77,6 +85,6 @@ class Compiler:
             whisper = self.parser.parse(whisper)
 
         if self._flags.stop_at >= 5:
-            whisper = whisper.compile()  # TODO: this as well
+            whisper = whisper()  # TODO: this as well
 
         return whisper

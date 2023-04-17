@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
 from typing import TypeVar, Generic, Any
+from hanual.compile import GlobalState
 from .base_node import BaseNode
 
 T = TypeVar("T", bound=BaseNode)
@@ -17,7 +18,7 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
         self._value: B = value
 
     def compile(self, global_state: GlobalState) -> Any:
-        yield self._target.compile(global_state)
+        yield self._value.compile(global_state)
 
     @property
     def target(self) -> A:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile import GlobalState
+from hanual.compile.global_state import GlobalState
 from typing import Tuple, TypeVar, Any
 from abc import ABC, abstractmethod
 

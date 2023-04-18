@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from hanual.compile import GlobalState
 from hanual.lang.builtin_lexer import Token
 from typing import TypeVar, List, Any, Self
 from .base_node import BaseNode
@@ -16,7 +15,7 @@ class NamespaceAcessor(BaseNode):
         self._path.append(child)
         return self
 
-    def compile(self, global_state: GlobalState) -> Any:
+    def compile(self, global_state) -> Any:
         return super().compile(global_state)
 
     def __str__(self, level=0) -> str:

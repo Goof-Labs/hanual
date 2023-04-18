@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import NamedTuple, Union, List, Self, Optional
+from typing import NamedTuple, Generator, Optional, Union, List
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.lexer import Lexer, rx, Token
 from hanual.lang.pparser import PParser
-from hanual.lang.proxy import Proxy
 
 
 class MacroLexer(Lexer):
@@ -57,17 +56,21 @@ def make_parser():
 
     return par
 
+
 class SubstituteMacro:
     """
     NOTE: This macro substituter will only work if, the initial prefix has been removed.
 
     This is class that will search through the tokens and find specific token patterns and
-    replace them. This class will make one parse over 
+    replace them. This class will make one parse over
     """
-    def __init__(Self: SubstituteMacro,
-                 text: str,
-                 lexer: Optional[HanualLexer]=None,
-                 parser: Optional[PParser]=None) -> None:
+
+    def __init__(
+        self: SubstituteMacro,
+        text: str,
+        lexer: Optional[HanualLexer] = None,
+        parser: Optional[PParser] = None,
+    ) -> None:
 
         assert isinstance(text, str)
 
@@ -78,15 +81,24 @@ class SubstituteMacro:
             parser = make_parser()
 
         split = False
-        left = right = []
+        self.right: List[Union[Token, _RightRegForm]] = []
+        self.left: List[Union[Token, _LeftRegForm]] = []
 
         for fragment in parser.parse(lexer.tokenize(text)):
             if fragment == "SPLIT":
                 split = True
 
-            if split: # aka we are ont he right side of expr
-                left.append(fragment)
+            if split:  # aka we are ont he right side of expr
+                self.left.append(fragment)
 
             else:
-                right.append(fragment)
+                self.right.append(fragment)
 
+    def substitute(
+        self, ts: Generator[Token, None, None]
+    ) -> Generator[Token, None, None]:
+        for i in range(len(ts) - len(self.left) + 1):
+            if ts[i : i + len(self.left)] == self.left:
+                print(f"macro detected at {i}")
+
+        return ts

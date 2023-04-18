@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from hanual.compile import GlobalState, Instruction, InstructionEnum
 from typing import TypeVar, Union, List, Any
 from hanual.lang.builtin_lexer import Token
-from hanual.compile import GlobalState
 from .base_node import BaseNode
 from io import StringIO
 
@@ -30,11 +30,23 @@ class Arguments(BaseNode):
         return self
 
     @property
-    def children(self):
+    def children(self) -> List[T]:
         return self._children
 
     def compile(self, global_state: GlobalState) -> Any:
-        return super().compile(global_state)
+        res = []
+
+        for node in self._children:
+            if isinstance(node, Token):
+                # We add a constant and get the index back
+                idx = global_state.constants.add_const(Token.value)
+                print(idx)
+                res.append(Instruction(InstructionEnum.PGC, idx))
+
+            else:
+                res.append(node.compile(global_state))
+
+        return res
 
     def __str__(self, level=1) -> str:
         string = StringIO()

@@ -28,7 +28,12 @@ class CodeBlock(BaseNode, ABC):
         return self._children
 
     def compile(self, global_state: GlobalState) -> Any:
-        pass
+        res = []
+
+        for node in self.children:
+            res.extend(node.compile(global_state))
+
+        return res
 
     def __str__(self, level=1) -> str:
         string = StringIO()

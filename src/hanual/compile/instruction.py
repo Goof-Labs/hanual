@@ -1,5 +1,5 @@
 from typing import Union, Optional
-from enum import Enum
+from enum import IntEnum
 
 
 """
@@ -24,7 +24,7 @@ D => Reserved, set to 0
 """
 
 
-class InstructionEnum(Enum):
+class InstructionEnum(IntEnum):
     NOP = 0b0000_0000
 
     JMP = 0b1110_0000  # unconditional Jump
@@ -45,6 +45,7 @@ class InstructionEnum(Enum):
     PK4 = 0b0100_0100  # Pack top 4 elements into tuple
     PK5 = 0b0100_0101  # Pack top 5 elements into tuple
     PKN = 0b1100_1000  # Pack top n elements into tuple
+    PK1 = 0b0100_1001  # Pack first value into tuple, (I forgot to add this in earlier so now it exists)
 
     RZE = 0b0100_0000  # Raise Eeception
 
@@ -56,9 +57,6 @@ class InstructionInfo:
         self._opcode: int = opcode
 
         self._next: int = argument
-
-        if not self.has_operang:
-            self._next = None
 
     @property
     def has_operang(self) -> bool:
@@ -84,3 +82,6 @@ class InstructionInfo:
 class Instruction(InstructionInfo):
     def __init__(self, opcode: int, argument: int | None = None):
         super().__init__(opcode, argument)
+
+    def __repr__(self) -> str:
+        return f"Instruction({self._opcode.name=} {self._next=})"

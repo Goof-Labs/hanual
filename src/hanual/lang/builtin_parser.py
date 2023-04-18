@@ -14,14 +14,11 @@ from hanual.lang.nodes import (
     Arguments,
 )
 
-from hanual.lang.preprocess.preprocesser import PrePeoccesser
-from hanual.lang.builtin_lexer import HanualLexer, Token
 from hanual.lang.productions import DefaultProduction
+from hanual.lang.builtin_lexer import Token
 from hanual.lang.pparser import PParser
 from typing import Any, Union
 
-pre = PrePeoccesser()
-lex = HanualLexer()
 par = PParser()
 
 

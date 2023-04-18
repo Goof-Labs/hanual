@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from hanual.compile.compile import GlobalState
 from hanual.lang.builtin_lexer import Token
-from hanual.compile import GlobalState
 from .base_node import BaseNode
 from typing import TypeVar, Any
 

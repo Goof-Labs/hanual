@@ -25,6 +25,6 @@ class LabelHandeler:
     def __init__(self, cls) -> None:
         self._cls = cls
 
-    def new_label(self, name: str = "questionable_identity") -> None:
+    def new_label(self, name: str = "questionable_identity") -> Label:
         self._cls.advance()
         return Label(name=name)

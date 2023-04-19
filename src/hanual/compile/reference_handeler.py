@@ -3,5 +3,5 @@ class ReferenceHandeler:
         self._cls = cls
 
     def add_ref(self, name):
-        self._cls._refs.append(name)
-        return len(self._cls._refs)
+        self._cls.refs.append(name)
+        return len(self._cls.refs)-1

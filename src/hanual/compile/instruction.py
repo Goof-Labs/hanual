@@ -76,11 +76,11 @@ class InstructionInfo:
     @property
     def id(self) -> bool:
         # 7th bit
-        return self._opcode & 0x0F
+        return self._opcode & 0x0F != 0
 
 
 class Instruction(InstructionInfo):
-    def __init__(self, opcode: int, argument: int | None = None):
+    def __init__(self, opcode: int, argument: Union[int, None] = None):
         super().__init__(opcode, argument)
 
     def __repr__(self) -> str:

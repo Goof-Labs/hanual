@@ -15,6 +15,14 @@ class GlobalState:
         self._refs = []
 
     @property
+    def refs(self):
+        return self._refs
+
+    @property
+    def const_pool(self):
+        return self._const_pool
+
+    @property
     def get_instacne(self):
         return self.__instance
 

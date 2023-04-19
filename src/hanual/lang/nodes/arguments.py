@@ -39,8 +39,7 @@ class Arguments(BaseNode):
         for node in self._children:
             if isinstance(node, Token):
                 # We add a constant and get the index back
-                idx = global_state.constants.add_const(Token.value)
-                print(idx)
+                idx = global_state.constants.add_const(node.value)
                 res.append(Instruction(InstructionEnum.PGC, idx))
 
             else:

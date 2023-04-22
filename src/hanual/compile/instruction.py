@@ -67,6 +67,7 @@ class InstructionEnum:
     RZE = 0b0100_0000  # Raise Eeception
 
     CAL = 0b0100_0001  # Call function
+    RET = 0b0000_0001  # return
 
 
 class InstructionInfo:

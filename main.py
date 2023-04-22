@@ -21,7 +21,6 @@ class HanualMainClass:
         whisper = self.preproc.process(src)
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
-        print(whisper)
         whisper = self.compiler.compile(whisper[0])
         pp.pprint(whisper)
 
@@ -34,5 +33,8 @@ use std::io
 let x = 1
 
 hello('Hello world')
+
+fn test()
+end
     """
 )

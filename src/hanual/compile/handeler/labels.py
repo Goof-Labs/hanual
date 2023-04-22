@@ -26,5 +26,4 @@ class LabelHandeler:
         self._cls = cls
 
     def new_label(self, name: str = "questionable_identity") -> Label:
-        self._cls.advance()
         return Label(name=name)

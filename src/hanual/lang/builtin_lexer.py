@@ -3,6 +3,7 @@ from .lexer import Lexer, rx, kw, Token
 
 class HanualLexer(Lexer):
     rules = [
+        ("ctx", rx(r"\$[a-zA-Z_][a-zA-Z0-9_]*")),
         ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
         ("SHOUT", kw("SHOUT")),
         # KEYWORDS

@@ -17,8 +17,9 @@ class NamespaceAcessor(BaseNode):
         return self
 
     def compile(self, global_state: GlobalState) -> Any:
+        # we dont need to load any moduals because they are packed with the final runnable
         global_state.external_deps.add_dependancy(self._path)
-        return ("get_namespace",)
+        return ()
 
     def __str__(self, level=0) -> str:
         return f"{type(self).__name__}({' -> '.join(str(i) for i in self._path)})"

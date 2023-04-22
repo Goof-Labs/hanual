@@ -22,6 +22,7 @@ class Token(NamedTuple):
     value: Union[str, int, float]
     line: int
     colm: int
+    line_val: str  # The value of the line as a string the token has been extracted from
 
 
 class Lexer:
@@ -66,15 +67,15 @@ class Lexer:
 
             elif kind == "MISMATCH":
                 IligalCharacterError().be_raised(
-                    "LEXING",
-                    lines[line_no - 1],
-                    line_no,
-                    col,
-                    f"{valu!r} was unexpected at this time",
+                    sample_code=lines[line_no - 1],
+                    line=line_no,
+                    col=col,
+                    explain=f"{valu!r} was unexpected at this time",
+                    stage="LEXING",
                 )
 
             if hasattr(self, f"t_{kind}"):
-                yield getattr(self, f"t_{kind}")(kind, valu, line_no, col)
+                yield getattr(self, f"t_{kind}")(kind, valu, line_no, col, lines[line_no - 1])
                 continue
 
-            yield Token(kind, valu, line_no, col)
+            yield Token(kind, valu, line_no, col, lines[line_no - 1])

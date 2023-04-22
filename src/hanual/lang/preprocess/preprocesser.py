@@ -39,6 +39,7 @@ class PrePeoccesser:
         self._definitions: Set[str] = []
         self._ignore_code: bool = False
         self._prefix: str = "@"
+        self._macros = []
 
     @property
     def prefix(self: PrePeoccesser) -> str:
@@ -98,4 +99,4 @@ class PrePeoccesser:
         self._ignore_code = not (line.split(" ")[1] in self._definitions)
 
     def get_mcr(self, line: str) -> None:
-        raise NotImplementedError
+        self._macros.append(line.removeprefix("@mcr "))

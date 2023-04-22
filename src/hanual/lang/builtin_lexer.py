@@ -37,5 +37,9 @@ class HanualLexer(Lexer):
         ("MISMATCH", rx(r".")),
     ]
 
-    def t_NUM(self, kind: str, valu: str, line_no: int, col: int) -> Token:
-        return Token(kind, float(valu) if "." in valu else int(valu), line_no, col)
+    def t_NUM(
+        self, kind: str, valu: str, line_no: int, col: int, origin_line: str
+    ) -> Token:
+        return Token(
+            kind, float(valu) if "." in valu else int(valu), line_no, col, origin_line
+        )

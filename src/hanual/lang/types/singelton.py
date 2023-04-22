@@ -19,14 +19,16 @@ to instantiate it will just return an already made instance.
 10
 """
 
+from typing import Self
+
 
 class Singleton:
     _instances = {}
 
-    def get_instance(self, *args, **kwargs):
+    def get_instance(self, *args, **kwargs) -> Self:
         if type(self).__name__ in Singleton._instances.keys():
             return Singleton._instances[type(self).__name__]
 
-        instance = type(self).__init__(*args, **kwargs)
+        instance = type(self)(*args, **kwargs)
         Singleton._instances[type(self).__name__] = instance
         return instance

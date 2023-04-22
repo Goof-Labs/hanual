@@ -1,6 +1,5 @@
-use py::base::py_print
+use sys
 
-
-fn print(x) {
-    py_print(x)
-}
+fn print(str)
+    ...
+end

@@ -1,3 +1,0 @@
-class HanualFileDump:
-    def __init__(self):
-        ...

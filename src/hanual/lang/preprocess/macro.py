@@ -87,18 +87,15 @@ class SubstituteMacro:
         for fragment in parser.parse(lexer.tokenize(text)):
             if fragment == "SPLIT":
                 split = True
+                continue
 
             if split:  # aka we are ont he right side of expr
-                self.left.append(fragment)
+                self.right.append(fragment)
 
             else:
-                self.right.append(fragment)
+                self.left.append(fragment)
 
     def substitute(
         self, ts: Generator[Token, None, None]
     ) -> Generator[Token, None, None]:
-        for i in range(len(ts) - len(self.left) + 1):
-            if ts[i : i + len(self.left)] == self.left:
-                print(f"macro detected at {i}")
-
-        return ts
+        raise NotImplementedError

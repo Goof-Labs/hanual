@@ -24,13 +24,30 @@ D => Reserved, set to 0
 """
 
 
-class InstructionEnum(IntEnum):
+class InstructionEnum:
+    @staticmethod
+    def get_instruction(value: int):
+        for name in dir(InstructionEnum):
+            if name.startswith("__"):
+                continue
+
+            item: int = getattr(InstructionEnum, name)
+
+            if not isinstance(item, int):
+                continue
+
+            if item == value:
+                return name
+
     NOP = 0b0000_0000
 
     JMP = 0b1110_0000  # unconditional Jump
     JEZ = 0b1110_0001  # Jump if 0
     JNZ = 0b1110_0010  # Jump not 0
     JIE = 0b1110_0011  # jump if error
+
+    SWP = 0b0100_1000  # swap top two elements
+    YNK = 0b1100_1100  # yank n'th element and push it to top
 
     PP1 = 0b0100_0000  # Pops top element
     PP2 = 0b0100_0001  # Pops two elements of stack
@@ -54,7 +71,7 @@ class InstructionEnum(IntEnum):
 
 class InstructionInfo:
     def __init__(self, opcode: int, argument: Optional[int] = None):
-        self._opcode: int = opcode
+        self._opcode = opcode
 
         self._next: int = argument
 
@@ -84,4 +101,10 @@ class Instruction(InstructionInfo):
         super().__init__(opcode, argument)
 
     def __repr__(self) -> str:
-        return f"Instruction({self._opcode.name=} {self._next=})"
+        return f"Instruction(opcode={InstructionEnum.get_instruction(self._opcode)!r} next={self._next})"
+
+    def as_bytes(self):
+        if not self._next:
+            return self._opcode.value
+
+        return (self._opcode.value << 8) | self._next

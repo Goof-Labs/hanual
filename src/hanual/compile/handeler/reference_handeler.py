@@ -1,3 +1,8 @@
+class Reference:
+    def __init__(self) -> None:
+        pass
+
+
 class ReferenceHandeler:
     def __init__(self, cls) -> None:
         self._cls = cls

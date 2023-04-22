@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile import GlobalState, Stack
 from typing import TypeVar, Generic, Any
-from hanual.compile import GlobalState
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 T = TypeVar("T", bound=BaseNode)
@@ -18,7 +19,13 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
         self._value: B = value
 
     def compile(self, global_state: GlobalState) -> Any:
-        yield self._value.compile(global_state)
+        Stack().get_instance().push(self._target.value)  # push name record to stack
+
+        if isinstance(self._value, Token):
+            id = global_state.constants.add_const(self._value.value)
+            return (Instruction(InstructionEnum.PGC, id),)
+
+        return (Instruction(InstructionEnum.PGC, self._value.compile(global_state)),)
 
     @property
     def target(self) -> A:

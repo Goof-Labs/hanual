@@ -1,7 +1,7 @@
-from .reference_handeler import ReferenceHandeler
-from .const_handeler import ConstantHandeler
-from .labels import LabelHandeler
-
+from .handeler.reference_handeler import ReferenceHandeler
+from .handeler.const_handeler import ConstantHandeler
+from .handeler.file_deps import ExternDepsHandeler
+from .handeler.labels import LabelHandeler
 
 class GlobalState:
     __instance = None
@@ -12,6 +12,7 @@ class GlobalState:
         self._const_pool = []
         self._label_pool = []
         self._functions = []
+        self._file_deps = []
         self._refs = []
 
     @property
@@ -37,6 +38,10 @@ class GlobalState:
     @property
     def references(self):
         return ReferenceHandeler(self)
+
+    @property
+    def external_deps(self):
+        return ExternDepsHandeler(self)
 
     def add_function(self, name: str):
         self._functions.append(name)

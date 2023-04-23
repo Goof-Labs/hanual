@@ -33,6 +33,6 @@ class HanualMainClass:
 main = HanualMainClass()
 main.run(
     """
-let version = array(0, 0)
+let version = array(0, 0, 0)
     """
 )

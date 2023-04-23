@@ -47,7 +47,14 @@ def arg(ts: DefaultProduction):
     return Arguments(ts[1])
 
 
-@par.rule("ID arg", "expr arg", "f_call arg", "ID arg", "NUM arg")
+@par.rule(
+    "ID arg",
+    "expr arg",
+    "f_call arg",
+    "ID arg",
+    "NUM arg",
+    "arg arg",
+)
 def arg(ts: DefaultProduction[Any, Arguments]):
     return ts[1].add_child(ts[0])
 

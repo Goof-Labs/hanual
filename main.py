@@ -1,6 +1,5 @@
-from hanual.lang.preprocess.macro import make_parser, MacroLexer
+from hanual.compile.serialization.dump import HanualFileSerializer
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
-from hanual.lang.preprocess.macro import SubstituteMacro
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.compile.compile import Compiler
@@ -12,6 +11,7 @@ pp = PrettyPrinter()
 
 class HanualMainClass:
     def __init__(self) -> None:
+        self.dump = HanualFileSerializer()
         self.preproc = PrePeoccesser()
         self.compiler = Compiler()
         self.parser = get_parser()
@@ -22,6 +22,7 @@ class HanualMainClass:
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
         whisper = self.compiler.compile(whisper[0])
+        whisper = self.dump.dump(whisper, src)
         pp.pprint(whisper)
 
 

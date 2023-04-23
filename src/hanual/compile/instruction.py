@@ -79,7 +79,7 @@ class InstructionInfo:
     @property
     def has_operang(self) -> bool:
         # most significant bit
-        return self._opcode & 8 != 0
+        return self._opcode & 1 != 0
 
     @property
     def stack_change(self) -> bool:
@@ -106,6 +106,17 @@ class Instruction(InstructionInfo):
 
     def as_bytes(self):
         if not self._next:
-            return self._opcode.value
+            return self._opcode
 
-        return (self._opcode.value << 8) | self._next
+        return (self._opcode << 8) | self._next
+
+    @property
+    def opcode(self):
+        return self._opcode
+
+    @property
+    def next(self):
+        if not self._next is None:  # We must do this, the next could be a 0
+            return self._next
+
+        return None

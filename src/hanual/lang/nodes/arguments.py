@@ -34,27 +34,4 @@ class Arguments(BaseNode):
         return self._children
 
     def compile(self, global_state: GlobalState) -> Any:
-        res = []
-
-        for node in self._children:
-            if isinstance(node, Token):
-                # We add a constant and get the index back
-                idx = global_state.constants.add_const(node.value)
-                res.append(Instruction(InstructionEnum.PGC, idx))
-
-            else:
-                res.append(node.compile(global_state))
-
-        return res
-
-    def __str__(self, level=1) -> str:
-        string = StringIO()
-
-        string.write(f"{type(self).__name__}([\n".rjust(level))
-
-        for child in self._children:
-            string.write(str(child) + "\n")
-
-        string.write("])".rjust(level))
-
-        return string.getvalue()
+        raise NotImplementedError

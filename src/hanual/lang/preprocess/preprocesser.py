@@ -99,4 +99,4 @@ class PrePeoccesser:
         self._ignore_code = not (line.split(" ")[1] in self._definitions)
 
     def get_mcr(self, line: str) -> None:
-        self._macros.append(line.removeprefix("@mcr "))
+        raise NotImplementedError

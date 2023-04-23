@@ -19,13 +19,17 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
         self._value: B = value
 
     def compile(self, global_state: GlobalState) -> Any:
-        Stack().get_instance().push(self._target.value)  # push name record to stack
+        Stack().get_instance().push(self._value)
+        res = []
 
-        if isinstance(self._value, Token):
+        if isinstance(self._value, Token):  # a literal value
             id = global_state.constants.add_const(self._value.value)
-            return (Instruction(InstructionEnum.PGC, id),)
+            res.append(Instruction(InstructionEnum.PGC, id))
 
-        return (Instruction(InstructionEnum.PGC, self._value.compile(global_state)),)
+        else:  # not a literal
+            res.extend(self._value.compile(global_state))
+
+        return res
 
     @property
     def target(self) -> A:
@@ -35,5 +39,9 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
     def value(self) -> B:
         return self._value
 
-    def __str__(self, level=0) -> str:
-        return f"{type(self).__name__.rjust(level+1)}(\n{' '.rjust(level)}target = {self.target.__str__(level+1) if issubclass(type(self.target), BaseNode) else str(str(self.target))}\n{' '.rjust(level)}value = {self.value.__str__(level+1) if issubclass(type(self.value), BaseNode) else str(str(self.value))}\n{' '.rjust(level)})\n"
+    def as_dict(self) -> None:
+        return {
+            "type": type(self).__name__,
+            "name": self._target,
+            "value": self._value.as_dict(),
+        }

@@ -14,6 +14,3 @@ class IfStatement(BaseNode):
 
     def compile(self, global_state: GlobalState) -> Any:
         return super().compile(global_state)
-
-    def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}con = {self._condition.__str__(level+1) if issubclass(type(self._condition), BaseNode) else str(str(self._condition))}\n{' '.rjust(level)} if_true = {self._iftrue.__str__(level+1) if issubclass(type(self._iftrue), BaseNode) else str(str(self._iftrue))}\n"

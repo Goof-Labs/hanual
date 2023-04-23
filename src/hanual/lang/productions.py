@@ -29,12 +29,6 @@ class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
     def __init__(self: Self, ts: List[T]) -> None:
         self.ts: List[T] = ts
 
-    def __str__(self: Self) -> str:
-        inner: str = "\n ".join(
-            "[{}] = '{}'".format(idx, str(token)) for idx, token in enumerate(self.ts)
-        )
-        return f"""{type(self).__name__}(\n {inner }\n)"""
-
     @property
     def raw(self) -> List[T]:
         return self.ts

@@ -1,5 +1,0 @@
-use sys
-
-fn print(str)
-    ...
-end

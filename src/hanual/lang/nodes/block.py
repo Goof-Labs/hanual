@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import List, Union, TypeVar, Any
 from hanual.compile import GlobalState
 from .base_node import BaseNode
-from io import StringIO
 from abc import ABC
 
 T = TypeVar("T")
@@ -30,19 +29,10 @@ class CodeBlock(BaseNode, ABC):
     def compile(self, global_state: GlobalState) -> Any:
         res = []
 
-        for node in self.children:
-            res.extend(node.compile(global_state))
+        for child in self.children:
+            res.extend(child.compile(global_state))
 
         return res
 
-    def __str__(self, level=1) -> str:
-        string = StringIO()
-
-        string.write("CodeBlock([\n".rjust(level))
-
-        for child in self._children:
-            string.write(child.__str__(level=level + 1) + "\n")
-
-        string.write("])".rjust(level))
-
-        return string.getvalue()
+    def as_dict(self) -> None:
+        return [c.as_dict() for c in self.children]

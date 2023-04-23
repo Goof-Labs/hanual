@@ -71,7 +71,7 @@ def f_call(ts: DefaultProduction, case):
         return FunctionCall(ts[0], None)
 
 
-@par.rule("LET ID EQ NUM")
+@par.rule("LET ID EQ NUM", "LET ID EQ f_call")
 def assighnment(ts: DefaultProduction):
     return AssighnmentNode(target=ts[1], value=ts[3])
 
@@ -166,6 +166,7 @@ def using(ts: DefaultProduction[Token, NamespaceAcessor]):
     return ts[1]
 
 
+"""
 @par.rule(
     "f_call",
     "assighnment",
@@ -182,6 +183,7 @@ def line(ts):
 @par.rule("line line", "line lines", "lines line")
 def lines(ts: DefaultProduction[CodeBlock, Any]):
     return ts[0].add_child(ts[1])
+"""
 
 
 def get_parser():

@@ -28,11 +28,11 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def __str__(self, *args, **kwargs) -> str:
+    def as_dict(self) -> None:
         """
-        represent class as string.
+        Instead of having verry awqward __str__ methods that
+        are impossible to refactor, at least mine where. We
+        have an `as_dict` method that will recursibely return
+        the ast as a dict. This lets us pprint it more
+        efficeintelly.
         """
-        raise NotImplementedError
-
-    def __repr__(self) -> str:
-        return str(self)

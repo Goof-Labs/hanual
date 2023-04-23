@@ -71,14 +71,4 @@ class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
         return res
 
     def compile(self, global_state: GlobalState) -> Any:
-        # LOAD-LEFT-SIDE
-        if isinstance(self._left, Token):
-            if self._left.type == "ID":
-                global_state.vars.exists_name(self._left.value)
-                # TODO: GET VALUE TO TOP
-
-            elif self._left.type == "NUM":
-                yield global_state.labels
-
-    def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}op = {self.op.__str__(level=level + 1) if issubclass(type(self.op), BaseNode) else str(str(self.op))}\n{' '.rjust(level)} left = {self.left.__str__(level=level + 1) if issubclass(type(self.left), BaseNode) else str(str(self.left))}\n{' '.rjust(level)} right = {self.right.__str__(level=level + 1) if issubclass(type(self.right), BaseNode) else str(str(self.right))})\n"
+        raise NotImplementedError

@@ -14,36 +14,41 @@ class FunctionCall(BaseNode):
         self._name: Token = name
 
     def compile(self, global_state: GlobalState) -> Any:
-        args = self._args.compile(global_state)
-        f_idx = global_state.references.add_ref(self._name)
+        res = []
 
-        if len(args) == 0:
-            pshrgs = Instruction(InstructionEnum.PK1)
+        if self._args is None:
+            res.append(Instruction(InstructionEnum.PKN, 0))
 
-        elif len(args) == 1:
-            pshrgs = Instruction(InstructionEnum.PK1)
+        else:  # The function has args
+            res.extend(self._args.compile(global_state))  # load args
 
-        elif len(args) == 2:
-            pshrgs = Instruction(InstructionEnum.PK1)
+            if len(self._args) == 0:
+                res.append(Instruction(InstructionEnum.PKN, 0))
 
-        elif len(args) == 3:
-            pshrgs = Instruction(InstructionEnum.PK1)
+            elif len(self._args) == 1:
+                res.append(Instruction(InstructionEnum.PK1))
 
-        elif len(args) == 4:
-            pshrgs = Instruction(InstructionEnum.PK1)
+            elif len(self._args) == 2:
+                res.append(Instruction(InstructionEnum.PK2))
 
-        elif len(args) == 5:
-            pshrgs = Instruction(InstructionEnum.PK1)
+            elif len(self._args) == 3:
+                res.append(Instruction(InstructionEnum.PK3))
 
-        else:
-            pshrgs = Instruction(InstructionEnum.PKN, len(args))
+            elif len(self._args) == 4:
+                res.append(Instruction(InstructionEnum.PK4))
 
-        return (
-            *args,
-            pshrgs,
-            Instruction(InstructionEnum.PGA, f_idx),
-            Instruction(InstructionEnum.CAL),
-        )
+            elif len(self._args) == 5:
+                res.append(Instruction(InstructionEnum.PK5))
+
+            else:
+                res.append(Instruction(InstructionEnum.PKN, len(self._args.children)))
+
+        id = global_state.references.add_ref(self._name)
+        res.append(Instruction(InstructionEnum.PGA, id))  # push reference to call
+
+        res.append(Instruction(InstructionEnum.CAL))  # CALL
+
+        return res
 
     @property
     def name(self) -> Token:
@@ -53,5 +58,5 @@ class FunctionCall(BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def __str__(self: FunctionCall, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}name = {self.name.__str__(level+1) if issubclass(type(self.name), BaseNode) else str(self.name)}\n{' '.rjust(level)}args = {self.args.__str__(level+1) if issubclass(type(self.args), BaseNode) else str(str(self.args))})\n"
+    def as_dict(self) -> None:
+        return {"args": self._args, "name": self._name}

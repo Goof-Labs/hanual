@@ -2,9 +2,10 @@ from hanual.compile.serialization.dump import HanualFileSerializer
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
-from hanual.lang.nodes.block import CodeBlock
 from hanual.compile.compile import Compiler
 from pprint import PrettyPrinter
+from sys import argv
+
 
 pp = PrettyPrinter()
 
@@ -21,19 +22,17 @@ class HanualMainClass:
         whisper = self.preproc.process(src)
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
-        whisper = self.clean(whisper)
-        whisper = self.compiler.compile(whisper)
+        whisper = self.compiler.compile(whisper[0])
         whisper = self.dump.dump(whisper, src)
-        pp.pprint(whisper)
-
-    def clean(self, res):
-        res = CodeBlock(*res)
-        return res
+        return whisper
 
 
 main = HanualMainClass()
-main.run(
-    """
-let version = array()
-    """
-)
+
+fp = argv[1]
+
+with open(f"{fp}.hnl", "r") as f:
+    code = main.run(f.read())
+
+with open(rf"obj\{fp}.chl", "wb") as f:
+    f.write(code)

@@ -14,6 +14,3 @@ class ReturnStatement(BaseNode):
 
     def compile(self, global_state: GlobalState) -> Any:
         return super().compile(global_state)
-
-    def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(ret={self._value})"

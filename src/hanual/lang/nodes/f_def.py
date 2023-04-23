@@ -21,13 +21,4 @@ class FunctionDefinition(BaseNode):
         self._name = name  # Token
 
     def compile(self, global_state: GlobalState) -> Any:
-
-        entery_point = global_state.labels.new_label(f"FN_{self._name}")
-        global_state.add_function(self._name, entery_point)
-
-        if not self._inner:
-            return (Instruction(InstructionEnum.RET),)
-        return self._inner.compile(global_state), Instruction(InstructionEnum.RET)
-
-    def __str__(self, level=0) -> str:
-        return f"{type(self).__name__}(\n{' '.rjust(level)}name = {self._name.__str__(level+1) if issubclass(type(self._name), BaseNode) else str(str(self._name))}\n{' '.rjust(level)} name = {self._name.__str__(level+1) if issubclass(type(self._name), BaseNode) else str(str(self._name))}\n{' '.rjust(level)} inner = {self._inner.__str__(level+1) if issubclass(type(self._inner), BaseNode) else str(str(self._inner))})\n"
+        raise NotImplementedError

@@ -1,1 +1,1 @@
-let version = tuple()
+let version = tuple(1)

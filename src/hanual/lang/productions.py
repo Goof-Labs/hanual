@@ -34,7 +34,7 @@ class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
         return self.ts
 
     def __repr__(self: Self) -> str:
-        return str(self)
+        return str(self.ts)
 
     def __getitem__(self: Self, item: int) -> Union[A, B, C]:
         return self.ts[item]

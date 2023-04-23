@@ -21,19 +21,18 @@ class HanualMainClass:
         whisper = self.preproc.process(src)
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
-        whisper = self.clean(whisper)
-        whisper = self.compiler.compile(whisper)
-        whisper = self.dump.dump(whisper, src)
         pp.pprint(whisper)
+        pp.pprint(whisper[0])
+        pp.pprint(whisper[0].as_dict())
 
     def clean(self, res):
-        res = CodeBlock(*res)
+        res = CodeBlock(res)
         return res
 
 
 main = HanualMainClass()
 main.run(
     """
-let version = array()
+let version = array(0, 0)
     """
 )

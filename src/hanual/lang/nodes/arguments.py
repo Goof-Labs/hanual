@@ -4,7 +4,6 @@ from hanual.compile import GlobalState, Instruction, InstructionEnum
 from typing import TypeVar, Union, List, Any
 from hanual.lang.builtin_lexer import Token
 from .base_node import BaseNode
-from io import StringIO
 
 T = TypeVar("T")
 
@@ -35,3 +34,11 @@ class Arguments(BaseNode):
 
     def compile(self, global_state: GlobalState) -> Any:
         raise NotImplementedError
+
+    def as_dict(self) -> None:
+        return {
+            "tupe": type(self).__name__,
+            "values": [
+                c.as_dict() if hasattr(c, "as_dict") else c for c in self.children
+            ],
+        }

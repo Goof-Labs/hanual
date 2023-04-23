@@ -54,6 +54,10 @@ class HanualFileSerializer:
         return header.getvalue()
 
     @staticmethod
+    def serialize_refs(refs: List[str]) -> bytes:
+        ref_bytes = BytesIO()
+
+    @staticmethod
     def dump(
         data: Tuple[Dict[str, List[HanualObject]], List[Instruction]], src: str
     ) -> None:
@@ -61,6 +65,7 @@ class HanualFileSerializer:
 
         buffer.write(HanualFileSerializer.create_header(src))
         buffer.write(HanualFileSerializer.serialize_constants(data[0]["consts"]))
+        buffer.write(HanualFileSerializer.serialize_refs(data[0]["refs"]))
 
         for instruction in data[1]:
             buffer.write(instruction.opcode.to_bytes(byteorder="big"))

@@ -32,16 +32,6 @@ def expr(ts: DefaultProduction):
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 
 
-@par.rule("COM NUM", "COM expr", "COM f_call", "COM ID")
-def arg(ts: DefaultProduction):
-    return Arguments(ts[1])
-
-
-@par.rule("ID arg", "expr arg", "f_call arg", "ID arg")
-def arg(ts: DefaultProduction[Any, Arguments]):
-    return ts[1].add_child(ts[0])
-
-
 @par.rule("NSA ID")
 def namespace_acesssor(ts: DefaultProduction[Token]):
     return NamespaceAcessor(ts[1])
@@ -52,23 +42,28 @@ def namespace_acesssor(ts: DefaultProduction[NamespaceAcessor, Token]):
     return ts[1].add_child(ts[0])
 
 
+@par.rule("COM NUM", "COM expr", "COM f_call", "COM ID")
+def arg(ts: DefaultProduction):
+    return Arguments(ts[1])
+
+
+@par.rule("ID arg", "expr arg", "f_call arg", "ID arg", "NUM arg")
+def arg(ts: DefaultProduction[Any, Arguments]):
+    return ts[1].add_child(ts[0])
+
+
 @par.rule(
-    "ID LPAR RPAR",  # NO ARGS
     "ID LPAR expr RPAR",
     "ID LPAR ID RPAR",
     "ID LPAR STR RPAR",
+    "ID LPAR NUM RPAR",
     "ID LPAR arg RPAR",
-    types={"ID LPAR args RPAR": 1, "ID LPAR RPAR": 2},
 )
-def f_call(ts: DefaultProduction, case):
-    if case is None:  # single arg
-        return FunctionCall(ts[0], Arguments(ts[2]))
+def f_call(ts: DefaultProduction):
+    if isinstance(ts[2], Token):
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 
-    elif case == 1:  # multiple args
-        return FunctionCall(ts[0], ts[2])
-
-    elif case == 2:  # no args
-        return FunctionCall(ts[0], None)
+    return FunctionCall(name=ts[0], arguments=ts[2])
 
 
 @par.rule("LET ID EQ NUM", "LET ID EQ f_call")

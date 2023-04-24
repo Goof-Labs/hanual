@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import ABC
+
 from hanual.compile.global_state import GlobalState
 from hanual.lang.builtin_lexer import Token
 from typing import TypeVar, List, Any, Self
@@ -8,7 +10,7 @@ from .base_node import BaseNode
 T = TypeVar("T", Token, ...)
 
 
-class NamespaceAcessor(BaseNode):
+class NamespaceAcessor(BaseNode, ABC):
     def __init__(self: BaseNode, first: T) -> None:
         self._path: List[Token] = [first]
 

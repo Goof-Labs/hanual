@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from hanual.compile import GlobalState, Instruction, InstructionEnum
-from typing import TypeVar, Union, List, Any
+from typing import TypeVar, Union, List, Any, Dict
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
-from .base_node import BaseNode
+from hanual.compile import GlobalState
 
 T = TypeVar("T")
 
@@ -33,11 +33,11 @@ class Arguments(BaseNode):
         return self._children
 
     def compile(self, global_state: GlobalState) -> Any:
-        raise NotImplementedError
+        pass
 
-    def as_dict(self) -> None:
+    def as_dict(self) -> Dict[str, ...]:
         return {
-            "tupe": type(self).__name__,
+            "type": type(self).__name__,
             "values": [
                 c.as_dict() if hasattr(c, "as_dict") else c for c in self.children
             ],

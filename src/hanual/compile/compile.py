@@ -12,7 +12,6 @@ class Compiler:
         }
 
     def compile_src(self, tree):
-        print(tree)
         return tree.compile(self._global_state)
 
     def compile(self, tree):

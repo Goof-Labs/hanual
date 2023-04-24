@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
+from typing import TypeVar, Generic, Any, Dict
 from hanual.compile import GlobalState, Stack
-from typing import TypeVar, Generic, Any
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
@@ -23,8 +23,8 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
         res = []
 
         if isinstance(self._value, Token):  # a literal value
-            id = global_state.constants.add_const(self._value.value)
-            res.append(Instruction(InstructionEnum.PGC, id))
+            const_id = global_state.constants.add_const(self._value.value)
+            res.append(Instruction(InstructionEnum.PGC, const_id))
 
         else:  # not a literal
             res.extend(self._value.compile(global_state))
@@ -39,7 +39,7 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
     def value(self) -> B:
         return self._value
 
-    def as_dict(self) -> None:
+    def as_dict(self) -> Dict[str, ...]:
         return {
             "type": type(self).__name__,
             "name": self._target,

@@ -12,10 +12,11 @@ class PrePeoccesser:
     What is a preproccesser, so pre means before and proccess refers to the compiler, this means that
     the code is put through this class before being lexed and tokenized. This lets us use some magic
     that C and C++ users are farmiliar with. This means that we can conditionally include code. For
-    example, we may want to verifiy that the Hanual version is greater then some value this opens the
+    example, we may want to verifiy that the Hanual version is greater than some value this opens the
     doors to lots of backwads compatability. All Preprocessers are, by default, prefixed with an `@`
     but this behaviour can be altered with the config file.
-    NOTE all preprocessers are removed after processing so using a `"` is perfectely fine, it wont raise any syntax errors
+    NOTE all preprocessers are removed after processing so using a `"` is perfectely fine, it won't raise any syntax
+    errors
     NOTE preprocessers can have their names changed, so `mcr` and be changed to `macro`
 
     The preprocessers are:
@@ -36,7 +37,7 @@ class PrePeoccesser:
     """
 
     def __init__(self) -> None:
-        self._definitions: Set[str] = []
+        self._definitions: Set[str] = set()
         self._ignore_code: bool = False
         self._prefix: str = "@"
         self._macros = []

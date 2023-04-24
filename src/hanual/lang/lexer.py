@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import NamedTuple, Union, TypeVar, Tuple, LiteralString, Generator
 from .errors import IligalCharacterError
-from io import StringIO
 import re
 
 

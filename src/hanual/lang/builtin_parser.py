@@ -70,7 +70,7 @@ def f_call(ts: DefaultProduction):
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 
-    return FunctionCall(name=ts[0], arguments=ts[2])
+    return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 
 
 @par.rule("LET ID EQ NUM", "LET ID EQ f_call")
@@ -111,10 +111,8 @@ def condition(ts: DefaultProduction):
     types={
         "IF LPAR condition RPAR line END": 1,
         "IF LPAR condition RPAR lines END": 1,
-        "IF LPAR condition RPAR lines END": 1,
         "IF LPAR condition RPAR END": 2,
         "IF cond_f_call line END": 3,
-        "IF cond_f_call lines END": 3,
         "IF cond_f_call lines END": 3,
         "IF cond_f_call END": 4,
     },
@@ -124,13 +122,13 @@ def if_statement(ts: DefaultProduction, type: int):
         return IfStatement(condition=ts[2], if_true=ts[4])
 
     elif type == 2:
-        return IfStatement(condition=ts[2], if_true=None)
+        return IfStatement(condition=ts[2], if_true=CodeBlock([]))
 
     elif type == 3:
         return IfStatement(condition=ts[1], if_true=ts[2])
 
     elif type == 4:
-        return IfStatement(condition=ts[1], if_true=None)
+        return IfStatement(condition=ts[1], if_true=CodeBlock([]))
 
 
 @par.rule("FN f_call")
@@ -158,7 +156,7 @@ def cond_f_call(ts):
 )
 def function_definition(ts: DefaultProduction[FunctionCall], hasend: bool):
     if hasend is False:
-        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=None)
+        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 
     return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
 
@@ -168,7 +166,6 @@ def using(ts: DefaultProduction[Token, NamespaceAcessor]):
     return ts[1]
 
 
-"""
 @par.rule(
     "f_call",
     "assighnment",
@@ -185,7 +182,6 @@ def line(ts):
 @par.rule("line line", "line lines", "lines line")
 def lines(ts: DefaultProduction[CodeBlock, Any]):
     return ts[0].add_child(ts[1])
-"""
 
 
 def get_parser():

@@ -21,6 +21,8 @@ class HanualMainClass:
         whisper = self.preproc.process(src)
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
+        whisper = self.clean(whisper)
+        whisper = self.compiler.compile(whisper)
         pp.pprint(whisper)
         pp.pprint(whisper[0])
         pp.pprint(whisper[0].as_dict())
@@ -33,6 +35,6 @@ class HanualMainClass:
 main = HanualMainClass()
 main.run(
     """
-let version = array(0, 0, 0)
+print("hi")
     """
 )

@@ -3,7 +3,7 @@ from __future__ import annotations
 from hanual.compile.instruction import Instruction, InstructionEnum
 from hanual.lang.types.singelton import Singleton
 from hanual.lang.errors import NameNotFoundError
-from typing import TypeVar, List, Self, Union
+from typing import TypeVar, List, Union
 from hanual.lang.lexer import Token
 
 T = TypeVar("T")

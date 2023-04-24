@@ -46,3 +46,6 @@ class GlobalState:
 
     def add_function(self, name: str, entery):
         self._functions[name] = entery
+
+    def add_dep(self, name: str) -> None:
+        self._file_deps.append(name)

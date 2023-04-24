@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import ABC
+
 from hanual.compile.compile import GlobalState
 from hanual.lang.builtin_lexer import Token
 from .base_node import BaseNode
@@ -8,7 +10,7 @@ from typing import TypeVar, Any
 T = TypeVar("T", Token, ...)
 
 
-class ReturnStatement(BaseNode):
+class ReturnStatement(BaseNode, ABC):
     def __init__(self: BaseNode, value: T) -> None:
         self._value: T = value
 

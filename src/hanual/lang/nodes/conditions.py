@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import ABC
+
 from hanual.compile import GlobalState
 from .base_node import BaseNode
 from typing import Any, TypeVar
@@ -9,7 +11,7 @@ L = TypeVar("L")
 R = TypeVar("R")
 
 
-class Condition(BaseNode):
+class Condition(BaseNode, ABC):
     __slots__ = "_op", "_left", "_right"
 
     def __init__(self: BaseNode, op: O, left: L, right: R) -> None:

@@ -13,6 +13,9 @@ iota.i = 0
 
 
 class Error:
+    stage = None
+    id = None
+
     def be_raised(
         self: Error,
         sample_code: str,

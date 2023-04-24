@@ -1,5 +1,4 @@
 from typing import Union, Optional
-from enum import IntEnum
 
 
 """
@@ -116,7 +115,7 @@ class Instruction(InstructionInfo):
 
     @property
     def next(self):
-        if not self._next is None:  # We must do this, the next could be a 0
+        if self._next is not None:  # We must do this, the next could be a 0
             return self._next
 
         return None

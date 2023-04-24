@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from gzip import GzipFile
 from sys import exit
 
 

@@ -112,7 +112,6 @@ class PParser:
     def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
         pattern = []
         t_stack = []
-        token = None
 
         while True:
             token: Token = next(stream, None)

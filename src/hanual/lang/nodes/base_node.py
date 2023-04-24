@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from hanual.compile.global_state import GlobalState
-from typing import Tuple, TypeVar, Any
+from typing import Tuple, TypeVar, Any, Dict
 from abc import ABC, abstractmethod
 
 
@@ -28,11 +28,12 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def as_dict(self) -> None:
+    def as_dict(self) -> Dict[str, ...]:
         """
-        Instead of having verry awqward __str__ methods that
+        Instead of having very awkward __str__ methods that
         are impossible to refactor, at least mine where. We
-        have an `as_dict` method that will recursibely return
+        have an `as_dict` method that will recursively return
         the ast as a dict. This lets us pprint it more
-        efficeintelly.
+        efficiently.
         """
+        raise NotImplementedError

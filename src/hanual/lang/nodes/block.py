@@ -34,5 +34,5 @@ class CodeBlock(BaseNode, ABC):
 
         return res
 
-    def as_dict(self) -> None:
+    def as_dict(self) -> List[...]:
         return [c.as_dict() if hasattr(c, "as_dict") else c for c in self.children]

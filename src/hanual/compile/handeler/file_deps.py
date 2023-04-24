@@ -3,4 +3,4 @@ class ExternDepsHandeler:
         self.cls = cls
 
     def add_dependancy(self, file_name):
-        self.cls._file_deps.append(file_name)
+        self.cls.add_dep(file_name)

@@ -31,7 +31,7 @@ class HanualLexer(Lexer):
         ("OP", rx(r"[\+\-\\\*]")),
         ("NUM", rx(r"\d+(\.\d*)?")),
         ("COM", rx(r"\,")),
-        ("NSA", rx(r"\:\:")),  # name space acesser
+        ("NSA", rx(r"\:\:")),  # name space access
         # special cases
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+|//.*")),
@@ -39,8 +39,8 @@ class HanualLexer(Lexer):
     ]
 
     def t_NUM(
-        self, kind: str, valu: str, line_no: int, col: int, origin_line: str
+        self, kind: str, value: str, line_no: int, col: int, origin_line: str
     ) -> Token:
         return Token(
-            kind, float(valu) if "." in valu else int(valu), line_no, col, origin_line
+            kind, float(value) if "." in value else int(value), line_no, col, origin_line
         )

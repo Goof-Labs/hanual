@@ -28,5 +28,5 @@ args = parser.parse_args()
 
 if args.files is None:
     parser.print_help()
-    print("ERROR: need to includ the files you want to compile")
+    print("ERROR: need to include the files you want to compile")
     exit()

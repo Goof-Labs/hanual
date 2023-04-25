@@ -28,7 +28,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def as_dict(self) -> Dict[str, ...]:
+    def as_dict(self) -> Dict[str, Any]:
         """
         Instead of having very awkward __str__ methods that
         are impossible to refactor, at least mine where. We

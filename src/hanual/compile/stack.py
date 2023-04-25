@@ -28,7 +28,7 @@ class Stack(Singleton):
 
         for idx, item in enumerate(self.__stk):
             if item == name:
-                # yank n'th element to top of stack
+                # yank nth element to top of stack
                 return Instruction(InstructionEnum.YNK, idx - 1)
 
         NameNotFoundError().be_raised(

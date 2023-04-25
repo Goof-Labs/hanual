@@ -58,5 +58,5 @@ class FunctionCall(BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def as_dict(self) -> Dict[str, ...]:
+    def as_dict(self) -> Dict[str, Any]:
         return {"args": self._args.as_dict(), "name": self._name}

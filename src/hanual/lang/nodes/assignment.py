@@ -11,7 +11,7 @@ A = TypeVar("A")
 B = TypeVar("B")
 
 
-class AssighnmentNode(BaseNode, Generic[A, B]):
+class AssignmentNode(BaseNode, Generic[A, B]):
     __slots__ = ("_target", "_value")
 
     def __init__(self: BaseNode, target: A, value: B) -> None:
@@ -39,7 +39,7 @@ class AssighnmentNode(BaseNode, Generic[A, B]):
     def value(self) -> B:
         return self._value
 
-    def as_dict(self) -> Dict[str, ...]:
+    def as_dict(self) -> Dict[str, Any]:
         return {
             "type": type(self).__name__,
             "name": self._target,

@@ -1,6 +1,6 @@
 from .namespace_acessor import NamespaceAcessor
 from .return_stmt import ReturnStatement
-from .assignment import AssighnmentNode
+from .assignment import AssignmentNode
 from .if_statement import IfStatement
 from .f_def import FunctionDefinition
 from .freeze_node import FreezeNode

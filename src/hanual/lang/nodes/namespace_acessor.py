@@ -19,6 +19,6 @@ class NamespaceAcessor(BaseNode, ABC):
         return self
 
     def compile(self, global_state: GlobalState) -> Any:
-        # we dont need to load any moduals because they are packed with the final runnable
+        # we don't need to load any moduals because they are packed with the final runnable
         global_state.external_deps.add_dependancy(self._path)
         return ()

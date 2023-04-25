@@ -14,7 +14,7 @@ class Arguments(BaseNode):
         if isinstance(children, Token):
             self._children = [children]
 
-        elif isinstance(children, (tuple, list)):  # is itterable
+        elif isinstance(children, (tuple, list)):  # is iterable
             self._children = [*children]
 
         else:  # This is just another node that we have chucked into a list
@@ -35,7 +35,7 @@ class Arguments(BaseNode):
     def compile(self, global_state: GlobalState) -> Any:
         raise NotImplementedError
 
-    def as_dict(self) -> Dict[str, ...]:
+    def as_dict(self) -> Dict[str, Any]:
         return {
             "type": type(self).__name__,
             "values": [

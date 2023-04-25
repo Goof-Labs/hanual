@@ -22,7 +22,7 @@ class FunctionDefinition(BaseNode):
     def compile(self, global_state: GlobalState) -> Any:
         raise NotImplementedError
 
-    def as_dict(self) -> Dict[str, ...]:
+    def as_dict(self) -> Dict[str, Any]:
         return {
             "args": self._arguments.as_dict(),
             "name": self._name,

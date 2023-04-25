@@ -68,7 +68,7 @@ The tokens are then substituted on the right side of the macro, where the format
 
 ## Example
 
-Lets say that we want to replace the `fn` keyword with `func`. We can create a macro that will do this. For the demonstrational perposes I will also include the name in the macro although it would not be neccessery
+Let's say that we want to replace the `fn` keyword with `func`. We can create a macro that will do this. For the demonstrational perposes I will also include the name in the macro, although it would not be neccessery
 
 ```text
 @mcr func <I:name> -> fn <name>
@@ -77,6 +77,6 @@ func main()
 end
 ```
 
-In the pre processing steps the macro will be matched to the stream
+In the pre-processing steps the macro will be matched to the stream
 
 FINISH THIS

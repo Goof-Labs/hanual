@@ -24,7 +24,7 @@ class HanualMainClass:
         whisper = self.clean(whisper)
         whisper = self.compiler.compile(whisper)
         pp.pprint(whisper)
-        #pp.pprint(whisper[0])
+        # pp.pprint(whisper[0])
 
     def clean(self, res):
         res = CodeBlock(res)

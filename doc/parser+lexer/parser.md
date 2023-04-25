@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The lexing/tokenizing libruary is custom made for this language. This means that they both have their own quirks and feature that are unique to this project. If you want to use the lexer and parser, you just need to coppy the `lexer.py`, `pparser.py` file into your own project, it is suggested that you also coppy the `productions.py` file.
+The lexing/tokenizing libruary is custom-made for this language. This means that they both have their own quirks and feature that are unique to this project. If you want to use the lexer and parser, you just need to coppy the `lexer.py`, `pparser.py` file into your own project, it is suggested that you also coppy the `productions.py` file.
 
 ## How it works
 
@@ -18,14 +18,14 @@ The pattern is a pattern of tokens and other rule names as a string, these are s
 
 ### Reducer
 
-Once we have found our pattern, `token_1` followed by `rule_34` we sould reduce this in some manner to show that we have simplifiied this. This is the roll of the reducer and it is what a recognised pattern is replaced by, this is programmed to be the name of the function, verry much like `sly`. So If we had the rule that:
+Once we have found our pattern, `token_1` followed by `rule_34` we sould reduce this in some manner to show that we have simplifiied this. This is the roll of the reducer, and it is what a recognised pattern is replaced by, this is programmed to be the name of the function, verry much like `sly`. So If we had the rule that:
 
 ```yacc
 token1_with_rule34_after_it:
     token_1 rule_34
 ```
 
-So if we imagine that we have a token list and we have just found `token_1` followed by `rule_34`, we would pop these tokens off the `gps` and the `gts`, and push `token1_with_rule34_after_it` to replace it.
+So if we imagine that we have a token list, and we have just found `token_1` followed by `rule_34`, we would pop these tokens off the `gps` and the `gts`, and push `token1_with_rule34_after_it` to replace it.
 
 ### Caller
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 from hanual.lang.nodes import (
     FunctionDefinition,
     NamespaceAcessor,
-    AssighnmentNode,
+    AssignmentNode,
     ReturnStatement,
     FunctionCall,
     IfStatement,
@@ -33,12 +33,12 @@ def expr(ts: DefaultProduction):
 
 
 @par.rule("NSA ID")
-def namespace_acesssor(ts: DefaultProduction[Token]):
+def namespace_accessor(ts: DefaultProduction[Token]):
     return NamespaceAcessor(ts[1])
 
 
-@par.rule("ID namespace_acesssor")
-def namespace_acesssor(ts: DefaultProduction[NamespaceAcessor, Token]):
+@par.rule("ID namespace_accessor")
+def namespace_accessor(ts: DefaultProduction[NamespaceAcessor, Token]):
     return ts[1].add_child(ts[0])
 
 
@@ -82,7 +82,7 @@ def f_call(ts: DefaultProduction, no_args: bool):
 
 @par.rule("LET ID EQ NUM", "LET ID EQ f_call")
 def assighnment(ts: DefaultProduction):
-    return AssighnmentNode(target=ts[1], value=ts[3])
+    return AssignmentNode(target=ts[1], value=ts[3])
 
 
 @par.rule("FREEZE ID")
@@ -168,7 +168,7 @@ def function_definition(ts: DefaultProduction[FunctionCall], hasend: bool):
     return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
 
 
-@par.rule("USE namespace_acesssor")
+@par.rule("USE namespace_accessor")
 def using(ts: DefaultProduction[Token, NamespaceAcessor]):
     return ts[1]
 

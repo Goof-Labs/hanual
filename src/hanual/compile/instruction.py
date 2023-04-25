@@ -54,16 +54,16 @@ class InstructionEnum:
 
     PGV = 0b1100_0000  # Push global value on stack
     PGC = 0b1100_0001  # Push constant onto stack
-    PGA = 0b1100_0010  # Push global address, e.g function
+    PGA = 0b1100_0010  # Push global address, e.g. function
 
     PK2 = 0b0100_0010  # Pack top 2 elements into tuple
     PK3 = 0b0100_0011  # Pack top 3 elements into tuple
     PK4 = 0b0100_0100  # Pack top 4 elements into tuple
     PK5 = 0b0100_0101  # Pack top 5 elements into tuple
     PKN = 0b1100_1000  # Pack top n elements into tuple
-    PK1 = 0b0100_1001  # Pack first value into tuple, (I forgot to add this in earlier so now it exists)
+    PK1 = 0b0100_1001  # Pack first value into tuple, (I forgot to add this in earlier, so now it exists)
 
-    RZE = 0b0100_0000  # Raise Eeception
+    RZE = 0b0100_0000  # Raise Exception
 
     CAL = 0b0100_0001  # Call function
     RET = 0b0000_0001  # return

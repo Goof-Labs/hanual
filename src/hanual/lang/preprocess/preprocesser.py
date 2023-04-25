@@ -30,7 +30,7 @@ class PrePeoccesser:
     of this is to check something.
 
     + mcr
-    Macros are replaced at lexing time, these can replace a symbol with another. Lets say we want to
+    Macros are replaced at lexing time, these can replace a symbol with another. Let's say we want to
     create a new keyword "contains", that takes a symbol on the left and right, we can create a macro
     mcr "<L> contains <R>" "<R> in <L>", do note that the strings are important in this, we surround
     tokens we want to replace in angel brackets <>

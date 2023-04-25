@@ -10,6 +10,7 @@ class Disasembeler:
     def __init__(self) -> None:
         pass
 
+    @staticmethod
     def disasable(
         self, code: Tuple[Dict[str, Union[str, Token, int]], List[Instruction]]
     ) -> None:

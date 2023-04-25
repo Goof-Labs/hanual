@@ -19,7 +19,7 @@ to instantiate it will just return an already made instance.
 10
 """
 
-from typing import Self
+from typing import Self, Type
 
 
 class Singleton:
@@ -29,6 +29,6 @@ class Singleton:
         if type(self).__name__ in Singleton._instances.keys():
             return Singleton._instances[type(self).__name__]
 
-        instance = type(self)(*args, **kwargs)
+        instance = type(self).__init__(*args, **kwargs)
         Singleton._instances[type(self).__name__] = instance
         return instance

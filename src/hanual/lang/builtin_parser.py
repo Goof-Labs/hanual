@@ -65,8 +65,15 @@ def arg(ts: DefaultProduction[Any, Arguments]):
     "ID LPAR STR RPAR",
     "ID LPAR NUM RPAR",
     "ID LPAR arg RPAR",
+    "ID LPAR RPAR",
+    types={
+        "ID LPAR RPAR": True
+    },
 )
-def f_call(ts: DefaultProduction):
+def f_call(ts: DefaultProduction, no_args: bool):
+    if no_args:
+        return FunctionCall(name=ts[0], arguments=Arguments([]))
+
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 

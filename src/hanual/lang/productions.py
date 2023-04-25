@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from typing import TypeVar, List, Optional, Any, Generic, Union, Self
+from sys import version_info
 from abc import ABC
-
 
 T = TypeVar("T")
 
@@ -29,7 +29,7 @@ class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
         self.ts: List[T] = ts
 
     @property
-    def raw(self) -> List[T]:
+    def raw(self: Self) -> List[T]:
         return self.ts
 
     def __repr__(self: Self) -> str:
@@ -134,10 +134,17 @@ class ProductionDict(_ProductionInterface):
 
         except KeyError as e:
             # only py311+
-            e.add_note(
-                "Could not get key '%s', did you mean one of: %s",
-                (__key, ", ".join(self._dct.keys())),
-            )
+            if version_info.major >= 3 and version_info.minor >= 11:
+                e.add_note(
+                    "Could not get key '%s', did you mean one of: %s",
+                    (__key, ", ".join(self._dct.keys())),
+                )
+
+            else:
+                print(
+                    "Could not get key '%s', did you mean one of: %s",
+                    (__key, ", ".join(self._dct.keys())),
+                )
             # display error message
             raise e
 

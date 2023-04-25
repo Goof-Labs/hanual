@@ -33,7 +33,7 @@ class Arguments(BaseNode):
         return self._children
 
     def compile(self, global_state: GlobalState) -> Any:
-        pass
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, ...]:
         return {

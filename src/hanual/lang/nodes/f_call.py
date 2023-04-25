@@ -16,7 +16,7 @@ class FunctionCall(BaseNode):
     def compile(self, global_state: GlobalState) -> Any:
         res = []
 
-        if self._args is None:
+        if self._args is None or self._args.compile(global_state=global_state) is None:
             res.append(Instruction(InstructionEnum.PKN, 0))
 
         else:  # The function has args

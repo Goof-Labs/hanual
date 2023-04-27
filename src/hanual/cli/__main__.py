@@ -1,32 +1,17 @@
-from argparse import ArgumentParser
+from typing import NamedTuple
+from tomllib import load
 from sys import exit
 
 
-parser = ArgumentParser(add_help=True)
+class CompilerSettings(NamedTuple):
+    definitions: list[str]
+    search_dirs: list[str]
+    packeages: list[str]
+    mode: str
+    name: str
 
-parser.add_argument("files", nargs="?")
 
-parser.add_argument(
-    "-m",  # mode
-    choices=[
-        "R",  # Release
-        "P",  # Package
-        "C",  # compile
-        "PD",  # preproc debug
-        "LD",  # lexing debug
-        "MD",  # Macro debug
-        "RD",  # parsing debug
-    ],
-    default="C",
-)
+with open("prodject.toml", "rb") as f:
+    data = load(f)
+    settings = CompilerSettings(data[""])
 
-parser.add_argument("-d", nargs="?")
-
-parser.add_argument("-n")
-
-args = parser.parse_args()
-
-if args.files is None:
-    parser.print_help()
-    print("ERROR: need to include the files you want to compile")
-    exit()

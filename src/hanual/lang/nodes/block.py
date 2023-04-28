@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import List, Union, TypeVar, Any
-from hanual.compile import GlobalState
+from hanual.compile import Assembler
 from .base_node import BaseNode
 from abc import ABC
 
@@ -26,13 +26,9 @@ class CodeBlock(BaseNode, ABC):
     def children(self):
         return self._children
 
-    def compile(self, global_state: GlobalState) -> Any:
-        res = []
-
+    def compile(self, state: Assembler) -> Any:
         for child in self.children:
-            res.extend(child.compile(global_state))
-
-        return res
+            child.compile(state)
 
     def as_dict(self) -> List[Any]:
         return [c.as_dict() if hasattr(c, "as_dict") else c for c in self.children]

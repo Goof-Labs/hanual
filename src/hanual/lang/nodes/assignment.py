@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
 from typing import TypeVar, Generic, Any, Dict
-from hanual.compile import GlobalState, Stack
+from hanual.compile import Assembler, Stack
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
@@ -18,7 +18,9 @@ class AssignmentNode(BaseNode, Generic[A, B]):
         self._target: A = target
         self._value: B = value
 
-    def compile(self, global_state: GlobalState) -> Any:
+    def compile(self, global_state: Assembler) -> Any:
+        raise NotImplementedError
+
         Stack().get_instance().push(self._value)
         res = []
 

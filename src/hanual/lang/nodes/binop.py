@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 
 from typing import TypeVar, Any, Generic
-from hanual.compile import GlobalState
+from hanual.compile import Assembler
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
@@ -70,5 +70,5 @@ class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
 
         return res
 
-    def compile(self, global_state: GlobalState) -> Any:
+    def compile(self, global_state: Assembler) -> Any:
         raise NotImplementedError

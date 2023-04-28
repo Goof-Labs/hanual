@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 
-from hanual.compile import GlobalState
+from hanual.compile import Assembler
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from typing import TypeVar, Any
@@ -17,7 +17,8 @@ class FreezeNode(BaseNode, ABC):
     def __init__(self: BaseNode, var: T) -> None:
         self._var: T = var
 
-    def compile(self, global_state: GlobalState) -> Any:
+    def compile(self, global_state: Assembler) -> Any:
+        raise NotImplementedError
         return super().compile(global_state)
 
     @property

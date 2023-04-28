@@ -2,17 +2,18 @@ from random import randbytes
 
 
 class Label:
-    def __init__(self, name: str) -> None:
-        self._mangeled = Label.mangle_id(name)
+    def __init__(self, name: str, idx: int = 0) -> None:
+        self._mangled = Label.mangle_id(name)
         self._name = name
+        self._idx = idx
 
     @property
     def name(self) -> str:
         return self._name
 
     @property
-    def mangeled_id(self) -> str:
-        return self._mangeled
+    def mangled_id(self) -> str:
+        return self._mangled
 
     @staticmethod
     def mangle_id(name: str) -> str:

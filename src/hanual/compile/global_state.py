@@ -44,8 +44,12 @@ class GlobalState:
     def external_deps(self):
         return ExternDepsHandeler(self)
 
-    def add_function(self, name: str, entery):
-        self._functions[name] = entery
+    def add_function(self, name: str, entry):
+        self._functions[name] = entry
 
     def add_dep(self, name: str) -> None:
         self._file_deps.append(name)
+
+    @property
+    def file_deps(self):
+        return self._file_deps

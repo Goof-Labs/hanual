@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
-from hanual.compile import GlobalState
+from hanual.compile import Assembler
 from hanual.lang.lexer import Token
 from .arguments import Arguments
 from .base_node import BaseNode
@@ -13,42 +13,32 @@ class FunctionCall(BaseNode):
         self._args: Arguments = arguments
         self._name: Token = name
 
-    def compile(self, global_state: GlobalState) -> Any:
-        res = []
+    def compile(self, global_state: Assembler) -> Any:
+        global_state.add_instructions(self._args.compile(global_state))
 
-        if self._args is None or self._args.compile(global_state=global_state) is None:
-            res.append(Instruction(InstructionEnum.PKN, 0))
+        #  we have special instructions that pack N amounts of elements on stack into a tuple, this lets us use them
+        n_children = len(self._args.children)
 
-        else:  # The function has args
-            res.extend(self._args.compile(global_state))  # load args
+        if n_children == 1:
+            global_state.add_instructions(Instruction(InstructionEnum.PK1))
 
-            if len(self._args.children) == 0:
-                res.append(Instruction(InstructionEnum.PKN, 0))
+        elif n_children == 2:
+            global_state.add_instructions(Instruction(InstructionEnum.PK2))
 
-            elif len(self._args.children) == 1:
-                res.append(Instruction(InstructionEnum.PK1))
+        elif n_children == 3:
+            global_state.add_instructions(Instruction(InstructionEnum.PK3))
 
-            elif len(self._args.children) == 2:
-                res.append(Instruction(InstructionEnum.PK2))
+        elif n_children == 4:
+            global_state.add_instructions(Instruction(InstructionEnum.PK4))
 
-            elif len(self._args.children) == 3:
-                res.append(Instruction(InstructionEnum.PK3))
+        elif n_children == 5:
+            global_state.add_instructions(Instruction(InstructionEnum.PK5))
 
-            elif len(self._args.children) == 4:
-                res.append(Instruction(InstructionEnum.PK4))
+        else:
+            global_state.add_instructions(Instruction(InstructionEnum.PKN, n_children))
 
-            elif len(self._args.children) == 5:
-                res.append(Instruction(InstructionEnum.PK5))
-
-            else:
-                res.append(Instruction(InstructionEnum.PKN, len(self._args.children)))
-
-        ref_id = global_state.references.add_ref(self._name)
-        res.append(Instruction(InstructionEnum.PGA, ref_id))  # push reference to call
-
-        res.append(Instruction(InstructionEnum.CAL))  # CALL
-
-        return res
+        global_state.add_instructions(Instruction(InstructionEnum.PGA, self._name.value))  # push function reference
+        global_state.add_instructions(Instruction(InstructionEnum.CAL))  # call function
 
     @property
     def name(self) -> Token:

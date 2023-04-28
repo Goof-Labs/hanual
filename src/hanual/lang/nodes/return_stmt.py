@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from abc import ABC
 
-from hanual.compile.compile import GlobalState
 from hanual.lang.builtin_lexer import Token
+from hanual.compile import Assembler
 from .base_node import BaseNode
 from typing import TypeVar, Any
 
@@ -15,4 +15,5 @@ class ReturnStatement(BaseNode, ABC):
         self._value: T = value
 
     def compile(self, global_state: GlobalState) -> Any:
+        raise NotImplementedError
         return super().compile(global_state)

@@ -1,18 +1,23 @@
-from .global_state import GlobalState
+from .assembler import Assembler
 
 
 class Compiler:
     def __init__(self) -> None:
-        self._global_state = GlobalState()
+        self._assembler = Assembler()
 
     def get_deps(self):
         return {
-            "refs": self._global_state.refs,
-            "consts": self._global_state.const_pool,
+            "deps": self._assembler.file_deps,
+            "refs": self._assembler.refs,
+            "consts": self._assembler.constants,
         }
 
     def compile_src(self, tree):
-        return tree.compile(self._global_state)
+        tree.compile(self._assembler)
+        return self._assembler.instructions
 
     def compile(self, tree):
-        return self.get_deps(), self.compile_src(tree)
+        return self.compile_src(tree), self.get_deps()
+
+    def dump_file(self, tree):
+        return self.get_deps()

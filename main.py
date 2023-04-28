@@ -34,6 +34,10 @@ class HanualMainClass:
 main = HanualMainClass()
 main.run(
     """
-print("hi")
+use std::io::println
+
+fn main()
+    println("Hello world")
+end
     """
 )

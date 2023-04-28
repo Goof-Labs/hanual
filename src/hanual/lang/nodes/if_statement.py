@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 
-from hanual.compile import GlobalState
+from hanual.compile import Assembler
 from .conditions import Condition
 from .base_node import BaseNode
 from .block import CodeBlock
@@ -14,5 +14,6 @@ class IfStatement(BaseNode, ABC):
         self._condition = condition
         self._iftrue = if_true
 
-    def compile(self, global_state: GlobalState) -> Any:
+    def compile(self, global_state: Assembler) -> Any:
+        raise NotImplementedError
         return super().compile(global_state)

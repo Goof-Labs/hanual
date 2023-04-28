@@ -1,3 +1,3 @@
 from .instruction import Instruction, InstructionEnum
-from .global_state import GlobalState
+from .assembler import Assembler
 from .stack import Stack

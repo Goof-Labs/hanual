@@ -21,10 +21,12 @@ class Label:
         # about having a name that starts with a
         return "_" + randbytes(50).hex() + "__" + name
 
+    @property
+    def idx(self):
+        return self._idx
 
-class LabelHandeler:
-    def __init__(self, cls) -> None:
-        self._cls = cls
+    def __str__(self):
+        return f"Instruction({self.name=} {self.mangled_id=} {self._idx=})"
 
-    def new_label(self, name: str = "questionable_identity") -> Label:
-        return Label(name=name)
+    def __repr__(self):
+        return str(self)

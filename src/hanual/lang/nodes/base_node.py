@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from hanual.compile.global_state import GlobalState
 from typing import Tuple, TypeVar, Any, Dict
+from hanual.compile import Assembler
 from abc import ABC, abstractmethod
 
 
@@ -19,7 +19,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self, global_state: GlobalState) -> Any:
+    def compile(self, global_state: Assembler) -> Any:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

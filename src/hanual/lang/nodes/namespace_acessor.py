@@ -21,7 +21,6 @@ class NamespaceAcessor(BaseNode, ABC):
     def compile(self, global_state: Assembler) -> Any:
         # we don't need to load any moduals because they are packed with the final runnable
         global_state.add_file_dep(self._path)
-        return ()
 
     def as_dict(self) -> Dict[str, Any]:
         return {"lib-path": self._path}

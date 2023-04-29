@@ -14,7 +14,7 @@ class FunctionCall(BaseNode):
         self._name: Token = name
 
     def compile(self, global_state: Assembler) -> Any:
-        global_state.add_instructions(self._args.compile(global_state))
+        self._args.compile(global_state)
 
         #  we have special instructions that pack N amounts of elements on stack into a tuple, this lets us use them
         n_children = len(self._args.children)

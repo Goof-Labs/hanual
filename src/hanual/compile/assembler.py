@@ -9,11 +9,10 @@ class Assembler:
         self._instructions = []
         self._file_deps = set()
         self._stk = Stack()
-        self._labels = set()
         self._consts = set()
+        self._refs = set()
         self._funcs = []
         self._index = 0
-        self._refs = set()
 
     def add_instructions(self, instructions: Union[Sequence[Instruction], Instruction]) -> None:
         if isinstance(instructions, (tuple, list)):
@@ -30,7 +29,7 @@ class Assembler:
 
         label = Label(name, self._index)
 
-        self._labels.add(label.mangled_id)
+        self._instructions.append(label)
 
         return label
 
@@ -61,10 +60,6 @@ class Assembler:
     @property
     def file_deps(self):
         return self._file_deps
-
-    @property
-    def labels(self):
-        return self._labels
 
     @property
     def constants(self):

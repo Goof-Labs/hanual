@@ -62,6 +62,7 @@ class PrePeoccesser:
             "mcr": "mcr",
             "end": "end",
             "if": "if",
+            "nif": "nif",
         }
 
         out = StringIO()
@@ -94,6 +95,10 @@ class PrePeoccesser:
     def get_end(self, line: str) -> None:
         # We will just reset it
         self._ignore_code = False
+
+    def get_nif(self, line) -> None:
+        # TODO: add better support for this stuff
+        self._ignore_code = line.split(" ")[1] in self._definitions
 
     def get_if(self, line: str) -> None:
         # TODO: add better support for this stuff

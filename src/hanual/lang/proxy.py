@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self, Callable, Any, Dict, Type, Union
+from typing import Self, Callable, Any, Dict, Type, Union, Sequence, Optional
 from .productions import DefaultProduction, P
 
 """
@@ -14,17 +14,19 @@ This class will store:
 
 
 class Proxy:
-    __slots__ = "_fn", "_types", "_prod"
+    __slots__ = "_fn", "_types", "_prod", "_unless"
 
     def __init__(
         self: Self,
-        fn: Union[Callable[[P], Any], Callable[[P, ...], Any]],
+        fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]],
         types: Dict[str, Any],
         prod: type[P] = None,
+        unless: Sequence[str] = (),
     ) -> None:
+        self._fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]] = fn
         self._prod: Type[P] = prod or DefaultProduction
         self._types = types or {}
-        self._fn: Union[Callable[[P], Any], Callable[[P, ...], Any]] = fn
+        self._unless = unless
 
     @property
     def prod(self) -> Type[P]:
@@ -35,7 +37,11 @@ class Proxy:
         return self._types
 
     @property
-    def fn(self) -> Union[Callable[[P], Any], Callable[[P, ...], Any]]:
+    def unless(self) -> Sequence[str]:
+        return self._unless
+
+    @property
+    def fn(self) -> Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]]:
         return self._fn
 
     def call(self: Proxy, args, pattern):

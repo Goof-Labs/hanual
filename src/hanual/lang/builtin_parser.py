@@ -3,8 +3,9 @@ from __future__ import annotations
 from hanual.lang.nodes import (
     FunctionDefinition,
     NamespaceAcessor,
-    AssignmentNode,
     ReturnStatement,
+    AssignmentNode,
+    WhileStatement,
     FunctionCall,
     IfStatement,
     FreezeNode,
@@ -42,7 +43,7 @@ def namespace_accessor(ts: DefaultProduction[NamespaceAcessor, Token]):
     return ts[1].add_child(ts[0])
 
 
-@par.rule("COM NUM", "COM expr", "COM f_call", "COM ID")
+@par.rule("COM NUM", "COM expr", "COM f_call", "COM ID", "COM STR")
 def arg(ts: DefaultProduction):
     return Arguments(ts[1])
 
@@ -51,7 +52,7 @@ def arg(ts: DefaultProduction):
     "ID arg",
     "expr arg",
     "f_call arg",
-    "ID arg",
+    "STR arg",
     "NUM arg",
     "arg arg",
 )
@@ -66,9 +67,7 @@ def arg(ts: DefaultProduction[Any, Arguments]):
     "ID LPAR NUM RPAR",
     "ID LPAR arg RPAR",
     "ID LPAR RPAR",
-    types={
-        "ID LPAR RPAR": True
-    },
+    types={"ID LPAR RPAR": True},
 )
 def f_call(ts: DefaultProduction, no_args: bool):
     if no_args:
@@ -80,7 +79,7 @@ def f_call(ts: DefaultProduction, no_args: bool):
     return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 
 
-@par.rule("LET ID EQ NUM", "LET ID EQ f_call")
+@par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR")
 def assighnment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
@@ -90,18 +89,21 @@ def freeze(ts: DefaultProduction):
     return FreezeNode(ts[1])
 
 
-@par.rule("RET", "ret ID", types={"ret ID": True})
+@par.rule("RET ID", unless=["LPAR"])
 def ret(
-    ts: Union[DefaultProduction[Token], DefaultProduction[Token, Token]],
-    has_arg: bool,
+    ts: Union[DefaultProduction[Token], DefaultProduction[Token, Token]]
 ) -> ReturnStatement:
-    if has_arg:
-        return ReturnStatement(ts[1])
-
-    return ReturnStatement(None)
+    return ReturnStatement(ts[1])
 
 
-@par.rule("ID EL NUM", "ID EL f_call", "ID EL expr", "ID EL ID")
+@par.rule("RET f_call")
+def ret(
+    ts: Union[DefaultProduction[Token], DefaultProduction[Token, Token]]
+) -> ReturnStatement:
+    return ReturnStatement(ts[1])
+
+
+@par.rule("ID EL NUM", "ID EL f_call", "ID EL expr", "ID EL ID", "ID EL STR")
 def condition(ts: DefaultProduction):
     return Condition(op=ts[1], left=ts[0], right=ts[2])
 
@@ -138,8 +140,29 @@ def if_statement(ts: DefaultProduction, type: int):
         return IfStatement(condition=ts[1], if_true=CodeBlock([]))
 
 
+@par.rule(
+    "WHL condition line END",
+    "WHL condition lines END",
+    "WHL cond_f_call line END",
+    "WHL cond_f_call lines END",
+    # no body
+    "WHL condition END",
+    "WHL cond_f_call END",
+    types={
+        "WHL condition END": False,
+        "WHL cond_f_call END": False,
+    },
+)
+def while_stmt(ts: DefaultProduction, no_body: bool = True):
+    if no_body:
+        return WhileStatement(ts[1], CodeBlock([]))
+    return WhileStatement(ts[1], ts[2])
+
+
 @par.rule("FN f_call")
 def function_marker(ts: DefaultProduction):
+    # If the args is part of a function definition it should behave differentelly from when it is not
+    ts[1].function_def = True
     return ts[1]
 
 
@@ -181,6 +204,7 @@ def using(ts: DefaultProduction[Token, NamespaceAcessor]):
     "function_definition",
     "using",
     "ret",
+    "while_stmt",
 )
 def line(ts):
     return CodeBlock(ts[0])

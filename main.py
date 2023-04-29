@@ -22,9 +22,9 @@ class HanualMainClass:
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
         whisper = self.clean(whisper)
-        whisper = self.compiler.compile(whisper)
-        pp.pprint(whisper)
-        # pp.pprint(whisper[0])
+        pp.pprint(whisper.as_dict())
+        # whisper = self.compiler.compile(whisper)
+        # pp.pprint(whisper)
 
     def clean(self, res):
         res = CodeBlock(res)
@@ -32,12 +32,4 @@ class HanualMainClass:
 
 
 main = HanualMainClass()
-main.run(
-    """
-use std::io::println
-
-fn main()
-    println("Hello world")
-end
-    """
-)
+main.run(open(r"D:\programing\hanual\hanual\src\stdlib\io.hnl").read())

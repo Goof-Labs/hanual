@@ -4,7 +4,7 @@ from abc import ABC
 
 from hanual.compile import Assembler
 from .base_node import BaseNode
-from typing import Any, TypeVar
+from typing import Any, Dict, TypeVar
 
 O = TypeVar("O")
 L = TypeVar("L")
@@ -34,3 +34,10 @@ class Condition(BaseNode, ABC):
     def compile(self, global_state: Assembler) -> Any:
         raise NotImplementedError
         return super().compile(global_state)
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "op": self._op,
+            "left": self._left,
+            "right": self._right,
+        }

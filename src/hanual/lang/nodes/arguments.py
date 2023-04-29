@@ -5,12 +5,16 @@ from typing import TypeVar, Union, List, Any, Dict
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 from hanual.compile import Assembler
+
 T = TypeVar("T")
 
 
 class Arguments(BaseNode):
+    __slots__ = "_children", "_function_def"
+
     def __init__(self, children: Union[List[T], T]) -> None:
         self._children: List[Token]
+        self._function_def = False
 
         if isinstance(children, Token):
             self._children = [children]
@@ -33,16 +37,25 @@ class Arguments(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
+    @property
+    def function_def(self):
+        return self._function_def
+
     def compile(self, global_state: Assembler) -> Any:
-        for name in self._children:
-            assert isinstance(name, Token)
+        if self._function_def:
+            for name in self._children:
+                assert isinstance(name, Token)
 
-            if name.type == "ID":
-                global_state.pull_value(name)
+                if name.type == "ID":
+                    global_state.pull_value(name)
 
-            else:
-                idx = global_state.add_constant(name.value)
-                global_state.add_instructions(Instruction(InstructionEnum.PGC, idx))
+                else:
+                    idx = global_state.add_constant(name.value)
+                    global_state.add_instructions(Instruction(InstructionEnum.PGC, idx))
+
+        else:
+            # TODO THIS
+            pass
 
     def as_dict(self) -> Dict[str, Any]:
         return {

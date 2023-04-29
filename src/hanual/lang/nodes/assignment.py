@@ -45,5 +45,5 @@ class AssignmentNode(BaseNode, Generic[A, B]):
         return {
             "type": type(self).__name__,
             "name": self._target,
-            "value": self._value.as_dict(),
+            "value": self._value.as_dict() if hasattr(self._value, "as_dict") else self._value,
         }

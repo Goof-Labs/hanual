@@ -75,6 +75,7 @@ class PParser:
         *rules,
         prod: Optional[P] = DefaultProduction,
         types: Optional[Dict[str, T]] = None,
+        unless: Optional[List[str]] = (),
     ):
         """
         This function is a decorator, so it can be used with the following syntax:
@@ -99,10 +100,19 @@ class PParser:
         >>>     if case == 1: # do some stuff for the first case
         >>>     elif case == 2: # other stuff for second case
         >>>     elif case == 3: # third case
+
+        The `unless` kwarg does what you may think it does, if the pattern such as
+        [ A B C ] is found in the token stream then it is swaped out, but what
+        happens if we only want this to happen if the following token does is not of
+        a specific type. For example, if the [ A B C ] sequence only makes sense if
+        the D token is not next. So in the example of [ A B C D E] we would not
+        reduce the tokens, this is because the [ A B C ] sequence is proceded by a D
+        token. But if we had [ A B C E D F G ] then a substetution would take place
+        this is because the sequence is not directelly followed by a D.
         """
 
         def inner(func):
-            prox = Proxy(func, types, prod)
+            prox = Proxy(func, types, prod, unless)
             # expand all rules, so they have their own individual function associated
             for rule in rules:
                 self.rules[rule] = func.__name__, prox
@@ -138,6 +148,10 @@ class PParser:
                         break
 
                 else:
+                    # If the pattern does not want to appear if a following type of token is after it then we just move on to the next
+                    if not token is None and token.type in prox.unless:
+                        continue
+
                     if self.debug:
                         print(pattern, " - ", rule_pattern, " ", depth + 1)
 

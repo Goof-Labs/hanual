@@ -1,0 +1,44 @@
+@nif __inc_io__
+
+@def __inc_io__
+
+use std::extern::io::nm_out
+use std::extern::io::nm_gch
+
+fn print(text)
+    // This function will take any object and use the nm_out function from nim to output the
+    // object, or text, if the item is not just a string the language will first try to run
+    // the object's `toString` method followed by the snake_case equivilent (i.e. to_string)
+    // if that fails the language will turn to the builtin object representation, if that
+    // fails it will just print out the nim representation.
+    nm_out(text)
+end
+
+
+fn println(text)
+    // this function is verry similar to the print function, however it just append a newline
+    // character onto the end.
+    str_cat(text, "\n")
+    print(text)
+end
+
+
+fn getch()
+    // this will get a single character from the user this is just like the c version of getch
+    return nm_gch()
+end
+
+fn input()
+    // this will take in characters over and over again until the user inputs a newline
+    // character
+    let str = ""
+    let char = ""
+
+    while char != "\n"
+        str_cat(str, char)
+    end
+
+    return str
+end
+
+@end

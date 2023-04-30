@@ -22,8 +22,8 @@ class HanualMainClass:
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
         whisper = self.clean(whisper)
-        pp.pprint(whisper.as_dict())
-        # whisper = self.compiler.compile(whisper)
+        whisper = self.compiler.compile(whisper)
+        pp.pprint(whisper)
         # pp.pprint(whisper)
 
     def clean(self, res):

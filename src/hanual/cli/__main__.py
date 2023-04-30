@@ -14,21 +14,20 @@ class CompilerSettings(NamedTuple):
     main: str
 
 
-with open("prodject.toml", "rb") as f:
-    data = load(f)
-    settings = CompilerSettings(
-        definitions=data["predefs"]["predefinitions"],
-        packall=data["target"]["packall"],
-        target=data["target"]["target"],
-        mappings=data["preprocessers"],
-        packeages=data["packets"],
-        name=data["name"],
-        main=data["entery"],
-    )
-
-
 if __name__ == "__main__":
     from hanual.lang.builtin_wrapper import BuiltinWrapper
+
+    with open("project.toml", "rb") as f:
+        data = load(f)
+        settings = CompilerSettings(
+            definitions=data["predefs"]["predefinitions"],
+            packall=data["target"]["packall"],
+            target=data["target"]["target"],
+            mappings=data["preprocessers"],
+            packeages=data["packets"],
+            name=data["name"],
+            main=data["entery"],
+        )
 
     bw = BuiltinWrapper()
     bw.parse()

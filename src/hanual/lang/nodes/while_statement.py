@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-
+from hanual.compile.instruction import Instruction, InstructionEnum
 from hanual.lang.nodes.base_node import BaseNode
 from typing import Any, Dict, TYPE_CHECKING
 
@@ -22,4 +22,8 @@ class WhileStatement(BaseNode):
         }
 
     def compile(self, global_state: Assembler) -> Any:
-        return super().compile(global_state)
+        while_start = global_state.add_label("while_loop")
+
+        self._body.compile(global_state)
+        self._whle.compile(global_state)  # push a true or false to stack
+        global_state.add_instructions(Instruction(InstructionEnum.JEZ, while_start.idx))  # if the while is true we jump

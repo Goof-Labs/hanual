@@ -1,23 +1,36 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic, Any, Dict
-from hanual.compile import Assembler
+from hanual.compile.instruction import Instruction, InstructionEnum
+from typing import TypeVar, Generic, Any, Dict, TYPE_CHECKING
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
+
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
+
 
 T = TypeVar("T", bound=BaseNode)
 A = TypeVar("A")
 B = TypeVar("B")
 
 
-class AssignmentNode(BaseNode, Generic[A, B]):
+class AssignmentNode(BaseNode, Generic[B]):
     __slots__ = ("_target", "_value")
 
-    def __init__(self: BaseNode, target: A, value: B) -> None:
-        self._target: A = target
+    def __init__(self: BaseNode, target: Token, value: B) -> None:
+        self._target: Token = target
         self._value: B = value
 
     def compile(self, global_state: Assembler) -> Any:
-        raise NotImplementedError
+        global_state.push_value(self._target.value)
+
+        if isinstance(self._target, Token):
+            ident = global_state.add_constant(self._value.value)
+            global_state.add_instructions(Instruction(InstructionEnum.PGC, ident))
+
+        else:
+            self._value.compile(global_state)
 
     @property
     def target(self) -> A:

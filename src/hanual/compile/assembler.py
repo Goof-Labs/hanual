@@ -2,7 +2,6 @@ from __future__ import annotations
 
 
 from typing import Sequence, Union, Optional, TYPE_CHECKING
-from .instruction import Instruction
 from .label import Label
 from .stack import Stack
 
@@ -15,8 +14,8 @@ class Assembler:
     def __init__(self):
         self._instructions = []
         self._file_deps = set()
-        self._stk = Stack()
         self._consts = set()
+        self._stk = Stack()
         self._refs = set()
         self._funcs = []
         self._index = 0
@@ -42,7 +41,7 @@ class Assembler:
 
         return label
 
-    def add_constant(self, value):
+    def add_constant(self, value) -> int:
         self._consts.add(value)
         return len(self._consts) - 1
 
@@ -61,6 +60,9 @@ class Assembler:
 
     def pull_value(self, name):
         self.add_instructions(self._stk.push_item_to_top(name))
+
+    def push_value(self, name):
+        self._stk.push(name)
 
     @property
     def instructions(self):

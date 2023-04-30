@@ -1,4 +1,3 @@
-multipledispatch~=0.6.0
-hanual~=0.0.0
-colorama~=0.4.6
 setuptools~=67.6.1
+colorama~=0.4.6
+hanual~=0.0.0

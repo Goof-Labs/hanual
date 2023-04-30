@@ -12,7 +12,7 @@ class Disasembeler:
 
     @staticmethod
     def disasable(
-        self, code: Tuple[Dict[str, Union[str, Token, int]], List[Instruction]]
+        code: Tuple[Dict[str, Union[str, Token, int]], List[Instruction]]
     ) -> None:
         for instruction in code[1]:
             print(instruction)

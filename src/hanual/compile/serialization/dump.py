@@ -20,8 +20,8 @@ class HanualFileSerializer:
 
         consts_pool.write(len(constants).to_bytes(length=1, byteorder="big"))
 
+        consts_pool.write(b"\x00\x00\x00")
         for const in constants:
-            consts_pool.write(b"\x00\x00\x00")
 
             if isinstance(const, int):
                 consts_pool.write(b"\x00")
@@ -39,7 +39,7 @@ class HanualFileSerializer:
                 for char in const:
                     consts_pool.write(ord(char).to_bytes(length=1, byteorder="big"))
 
-        consts_pool.write(b"\x00\x00\x00")
+        consts_pool.write(b"\x00\x00\x00\x00")
 
         return consts_pool.getvalue()
 
@@ -60,10 +60,6 @@ class HanualFileSerializer:
         return header.getvalue()
 
     @staticmethod
-    def serialize_refs(refs: List[str]) -> None:
-        raise NotImplementedError
-
-    @staticmethod
     def dump(
         data: Tuple[Dict[str, List[HanualObject]], List[Instruction]], src: str
     ) -> bytes:
@@ -71,7 +67,6 @@ class HanualFileSerializer:
 
         buffer.write(HanualFileSerializer.create_header(src))
         buffer.write(HanualFileSerializer.serialize_constants(data[0]["consts"]))
-        buffer.write(HanualFileSerializer.serialize_refs(data[0]["refs"]))
 
         for instruction in data[1]:
             buffer.write(instruction.opcode.to_bytes(byteorder="big"))

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class ExternDepsHandeler:
     def __init__(self, cls) -> None:
         self.cls = cls

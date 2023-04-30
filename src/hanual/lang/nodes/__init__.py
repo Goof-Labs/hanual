@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from .namespace_acessor import NamespaceAcessor
 from .while_statement import WhileStatement
 from .return_stmt import ReturnStatement

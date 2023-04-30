@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from .lexer import Lexer, rx, kw, Token
 
 
@@ -42,5 +45,9 @@ class HanualLexer(Lexer):
         self, kind: str, value: str, line_no: int, col: int, origin_line: str
     ) -> Token:
         return Token(
-            kind, float(value) if "." in value else int(value), line_no, col, origin_line
+            kind,
+            float(value) if "." in value else int(value),
+            line_no,
+            col,
+            origin_line,
         )

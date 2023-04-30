@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from hanual.lang.lexer import Lexer, rx
 from typing import List
 

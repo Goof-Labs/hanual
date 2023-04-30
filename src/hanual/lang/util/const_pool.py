@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from typing import Generic, TypeVar, Dict, Any, Self
 from multipledispatch import dispatch
 from abc import ABC, abstractmethod
@@ -22,6 +25,7 @@ class ConstPoolMod(Generic[CLS, VALUE]):
     The dispatch decorator is used to allow one function to take in any parameter type and call a specific function
     this is like overloading in other strongly typed languages.
     """
+
     def __init__(self, instance: CLS) -> None:
         self._const_pool: Dict[str, VALUE] = {}
         self._instance = instance

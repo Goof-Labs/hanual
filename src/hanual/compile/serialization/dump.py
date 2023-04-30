@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from hanual.compile.instruction import Instruction
 from hanual.version import major, minor, micro
 from typing import Dict, TypeVar, List, Tuple
@@ -46,7 +49,9 @@ class HanualFileSerializer:
         header.write(
             b64encode(sha256(source.encode()).digest(), altchars=b"+=")
         )  # checksum for the code, so we know if there has been a change
-        header.write(major.to_bytes(length=1, byteorder="big"))  # = write version number
+        header.write(
+            major.to_bytes(length=1, byteorder="big")
+        )  # = write version number
         header.write(minor.to_bytes(length=1, byteorder="big"))
         header.write(micro.to_bytes(length=1, byteorder="big"))
 
@@ -58,7 +63,7 @@ class HanualFileSerializer:
 
     @staticmethod
     def dump(
-            data: Tuple[Dict[str, List[HanualObject]], List[Instruction]], src: str
+        data: Tuple[Dict[str, List[HanualObject]], List[Instruction]], src: str
     ) -> bytes:
         buffer = BytesIO()
 

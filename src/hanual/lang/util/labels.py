@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from typing import Generic, TypeVar, Dict, Any
 from abc import ABC, abstractmethod
 

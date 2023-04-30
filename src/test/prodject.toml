@@ -1,5 +1,5 @@
-name=""
-entery=""
+name="test-hanual-lang"
+entery="test.hnl"
 
 [preprocessers]
 prefix='@'

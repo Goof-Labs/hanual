@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 There caon only be one instance of any child class, if you try
 to instantiate it will just return an already made instance.
@@ -19,7 +21,7 @@ to instantiate it will just return an already made instance.
 10
 """
 
-from typing import Self, Type
+from typing import Self
 
 
 class Singleton:

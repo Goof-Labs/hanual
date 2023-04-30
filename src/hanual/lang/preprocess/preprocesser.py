@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, TypeVar, Set
+from typing import Dict, TypeVar, Set, Optional, List
 from .preproc_lexer import Lexer
 from io import StringIO
 
@@ -56,14 +56,27 @@ class PrePeoccesser:
 
         self._definitions.add(name)
 
-    def process(self, text: str) -> str:
-        names: Dict[str, str] = {  # TODO: make this modifiable too
-            "def": "def",
-            "mcr": "mcr",
-            "end": "end",
-            "if": "if",
-            "nif": "nif",
-        }
+    def process(
+        self,
+        text: str,
+        mappings: Optional[Dict[str, str]] = None,
+        prefix: Optional[str] = None,
+        starting_defs: Optional[List[str]] = None,
+    ) -> str:
+        if mappings is None:
+            mappings: Dict[str, str] = {  # TODO: make this modifiable too
+                "def": "def",
+                "mcr": "mcr",
+                "end": "end",
+                "nif": "nif",
+                "if": "if",
+            }
+
+        if prefix is None:
+            prefix = self.prefix
+
+        if starting_defs is None:
+            starting_defs = self._definitions
 
         out = StringIO()
 
@@ -71,7 +84,7 @@ class PrePeoccesser:
             if line.startswith(self.prefix):
                 type_ = None
 
-                for pos in names.keys():
+                for pos in mappings.keys():
                     if line.startswith(self.prefix + pos):
                         type_ = pos
 
@@ -79,7 +92,7 @@ class PrePeoccesser:
                     raise ValueError("'%s' is not a pre processer", (line,))
 
                 # get class function
-                getattr(self, f"get_{names[type_]}")(line)
+                getattr(self, f"get_{mappings[type_]}")(line)
 
             elif not self._ignore_code:
                 out.write(line + "\n")

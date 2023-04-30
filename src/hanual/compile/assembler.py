@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from typing import Sequence, Union, Optional
 from .instruction import Instruction
 from .handeler.labels import Label
@@ -14,7 +17,9 @@ class Assembler:
         self._funcs = []
         self._index = 0
 
-    def add_instructions(self, instructions: Union[Sequence[Instruction], Instruction]) -> None:
+    def add_instructions(
+        self, instructions: Union[Sequence[Instruction], Instruction]
+    ) -> None:
         if isinstance(instructions, (tuple, list)):
             self._index += len(instructions)
             self._instructions.extend(instructions)
@@ -35,7 +40,7 @@ class Assembler:
 
     def add_constant(self, value):
         self._consts.add(value)
-        return len(self._consts)-1
+        return len(self._consts) - 1
 
     def add_file_dep(self, name):
         if isinstance(name, (list, tuple)):

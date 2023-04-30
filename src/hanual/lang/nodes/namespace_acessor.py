@@ -2,19 +2,19 @@ from __future__ import annotations
 
 from abc import ABC
 
-from typing import TypeVar, List, Any, Self, Dict
-from hanual.lang.builtin_lexer import Token
-from hanual.compile import Assembler
+from typing import List, Any, Self, Dict, TYPE_CHECKING
 from .base_node import BaseNode
 
-T = TypeVar("T", Token, ...)
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
+    from hanual.lang.builtin_lexer import Token
 
 
 class NamespaceAcessor(BaseNode, ABC):
-    def __init__(self: BaseNode, first: T) -> None:
+    def __init__(self: BaseNode, first: Token) -> None:
         self._path: List[Token] = [first]
 
-    def add_child(self, child: T) -> Self:
+    def add_child(self, child: Token) -> Self:
         self._path.append(child)
         return self
 

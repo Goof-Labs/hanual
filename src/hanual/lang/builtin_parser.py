@@ -34,12 +34,12 @@ def expr(ts: DefaultProduction):
 
 
 @par.rule("NSA ID")
-def namespace_accessor(ts: DefaultProduction[Token]):
+def namespace_accessor(ts: DefaultProduction):
     return NamespaceAcessor(ts[1])
 
 
 @par.rule("ID namespace_accessor")
-def namespace_accessor(ts: DefaultProduction[NamespaceAcessor, Token]):
+def namespace_accessor(ts: DefaultProduction):
     return ts[1].add_child(ts[0])
 
 
@@ -56,7 +56,7 @@ def arg(ts: DefaultProduction):
     "NUM arg",
     "arg arg",
 )
-def arg(ts: DefaultProduction[Any, Arguments]):
+def arg(ts: DefaultProduction):
     return ts[1].add_child(ts[0])
 
 
@@ -90,16 +90,12 @@ def freeze(ts: DefaultProduction):
 
 
 @par.rule("RET ID", unless=["LPAR"])
-def ret(
-    ts: Union[DefaultProduction[Token], DefaultProduction[Token, Token]]
-) -> ReturnStatement:
+def ret(ts: DefaultProduction) -> ReturnStatement:
     return ReturnStatement(ts[1])
 
 
 @par.rule("RET f_call")
-def ret(
-    ts: Union[DefaultProduction[Token], DefaultProduction[Token, Token]]
-) -> ReturnStatement:
+def ret(ts: DefaultProduction) -> ReturnStatement:
     return ReturnStatement(ts[1])
 
 
@@ -184,7 +180,7 @@ def cond_f_call(ts):
         "function_marker END": False,
     },
 )
-def function_definition(ts: DefaultProduction[FunctionCall], hasend: bool):
+def function_definition(ts: DefaultProduction, hasend: bool):
     if hasend is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 
@@ -192,7 +188,7 @@ def function_definition(ts: DefaultProduction[FunctionCall], hasend: bool):
 
 
 @par.rule("USE namespace_accessor")
-def using(ts: DefaultProduction[Token, NamespaceAcessor]):
+def using(ts: DefaultProduction):
     return ts[1]
 
 
@@ -211,7 +207,7 @@ def line(ts):
 
 
 @par.rule("line line", "line lines", "lines line")
-def lines(ts: DefaultProduction[CodeBlock, Any]):
+def lines(ts: DefaultProduction):
     return ts[0].add_child(ts[1])
 
 

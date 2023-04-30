@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 
-from hanual.compile import Assembler
-from hanual.lang.nodes.conditions import Condition
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.nodes.block import CodeBlock
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from hanual.lang.nodes.conditions import Condition
+    from hanual.lang.nodes.block import CodeBlock
+    from hanual.compile import Assembler
 
 
 class WhileStatement(BaseNode):

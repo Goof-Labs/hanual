@@ -4,7 +4,7 @@ from colorama import init, Fore
 from sys import exit
 
 
-def iota():
+def iota() -> int:
     iota.i += 1
     return iota.i
 

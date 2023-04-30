@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Generator, Any, Optional, TypeVar
-from .productions import DefaultProduction, P
+from typing import List, Dict, Tuple, Generator, Any, Optional, TypeVar, Type
+from .productions import DefaultProduction
 from .proxy import Proxy
 from .lexer import Token
 import logging
@@ -73,7 +73,7 @@ class PParser:
     def rule(
         self: PParser,
         *rules,
-        prod: Optional[P] = DefaultProduction,
+        prod: Optional[Type] = DefaultProduction,
         types: Optional[Dict[str, T]] = None,
         unless: Optional[List[str]] = (),
     ):

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from abc import ABC
 
-from hanual.compile import Assembler
-from .conditions import Condition
+from typing import Any, TYPE_CHECKING
 from .base_node import BaseNode
 from .block import CodeBlock
-from typing import Any
+
+
+if TYPE_CHECKING:
+    from .conditions import Condition
+    from hanual.compile import Assembler
 
 
 class IfStatement(BaseNode, ABC):
@@ -16,4 +19,3 @@ class IfStatement(BaseNode, ABC):
 
     def compile(self, global_state: Assembler) -> Any:
         raise NotImplementedError
-        return super().compile(global_state)

@@ -47,4 +47,10 @@ class BuiltinWrapper:
             self._parser = parser
 
     def parse(self, src: str, flags: CompilerSettings):
-        ...
+        # TODO prefix
+        whisper = self._preproc.process(
+            src, mappings=flags.mappings, prefix="@", starting_defs=flags.definitions
+        )
+        whisper = self._lexer.tokenize(whisper)
+        whisper = self._parser.parse(whisper)
+        return whisper

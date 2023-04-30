@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from typing import Tuple, TypeVar, Any, Dict
-from hanual.compile import Assembler
+from typing import Tuple, TypeVar, Any, Dict, TYPE_CHECKING
 from abc import ABC, abstractmethod
+
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
 
 
 T = TypeVar("T")

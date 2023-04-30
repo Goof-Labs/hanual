@@ -1,38 +1,36 @@
 from __future__ import annotations
 
 from abc import ABC
-
-from typing import TypeVar, Any, Generic
-from hanual.compile import Assembler
-from hanual.lang.lexer import Token
+from typing import Any, TYPE_CHECKING
 from .base_node import BaseNode
 
-O = TypeVar("O", Token, None)  # Operator
-L = TypeVar("L", Token, Any)  # Left
-R = TypeVar("R", Token, Any)  # Right
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
+    from hanual.lang.lexer import Token
 
 
-class BinOpNode(BaseNode, ABC, Generic[O, L, R]):
+class BinOpNode(BaseNode, ABC):
     __slots__ = "_right", "_left", "_op"
 
-    def __init__(self, op: O, left: L, right: R) -> None:
-        self._right: R = right
-        self._left: L = left
+    def __init__(self, op: Token, left, right) -> None:
+        self._right = right
+        self._left = left
 
-        self._op: O = op
+        self._op = op
 
     @property
-    def left(self) -> L:
+    def left(self):
         """The left property."""
         return self._left
 
     @property
-    def right(self) -> R:
+    def right(self):
         """The right property."""
         return self._right
 
     @property
-    def op(self) -> O:
+    def op(self):
         """The op property."""
         return self._op
 

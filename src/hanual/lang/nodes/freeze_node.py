@@ -2,10 +2,13 @@ from __future__ import annotations
 
 from abc import ABC
 
-from hanual.compile import Assembler
+from typing import TypeVar, Any, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
-from typing import TypeVar, Any
+
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
 
 
 T = TypeVar("T", bound=Token)
@@ -19,7 +22,6 @@ class FreezeNode(BaseNode, ABC):
 
     def compile(self, global_state: Assembler) -> Any:
         raise NotImplementedError
-        return super().compile(global_state)
 
     @property
     def target(self):

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
-from hanual.compile import Assembler
-from hanual.lang.lexer import Token
-from .arguments import Arguments
+from typing import Any, Dict, TYPE_CHECKING
 from .base_node import BaseNode
-from typing import Any, Dict
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
+    from hanual.lang.lexer import Token
+    from .arguments import Arguments
 
 
 class FunctionCall(BaseNode):

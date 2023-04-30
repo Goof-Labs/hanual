@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from typing import Dict, TypeVar, Set, Optional, List
-from .preproc_lexer import Lexer
+from typing import Dict, Set, Optional, List
 from io import StringIO
-
-L = TypeVar("L", bound=Lexer)
 
 
 class PrePeoccesser:

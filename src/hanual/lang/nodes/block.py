@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import List, Union, TypeVar, Any
-from hanual.compile import Assembler
+from typing import List, Union, TypeVar, Any, TYPE_CHECKING
 from .base_node import BaseNode
 from abc import ABC
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
 
 T = TypeVar("T")
 

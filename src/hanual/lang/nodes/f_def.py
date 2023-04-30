@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from hanual.compile import Assembler
-from hanual.lang.lexer import Token
-from .arguments import Arguments
+from typing import Any, Dict, TYPE_CHECKING
 from .base_node import BaseNode
-from .block import CodeBlock
-from typing import Any, Dict
+
+if TYPE_CHECKING:
+    from hanual.lang.lexer import Token
+    from hanual.compile import Assembler
+    from .arguments import Arguments
+    from .block import CodeBlock
 
 
 class FunctionDefinition(BaseNode):

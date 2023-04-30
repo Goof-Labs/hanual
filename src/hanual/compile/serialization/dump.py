@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 
-from hanual.compile.instruction import Instruction
 from hanual.version import major, minor, micro
 from typing import Dict, TypeVar, List, Tuple
 from base64 import b64encode
 from hashlib import sha256
 from io import BytesIO
+
+
+from hanual.compile.instruction import Instruction
 
 HanualObject = TypeVar("HanualObject", int, float, str)
 

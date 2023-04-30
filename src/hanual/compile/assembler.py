@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 
-from typing import Sequence, Union, Optional
+from typing import Sequence, Union, Optional, TYPE_CHECKING
 from .instruction import Instruction
-from .handeler.labels import Label
+from .label import Label
 from .stack import Stack
+
+
+if TYPE_CHECKING:
+    from .instruction import Instruction
 
 
 class Assembler:

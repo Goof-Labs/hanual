@@ -17,8 +17,12 @@ class WhileStatement(BaseNode):
 
     def as_dict(self) -> Dict[str, Any]:
         return {
-            "condition": self._whle.as_dict(),
-            "inner": self._body.as_dict(),
+            "condition": self._whle.as_dict()
+            if hasattr(self._whle, "as_dict")
+            else self._whle,
+            "inner": self._body.as_dict()
+            if hasattr(self._body, "as_dict")
+            else self._body,
         }
 
     def compile(self, global_state: Assembler) -> Any:
@@ -26,4 +30,6 @@ class WhileStatement(BaseNode):
 
         self._body.compile(global_state)
         self._whle.compile(global_state)  # push a true or false to stack
-        global_state.add_instructions(Instruction(InstructionEnum.JEZ, while_start.idx))  # if the while is true we jump
+        global_state.add_instructions(
+            Instruction(InstructionEnum.JEZ, while_start.idx)
+        )  # if the while is true we jump

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from .namespace_acessor import NamespaceAcessor
 from .while_statement import WhileStatement
+from .break_statement import BreakStatement
 from .return_stmt import ReturnStatement
 from .assignment import AssignmentNode
 from .if_statement import IfStatement

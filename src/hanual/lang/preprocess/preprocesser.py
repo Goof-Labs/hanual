@@ -69,11 +69,11 @@ class PrePeoccesser:
                 "if": "if",
             }
 
-        if prefix is None:
-            prefix = self.prefix
+        if not prefix is None:
+            self.prefix = prefix
 
-        if starting_defs is None:
-            starting_defs = self._definitions
+        if not starting_defs is None:
+            [self._definitions.add(n) for n in starting_defs]
 
         out = StringIO()
 

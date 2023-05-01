@@ -33,6 +33,7 @@ class Arguments(BaseNode):
 
         else:
             self._children.append(child)
+
         return self
 
     @property

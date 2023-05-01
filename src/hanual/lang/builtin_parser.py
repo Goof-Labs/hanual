@@ -6,6 +6,7 @@ from hanual.lang.nodes import (
     ReturnStatement,
     AssignmentNode,
     WhileStatement,
+    BreakStatement,
     FunctionCall,
     IfStatement,
     FreezeNode,
@@ -18,7 +19,6 @@ from hanual.lang.nodes import (
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.builtin_lexer import Token
 from hanual.lang.pparser import PParser
-from typing import Any, Union
 
 par = PParser()
 
@@ -57,6 +57,7 @@ def arg(ts: DefaultProduction):
     "arg arg",
 )
 def arg(ts: DefaultProduction):
+    print(ts)
     return ts[1].add_child(ts[0])
 
 
@@ -89,17 +90,51 @@ def freeze(ts: DefaultProduction):
     return FreezeNode(ts[1])
 
 
+@par.rule("RET", unless=["ID"])
+def ret(ts: DefaultProduction):
+    return ReturnStatement(None)
+
+
 @par.rule("RET ID", unless=["LPAR"])
-def ret(ts: DefaultProduction) -> ReturnStatement:
+def ret(ts: DefaultProduction):
     return ReturnStatement(ts[1])
 
 
 @par.rule("RET f_call")
-def ret(ts: DefaultProduction) -> ReturnStatement:
+def ret(ts: DefaultProduction):
     return ReturnStatement(ts[1])
 
 
-@par.rule("ID EL NUM", "ID EL f_call", "ID EL expr", "ID EL ID", "ID EL STR")
+@par.rule("BREAK", unless=["CTX"])
+def break_stmt(ts: DefaultProduction):
+    return BreakStatement(ts[0])
+
+
+@par.rule("BREAK CTX")
+def break_stmt(ts: DefaultProduction):
+    return BreakStatement(ts[0], ts[1])
+
+
+@par.rule(
+    # ID
+    "ID EL f_call",
+    "ID EL expr",
+    "ID EL NUM",
+    "ID EL STR",
+    "ID EL ID",
+    # NUM
+    "NUM EL f_call",
+    "NUM EL expr",
+    "NUM EL NUM",
+    "NUM EL STR",
+    "NUM EL ID",
+    # f_call
+    "f_call EL f_call",
+    "f_call EL expr",
+    "f_call EL NUM",
+    "f_call EL STR",
+    "f_call EL ID",
+)
 def condition(ts: DefaultProduction):
     return Condition(op=ts[1], left=ts[0], right=ts[2])
 
@@ -137,22 +172,33 @@ def if_statement(ts: DefaultProduction, type: int):
 
 
 @par.rule(
-    "WHL condition line END",
-    "WHL condition lines END",
+    "WHL LPAR condition RPAR line END",
+    "WHL LPAR condition RPAR lines END",
     "WHL cond_f_call line END",
     "WHL cond_f_call lines END",
     # no body
-    "WHL condition END",
+    "WHL LPAR condition RPAR END",
     "WHL cond_f_call END",
     types={
-        "WHL condition END": False,
+        "WHL LPAR condition RPAR END": False,
         "WHL cond_f_call END": False,
     },
 )
 def while_stmt(ts: DefaultProduction, no_body: bool = True):
     if no_body:
-        return WhileStatement(ts[1], CodeBlock([]))
-    return WhileStatement(ts[1], ts[2])
+        return WhileStatement(ts[2], CodeBlock([]))
+
+    con = None
+    blk = None
+
+    for t in ts:
+        if isinstance(t, Condition):
+            con = t
+
+        if isinstance(t, CodeBlock):
+            blk = t
+
+    return WhileStatement(condition=con, body=blk)
 
 
 @par.rule("FN f_call")
@@ -172,6 +218,7 @@ def cond_f_call(ts):
     return ts[0]
 
 
+# NO CONTEXT
 @par.rule(
     "function_marker END",
     "function_marker line END",
@@ -179,10 +226,37 @@ def cond_f_call(ts):
     types={
         "function_marker END": False,
     },
+    unless="AS",
 )
 def function_definition(ts: DefaultProduction, hasend: bool):
     if hasend is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
+
+    if not isinstance(ts[1], CodeBlock):
+        return FunctionDefinition(
+            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[1])
+        )
+
+    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
+
+
+# WITH CONTEXT
+@par.rule(
+    "function_marker AS CTX END CTX",
+    "function_marker AS CTX line END CTX",
+    "function_marker AS CTX lines END CTX",
+    types={
+        "function_marker AS CTX END CTX": False,
+    },
+)
+def function_definition(ts: DefaultProduction, hasend: bool):
+    if hasend is False:
+        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
+
+    if not isinstance(ts[1], CodeBlock):
+        return FunctionDefinition(
+            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[1])
+        )
 
     return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
 
@@ -193,14 +267,15 @@ def using(ts: DefaultProduction):
 
 
 @par.rule(
-    "f_call",
-    "assighnment",
-    "if_statement",
-    "freeze",
     "function_definition",
+    "if_statement",
+    "assighnment",
+    "while_stmt",
+    "break_stmt",
+    "freeze",
+    "f_call",
     "using",
     "ret",
-    "while_stmt",
 )
 def line(ts):
     return CodeBlock(ts[0])

@@ -25,7 +25,12 @@ class ReturnStatement(BaseNode, ABC):
                 global_state.add_instructions(Instruction(InstructionEnum.PGC, ident))
 
         else:
-            self._value.compile(global_state)
+            if self._value is None:
+                global_state.add_instructions(Instruction(InstructionEnum.PGA, 0))
+                # push a NULL or ref to a 0
+
+            else:
+                self._value.compile(global_state)
 
     def as_dict(self) -> Dict[str, Any]:
         return {"value": self._value}

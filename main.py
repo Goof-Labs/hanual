@@ -18,12 +18,12 @@ class HanualMainClass:
         self.lexer = HanualLexer()
 
     def run(self, src: str) -> None:
-        whisper = self.preproc.process(src)
+        whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
         whisper = self.clean(whisper)
-        whisper = self.compiler.compile(whisper)
-        pp.pprint(whisper)
+        pp.pprint(whisper.as_dict())
+        # whisper = self.compiler.compile(whisper)
         # pp.pprint(whisper)
 
     def clean(self, res):
@@ -32,4 +32,5 @@ class HanualMainClass:
 
 
 main = HanualMainClass()
-main.run(open(r"D:\programing\hanual\hanual\src\stdlib\io.hnl").read())
+main.run("print(1, 2, 3, 4, 5, 6, 7)")
+# (open(r"D:\programing\hanual\hanual\src\stdlib\io.hnl").read())

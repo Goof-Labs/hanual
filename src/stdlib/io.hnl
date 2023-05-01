@@ -34,7 +34,7 @@ fn input()
     let str = ""
     let char = ""
 
-    while char != "\n"
+    while (char != "\n")
         str_cat(str, char)
     end
 

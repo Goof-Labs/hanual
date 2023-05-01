@@ -16,7 +16,7 @@ class HanualLexer(Lexer):
         ("ITR", kw("iter")),
         ("WHL", kw("while")),
         ("FOR", kw("for")),
-        ("LOOP", kw("LOOP")),
+        ("LOOP", kw("loop")),
         ("BREAK", kw("break")),
         ("FREEZE", kw("freeze")),
         ("RET", kw("return")),

@@ -1,0 +1,13 @@
+@nif __inc_rand__
+
+@def __inc_rand__
+
+use std::extern::rand::rand
+use std::string
+use std::math
+
+fn rand_flt()
+    return rand()
+end
+
+@end

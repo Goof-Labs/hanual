@@ -45,6 +45,7 @@ class Arguments(BaseNode):
         return self._function_def
 
     def compile(self, global_state: Assembler) -> Any:
+        # function definitions and calling is handeled differently by args
         if self._function_def:
             for name in self._children:
                 assert isinstance(name, Token)
@@ -56,9 +57,29 @@ class Arguments(BaseNode):
                     idx = global_state.add_constant(name.value)
                     global_state.add_instructions(Instruction(InstructionEnum.PGC, idx))
 
+        # calling
         else:
-            # TODO THIS
-            pass
+            for obj in self.children:
+                if hasattr(obj, "compile"):
+                    obj.compile(global_state)
+
+                elif isinstance(obj, Token):
+                    # variable ID
+                    if obj.type == "ID":
+                        global_state.pull_value(obj.value)
+
+                    elif obj.type in ("NUM", "STR"):
+                        val = global_state.add_constant(obj)
+
+                        global_state.add_instructions(
+                            Instruction(InstructionEnum.PGC, val)
+                        )
+
+                    else:
+                        raise ValueError(f"{val} is unsupported")
+
+                else:
+                    raise ValueError(f"{obj} is unsupported")
 
     def as_dict(self) -> Dict[str, Any]:
         return {

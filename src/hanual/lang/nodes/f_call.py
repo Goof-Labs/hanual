@@ -39,7 +39,10 @@ class FunctionCall(BaseNode):
         else:
             global_state.add_instructions(Instruction(InstructionEnum.PKN, n_children))
 
-        global_state.add_instructions(Instruction(InstructionEnum.PGA, self._name.value))  # push function reference
+        fn_addr = global_state.add_reference(self._name.value)
+        global_state.add_instructions(
+            Instruction(InstructionEnum.PGA, fn_addr)
+        )  # push function reference
         global_state.add_instructions(Instruction(InstructionEnum.CAL))  # call function
 
     @property

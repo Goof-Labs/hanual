@@ -20,7 +20,7 @@ class HanualFileSerializer:
 
         consts_pool.write(len(constants).to_bytes(length=1, byteorder="big"))
 
-        consts_pool.write(b"\x00\x00\x00")
+        consts_pool.write(b"\x00\x00")
         for const in constants:
 
             if isinstance(const, int):
@@ -39,7 +39,7 @@ class HanualFileSerializer:
                 for char in const:
                     consts_pool.write(ord(char).to_bytes(length=1, byteorder="big"))
 
-        consts_pool.write(b"\x00\x00\x00\x00")
+        consts_pool.write(b"\x00\x00")
 
         return consts_pool.getvalue()
 
@@ -66,12 +66,12 @@ class HanualFileSerializer:
         buffer = BytesIO()
 
         buffer.write(HanualFileSerializer.create_header(src))
-        buffer.write(HanualFileSerializer.serialize_constants(data[0]["consts"]))
+        buffer.write(HanualFileSerializer.serialize_constants(data[1]["consts"]))
 
-        for instruction in data[1]:
+        for instruction in data[0]:
             buffer.write(instruction.opcode.to_bytes(byteorder="big"))
 
-            if instruction.next is not None:
+            if not (instruction.next is None):
                 buffer.write(instruction.next.to_bytes(byteorder="big"))
 
         return buffer.getvalue()

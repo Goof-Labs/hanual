@@ -56,18 +56,16 @@ class PrePeoccesser:
     def process(
         self,
         text: str,
-        mappings: Optional[Dict[str, str]] = None,
         prefix: Optional[str] = None,
         starting_defs: Optional[List[str]] = None,
     ) -> str:
-        if mappings is None:
-            mappings: Dict[str, str] = {  # TODO: make this modifiable too
-                "def": "def",
-                "mcr": "mcr",
-                "end": "end",
-                "nif": "nif",
-                "if": "if",
-            }
+        mappings: Dict[str, str] = {  # TODO: make this modifiable too
+            "def": "def",
+            "mcr": "mcr",
+            "end": "end",
+            "nif": "nif",
+            "if": "if",
+        }
 
         if not prefix is None:
             self.prefix = prefix
@@ -86,7 +84,7 @@ class PrePeoccesser:
                         type_ = pos
 
                 if type_ is None:
-                    raise ValueError("'%s' is not a pre processer", (line,))
+                    raise ValueError(f"{line!r} is not a pre processer")
 
                 # get class function
                 getattr(self, f"get_{mappings[type_]}")(line)

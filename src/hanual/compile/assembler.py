@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import Sequence, Union, Optional, TYPE_CHECKING
 from .label import Label
-from .stack import Stack
 
 
 if TYPE_CHECKING:
@@ -12,6 +11,8 @@ if TYPE_CHECKING:
 
 class Assembler:
     def __init__(self):
+        from .stack import Stack
+
         self._instructions = []
         self._file_deps = set()
         self._consts = set()

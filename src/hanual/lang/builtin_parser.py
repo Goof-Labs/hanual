@@ -57,7 +57,6 @@ def arg(ts: DefaultProduction):
     "arg arg",
 )
 def arg(ts: DefaultProduction):
-    print(ts)
     return ts[1].add_child(ts[0])
 
 

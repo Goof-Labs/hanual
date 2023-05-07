@@ -1,7 +1,6 @@
 #include <stdint.h>
+#include <iostream>
 #include <sstream>
-#include <memory>
-#include <vector>
 
 namespace Hanual
 {
@@ -9,16 +8,17 @@ namespace Hanual
     {
     private:
         void *value; // read only
+        uint8_t type;
 
         // all these functions discard the first byte this is because
         // the type is still passed to the function
-        void intFromBytes(uint8_t bytes[], uint16_t length)
+        void intFromBytes(uint8_t bytes[])
         {
             /* Intagers in the constant pool can be a maximum of 255 for some reason so this makes our life easier */
             this->value = (void *)(&bytes[1]);
         }
 
-        void strFromBytes(uint8_t bytes[], uint16_t length)
+        void strFromBytes(uint8_t bytes[])
         {
             std::stringstream bffr;
 
@@ -33,7 +33,7 @@ namespace Hanual
             this->value = (void *)bffr.str().c_str();
         }
 
-        void fltFromBytes(uint8_t bytes[], uint16_t length)
+        void fltFromBytes(uint8_t bytes[])
         {
             uint8_t denom = bytes[1];
             uint8_t numer = bytes[2];
@@ -41,31 +41,33 @@ namespace Hanual
         }
 
     public:
-        HanualConstant(uint8_t bytes[], uint16_t length)
+        HanualConstant(char bytes[1024])
         {
             switch (bytes[0])
             {
             case (0x00):
-                intFromBytes(bytes, length);
+                intFromBytes((unsigned char *)&bytes);
+                type = 0;
                 break;
 
             case (0x01):
-                strFromBytes(bytes, length);
+                strFromBytes((unsigned char *)&bytes);
+                type = 1;
                 break;
 
             case (0x02):
-                fltFromBytes(bytes, length);
+                fltFromBytes((unsigned char *)&bytes);
+                type = 2;
                 break;
 
             default:
                 break;
             };
         }
-    };
 
-    std::vector<HanualConstant> constantsFromBytes(uint8_t bytes[], uint8_t num)
-    {
-        std::vector<HanualConstant>
-            vec;
-    }
+        void print()
+        {
+            std::cout << "TYPE:" << type + 0 << "\n";
+        }
+    };
 } // namespace Hanual

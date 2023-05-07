@@ -49,6 +49,32 @@ namespace Hanual
             vMicro = (uint8_t)versionBuffer[0];
         }
 
+        void parseConstants(FILE *fh)
+        {
+            unsigned char numConsts[1];
+            fread(numConsts, 1, 1, fh);
+            fread(NULL, 1, 1, fh); // ignore padding byte
+
+            unsigned char byte;
+            char buffer[1024];
+            uint32_t cidx = 0; // index of where we want to put the buffer
+
+            for (uint8_t i = 0; i <= (uint8_t)*numConsts; i++, cidx++)
+            {
+                fread(&byte, 1, 1, fh);
+
+                buffer[cidx] = byte;
+
+                if ((int)byte == 0)
+                {
+                    consts.push_back(Hanual::HanualConstant(buffer));
+
+                    for (int i = 0; i < 1024; i++) // clear the buffer
+                        buffer[i] = 0;
+                }
+            }
+        }
+
     public:
         HanualFile(const char *fp)
         {
@@ -56,6 +82,7 @@ namespace Hanual
             fh = fopen(fp, "rb");
 
             parseHeader(fh);
+            parseConstants(fh);
 
             fclose(fh);
         }
@@ -79,6 +106,11 @@ namespace Hanual
             std::cout << "vMajor:" << this->vMajor + 0 << std::endl;
             std::cout << "vMinor:" << this->vMinor + 0 << std::endl;
             std::cout << "vMicro:" << this->vMicro + 0 << std::endl;
+
+            for (unsigned int i = 0; i < consts.size(); i++)
+            {
+                consts[i].print();
+            }
         }
     };
 }

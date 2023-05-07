@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from multipledispatch import dispatch
 from colorama import init, Fore
+from typing import NoReturn
 from sys import exit
 
 
@@ -23,7 +25,7 @@ class Error:
         col: int,
         explain: str,
         stage: str = None,
-    ) -> None:
+    ) -> NoReturn:
         init(autoreset=True)
 
         code = sample_code.strip(" ")
@@ -41,6 +43,27 @@ class Error:
         print(explain)
         print(f"ERROR CODE : {self.id}")
 
+        exit()
+
+
+class HanualRuntimeError(Error):
+    in_code: bool
+
+    @dispatch(str, int, int, str, str)
+    def be_raised(
+        self: HanualRuntimeError,
+        sample_code: str,
+        line: int,
+        col: int,
+        explain: str,
+        stage: str = None,
+    ) -> NoReturn:
+        super().be_raised(sample_code, line, col, explain, stage)
+
+    @dispatch(str)
+    def be_raised(self: HanualRuntimeError, explain: str) -> NoReturn:
+        init(autoreset=True)
+        print(f"{Fore.RED}{self.stage}-ERROR: {type(self).__name__} , {explain}")
         exit()
 
 
@@ -87,4 +110,45 @@ class NameNotFoundError(Error):
     
     This error has been caused by a name not being found, to fix this you will want to fix the outlined name
     because you may have made a typo.
+    """
+
+
+class ProjectTomlNotFound(HanualRuntimeError):
+    id = iota()
+
+    stage = "exploring"
+
+    """
+    Overview: You need a 'project.toml' file in your directory.
+    
+    ::Details::
+    ===========
+    
+    You need a project.toml file in your folder, this is required for a project and provides all settings
+    for a project.
+    
+    ::Fix This::
+    ============
+    
+    you will need to create a project.toml file in the directory with all the source code.
+    """
+
+
+class TomlNameNotFound(HanualRuntimeError):
+    id = iota()
+
+    stage = "exploring"
+
+    """
+    Overview: Toml file is missing a key.
+    
+    ::Details::
+    ===========
+    
+    This error is raised when there is a name missing from the project.toml file.
+    
+    ::Fix This::
+    ============
+    
+    You will need to add the name to the toml file.
     """

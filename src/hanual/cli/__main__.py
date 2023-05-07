@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.lang.errors import TomlNameNotFound, ProjectTomlNotFound
 from typing import NamedTuple, List, Dict
 from pprint import pprint
 from tomllib import load
@@ -19,8 +20,14 @@ class CompilerSettings(NamedTuple):
 if __name__ == "__main__":
     from hanual.lang.builtin_wrapper import BuiltinWrapper
 
-    with open("project.toml", "rb") as f:
-        data = load(f)
+    try:
+        with open("project.toml", "rb") as f:
+            data = load(f)
+
+    except FileNotFoundError:
+        ProjectTomlNotFound().be_raised()
+
+    try:
         settings = CompilerSettings(
             definitions=data["predefs"]["predefinitions"],
             packall=data["target"]["packall"],
@@ -31,6 +38,8 @@ if __name__ == "__main__":
             main=data["entery"],
             file=data["file"],
         )
+    except KeyError as e:
+        TomlNameNotFound().be_raised(f"Expected name {e} couldn't find it")
 
     bw = BuiltinWrapper()
 

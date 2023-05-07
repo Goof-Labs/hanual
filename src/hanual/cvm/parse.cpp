@@ -5,6 +5,7 @@
 #include "constants.cpp"
 #include <stdint.h>
 #include <stdlib.h>
+#include <iostream>
 #include <stdio.h>
 #include <vector>
 
@@ -39,13 +40,13 @@ namespace Hanual
             char versionBuffer[1];
 
             fread(versionBuffer, 1, 1, fh);
-            vMajor = (char)versionBuffer[0];
+            vMajor = (uint8_t)versionBuffer[0];
 
             fread(versionBuffer, 1, 1, fh);
-            vMinor = (char)versionBuffer[0];
+            vMinor = (uint8_t)versionBuffer[0];
 
             fread(versionBuffer, 1, 1, fh);
-            vMicro = (char)versionBuffer[0];
+            vMicro = (uint8_t)versionBuffer[0];
         }
 
     public:
@@ -58,6 +59,28 @@ namespace Hanual
 
             fclose(fh);
         }
+
+        void print()
+        {
+            std::cout << "MAGIC-NUM:";
+
+            for (uint8_t i = 0; i < 4; i++)
+                std::cout << this->magicNumber[i];
+
+            std::cout << std::endl;
+
+            std::cout << "CHECK-SUM:";
+
+            for (uint8_t i = 0; i < 44; i++)
+                std::cout << this->checkSum[i];
+
+            std::cout << std::endl;
+
+            std::cout << "vMajor:" << this->vMajor + 0 << std::endl;
+            std::cout << "vMinor:" << this->vMinor + 0 << std::endl;
+            std::cout << "vMicro:" << this->vMicro + 0 << std::endl;
+        }
     };
 }
+
 #endif

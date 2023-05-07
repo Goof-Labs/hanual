@@ -30,9 +30,8 @@ class HanualFileSerializer:
             elif isinstance(const, float):
                 consts_pool.write(b"\x01")
                 ratio = const.as_integer_ratio()  # this is a fraction
-                consts_pool.write(ratio[0])
-                consts_pool.write(b"\x00")
-                consts_pool.write(ratio[1])
+                consts_pool.write(ratio[0].to_bytes(byteorder="big"))
+                consts_pool.write(ratio[1].to_bytes(byteorder="big"))
 
             elif isinstance(const, str):
                 consts_pool.write(b"\x02")

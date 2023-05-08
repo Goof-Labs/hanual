@@ -1,0 +1,20 @@
+Here are the levels of completeness
+[ ] not done
+[*] working on it
+[#] done
+[-] not implemented
+[=] means implementation problems or not prod ready
+
+[|]
+
+Also after the right square bracket put the first letter of your github
+username so we know who is working on what.
+
+[-]0 Standard libruarry
+[=]0 Ranges
+[ ]0 Anonemous functions
+[ ]0 Make baseic lib
+
+[ ]C Parse Hanual bytecode
+[ ]C Make a Hanual object struct
+[ ]C Implement language

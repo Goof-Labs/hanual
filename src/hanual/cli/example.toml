@@ -14,8 +14,8 @@ predefinitions=[]
 [packets]
 
 [warnif]
-macro_substitution=false
-shout_kw=false
+macrosubstitution=false
+shoutkw=false
 
 [target]
 target='bundle'

@@ -14,6 +14,7 @@ from hanual.lang.nodes import (
     Condition,
     CodeBlock,
     Arguments,
+    RangeNode,
 )
 
 from hanual.lang.productions import DefaultProduction
@@ -263,6 +264,26 @@ def function_definition(ts: DefaultProduction, hasend: bool):
 @par.rule("USE namespace_accessor")
 def using(ts: DefaultProduction):
     return ts[1]
+
+
+@par.rule(
+    # open ended
+    "NUM DOT DOT",
+    "ID DOT DOT",
+    unless=["ID", "NUM"],
+)
+def hrange(ts: DefaultProduction):
+    return RangeNode(from_=ts, to_=None)
+
+
+@par.rule(
+    "NUM DOT DOT NUM",
+    "NUM DOT DOT ID",
+    "ID DOT DOT ID",
+    "ID DOT DOT NUM",
+)
+def hrange(ts: DefaultProduction):
+    return RangeNode(from_=ts, to_=ts[3])
 
 
 @par.rule(

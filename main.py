@@ -17,13 +17,13 @@ class HanualMainClass:
         self.parser = get_parser()
         self.lexer = HanualLexer()
 
-    def run(self, src: str) -> None:
+    def run(self, src: str) -> CodeBlock:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
-        whisper = self.clean(whisper)
-        whisper = self.compiler.compile(whisper)
-        whisper = self.dump.dump(whisper, src)
+        # whisper = self.clean(whisper)
+        # whisper = self.compiler.compile(whisper)
+        # whisper = self.dump.dump(whisper, src)
         return whisper
 
     def clean(self, res):
@@ -32,5 +32,9 @@ class HanualMainClass:
 
 
 main = HanualMainClass()
-with open("test.txt", "wb") as f:
-    f.write(main.run("print('Hello world')"))
+
+res = main.run("print(1..)")
+pp.pprint(res)
+
+for i in res:
+    pp.pprint(i.as_dict())

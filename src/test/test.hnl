@@ -1,0 +1,3 @@
+fn main()
+    let gen = map(1..)
+end

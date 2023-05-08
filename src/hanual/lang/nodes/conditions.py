@@ -47,10 +47,12 @@ class Condition(BaseNode, ABC):
             assert hasattr(self._right, "compile")
             self._right.compile(global_state)
 
-        op_id = global_state.add_function(self._op.value)  # one of +-/*% and yes these are functions now
+        op_id = global_state.add_function(
+            self._op.value
+        )  # one of +-/*% and yes these are functions now
 
         global_state.add_instructions(Instruction(InstructionEnum.PK2))
-        global_state.add_instructions(Instruction(InstructionEnum.PGA, op_id))
+        global_state.add_instructions(Instruction(InstructionEnum.PGA, op_id))  # <<<<<
         global_state.add_instructions(Instruction(InstructionEnum.CAL))
 
     def as_dict(self) -> Dict[str, Any]:

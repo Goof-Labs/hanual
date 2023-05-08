@@ -30,9 +30,10 @@ class HanualLexer(Lexer):
         ("LPAR", rx(r"\(")),
         ("RPAR", rx(r"\)")),
         ("OP", rx(r"[\+\-\\\*]")),
-        ("NUM", rx(r"\d+(\.\d*)?")),
+        ("NUM", rx(r"\d+(\.\d+)?")),
         ("COM", rx(r"\,")),
         ("NSA", rx(r"\:\:")),  # name space access
+        ("DOT", rx(r"\.")),
         # special cases
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+|//.*")),

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.lang.errors import TomlNameNotFound, ProjectTomlNotFound
+from hanual.lang.errors import ProjectTomlNotFound
 from typing import NamedTuple, List, Dict
 from pprint import pprint
 from tomllib import load
@@ -20,26 +20,49 @@ class CompilerSettings(NamedTuple):
 if __name__ == "__main__":
     from hanual.lang.builtin_wrapper import BuiltinWrapper
 
+    default = {
+        "name": "hello_world",
+        "entery": "main",
+        "preprocessers": {
+            "prefix": "@",
+            "nif": "nif",
+            "end": "end",
+            "def": "def",
+            "if": "if",
+        },
+        "predefs": {
+            "predefinitions": [],
+        },
+        "packets": {
+            "std": "@latest",
+        },
+        "warnif": {
+            "macro_substitution": False,
+            "shoutkw": False,
+        },
+        "target": {
+            "target": "bundle",
+            "packall": False,
+        },
+    }
+
     try:
         with open("project.toml", "rb") as f:
-            data = load(f)
+            data = {**load(f), **default}
 
     except FileNotFoundError:
         ProjectTomlNotFound().be_raised()
 
-    try:
-        settings = CompilerSettings(
-            definitions=data["predefs"]["predefinitions"],
-            packall=data["target"]["packall"],
-            target=data["target"]["target"],
-            mappings=data["preprocessers"],
-            packeages=data["packets"],
-            name=data["name"],
-            main=data["entery"],
-            file=data["file"],
-        )
-    except KeyError as e:
-        TomlNameNotFound().be_raised(f"Expected name {e} couldn't find it")
+    settings = CompilerSettings(
+        definitions=data["predefs"]["predefinitions"],
+        packall=data["target"]["packall"],
+        target=data["target"]["target"],
+        mappings=data["preprocessers"],
+        packeages=data["packets"],
+        name=data["name"],
+        main=data["entery"],
+        file=data["file"],
+    )
 
     bw = BuiltinWrapper()
 

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from hanual.lang.nodes import (
+    AlgebraicExpression,
     FunctionDefinition,
     NamespaceAcessor,
     ReturnStatement,
     AssignmentNode,
     WhileStatement,
     BreakStatement,
+    AlgebraicFunc,
     FunctionCall,
     IfStatement,
     FreezeNode,
@@ -80,7 +82,35 @@ def f_call(ts: DefaultProduction, no_args: bool):
     return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 
 
-@par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR")
+@par.rule(
+    # ALG
+    "ALG op ALG",
+    "ALG op NUM",
+    "ALG op expr",
+    "ALG op algebraic_fn",
+    # NUM
+    "NUM op ALG",
+    "NUM op algebraic_fn",
+    # algebraic_fn
+    "algebraic_fn op ALG",
+    "algebraic_fn op NUM",
+    "algebraic_fn OP algebraic_fn",
+    "algebraic_fn op expr",
+    # expr
+    "expr op ALG",
+    "expr op NUM",
+    "expr OP algebraic_fn",
+)
+def algebraic_fn(ts: DefaultProduction):
+    return AlgebraicExpression(operator=ts[1], left=ts[0], right=ts[2])
+
+
+@par.rule(
+    "LET ID EQ NUM",
+    "LET ID EQ f_call",
+    "LET ID EQ STR",
+    "LET ID EL algebraic_fn",
+)
 def assighnment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 

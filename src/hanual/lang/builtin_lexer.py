@@ -6,10 +6,12 @@ from .lexer import Lexer, rx, kw, Token
 
 class HanualLexer(Lexer):
     rules = [
+        # NAMES
         ("CTX", rx(r"\$[a-zA-Z_][a-zA-Z0-9_]*")),
         ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
-        ("SHOUT", kw("SHOUT")),
+        ("ADT", rx(r"\\[a-zA-Z0-9_]+")),  # algebraic datatype \name
         # KEYWORDS
+        ("SHOUT", kw("SHOUT")),
         ("FN", kw("fn")),
         ("AS", kw("as")),
         ("IF", kw("if")),

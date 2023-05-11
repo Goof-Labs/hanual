@@ -35,8 +35,11 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-let double = \x * 2
-"""
+fn say_hello(name)
+    print(strcat("Hello ",name))
+//    SHOUT
+//end
+    """
 )
 pp.pprint(res)
 pp.pprint(res.as_dict())

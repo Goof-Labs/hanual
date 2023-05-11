@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from abc import ABC
 
-from typing import List, Any, Self, Dict, TYPE_CHECKING
+from typing import List, Any, Dict, TYPE_CHECKING
+from typing_extensions import Self
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

@@ -21,7 +21,7 @@ to instantiate it will just return an already made instance.
 10
 """
 
-from typing import Self
+from typing_extensions import Self
 
 
 class Singleton:

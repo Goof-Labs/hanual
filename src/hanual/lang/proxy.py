@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import Self, Callable, Any, Dict, Type, Union, Sequence, Optional
+from typing import Callable, Any, Dict, Type, Union, Sequence, Optional
 from .productions import DefaultProduction, P
+from typing_extensions import Self
 
 """
 This is a proxy class that wraps around a function, I

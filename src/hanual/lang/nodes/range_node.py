@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
-from typing import Any, Dict, Self, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing_extensions import Self
 from .base_node import BaseNode
 
 

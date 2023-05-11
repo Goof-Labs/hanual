@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from multipledispatch import dispatch
 from colorama import init, Fore
 from typing import NoReturn
 from sys import exit
@@ -49,7 +48,6 @@ class Error:
 class HanualRuntimeError(Error):
     in_code: bool
 
-    @dispatch(str, int, int, str, str)
     def be_raised(
         self: HanualRuntimeError,
         sample_code: str,
@@ -60,8 +58,7 @@ class HanualRuntimeError(Error):
     ) -> NoReturn:
         super().be_raised(sample_code, line, col, explain, stage)
 
-    @dispatch(str)
-    def be_raised(self: HanualRuntimeError, explain: str) -> NoReturn:
+    def be_raised_runtime(self: HanualRuntimeError, explain: str) -> NoReturn:
         init(autoreset=True)
         print(f"{Fore.RED}{self.stage}-ERROR: {type(self).__name__} , {explain}")
         exit()

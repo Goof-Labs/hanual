@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Tuple, TypeVar, Any, Dict, TYPE_CHECKING
+from typing import Union, Tuple, TypeVar, Any, Dict, TYPE_CHECKING
+from hanual.lang.builtin_lexer import Token
 from abc import ABC, abstractmethod
 
 
@@ -40,3 +41,7 @@ class BaseNode(ABC):
         efficiently.
         """
         raise NotImplementedError
+
+    def get_repr(self, o: T) -> Union[Dict, Token]:
+        # Just a convenience function that will call as_dict if it exists
+        return o.as_dict() if hasattr(o, "as_dict") else o

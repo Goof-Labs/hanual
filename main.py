@@ -21,7 +21,7 @@ class HanualMainClass:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
-        # whisper = self.clean(whisper)
+        whisper = self.clean(whisper)
         # whisper = self.compiler.compile(whisper)
         # whisper = self.dump.dump(whisper, src)
         return whisper
@@ -35,7 +35,8 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-hypotinuse = \x ** 2 + \y ** 2
+let double = \x * 2
 """
 )
 pp.pprint(res)
+pp.pprint(res.as_dict())

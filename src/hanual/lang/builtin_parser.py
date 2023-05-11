@@ -84,32 +84,36 @@ def f_call(ts: DefaultProduction, no_args: bool):
 
 @par.rule(
     # ALG
-    "ALG op ALG",
-    "ALG op NUM",
-    "ALG op expr",
-    "ALG op algebraic_fn",
+    "ADT OP ADT",
+    "ADT OP NUM",
+    "ADT OP expr",
+    "ADT OP algebraic_op",
     # NUM
-    "NUM op ALG",
-    "NUM op algebraic_fn",
-    # algebraic_fn
-    "algebraic_fn op ALG",
-    "algebraic_fn op NUM",
-    "algebraic_fn OP algebraic_fn",
-    "algebraic_fn op expr",
+    "NUM OP ADT",
+    "NUM OP algebraic_op",
+    # algebraic_op
+    "algebraic_op OP ADT",
+    "algebraic_op OP NUM",
+    "algebraic_op OP algebraic_op",
+    "algebraic_op OP expr",
     # expr
-    "expr op ALG",
-    "expr op NUM",
-    "expr OP algebraic_fn",
+    "expr OP ADT",
+    "expr OP NUM",
+    "expr OP algebraic_op",
 )
-def algebraic_fn(ts: DefaultProduction):
+def algebraic_op(ts: DefaultProduction):
     return AlgebraicExpression(operator=ts[1], left=ts[0], right=ts[2])
+
+
+@par.rule("LET ID EQ algebraic_op")
+def algebraic_fn(ts):
+    return AlgebraicFunc(ts[1], ts[3])
 
 
 @par.rule(
     "LET ID EQ NUM",
     "LET ID EQ f_call",
     "LET ID EQ STR",
-    "LET ID EL algebraic_fn",
 )
 def assighnment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])

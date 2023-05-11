@@ -1,1 +1,6 @@
+@nif __inc_sys___
+@def __inc_sys___
+
 let version = array(0, 0, 0)
+
+@end

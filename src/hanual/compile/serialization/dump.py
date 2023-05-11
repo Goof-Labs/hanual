@@ -1,41 +1,41 @@
 from __future__ import annotations
 
 
+from hanual.compile.instruction import Instruction
 from hanual.version import major, minor, micro
 from typing import Dict, TypeVar, List, Tuple
+from hanual.lang.lexer import Token
 from base64 import b64encode
 from hashlib import sha256
 from io import BytesIO
-
-
-from hanual.compile.instruction import Instruction
 
 HanualObject = TypeVar("HanualObject", int, float, str)
 
 
 class HanualFileSerializer:
     @staticmethod
-    def serialize_constants(constants: List[HanualObject]):
+    def serialize_constants(constants: List[Token]):
         consts_pool = BytesIO()
 
         consts_pool.write(len(constants).to_bytes(length=1, byteorder="big"))
         consts_pool.write(b"\x00\x00")
 
         for const in constants:
-            if isinstance(const, int):
-                consts_pool.write(b"\x01")
-                consts_pool.write(const.to_bytes(length=1, byteorder="big"))
+            if const.type == "NUM": # NUMBERS
+                if isinstance(const.value, int):
+                    consts_pool.write(b"\x01")
+                    consts_pool.write(const.value.to_bytes(length=1, byteorder="big"))
 
-            elif isinstance(const, float):
-                consts_pool.write(b"\x02")
-                ratio = const.as_integer_ratio()  # this is a fraction
-                consts_pool.write(ratio[0].to_bytes(length=1, byteorder="big"))
-                consts_pool.write(ratio[1].to_bytes(length=1, byteorder="big"))
+                elif isinstance(const.value, float):
+                    consts_pool.write(b"\x02")
+                    ratio = const.value.as_integer_ratio()  # this is a fraction
+                    consts_pool.write(ratio[0].to_bytes(length=1, byteorder="big"))
+                    consts_pool.write(ratio[1].to_bytes(length=1, byteorder="big"))
 
-            elif isinstance(const, str):
+            elif const.type == "STR":
                 consts_pool.write(b"\x03")
 
-                for char in const:
+                for char in const.value:
                     consts_pool.write(ord(char).to_bytes(length=1, byteorder="big"))
 
         consts_pool.write(b"\x00\x00")
@@ -65,6 +65,7 @@ class HanualFileSerializer:
         buffer = BytesIO()
 
         buffer.write(HanualFileSerializer.create_header(src))
+        print(data[1])
         buffer.write(HanualFileSerializer.serialize_constants(data[1]["consts"]))
 
         for instruction in data[0]:

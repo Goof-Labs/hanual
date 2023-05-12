@@ -44,7 +44,8 @@ class Assembler:
 
     def add_constant(self, value) -> int:
         self._consts.add(value)
-        return len(self._consts) - 1
+
+        return list(self._consts).index(value)
 
     def add_file_dep(self, name):
         if isinstance(name, (list, tuple)):
@@ -55,6 +56,7 @@ class Assembler:
 
     def add_reference(self, name):
         self._refs.add(name)
+        return list(self._refs).index(name)
 
     def add_function(self, name):
         self._funcs.append(name)

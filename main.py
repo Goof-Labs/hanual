@@ -23,7 +23,7 @@ class HanualMainClass:
         whisper = self.parser.parse(whisper)
         whisper = self.clean(whisper)
         whisper = self.compiler.compile(whisper)
-        whisper = self.dump.dump(whisper, src)
+        # whisper = self.dump.dump(whisper, src)
         return whisper
 
     def clean(self, res):
@@ -39,5 +39,5 @@ print("Hello world")    """
 )
 with open("test.txt", "wb") as f:
     f.write(res)
-#pp.pprint(res)
-#pp.pprint(res.as_dict())
+# pp.pprint(res)
+# pp.pprint(res.as_dict())

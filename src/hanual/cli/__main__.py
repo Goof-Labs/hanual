@@ -69,5 +69,5 @@ if __name__ == "__main__":
     with open(settings.file, "r") as f:
         ast = bw.parse(f.read(), settings)
 
-        for line in ast:
-            pprint(line.as_dict(), indent=2, width=100)
+        pprint(ast)
+        pprint(ast[0].as_dict())

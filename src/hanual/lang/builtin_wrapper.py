@@ -65,5 +65,8 @@ class BuiltinWrapper:
             src, prefix="@", starting_defs=flags.definitions
         )
         whisper = self._lexer.tokenize(whisper)
+        
+        self._parser.toggle_debug_messages(True)
+        
         whisper = self._parser.parse(whisper)
         return whisper

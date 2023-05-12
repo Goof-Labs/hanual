@@ -114,8 +114,17 @@ def algebraic_fn(ts):
     "LET ID EQ NUM",
     "LET ID EQ f_call",
     "LET ID EQ STR",
+    unless=["DOT"]
 )
 def assighnment(ts: DefaultProduction):
+    return AssignmentNode(target=ts[1], value=ts[3])
+
+@par.rule(
+    "LET ID EQ hrange",
+    #unless=["DOT"]
+)
+def assighnment(ts: DefaultProduction):
+    print("HERE")
     return AssignmentNode(target=ts[1], value=ts[3])
 
 
@@ -304,20 +313,19 @@ def using(ts: DefaultProduction):
     # open ended
     "NUM DOT DOT",
     "ID DOT DOT",
-    unless=["ID", "NUM"],
 )
 def hrange(ts: DefaultProduction):
     return RangeNode(from_=ts, to_=None)
 
 
-@par.rule(
-    "NUM DOT DOT NUM",
-    "NUM DOT DOT ID",
-    "ID DOT DOT ID",
-    "ID DOT DOT NUM",
-)
-def hrange(ts: DefaultProduction):
-    return RangeNode(from_=ts, to_=ts[3])
+#@par.rule(
+#    "NUM DOT DOT NUM",
+#    "NUM DOT DOT ID",
+#    "ID DOT DOT ID",
+#    "ID DOT DOT NUM",
+#)
+#def hrange(ts: DefaultProduction):
+#    return RangeNode(from_=ts, to_=ts[3])
 
 
 @par.rule(

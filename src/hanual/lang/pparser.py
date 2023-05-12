@@ -122,6 +122,7 @@ class PParser:
     def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
         pattern = []
         t_stack = []
+        last = None
 
         while True:
             token: Token = next(stream, None)
@@ -142,14 +143,13 @@ class PParser:
                 if len(glob_pattern) < len(rule_pattern):
                     continue
 
-                depth = 0
                 for depth, (r, g) in enumerate(zip(rule_pattern, glob_pattern)):
                     if r != g:
                         break
 
                 else:
                     # If the pattern does not want to appear if a following type of token is after it then we just move on to the next
-                    if not token is None and token.type in prox.unless:
+                    if not (token is None) and token.type in prox.unless:
                         continue
 
                     if self.debug:
@@ -168,10 +168,13 @@ class PParser:
                     pattern.append(reducer)
                     t_stack.append(prox.call(args, arg_pattern))
 
-            if not token:
+            if not token and last == pattern:
                 break
 
-            pattern.append(token.type)
-            t_stack.append(token)
+            last = pattern.copy()
+            
+            if not (token is None):
+                pattern.append(token.type)
+                t_stack.append(token)
 
         return t_stack

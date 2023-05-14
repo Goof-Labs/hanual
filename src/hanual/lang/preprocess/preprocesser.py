@@ -61,7 +61,6 @@ class PrePeoccesser:
     ) -> str:
         mappings: Dict[str, str] = {  # TODO: make this modifiable too
             "def": "def",
-            "mcr": "mcr",
             "end": "end",
             "nif": "nif",
             "if": "if",
@@ -111,6 +110,3 @@ class PrePeoccesser:
     def get_if(self, line: str) -> None:
         # TODO: add better support for this stuff
         self._ignore_code = not (line.split(" ")[1] in self._definitions)
-
-    def get_mcr(self, line: str) -> None:
-        raise NotImplementedError

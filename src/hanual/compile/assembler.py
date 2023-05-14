@@ -32,13 +32,45 @@ class Assembler:
             self._index += 1
             self._instructions.append(instructions)
 
-    def add_label(self, name: Optional[str] = None):
+    def add_label(
+        self,
+        name: Optional[str] = None,
+        *,  # force programmer to specifiy the keyword args
+        add_now: bool = False,
+        label: Optional[Label] = None,
+    ):
+        """
+        Add label will take in one of the following:
+        A => name
+        B => name , add_now
+        C => label
+
+        A =>
+        This will take only the name, this creates a label and will add it to the instructions
+        imidiately, it will also return the label object.
+
+        B =>
+        This will create a label but not add it, this must be done manually by the programer,
+        this will be usefull if the label needs to be added later, in this case the method name
+        is somewhat missleading, but the programmer must uyse the keywords so I guess it
+        balances out.
+
+        C =>
+        This will just add the label to the instructions, this only exists because it fits the
+        method's name well, as aposed to `add_raw_label`.
+        """
+
+        if isinstance(label, Label):
+            self._instructions.append(label)
+            return
+
         if name is None:
             name = "lost_identity"
 
         label = Label(name, self._index)
 
-        self._instructions.append(label)
+        if add_now:
+            self._instructions.append(label)
 
         return label
 

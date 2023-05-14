@@ -12,14 +12,14 @@ if TYPE_CHECKING:
 
 class WhileStatement(BaseNode):
     def __init__(self: BaseNode, condition: Condition, body: CodeBlock) -> None:
-        self._whle: Condition = condition
+        self._while: Condition = condition
         self._body: CodeBlock = body
 
     def as_dict(self) -> Dict[str, Any]:
         return {
-            "condition": self._whle.as_dict()
-            if hasattr(self._whle, "as_dict")
-            else self._whle,
+            "condition": self._while.as_dict()
+            if hasattr(self._while, "as_dict")
+            else self._while,
             "inner": self._body.as_dict()
             if hasattr(self._body, "as_dict")
             else self._body,
@@ -29,7 +29,7 @@ class WhileStatement(BaseNode):
         while_start = global_state.add_label("while_loop")
 
         self._body.compile(global_state)
-        self._whle.compile(global_state)  # push a true or false to stack
+        self._while.compile(global_state)  # push a true or false to stack
         global_state.add_instructions(
             Instruction(InstructionEnum.JEZ, while_start.idx)
         )  # if the while is true we jump

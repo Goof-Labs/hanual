@@ -36,6 +36,8 @@ class HanualLexer(Lexer):
         ("COM", rx(r"\,")),
         ("NSA", rx(r"\:\:")),  # name space access
         ("DOT", rx(r"\.")),
+        ("LSB", rx(r"\[")),
+        ("RSB", rx(r"\]")),
         # special cases
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+|//.*")),

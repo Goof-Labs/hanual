@@ -1,10 +1,9 @@
 from __future__ import annotations
 from hanual.compile import Assembler
 
-from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.lexer import Token
-from .base_node import BaseNode
 from typing import Any, Dict, Union
+from .base_node import BaseNode
 
 
 class AlgebraicExpression(BaseNode):

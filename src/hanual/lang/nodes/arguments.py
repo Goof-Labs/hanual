@@ -45,7 +45,7 @@ class Arguments(BaseNode):
         return self._function_def
 
     def compile(self, global_state: Assembler) -> Any:
-        # function definitions and calling is handeled differently by args
+        # function definitions and calling is handled differently by args
         if self._function_def:
             for name in self._children:
                 assert isinstance(name, Token)
@@ -76,10 +76,10 @@ class Arguments(BaseNode):
                         )
 
                     else:
-                        raise ValueError(f"{val} is unsupported")
+                        raise Exception
 
                 else:
-                    raise ValueError(f"{obj} is unsupported")
+                    raise Exception
 
     def as_dict(self) -> Dict[str, Any]:
         return {

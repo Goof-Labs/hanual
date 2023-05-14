@@ -42,6 +42,7 @@ class BaseNode(ABC):
         """
         raise NotImplementedError
 
-    def get_repr(self, o: T) -> Union[Dict, Token]:
+    @staticmethod
+    def get_repr(o: T) -> Union[Dict, Token]:
         # Just a convenience function that will call as_dict if it exists
         return o.as_dict() if hasattr(o, "as_dict") else o

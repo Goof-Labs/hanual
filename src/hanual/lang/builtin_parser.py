@@ -3,8 +3,10 @@ from __future__ import annotations
 from hanual.lang.nodes import (
     AlgebraicExpression,
     FunctionDefinition,
-    NamespaceAcessor,
+    AnonymousFunction,
+    NamespaceAccessor,
     ReturnStatement,
+    UsingStatement,
     AssignmentNode,
     WhileStatement,
     BreakStatement,
@@ -17,6 +19,7 @@ from hanual.lang.nodes import (
     CodeBlock,
     Arguments,
     RangeNode,
+    AnonArgs,
 )
 
 from hanual.lang.productions import DefaultProduction
@@ -27,27 +30,27 @@ par = PParser()
 
 
 @par.rule("NUM OP NUM")
-def expr(ts: DefaultProduction):
+def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 
 
 @par.rule("expr OP NUM")
-def expr(ts: DefaultProduction):
+def expr(ts: DefaultProduction[BinOpNode, Token, Token]):
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 
 
 @par.rule("NSA ID")
-def namespace_accessor(ts: DefaultProduction):
-    return NamespaceAcessor(ts[1])
+def namespace_accessor(ts: DefaultProduction[Token, Token]) -> NamespaceAccessor:
+    return NamespaceAccessor(ts[1])
 
 
 @par.rule("ID namespace_accessor")
-def namespace_accessor(ts: DefaultProduction):
+def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
     return ts[1].add_child(ts[0])
 
 
 @par.rule("COM NUM", "COM expr", "COM f_call", "COM ID", "COM STR")
-def arg(ts: DefaultProduction):
+def arg(ts: DefaultProduction[Token, any]):
     return Arguments(ts[1])
 
 
@@ -59,7 +62,7 @@ def arg(ts: DefaultProduction):
     "NUM arg",
     "arg arg",
 )
-def arg(ts: DefaultProduction):
+def arg(ts: DefaultProduction[any, Arguments]):
     return ts[1].add_child(ts[0])
 
 
@@ -72,7 +75,7 @@ def arg(ts: DefaultProduction):
     "ID LPAR RPAR",
     types={"ID LPAR RPAR": True},
 )
-def f_call(ts: DefaultProduction, no_args: bool):
+def f_call(ts: DefaultProduction[Token, Token, any, Token], no_args: bool):
     if no_args:
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
@@ -110,21 +113,13 @@ def algebraic_fn(ts):
     return AlgebraicFunc(ts[1], ts[3])
 
 
-@par.rule(
-    "LET ID EQ NUM",
-    "LET ID EQ f_call",
-    "LET ID EQ STR",
-    unless=["DOT"]
-)
-def assighnment(ts: DefaultProduction):
+@par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR", unless=["DOT"])
+def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
-@par.rule(
-    "LET ID EQ hrange",
-    #unless=["DOT"]
-)
-def assighnment(ts: DefaultProduction):
-    print("HERE")
+
+@par.rule("LET ID EQ h_range")
+def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
 
@@ -138,7 +133,7 @@ def ret(ts: DefaultProduction):
     return ReturnStatement(None)
 
 
-@par.rule("RET ID", unless=["LPAR"])
+@par.rule("RET ID", "RET NUM", unless=["LPAR"])
 def ret(ts: DefaultProduction):
     return ReturnStatement(ts[1])
 
@@ -200,17 +195,17 @@ def condition(ts: DefaultProduction):
         "IF cond_f_call END": 4,
     },
 )
-def if_statement(ts: DefaultProduction, type: int):
-    if type == 1:
+def if_statement(ts: DefaultProduction, type_: int):
+    if type_ == 1:
         return IfStatement(condition=ts[2], if_true=ts[4])
 
-    elif type == 2:
+    elif type_ == 2:
         return IfStatement(condition=ts[2], if_true=CodeBlock([]))
 
-    elif type == 3:
+    elif type_ == 3:
         return IfStatement(condition=ts[1], if_true=ts[2])
 
-    elif type == 4:
+    elif type_ == 4:
         return IfStatement(condition=ts[1], if_true=CodeBlock([]))
 
 
@@ -219,7 +214,7 @@ def if_statement(ts: DefaultProduction, type: int):
     "WHL LPAR condition RPAR lines END",
     "WHL cond_f_call line END",
     "WHL cond_f_call lines END",
-    # no body
+    # nobody
     "WHL LPAR condition RPAR END",
     "WHL cond_f_call END",
     types={
@@ -246,7 +241,7 @@ def while_stmt(ts: DefaultProduction, no_body: bool = True):
 
 @par.rule("FN f_call")
 def function_marker(ts: DefaultProduction):
-    # If the args is part of a function definition it should behave differentelly from when it is not
+    # If the args is part of a function definition it should behave differently from when it is not
     ts[1].function_def = True
     return ts[1]
 
@@ -269,10 +264,10 @@ def cond_f_call(ts):
     types={
         "function_marker END": False,
     },
-    unless="AS",
+    unless=["AS"],
 )
-def function_definition(ts: DefaultProduction, hasend: bool):
-    if hasend is False:
+def function_definition(ts: DefaultProduction, has_end: bool):
+    if has_end is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 
     if not isinstance(ts[1], CodeBlock):
@@ -292,8 +287,8 @@ def function_definition(ts: DefaultProduction, hasend: bool):
         "function_marker AS CTX END CTX": False,
     },
 )
-def function_definition(ts: DefaultProduction, hasend: bool):
-    if hasend is False:
+def function_definition(ts: DefaultProduction, has_end: bool):
+    if has_end is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 
     if not isinstance(ts[1], CodeBlock):
@@ -306,32 +301,37 @@ def function_definition(ts: DefaultProduction, hasend: bool):
 
 @par.rule("USE namespace_accessor")
 def using(ts: DefaultProduction):
-    return ts[1]
+    return UsingStatement(ts[1])
+
+
+@par.rule("LSB args RSB")
+def anon_func_args(ts: DefaultProduction[Token, Arguments, Token]) -> AnonArgs:
+    return AnonArgs(ts[1])
 
 
 @par.rule(
-    # open ended
+    "anon_func_args do line end",
+    "anon_func_args do lines end",
+)
+def anon_function(
+    ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
+) -> AnonymousFunction:
+    return AnonymousFunction(args=ts[0], inner=ts[2])
+
+
+# ranges `x..`
+@par.rule(
     "NUM DOT DOT",
     "ID DOT DOT",
 )
-def hrange(ts: DefaultProduction):
-    return RangeNode(from_=ts, to_=None)
-
-
-#@par.rule(
-#    "NUM DOT DOT NUM",
-#    "NUM DOT DOT ID",
-#    "ID DOT DOT ID",
-#    "ID DOT DOT NUM",
-#)
-#def hrange(ts: DefaultProduction):
-#    return RangeNode(from_=ts, to_=ts[3])
+def h_range(ts: DefaultProduction):
+    return RangeNode(from_=ts[0], to_=None)
 
 
 @par.rule(
     "function_definition",
     "if_statement",
-    "assighnment",
+    "assignment",
     "while_stmt",
     "break_stmt",
     "freeze",

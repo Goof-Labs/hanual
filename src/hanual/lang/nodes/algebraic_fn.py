@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import Any, Dict
 
-from hanual.compile import Assembler
 
 from .algebraic_expr import AlgebraicExpression
+from hanual.compile import Assembler
 from .base_node import BaseNode
+from typing import Any, Dict
 
 
 class AlgebraicFunc(BaseNode):

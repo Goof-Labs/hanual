@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from hanual.lang.builtin_lexer import Token
 
 
-class NamespaceAcessor(BaseNode, ABC):
+class NamespaceAccessor(BaseNode, ABC):
     def __init__(self: BaseNode, first: Token) -> None:
         self._path: List[Token] = [first]
 
@@ -20,7 +20,7 @@ class NamespaceAcessor(BaseNode, ABC):
         return self
 
     def compile(self, global_state: Assembler) -> Any:
-        # we don't need to load any moduals because they are packed with the final runnable
+        # we don't need to load any moduls because they are packed with the final runnable
         global_state.add_file_dep(self._path)
 
     def as_dict(self) -> Dict[str, Any]:

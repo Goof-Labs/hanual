@@ -26,8 +26,8 @@ class HanualMainClass:
         # whisper = self.dump.dump(whisper, src)
         return whisper
 
-    def clean(self, res):
-        res = CodeBlock(res)
+    def clean(self, res_):
+        res = CodeBlock(res_)
         return res
 
 
@@ -37,7 +37,5 @@ res = main.run(
     r"""
 print("Hello world")    """
 )
-with open("test.txt", "wb") as f:
-    f.write(res)
-# pp.pprint(res)
-# pp.pprint(res.as_dict())
+pp.pprint(res)
+pp.pprint(res.as_dict())

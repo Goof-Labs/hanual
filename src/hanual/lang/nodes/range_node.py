@@ -28,27 +28,27 @@ class RangeNode(BaseNode):
             global_state.pull_value(self._from.value)
 
         elif self._from.type == "NUM":
-            idnt = global_state.add_constant(self._from.value)
-            global_state.add_instructions(Instruction(InstructionEnum.PGC, idnt))
+            id_ = global_state.add_constant(self._from.value)
+            global_state.add_instructions(Instruction(InstructionEnum.PGC, id_))
 
         # push end value to top, if there is no end value we just push infinity
         if self._to is None:
-            tidx = global_state.add_constant("INF")
-            global_state.push_value(tidx)
+            id_ = global_state.add_constant("INF")
+            global_state.push_value(id_)
 
         else:  # An upper bound has been defined
             if self._to.type == "ID":
                 global_state.pull_value(self._to.value)
 
             elif self._to.type == "NUM":
-                tidx = global_state.add_constant(self._to.value)
-                global_state.add_instructions(Instruction(InstructionEnum.PGC, tidx))
+                id_ = global_state.add_constant(self._to.value)
+                global_state.add_instructions(Instruction(InstructionEnum.PGC, id_))
 
         global_state.add_instructions(Instruction(InstructionEnum.PK2))
-        rngfn = global_state.add_reference("~range")
+        range_fn = global_state.add_reference("~range")
         global_state.add_instructions(
             (
-                Instruction(InstructionEnum.PGA, rngfn),
+                Instruction(InstructionEnum.PGA, range_fn),
                 Instruction(InstructionEnum.CAL),
             )
         )

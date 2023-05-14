@@ -23,7 +23,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self, global_state: Assembler) -> Any:
+    def compile(self, global_state: Assembler) -> None:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

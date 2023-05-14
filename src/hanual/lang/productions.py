@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from typing import TypeVar, List, Optional, Any, Generic, Union
+from abc import ABC, abstractmethod
 from typing_extensions import Self
 from sys import version_info
-from abc import ABC
 
 T = TypeVar("T")
 
@@ -13,8 +13,9 @@ C = TypeVar("C")
 
 
 class _ProductionInterface(ABC):
+    @abstractmethod
     def get(self, *args, **kwargs) -> T:
-        raise NotImplementedError
+        pass
 
     def __format__(self, format_spec: Any) -> None:
         pass

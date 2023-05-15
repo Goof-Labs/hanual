@@ -122,3 +122,162 @@ class Instruction(InstructionInfo):
             return self._next
 
         return None
+
+
+####################
+# NEW INSTRUCTIONS #
+####################
+"""
+This part of the file uses a better method of making instructions, which is backwards compatible with
+existing code.
+"""
+
+
+def _init_args(self: Instruction, arg: int):
+    # This is ok, we are only using this in a class
+    super().__init__(opcode=self._op_code, argument=arg)
+
+
+def _init_nargs(self: Instruction):
+    super().__init__(opcode=self._op_code, argument=None)
+
+
+class InstructionJMP(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.JMP
+
+
+class InstructionNOP(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.NOP
+
+
+class InstructionJMP(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.JMP
+
+
+class InstructionJEZ(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.JEZ
+
+
+class InstructionJNZ(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.JNZ
+
+
+class InstructionJIE(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.JIE
+
+
+class InstructionSWP(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.SWP
+
+
+class InstructionYNK(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.YNK
+
+
+class InstructionPP1(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PP1
+
+
+class InstructionPP2(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PP2
+
+
+class InstructionPP3(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PP3
+
+
+class InstructionPGV(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PGV
+
+
+class InstructionPGC(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PGC
+
+
+class InstructionPGA(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PGA
+
+
+class InstructionPK2(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PK2
+
+
+class InstructionPK3(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PK3
+
+
+class InstructionPK4(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PK4
+
+
+class InstructionPK5(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PK5
+
+
+class InstructionPKN(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PKN
+
+
+class InstructionPK1(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.PK1
+
+
+class InstructionRZE(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.RZE
+
+
+class InstructionCAL(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.CAL
+
+
+class InstructionRET(Instruction):
+    __init__ = _init_args
+    _op_code = InstructionEnum.RET
+
+
+__all__ = [
+    "InstructionNOP",
+    "InstructionJMP",
+    "InstructionJEZ",
+    "InstructionJNZ",
+    "InstructionJIE",
+    "InstructionSWP",
+    "InstructionYNK",
+    "InstructionPP1",
+    "InstructionPP2",
+    "InstructionPP3",
+    "InstructionPGV",
+    "InstructionPGC",
+    "InstructionPGA",
+    "InstructionPK2",
+    "InstructionPK3",
+    "InstructionPK4",
+    "InstructionPK5",
+    "InstructionPKN",
+    "InstructionPK1",
+    "InstructionRZE",
+    "InstructionCAL",
+    "InstructionRET",
+]

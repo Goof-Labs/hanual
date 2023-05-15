@@ -1,6 +1,7 @@
 from __future__ import annotations
 from hanual.compile import Assembler
 
+from hanual.compile.instruction import Instruction, InstructionEnum
 from hanual.lang.lexer import Token
 from typing import Any, Dict, Union
 from .base_node import BaseNode
@@ -27,4 +28,51 @@ class AlgebraicExpression(BaseNode):
         }
 
     def compile(self, global_state: Assembler) -> Any:
-        return super().compile(global_state)
+        # LEFT
+        if isinstance(self._left, Token):
+            if self._left.type == "ID":
+                global_state.pull_value(self._left.value)
+
+            elif self._left.type == "NUM":
+                num_id = global_state.add_constant(self._left.value)
+                global_state.push_value(num_id)
+
+            else:
+                raise Exception(f"bad token {self._left}")
+
+        elif hasattr(self._left, "compile"):
+            self._left.compile(global_state)
+
+        else:
+            raise Exception(
+                f"{self._left} is not a token and has no attribute 'compile'"
+            )
+
+        # RIGHT
+        if isinstance(self._right, Token):
+            if self._right.type == "ID":
+                global_state.pull_value(self._right)
+
+            elif self._right.type == "NUM":
+                num_id = global_state.add_constant(self._right.value)
+                global_state.push_value(num_id)
+
+            else:
+                raise Exception(f"bad token {self._right}")
+
+        elif hasattr(self._right, "compile"):
+            self._right.compile(global_state)
+
+        else:
+            raise Exception(
+                f"{self._left} is not a token and has no attribute 'compile'"
+            )
+
+        # assuming that the value of both the left and right have been pushed onto the stack we will
+        # call the operator as a function
+
+        global_state.add_instructions(Instruction(InstructionEnum.PK2))
+
+        op_fn = global_state.add_function(self._op)
+        global_state.add_instructions(Instruction(InstructionEnum.PGA, op_fn))
+        global_state.add_instructions(Instruction(InstructionEnum.CAL))

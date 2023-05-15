@@ -27,6 +27,10 @@ class FunctionDefinition(BaseNode):
         self._arguments.compile(global_state)
         self._inner.compile(global_state)
 
+        # TODO Add returning
+
+        global_state.add_fn_to_table(self._name, label)
+
     def as_dict(self) -> Dict[str, Any]:
         return {
             "args": self._arguments.as_dict(),

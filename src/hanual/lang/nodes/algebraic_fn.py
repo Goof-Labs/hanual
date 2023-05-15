@@ -18,4 +18,4 @@ class AlgebraicFunc(BaseNode):
         return {"name": self._name, "expr": self.get_repr(self._expr)}
 
     def compile(self, global_state: Assembler) -> Any:
-        return super().compile(global_state)
+        ...

@@ -22,7 +22,7 @@ class HanualMainClass:
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)
         whisper = self.clean(whisper)
-        whisper = self.compiler.compile(whisper)
+        # whisper = self.compiler.compile(whisper)
         # whisper = self.dump.dump(whisper, src)
         return whisper
 
@@ -35,7 +35,10 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-print("Hello world")    """
+fn main()
+    print("Hello world")
+end
+"""
 )
 pp.pprint(res)
 pp.pprint(res.as_dict())

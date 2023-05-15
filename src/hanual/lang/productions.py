@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from typing import TypeVar, List, Optional, Any, Generic, Union
-from abc import ABC, abstractmethod
 from typing_extensions import Self
 from sys import version_info
+from abc import ABC
 
 T = TypeVar("T")
 
@@ -13,7 +13,6 @@ C = TypeVar("C")
 
 
 class _ProductionInterface(ABC):
-    @abstractmethod
     def get(self, *args, **kwargs) -> T:
         pass
 
@@ -39,6 +38,9 @@ class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
 
     def __getitem__(self: Self, item: int) -> Union[A, B, C]:
         return self.ts[item]
+
+    def get(self, *args, **kwargs) -> T:
+        return super().get(*args, **kwargs)
 
 
 class ProductionGen(_ProductionInterface, ABC, Generic[A, B, C]):

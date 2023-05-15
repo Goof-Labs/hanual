@@ -17,6 +17,7 @@ class Assembler:
         self._file_deps = set()
         self._consts = set()
         self._stk = Stack()
+        self._fn_table = {}
         self._refs = set()
         self._funcs = []
         self._index = 0
@@ -92,6 +93,9 @@ class Assembler:
 
     def add_function(self, name):
         self._funcs.append(name)
+
+    def add_fn_to_table(self, name: str, label: Label) -> None:
+        self._fn_table[name] = label
 
     def pull_value(self, name):
         self.add_instructions(self._stk.push_item_to_top(name))

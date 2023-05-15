@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any, Dict
 
 from hanual.compile.assembler import Assembler
 from hanual.compile.instruction import *
@@ -22,3 +23,6 @@ class AnonymousFunction(BaseNode, ABC):
         global_state.add_fn_to_table(fn_start.mangled_id, fn_start)
 
         self._inner.compile(global_state)
+
+    def as_dict(self) -> Dict[str, Any]:
+        return super().as_dict()

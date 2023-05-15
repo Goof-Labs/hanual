@@ -28,6 +28,10 @@ from hanual.lang.pparser import PParser
 
 par = PParser()
 
+###########################
+# BINARY OPERATIONS
+###########################
+
 
 @par.rule("NUM OP NUM")
 def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
@@ -39,6 +43,11 @@ def expr(ts: DefaultProduction[BinOpNode, Token, Token]):
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 
 
+###########################
+# NAME SPACES
+###########################
+
+
 @par.rule("NSA ID")
 def namespace_accessor(ts: DefaultProduction[Token, Token]) -> NamespaceAccessor:
     return NamespaceAccessor(ts[1])
@@ -47,6 +56,11 @@ def namespace_accessor(ts: DefaultProduction[Token, Token]) -> NamespaceAccessor
 @par.rule("ID namespace_accessor")
 def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
     return ts[1].add_child(ts[0])
+
+
+###########################
+# ARGUMENTS
+###########################
 
 
 @par.rule("COM NUM", "COM expr", "COM f_call", "COM ID", "COM STR")
@@ -66,6 +80,11 @@ def arg(ts: DefaultProduction[any, Arguments]):
     return ts[1].add_child(ts[0])
 
 
+###########################
+# FUNCTION CALLS
+###########################
+
+
 @par.rule(
     "ID LPAR expr RPAR",
     "ID LPAR ID RPAR",
@@ -83,6 +102,11 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], no_args: bool):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
 
     return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
+
+
+###########################
+# ALGEBRAIC OPERATIONS
+###########################
 
 
 @par.rule(
@@ -113,6 +137,11 @@ def algebraic_fn(ts):
     return AlgebraicFunc(ts[1], ts[3])
 
 
+###########################
+# ASSIGHNMENT
+###########################
+
+
 @par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR", unless=["DOT"])
 def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
@@ -123,9 +152,19 @@ def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
 
+###########################
+# FREEZING
+###########################
+
+
 @par.rule("FREEZE ID")
 def freeze(ts: DefaultProduction):
     return FreezeNode(ts[1])
+
+
+###########################
+# RETURNING
+###########################
 
 
 @par.rule("RET", unless=["ID"])
@@ -143,6 +182,11 @@ def ret(ts: DefaultProduction):
     return ReturnStatement(ts[1])
 
 
+###########################
+# BREAKING
+###########################
+
+
 @par.rule("BREAK", unless=["CTX"])
 def break_stmt(ts: DefaultProduction):
     return BreakStatement(ts[0])
@@ -151,6 +195,11 @@ def break_stmt(ts: DefaultProduction):
 @par.rule("BREAK CTX")
 def break_stmt(ts: DefaultProduction):
     return BreakStatement(ts[0], ts[1])
+
+
+###########################
+# EQUALITY
+###########################
 
 
 @par.rule(
@@ -175,6 +224,11 @@ def break_stmt(ts: DefaultProduction):
 )
 def condition(ts: DefaultProduction):
     return Condition(op=ts[1], left=ts[0], right=ts[2])
+
+
+###########################
+# IF SATTEMENTS
+###########################
 
 
 @par.rule(
@@ -209,6 +263,11 @@ def if_statement(ts: DefaultProduction, type_: int):
         return IfStatement(condition=ts[1], if_true=CodeBlock([]))
 
 
+###########################
+# WHILE LOOPS
+###########################
+
+
 @par.rule(
     "WHL LPAR condition RPAR line END",
     "WHL LPAR condition RPAR lines END",
@@ -239,6 +298,11 @@ def while_stmt(ts: DefaultProduction, no_body: bool = True):
     return WhileStatement(condition=con, body=blk)
 
 
+###########################
+# MARKERS
+###########################
+
+
 @par.rule("FN f_call")
 def function_marker(ts: DefaultProduction):
     # If the args is part of a function definition it should behave differently from when it is not
@@ -254,6 +318,11 @@ def par_f_mark(ts):
 @par.rule("par_f_mark RPAR")
 def cond_f_call(ts):
     return ts[0]
+
+
+###########################
+# FUNCTION DEF
+###########################
 
 
 # NO CONTEXT
@@ -299,14 +368,33 @@ def function_definition(ts: DefaultProduction, has_end: bool):
     return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
 
 
+###########################
+# USE STATEMENT
+###########################
+
+
 @par.rule("USE namespace_accessor")
 def using(ts: DefaultProduction):
     return UsingStatement(ts[1])
 
 
-@par.rule("LSB args RSB")
-def anon_func_args(ts: DefaultProduction[Token, Arguments, Token]) -> AnonArgs:
+@par.rule(
+    "LSB args RSB",
+    "LSB ID RSB",
+    types={"LSB ID RSB": True},
+)
+def anon_func_args(
+    ts: DefaultProduction[Token, Arguments, Token], _1arg: bool
+) -> AnonArgs:
+    if _1arg:
+        return AnonArgs(Arguments(ts[1]))
+
     return AnonArgs(ts[1])
+
+
+###########################
+# ANONEMOUS FUNCTIONS
+###########################
 
 
 @par.rule(
@@ -319,6 +407,11 @@ def anon_function(
     return AnonymousFunction(args=ts[0], inner=ts[2])
 
 
+###########################
+# RANGES
+###########################
+
+
 # ranges `x..`
 @par.rule(
     "NUM DOT DOT",
@@ -326,6 +419,11 @@ def anon_function(
 )
 def h_range(ts: DefaultProduction):
     return RangeNode(from_=ts[0], to_=None)
+
+
+###########################
+# CODE BLOCKS
+###########################
 
 
 @par.rule(
@@ -346,6 +444,11 @@ def line(ts):
 @par.rule("line line", "line lines", "lines line")
 def lines(ts: DefaultProduction):
     return ts[0].add_child(ts[1])
+
+
+###########################
+# END
+###########################
 
 
 def get_parser():

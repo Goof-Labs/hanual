@@ -35,8 +35,8 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-fn main()
-    print("Hello world")
+[x] do
+    x + 1
 end
 """
 )

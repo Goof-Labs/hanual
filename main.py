@@ -17,6 +17,8 @@ class HanualMainClass:
         self.parser = get_parser()
         self.lexer = HanualLexer()
 
+        self.parser.toggle_debug_messages(True)
+
     def run(self, src: str) -> CodeBlock:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
@@ -35,8 +37,9 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-[x] do
-    x + 1
+
+fn say_hi(name)
+    print(str_cat("hi", name))
 end
 """
 )

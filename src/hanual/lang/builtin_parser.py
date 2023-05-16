@@ -96,6 +96,7 @@ def arg(ts: DefaultProduction[any, Arguments]):
     "ID LPAR STR RPAR",
     "ID LPAR NUM RPAR",
     "ID LPAR arg RPAR",
+    "ID LPAR f_call RPAR",
     "ID LPAR RPAR",
     types={"ID LPAR RPAR": True},
 )
@@ -315,14 +316,14 @@ def function_marker(ts: DefaultProduction):
     return ts[1]
 
 
-@par.rule("LPAR f_call")
-def par_f_mark(ts):
-    return ts[1]
+# @par.rule("LPAR f_call")
+# def par_f_mark(ts):
+#    return ts[1]
 
 
-@par.rule("par_f_mark RPAR")
-def cond_f_call(ts):
-    return ts[0]
+# @par.rule("par_f_mark RPAR")
+# def cond_f_call(ts):
+#    return ts[0]
 
 
 ###########################
@@ -463,7 +464,7 @@ def h_range(ts: DefaultProduction):
     "while_stmt",
     "break_stmt",
     "freeze",
-    "f_call",
+    #    "f_call",
     "using",
     "ret",
 )

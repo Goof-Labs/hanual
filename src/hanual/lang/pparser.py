@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Generator, Any, Optional, TypeVar, Type
+from typing import (
+    List,
+    Dict,
+    Tuple,
+    Generator,
+    Any,
+    Optional,
+    TypeVar,
+    Type,
+    Literal,
+)
 from .productions import DefaultProduction
 from .proxy import Proxy
 from .lexer import Token
@@ -75,7 +85,10 @@ class PParser:
         *rules,
         prod: Optional[Type] = DefaultProduction,
         types: Optional[Dict[str, T]] = None,
-        unless: Optional[List[str]] = (),
+        unless: Optional[Dict[Literal["start", "end"], List[str]]] = {
+            "start": (),
+            "end": (),
+        },
     ):
         """
         This function is a decorator, so it can be used with the following syntax:
@@ -101,18 +114,33 @@ class PParser:
         >>>     elif case == 2: # other stuff for second case
         >>>     elif case == 3: # third case
 
-        The `unless` kwarg does what you may think it does, if the pattern such as
-        [ A B C ] is found in the token stream then it is swaped out, but what
-        happens if we only want this to happen if the following token does is not of
-        a specific type. For example, if the [ A B C ] sequence only makes sense if
-        the D token is not next. So in the example of [ A B C D E] we would not
-        reduce the tokens, this is because the [ A B C ] sequence is proceded by a D
-        token. But if we had [ A B C E D F G ] then a substetution would take place
-        this is because the sequence is not directelly followed by a D.
+        The unless kwarg is a dict with two keys `start` and `end` this means that
+        if we find a pattern, but we want to skip over it if and only if the next
+        token is a specific value, or a token at the start of the pattern is preasent.
+        Lets say we have a rule [B C] and we want it only to be formed if it is not
+        prefixed with an A or the next token would be a D, so if we have the pattern
+        [A B C] {next token D} this pattern would not be formed because the pattern is
+        next to an A, also because the next token would be a D. Lets say we are making
+        a function definition rule, but it conflicts with a function call rule. This is
+        because a function call sort of exists within the function definition e.g.
+
+        FN NAME LPAR RPAR
+        END
+
+        The [NAME LPAR RAPR] would be reduced as a function call, but by using an
+        unless we can write the following.
+
+        >>> @par.rule("NAME LPAR RPAR", unless={"start": "FN"})
+        >>> def function_call(ts):
+        >>>     return ...
+
+        This rule will now evaluate [NAME LPAR RPAR] to a function call if and only
+        if the pattern is not prefixed with a FN, else it will skip this pattern
+        and a different rule can take care of it.
         """
 
         def inner(func):
-            prox = Proxy(func, types, prod, unless)
+            prox = Proxy(func, types, prod, unless["start"], unless["end"])
             # expand all rules, so they have their own individual function associated
             for rule in rules:
                 self.rules[rule] = func.__name__, prox
@@ -123,6 +151,8 @@ class PParser:
         pattern = []
         t_stack = []
         last = None
+
+        # TODO: ADD UNLESS
 
         while True:
             token: Token = next(stream, None)
@@ -153,7 +183,9 @@ class PParser:
                         continue
 
                     if self.debug:
-                        print(pattern, " - ", rule_pattern, " ", depth + 1)
+                        print(
+                            pattern, " - ", rule_pattern, " ", depth + 1, "=>", reducer
+                        )
 
                     args = []
                     arg_pattern = []
@@ -172,7 +204,7 @@ class PParser:
                 break
 
             last = pattern.copy()
-            
+
             if not (token is None):
                 pattern.append(token.type)
                 t_stack.append(token)

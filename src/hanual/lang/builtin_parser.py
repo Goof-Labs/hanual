@@ -39,8 +39,13 @@ def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
 
 
 @par.rule("expr OP NUM")
-def expr(ts: DefaultProduction[BinOpNode, Token, Token]):
+def expr(ts: DefaultProduction[BinOpNode, Token, Token]) -> BinOpNode:
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
+
+
+@par.rule("ID OP NUM")
+def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
+    return BinOpNode(ts[1], ts[0], ts[2])
 
 
 ###########################
@@ -378,6 +383,11 @@ def using(ts: DefaultProduction):
     return UsingStatement(ts[1])
 
 
+###########################
+# ANONEMOUS FUNCTIONS ARGS
+###########################
+
+
 @par.rule(
     "LSB args RSB",
     "LSB ID RSB",
@@ -405,6 +415,26 @@ def anon_function(
     ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
 ) -> AnonymousFunction:
     return AnonymousFunction(args=ts[0], inner=ts[2])
+
+
+# Anonemous functions can return stuff. The last statement is expected to be
+# the return value so that is what we return. Of corse `lines` or `line` does
+# not capute this case and probably shouldn't, because this wold break stuff
+@par.rule(
+    # last statement is a binop
+    "anon_func_args do line expr end",
+    "anon_func_args do lines expr end",
+    # last statement is a ID
+    "anon_func_args do line ID end",
+    "anon_func_args do lines ID end",
+    # last statement is a range
+    "anon_func_args do line h_range end",
+    "anon_func_args do lines h_range end",
+)
+def anon_function(
+    ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
+) -> AnonymousFunction:
+    return AnonymousFunction(args=ts[0], inner=ts[2], retrn=ts[3])
 
 
 ###########################

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from hanual.compile.instruction import Instruction, InstructionEnum
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Dict, Union
 from .base_node import BaseNode
 from abc import ABC
 
@@ -80,7 +80,7 @@ class BinOpNode(BaseNode, ABC):
                 global_state.push_value(id_)
 
             else:
-                raise NotImplementedError
+                raise Exception
 
         elif hasattr(self._left, "compile"):
             self._left.compile(global_state)
@@ -111,3 +111,10 @@ class BinOpNode(BaseNode, ABC):
         fn_id = global_state.add_reference(self._op.value)
         global_state.add_instructions(Instruction(InstructionEnum.PGA, fn_id))
         global_state.add_instructions(Instruction(InstructionEnum.CAL))
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "op": self._op,
+            "left": self.get_repr(self._left),
+            "right": self.get_repr(self._right),
+        }

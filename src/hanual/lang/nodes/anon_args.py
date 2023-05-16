@@ -13,7 +13,7 @@ class AnonArgs(BaseNode):
         self._args = args
 
     def compile(self, global_state: Assembler) -> Any:
-        return super().compile(global_state)
+        self._args.compile(global_state)
 
     def as_dict(self) -> Dict[str, Any]:
-        return {"HERE": ""}
+        return self._args.as_dict()

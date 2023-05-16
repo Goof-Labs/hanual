@@ -15,6 +15,7 @@ class HanualLexer(Lexer):
         ("FN", kw("fn")),
         ("AS", kw("as")),
         ("IF", kw("if")),
+        ("DO", kw("do")),
         ("ITR", kw("iter")),
         ("WHL", kw("while")),
         ("FOR", kw("for")),

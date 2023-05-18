@@ -1,5 +1,10 @@
-# Nim VM - Nim is very similiar to python and compiles to C, so it's got a speedy runtime.
-# You may need to install the nim VS code extension to see this in wonderful syntax highlighting
+# Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It is speedy as nim is complied to C.
+# !! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING !!
+# ok
+
+type
+    instructions = enum
+    
 
 
 #[
@@ -10,9 +15,8 @@
     !! 
 ]#
 
-# foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 # Parse file into various parts (Instruction, const, etc. pools)
-let file2parse = readFile("thereallylongfilethatiscool.hul")
+let file2parse = readFile("thereallylongfilethatiscool.chnl")
 
 for instructions in somerandomfile:
     case instructions:

@@ -39,7 +39,6 @@ res = main.run(
     r"""
 
 fn say_hi(name)
-    print(str_cat("hi", name))
 end
 """
 )

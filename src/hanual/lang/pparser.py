@@ -151,11 +151,19 @@ class PParser:
     ######################
 
     def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
+        change = True
         stack = []
 
         while True:
+            # get next token, default is None
             next_token: Token = next(stream, None)
 
+            # flags
+            change = False
+            if not (next_token is None):
+                change = True
+
+            # reductions
             for pattern, (reducer, proxy) in self.rules.items():
                 # pattern is what we need to reduce the stack
                 # reducer is what we reduce the pattern to
@@ -185,9 +193,11 @@ class PParser:
                 if broke_out:
                     continue
 
-                # check if next is an unless
-                if next_token in proxy.unless_end:
-                    continue
+                # the contense of this function need to know the token but nothing else so this is ok
+                if not next_token is None:
+                    # check if next is an unless
+                    if next_token.type in proxy.unless_end:
+                        continue
 
                 # create arguments for proxy
                 p_args = []
@@ -203,9 +213,13 @@ class PParser:
                 res = proxy.call(p_args, pattern_lst)
                 stack.append((reducer, res))
 
-            if next_token is None:
+                # there has be a reduction aka change so set flag to true
+                change = True
+
+            if (next_token is None) and (change is False):
                 break
 
-            stack.append((next_token.type, next_token))
+            if not (next_token is None):
+                stack.append((next_token.type, next_token))
 
         return stack

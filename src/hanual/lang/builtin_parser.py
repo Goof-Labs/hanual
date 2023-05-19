@@ -85,6 +85,11 @@ def args(ts: DefaultProduction[any, Arguments]):
     return ts[1].add_child(ts[0])
 
 
+@par.rule("LPAR args RPAR")
+def par_args(ts):
+    return ts[1]
+
+
 ###########################
 # FUNCTION CALLS
 ###########################
@@ -95,14 +100,17 @@ def args(ts: DefaultProduction[any, Arguments]):
     "ID LPAR ID RPAR",
     "ID LPAR STR RPAR",
     "ID LPAR NUM RPAR",
-    "ID LPAR arg RPAR",
     "ID LPAR f_call RPAR",
     "ID LPAR RPAR",
-    types={"ID LPAR RPAR": True},
+    "ID par_args",
+    types={"ID LPAR RPAR": 1, "ID par_args": 2},
 )
-def f_call(ts: DefaultProduction[Token, Token, any, Token], no_args: bool):
-    if no_args:
+def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
+    if mode == 1:
         return FunctionCall(name=ts[0], arguments=Arguments([]))
+
+    if mode == 2:
+        return FunctionCall(name=ts[0], arguments=ts[1])
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -342,6 +350,7 @@ def function_marker(ts: DefaultProduction):
     unless_ends=["AS"],
 )
 def function_definition(ts: DefaultProduction, has_end: bool):
+    print("HERE")
     if has_end is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 
@@ -390,7 +399,7 @@ def using(ts: DefaultProduction):
 
 
 @par.rule(
-    "LSB args RSB",
+    "LSB arg RSB",
     "LSB ID RSB",
     types={"LSB ID RSB": True},
 )
@@ -467,6 +476,7 @@ def h_range(ts: DefaultProduction):
     "f_call",
     "using",
     "ret",
+    unless_ends=["RPAR"],
 )
 def line(ts):
     return CodeBlock(ts[0])

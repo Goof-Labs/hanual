@@ -1,3 +1,0 @@
-let func = [a, b, c] do
-    a + b + c
-end

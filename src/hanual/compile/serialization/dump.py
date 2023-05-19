@@ -30,11 +30,13 @@ class HanualFileSerializer:
 
         return dep_pool.getvalue()
 
+    #    @staticmethod
+    #    def constant_table()
+
     @staticmethod
     def serialize_constants(constants: List[Token]):
         consts_pool = BytesIO()
 
-        consts_pool.write(len(constants).to_bytes(length=1, byteorder="big"))
         consts_pool.write(b"\x00\x00")
 
         for const in constants:

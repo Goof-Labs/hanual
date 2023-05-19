@@ -14,14 +14,20 @@ class CodeBlock(BaseNode, ABC):
     __slots__ = ("_children",)
 
     def __init__(self, children: Union[List[T], T]) -> None:
-        if isinstance(children, (tuple, list)):  # is iterable
-            self._children = [*children]
-
-        else:  # This is just another node that we have chucked into a list
-            self._children = [children]
+        self._children = []
+        self.add_child(children)
 
     def add_child(self, child: CodeBlock):
-        self._children.extend(child.children)
+        if isinstance(child, (list, tuple)):
+            if isinstance(child[0], str):
+                self._children.append(child[1])
+
+            else:
+                self._children.extend(child)
+
+        else:
+            self._children.append(child)
+
         return self
 
     @property

@@ -350,7 +350,6 @@ def function_marker(ts: DefaultProduction):
     unless_ends=["AS"],
 )
 def function_definition(ts: DefaultProduction, has_end: bool):
-    print("HERE")
     if has_end is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 

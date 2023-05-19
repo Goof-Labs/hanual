@@ -12,6 +12,7 @@ from typing import (
     Literal,
 )
 from .productions import DefaultProduction
+from copy import deepcopy
 from .proxy import Proxy
 from .lexer import Token
 import logging
@@ -145,68 +146,66 @@ class PParser:
 
         return inner
 
-    def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
-        pattern = []
-        t_stack = []
-        last = None
+    ######################
+    # PARSING THE TOKENS #
+    ######################
 
-        # TODO: ADD UNLESS
+    def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
+        stack = []
 
         while True:
-            token: Token = next(stream, None)
+            next_token: Token = next(stream, None)
 
-            if self.debug:
-                print(f"PUSH NEW TOKEN {token}")
+            for pattern, (reducer, proxy) in self.rules.items():
+                # pattern is what we need to reduce the stack
+                # reducer is what we reduce the pattern to
+                # proxy is a wrapper around a function
 
-            for r_pattern, (reducer, prox) in self.rules.items():
-                # if not pattern:
-                #    continue
+                pattern_lst = pattern.split(" ")
 
-                rule_pattern = r_pattern.split(" ")
-                rule_pattern.reverse()
+                # compare the stack from top to bottom so we need to reverse
+                stk_coppy = deepcopy(stack)
+                stk_coppy.reverse()
 
-                glob_pattern = pattern.copy()
-                glob_pattern.reverse()
+                pattern_lst.reverse()
 
-                if len(glob_pattern) < len(rule_pattern):
+                # would not zip up nicely
+                if len(pattern_lst) > len(stk_coppy):
                     continue
 
-                for depth, (r, g) in enumerate(zip(rule_pattern, glob_pattern)):
-                    if r != g:
+                # compare
+                broke_out = False
+
+                for debth, (left, right) in enumerate(zip(stk_coppy, pattern_lst)):
+                    if left[0] != right:
+                        broke_out = True
                         break
 
-                else:
-                    # If the pattern does not want to appear if a following type of token is after it then we just move on to the next
-                    if not (token is None) and (
-                        token.type in prox.unless_end or pattern[depth] == token.type
-                    ):
-                        continue
+                # goto next if we broke out
+                if broke_out:
+                    continue
 
-                    if self.debug:
-                        print(
-                            pattern, " - ", rule_pattern, " ", depth + 1, "=>", reducer
-                        )
+                # check if next is an unless
+                if next_token in proxy.unless_end:
+                    continue
 
-                    args = []
-                    arg_pattern = []
+                # create arguments for proxy
+                p_args = []
 
-                    for _ in range(depth + 1):
-                        arg_pattern.append(pattern.pop())
-                        args.append(t_stack.pop())
+                for _ in range(debth + 1):
+                    p_args.append(stack.pop()[1])
 
-                    arg_pattern.reverse()
-                    args.reverse()
+                # make normal
+                pattern_lst.reverse()
+                p_args.reverse()
 
-                    pattern.append(reducer)
-                    t_stack.append(prox.call(args, arg_pattern))
+                # actually run it
+                res = proxy.call(p_args, pattern_lst)
+                stack.append((reducer, res))
 
-            if not token and last == pattern:
+            if next_token is None:
                 break
 
-            last = pattern.copy()
+            stack.append((next_token.type, next_token))
 
-            if not (token is None):
-                pattern.append(token.type)
-                t_stack.append(token)
-
-        return t_stack
+        return stack

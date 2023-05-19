@@ -69,19 +69,19 @@ def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
 
 
 @par.rule("COM NUM", "COM expr", "COM f_call", "COM ID", "COM STR")
-def arg(ts: DefaultProduction[Token, any]):
+def args(ts: DefaultProduction[Token, any]):
     return Arguments(ts[1])
 
 
 @par.rule(
-    "ID arg",
-    "expr arg",
-    "f_call arg",
-    "STR arg",
-    "NUM arg",
-    "arg arg",
+    "ID args",
+    "expr args",
+    "f_call args",
+    "STR args",
+    "NUM args",
+    "arg args",
 )
-def arg(ts: DefaultProduction[any, Arguments]):
+def args(ts: DefaultProduction[any, Arguments]):
     return ts[1].add_child(ts[0])
 
 
@@ -464,7 +464,7 @@ def h_range(ts: DefaultProduction):
     "while_stmt",
     "break_stmt",
     "freeze",
-    #    "f_call",
+    "f_call",
     "using",
     "ret",
 )

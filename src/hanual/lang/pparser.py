@@ -85,10 +85,8 @@ class PParser:
         *rules,
         prod: Optional[Type] = DefaultProduction,
         types: Optional[Dict[str, T]] = None,
-        unless: Optional[Dict[Literal["start", "end"], List[str]]] = {
-            "start": (),
-            "end": (),
-        },
+        unless_starts: Optional[str] = None,
+        unless_ends: Optional[str] = None,
     ):
         """
         This function is a decorator, so it can be used with the following syntax:
@@ -140,7 +138,7 @@ class PParser:
         """
 
         def inner(func):
-            prox = Proxy(func, types, prod, unless["start"], unless["end"])
+            prox = Proxy(func, types, prod, unless_starts, unless_ends)
             # expand all rules, so they have their own individual function associated
             for rule in rules:
                 self.rules[rule] = func.__name__, prox
@@ -161,8 +159,8 @@ class PParser:
                 print(f"PUSH NEW TOKEN {token}")
 
             for r_pattern, (reducer, prox) in self.rules.items():
-                if not pattern:
-                    continue
+                # if not pattern:
+                #    continue
 
                 rule_pattern = r_pattern.split(" ")
                 rule_pattern.reverse()
@@ -179,7 +177,9 @@ class PParser:
 
                 else:
                     # If the pattern does not want to appear if a following type of token is after it then we just move on to the next
-                    if not (token is None) and token.type in prox.unless:
+                    if not (token is None) and (
+                        token.type in prox.unless_end or pattern[depth] == token.type
+                    ):
                         continue
 
                     if self.debug:

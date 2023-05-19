@@ -15,19 +15,21 @@ This class will store:
 
 
 class Proxy:
-    __slots__ = "_fn", "_types", "_prod", "_unless"
+    __slots__ = "_fn", "_types", "_prod", "_unless_b", "_unless_e"
 
     def __init__(
         self: Self,
         fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]],
         types: Dict[str, Any],
         prod: type[P] = None,
-        unless: Sequence[str] = (),
+        unless_start: Sequence[str] = (),
+        unless_end: Sequence[str] = (),
     ) -> None:
         self._fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]] = fn
         self._prod: Type[P] = prod or DefaultProduction
         self._types = types or {}
-        self._unless = unless
+        self._unless_b = unless_start or ()
+        self._unless_e = unless_end or ()
 
     @property
     def prod(self) -> Type[P]:
@@ -38,8 +40,12 @@ class Proxy:
         return self._types
 
     @property
-    def unless(self) -> Sequence[str]:
-        return self._unless
+    def unless_start(self) -> Sequence[str]:
+        return self._unless_b
+
+    @property
+    def unless_end(self) -> Sequence[str]:
+        return self._unless_e
 
     @property
     def fn(self) -> Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]]:

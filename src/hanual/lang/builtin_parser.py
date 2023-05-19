@@ -148,7 +148,7 @@ def algebraic_fn(ts):
 ###########################
 
 
-@par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR", unless=["DOT"])
+@par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR", unless_ends=["DOT"])
 def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
@@ -173,12 +173,12 @@ def freeze(ts: DefaultProduction):
 ###########################
 
 
-@par.rule("RET", unless=["ID"])
+@par.rule("RET", unless_ends=["ID"])
 def ret(ts: DefaultProduction):
     return ReturnStatement(None)
 
 
-@par.rule("RET ID", "RET NUM", unless=["LPAR"])
+@par.rule("RET ID", "RET NUM", unless_ends=["LPAR"])
 def ret(ts: DefaultProduction):
     return ReturnStatement(ts[1])
 
@@ -193,7 +193,7 @@ def ret(ts: DefaultProduction):
 ###########################
 
 
-@par.rule("BREAK", unless=["CTX"])
+@par.rule("BREAK", unless_ends=["CTX"])
 def break_stmt(ts: DefaultProduction):
     return BreakStatement(ts[0])
 
@@ -339,7 +339,7 @@ def function_marker(ts: DefaultProduction):
     types={
         "function_marker END": False,
     },
-    unless=["AS"],
+    unless_ends=["AS"],
 )
 def function_definition(ts: DefaultProduction, has_end: bool):
     if has_end is False:

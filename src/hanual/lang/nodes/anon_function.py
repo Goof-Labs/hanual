@@ -35,4 +35,4 @@ class AnonymousFunction(BaseNode, ABC):
         self._inner.compile(global_state)
 
     def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()
+        return {"args": self._args, "innter": self._inner}

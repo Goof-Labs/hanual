@@ -118,3 +118,7 @@ class Assembler:
     @property
     def refs(self):
         return self._refs
+
+    @property
+    def functions(self):
+        return self._fn_table

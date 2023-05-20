@@ -2,10 +2,10 @@ from __future__ import annotations
 
 
 from hanual.compile.instruction import Instruction
+from typing import NamedTuple, List, Dict
 from hanual.lang.lexer import Token
 from .assembler import Assembler
-from typing import NamedTuple
-from typing import List
+from .label import Label
 
 
 class DepInfo(NamedTuple):
@@ -16,6 +16,7 @@ class DepInfo(NamedTuple):
 
 class CompileInfo(NamedTuple):
     instructions: List[Instruction]
+    functions: Dict[str, Label]
     deps: DepInfo
 
 
@@ -35,4 +36,8 @@ class Compiler:
         return self._assembler.instructions
 
     def compile(self, tree):
-        return CompileInfo(instructions=self.compile_src(tree), deps=self.get_deps())
+        return CompileInfo(
+            instructions=self.compile_src(tree),
+            deps=self.get_deps(),
+            functions=self._assembler.functions,
+        )

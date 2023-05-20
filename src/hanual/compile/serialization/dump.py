@@ -30,8 +30,22 @@ class HanualFileSerializer:
 
         return dep_pool.getvalue()
 
-    #    @staticmethod
-    #    def constant_table()
+    @staticmethod
+    def dependancy_list(dpes: List[str]) -> bytes:
+        deps_pool = BytesIO()
+
+        deps_pool.write(b"\x00")
+
+        for dep in deps_pool:
+            # write each file path
+            deps_pool.write("\x00")
+
+            for char in dep:
+                deps_pool.write(ord(char).to_bytes(length=1, byteorder="big"))
+
+        deps_pool.write(b"\x00\x00")
+
+        return deps_pool.getvalue()
 
     @staticmethod
     def serialize_constants(constants: List[Token]):
@@ -80,8 +94,9 @@ class HanualFileSerializer:
         buffer = BytesIO()
 
         buffer.write(HanualFileSerializer.create_header(src))
+        buffer.write(HanualFileSerializer.dependancy_list(data.deps.file_deps))
+        buffer.write(HanualFileSerializer.function_table(data))
         buffer.write(HanualFileSerializer.serialize_constants(data.deps.consts))
-        buffer.write(HanualFileSerializer.serialize_refs(data.deps.refs))
 
         for instruction in data[0]:
             buffer.write(instruction.opcode.to_bytes(byteorder="big"))

@@ -27,4 +27,5 @@ class VarChange(BaseNode):
         return super().as_dict()
 
     def compile(self, global_state: Assembler) -> None:
-        return super().compile(global_state)
+        global_state.pull_value(self._name.value)
+        self._value.compile(global_state)

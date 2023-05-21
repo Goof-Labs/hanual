@@ -133,128 +133,304 @@ existing code.
 """
 
 
-def _init_args(self: Instruction, arg: int):
-    # This is ok, we are only using this in a class
-    super().__init__(opcode=self._op_code, argument=arg)
-
-
-def _init_nargs(self: Instruction):
-    super().__init__(opcode=self._op_code, argument=None)
-
-
 class InstructionJMP(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.JMP
+
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionNOP(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.NOP
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionJMP(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.JMP
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionJEZ(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.JEZ
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionJNZ(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.JNZ
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionJIE(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.JIE
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionSWP(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.SWP
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionYNK(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.YNK
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPP1(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PP1
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPP2(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PP2
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPP3(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PP3
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPGV(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PGV
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPGC(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PGC
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPGA(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PGA
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPK2(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PK2
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPK3(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PK3
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPK4(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PK4
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPK5(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PK5
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPKN(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PKN
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionPK1(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.PK1
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionRZE(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.RZE
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionCAL(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.CAL
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 class InstructionRET(Instruction):
-    __init__ = _init_args
     _op_code = InstructionEnum.RET
+    if _op_code & (1 << 7):
+
+        def __init__(self, arg: int):
+            super().__init__(opcode=self._op_code, argument=arg)
+
+    else:
+
+        def __init__(self):
+            super().__init__(opcode=self._op_code)
 
 
 __all__ = [

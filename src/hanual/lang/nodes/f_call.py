@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import (
+    InstructionPK1,
+    InstructionPK2,
+    InstructionPK3,
+    InstructionPK4,
+    InstructionPK5,
+    InstructionPKN,
+    InstructionPGA,
+    InstructionCAL,
+)
 from typing import Any, Dict, TYPE_CHECKING
 from .base_node import BaseNode
 
@@ -22,27 +31,27 @@ class FunctionCall(BaseNode):
         n_children = len(self._args.children)
 
         if n_children == 1:
-            global_state.add_instructions(Instruction(InstructionEnum.PK1))
+            global_state.add_instructions(InstructionPK1())
 
         elif n_children == 2:
-            global_state.add_instructions(Instruction(InstructionEnum.PK2))
+            global_state.add_instructions(InstructionPK2())
 
         elif n_children == 3:
-            global_state.add_instructions(Instruction(InstructionEnum.PK3))
+            global_state.add_instructions(InstructionPK3())
 
         elif n_children == 4:
-            global_state.add_instructions(Instruction(InstructionEnum.PK4))
+            global_state.add_instructions(InstructionPK4())
 
         elif n_children == 5:
-            global_state.add_instructions(Instruction(InstructionEnum.PK5))
+            global_state.add_instructions(InstructionPK5())
 
         else:
-            global_state.add_instructions(Instruction(InstructionEnum.PKN, n_children))
+            global_state.add_instructions(InstructionPKN(n_children))
 
         fn_addr = global_state.add_reference(self._name.value)
         # push function reference
-        global_state.add_instructions(Instruction(InstructionEnum.PGA, fn_addr))
-        global_state.add_instructions(Instruction(InstructionEnum.CAL))  # call function
+        global_state.add_instructions(InstructionPGA(fn_addr))
+        global_state.add_instructions(InstructionCAL())  # call function
 
     @property
     def name(self) -> Token:

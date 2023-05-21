@@ -25,7 +25,7 @@ class HanualMainClass:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
         whisper = self.parser.parse(whisper)[0][1]
-        # whisper = self.compiler.compile(whisper)
+        whisper = self.compiler.compile(whisper)
         # whisper = self.dump.dump(whisper, src)
         return whisper
 

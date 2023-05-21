@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import InstructionPGC, InstructionPGA
 from hanual.lang.builtin_lexer import Token
 from typing import Dict, Any, TYPE_CHECKING
 from .base_node import BaseNode
@@ -22,11 +22,11 @@ class ReturnStatement(BaseNode, ABC):
             elif self._value.type in ("STR", "NUM"):
                 # get the
                 ident = global_state.add_constant(self._value.value)
-                global_state.add_instructions(Instruction(InstructionEnum.PGC, ident))
+                global_state.add_instructions(InstructionPGC(ident))
 
         else:
             if self._value is None:
-                global_state.add_instructions(Instruction(InstructionEnum.PGA, 0))
+                global_state.add_instructions(InstructionPGA(0))
                 # push a NULL or ref to a 0
 
             else:

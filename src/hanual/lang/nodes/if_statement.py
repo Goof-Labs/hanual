@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
-from hanual.compile.label import Label
+from hanual.compile.instruction import InstructionJEZ
 from typing import Any, TYPE_CHECKING
 from .base_node import BaseNode
 from .block import CodeBlock
@@ -25,9 +24,7 @@ class IfStatement(BaseNode, ABC):
         jmp_false_label = global_state.add_label(
             name="if", add_now=False
         )  # push on later
-        global_state.add_instructions(
-            Instruction(InstructionEnum.JEZ, jmp_false_label.idx)
-        )
+        global_state.add_instructions(InstructionJEZ(jmp_false_label.idx))
 
         # dump the body of the if code
         self._iftrue.compile(global_state)

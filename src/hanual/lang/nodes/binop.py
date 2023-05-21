@@ -1,14 +1,18 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import (
+    InstructionPK2,
+    InstructionPGA,
+    InstructionCAL,
+)
 from typing import Any, TYPE_CHECKING, Dict, Union
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
 
 
 if TYPE_CHECKING:
     from hanual.compile import Assembler
-    from hanual.lang.lexer import Token
 
 
 class BinOpNode(BaseNode, ABC):
@@ -106,11 +110,11 @@ class BinOpNode(BaseNode, ABC):
         else:
             raise Exception
 
-        global_state.add_instructions(Instruction(InstructionEnum.PK2))
+        global_state.add_instructions(InstructionPK2())
 
         fn_id = global_state.add_reference(self._op.value)
-        global_state.add_instructions(Instruction(InstructionEnum.PGA, fn_id))
-        global_state.add_instructions(Instruction(InstructionEnum.CAL))
+        global_state.add_instructions(InstructionPGA(fn_id))
+        global_state.add_instructions(InstructionCAL())
 
     def as_dict(self) -> Dict[str, Any]:
         return {

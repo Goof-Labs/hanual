@@ -1,7 +1,11 @@
 from __future__ import annotations
 from hanual.compile import Assembler
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import (
+    InstructionPK2,
+    InstructionPGA,
+    InstructionCAL,
+)
 from hanual.lang.lexer import Token
 from typing import Any, Dict, Union
 from .base_node import BaseNode
@@ -71,8 +75,8 @@ class AlgebraicExpression(BaseNode):
         # assuming that the value of both the left and right have been pushed onto the stack we will
         # call the operator as a function
 
-        global_state.add_instructions(Instruction(InstructionEnum.PK2))
+        global_state.add_instructions(InstructionPK2())
 
         op_fn = global_state.add_function(self._op)
-        global_state.add_instructions(Instruction(InstructionEnum.PGA, op_fn))
-        global_state.add_instructions(Instruction(InstructionEnum.CAL))
+        global_state.add_instructions(InstructionPGA(op_fn))
+        global_state.add_instructions(InstructionCAL())

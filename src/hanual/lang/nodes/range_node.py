@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import (
+    InstructionPGC,
+    InstructionPK2,
+    InstructionPGA,
+    InstructionCAL,
+)
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from typing_extensions import Self
 from .base_node import BaseNode
@@ -29,7 +34,7 @@ class RangeNode(BaseNode):
 
         elif self._from.type == "NUM":
             id_ = global_state.add_constant(self._from.value)
-            global_state.add_instructions(Instruction(InstructionEnum.PGC, id_))
+            global_state.add_instructions(InstructionPGC(id_))
 
         # push end value to top, if there is no end value we just push infinity
         if self._to is None:
@@ -42,14 +47,14 @@ class RangeNode(BaseNode):
 
             elif self._to.type == "NUM":
                 id_ = global_state.add_constant(self._to.value)
-                global_state.add_instructions(Instruction(InstructionEnum.PGC, id_))
+                global_state.add_instructions(InstructionPGC(id_))
 
-        global_state.add_instructions(Instruction(InstructionEnum.PK2))
+        global_state.add_instructions(InstructionPK2())
         range_fn = global_state.add_reference("~range")
         global_state.add_instructions(
             (
-                Instruction(InstructionEnum.PGA, range_fn),
-                Instruction(InstructionEnum.CAL),
+                InstructionPGA(range_fn),
+                InstructionCAL(),
             )
         )
 

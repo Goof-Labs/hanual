@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import Instruction, InstructionPGC
 from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
@@ -55,7 +55,7 @@ class Arguments(BaseNode):
 
                 else:
                     idx = global_state.add_constant(name.value)
-                    global_state.add_instructions(Instruction(InstructionEnum.PGC, idx))
+                    global_state.add_instructions(InstructionPGC(idx))
 
         # calling
         else:
@@ -71,9 +71,7 @@ class Arguments(BaseNode):
                     elif obj.type in ("NUM", "STR"):
                         val = global_state.add_constant(obj)
 
-                        global_state.add_instructions(
-                            Instruction(InstructionEnum.PGC, val)
-                        )
+                        global_state.add_instructions(InstructionPGC(val))
 
                     else:
                         raise Exception

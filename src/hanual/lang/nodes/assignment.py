@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import Instruction, InstructionPGC
 from typing import TypeVar, Generic, Any, Dict, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
@@ -27,7 +27,7 @@ class AssignmentNode(BaseNode, Generic[B]):
 
         if isinstance(self._target, Token):
             ident = global_state.add_constant(self._value.value)
-            global_state.add_instructions(Instruction(InstructionEnum.PGC, ident))
+            global_state.add_instructions(InstructionPGC(ident))
 
         else:
             self._value.compile(global_state)

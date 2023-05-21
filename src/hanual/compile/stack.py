@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import Instruction, InstructionYNK
 from hanual.lang.types.singelton import Singleton
 from hanual.lang.errors import NameNotFoundError
 from typing import TypeVar, List, Union
@@ -29,7 +29,7 @@ class Stack(Singleton):
         for idx, item in enumerate(self.__stk):
             if item == name:
                 # yank nth element to top of stack
-                return Instruction(InstructionEnum.YNK, idx - 1)
+                return InstructionYNK(idx - 1)
 
         NameNotFoundError().be_raised(
             token.line_val,

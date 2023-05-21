@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionEnum
+from hanual.compile.instruction import (
+    InstructionPGC,
+    InstructionPK2,
+    InstructionPGA,
+    InstructionCAL,
+)
 from typing import Any, Dict, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
@@ -33,7 +38,7 @@ class Condition(BaseNode, ABC):
     def compile(self, global_state: Assembler) -> Any:
         if isinstance(self._left, Token):
             cid = global_state.add_constant(self._left)
-            global_state.add_instructions(Instruction(InstructionEnum.PGC, cid))
+            global_state.add_instructions(InstructionPGC(cid))
 
         else:
             assert hasattr(self._left, "compile")
@@ -41,7 +46,7 @@ class Condition(BaseNode, ABC):
 
         if isinstance(self._right, Token):
             cid = global_state.add_constant(self._right)
-            global_state.add_instructions(Instruction(InstructionEnum.PGC, cid))
+            global_state.add_instructions(InstructionPGC(cid))
 
         else:
             assert hasattr(self._right, "compile")
@@ -51,9 +56,9 @@ class Condition(BaseNode, ABC):
             self._op.value
         )  # one of +-/*% and yes these are functions now
 
-        global_state.add_instructions(Instruction(InstructionEnum.PK2))
-        global_state.add_instructions(Instruction(InstructionEnum.PGA, op_id))  # <<<<<
-        global_state.add_instructions(Instruction(InstructionEnum.CAL))
+        global_state.add_instructions(InstructionPK2())
+        global_state.add_instructions(InstructionPGA(op_id))  # <<<<<
+        global_state.add_instructions(InstructionCAL())
 
     def as_dict(self) -> Dict[str, Any]:
         return {

@@ -39,40 +39,6 @@ class BinOpNode(BaseNode, ABC):
         """The op property."""
         return self._op
 
-    def __format__(self, spec: str) -> str:
-        """
-        %l => left operator
-        %r => right operator
-        %o => operator
-        """
-
-        perc = False
-        res = ""
-
-        for char in spec:
-            if perc:  # then check characters
-                perc = False
-
-                if char == "l":
-                    res += self.left
-
-                elif char == "r":
-                    res += self.right
-
-                elif char == "o":
-                    res += self.op
-
-                elif char == "%":
-                    res += "%"
-
-                else:
-                    res += "%" + char
-
-            if char == "%":
-                perc = True
-
-        return res
-
     def compile(self, global_state: Assembler) -> Any:
         # LEFT
         if isinstance(self._left, Token):

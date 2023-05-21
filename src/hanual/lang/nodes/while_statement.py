@@ -34,7 +34,7 @@ class WhileStatement(BaseNode):
         }
 
     def compile(self, global_state: Assembler) -> Any:
-        while_start = global_state.add_label("while_loop")
+        while_start = global_state.add_label("while_loop", add_now=False)
 
         self._body.compile(global_state)
         self._while.compile(global_state)  # push a true or false to stack

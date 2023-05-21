@@ -37,12 +37,12 @@ res = main.run(
 
 let i = 0
 
-while (i<10)
+while ( i < 10 )
     i = i + 1
 end
 
 """
 )
-# pp.pprint(res)
-print(dump_tree(res, depth=10))
+pp.pprint(res)
+# print(dump_tree(res, depth=10))
 # pp.pprint(res.as_dict())

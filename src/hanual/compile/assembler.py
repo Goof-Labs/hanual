@@ -19,7 +19,6 @@ class Assembler:
         self._stk = Stack()
         self._fn_table = {}
         self._refs = set()
-        self._funcs = []
         self._index = 0
 
     def add_instructions(
@@ -37,7 +36,7 @@ class Assembler:
         self,
         name: Optional[str] = None,
         *,  # force programmer to specifiy the keyword args
-        add_now: bool = False,
+        add_now: bool = True,
         label: Optional[Label] = None,
     ):
         """
@@ -90,9 +89,6 @@ class Assembler:
     def add_reference(self, name):
         self._refs.add(name)
         return list(self._refs).index(name)
-
-    def add_function(self, name):
-        self._funcs.append(name)
 
     def add_fn_to_table(self, name: str, label: Label) -> None:
         self._fn_table[name] = label

@@ -19,6 +19,7 @@ from hanual.lang.nodes import (
     CodeBlock,
     Arguments,
     RangeNode,
+    VarChange,
     AnonArgs,
 )
 
@@ -164,6 +165,16 @@ def assignment(ts: DefaultProduction):
 @par.rule("LET ID EQ h_range")
 def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
+
+
+###########################
+# CHANGING AND MODDING VARS
+###########################
+
+
+@par.rule("ID EQ NUM", "ID EQ f_call", "ID EQ STR", "ID EQ expr", unless_ends=["DOT"])
+def var_change(ts: DefaultProduction):
+    return VarChange(ts[0], ts[2])
 
 
 ###########################
@@ -471,6 +482,7 @@ def h_range(ts: DefaultProduction):
     "assignment",
     "while_stmt",
     "break_stmt",
+    "var_change",
     "freeze",
     "f_call",
     "using",

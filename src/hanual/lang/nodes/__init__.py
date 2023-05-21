@@ -14,6 +14,7 @@ from .freeze_node import FreezeNode
 from .assignment import AssignmentNode
 from .conditions import Condition
 from .range_node import RangeNode
+from .var_change import VarChange
 from .arguments import Arguments
 from .base_node import BaseNode
 from .anon_args import AnonArgs

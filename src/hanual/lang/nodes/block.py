@@ -19,11 +19,11 @@ class CodeBlock(BaseNode, ABC):
 
     def add_child(self, child: CodeBlock):
         if isinstance(child, (list, tuple)):
-            if isinstance(child[0], str):
-                self._children.append(child[1])
+            for child_ in child:
+                self.add_child(child_)
 
-            else:
-                self._children.extend(child)
+        elif isinstance(child, CodeBlock):
+            self.children.extend(child.children)
 
         else:
             self._children.append(child)

@@ -34,8 +34,15 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-print("here")
+
+let i = 0
+
+while (i<10)
+    i = i + 1
+end
+
 """
 )
+# pp.pprint(res)
 print(dump_tree(res, depth=10))
 # pp.pprint(res.as_dict())

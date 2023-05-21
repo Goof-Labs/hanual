@@ -15,6 +15,14 @@ class WhileStatement(BaseNode):
         self._while: Condition = condition
         self._body: CodeBlock = body
 
+    @property
+    def condition(self) -> Condition:
+        return self._while
+
+    @property
+    def body(self) -> CodeBlock:
+        return self._body
+
     def as_dict(self) -> Dict[str, Any]:
         return {
             "condition": self._while.as_dict()

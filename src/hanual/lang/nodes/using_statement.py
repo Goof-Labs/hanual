@@ -10,3 +10,13 @@ class UsingStatement(BaseNode, ABC):
 
     def __init__(self: BaseNode, nsa: NamespaceAccessor) -> None:
         self._nsa = nsa
+
+    @property
+    def path(self):
+        return self._nsa
+
+    def compile(self):
+        super().compile()
+
+    def as_dict(self):
+        super().as_dict()

@@ -19,6 +19,11 @@ class NamespaceAccessor(BaseNode, ABC):
         self._path.append(child)
         return self
 
+    @property
+    def path(self):
+        return self._path
+    
+
     def compile(self, global_state: Assembler) -> Any:
         # we don't need to load any moduls because they are packed with the final runnable
         global_state.add_file_dep(self._path)

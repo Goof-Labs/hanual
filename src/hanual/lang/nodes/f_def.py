@@ -20,6 +20,18 @@ class FunctionDefinition(BaseNode):
         self._arguments = args
         self._inner = inner
 
+    @property
+    def name(self) -> Token:
+        return self._name
+
+    @property
+    def arguments(self) -> Arguments:
+        return self._arguments
+
+    @property
+    def inner(self) -> CodeBlock:
+        return self._inner
+
     def compile(self, global_state: Assembler) -> Any:
         label = global_state.add_label(self._name.value)
         global_state.add_function(label)

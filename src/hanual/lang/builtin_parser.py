@@ -246,6 +246,7 @@ def break_stmt(ts: DefaultProduction):
     "f_call EL NUM",
     "f_call EL STR",
     "f_call EL ID",
+    unless_ends=["LPAR"],
 )
 def condition(ts: DefaultProduction):
     return Condition(op=ts[1], left=ts[0], right=ts[2])
@@ -296,14 +297,10 @@ def if_statement(ts: DefaultProduction, type_: int):
 @par.rule(
     "WHL LPAR condition RPAR line END",
     "WHL LPAR condition RPAR lines END",
-    "WHL cond_f_call line END",
-    "WHL cond_f_call lines END",
     # nobody
     "WHL LPAR condition RPAR END",
-    "WHL cond_f_call END",
     types={
         "WHL LPAR condition RPAR END": False,
-        "WHL cond_f_call END": False,
     },
 )
 def while_stmt(ts: DefaultProduction, no_body: bool = True):

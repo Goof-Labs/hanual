@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 
+from abc import ABC, abstractmethod
 from typing import Union, Optional
-
+from io import StringIO
 
 """
 Each instruction is a byte so thare are a possible of 256 possible instructions.
@@ -99,12 +100,12 @@ class InstructionInfo:
         return self._opcode & 0x0F != 0
 
 
-class Instruction(InstructionInfo):
+class Instruction(InstructionInfo, ABC):
     def __init__(self, opcode: int, argument: Union[int, None] = None):
         super().__init__(opcode, argument)
 
     def __repr__(self) -> str:
-        return f"Instruction(opcode={InstructionEnum.get_instruction(self._opcode)!r} next={self._next})"
+        return f"Instruction(opcode={InstructionEnum.get_instruction(self._opcode)!r}, next={self._next})"
 
     def as_bytes(self):
         if not self._next:
@@ -122,6 +123,14 @@ class Instruction(InstructionInfo):
             return self._next
 
         return None
+
+    @abstractmethod
+    def compile(self, buffer: StringIO) -> str:
+        """
+        will append to a buffer what the value of the
+        instruction should be.
+        """
+        raise NotImplementedError
 
 
 ####################

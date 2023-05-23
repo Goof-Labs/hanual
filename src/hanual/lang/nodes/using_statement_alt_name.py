@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 
-from typing import TYPE_CHECKING, Any, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Dict
 
 from hanual.compile import Assembler
 from .base_node import BaseNode
@@ -28,7 +28,7 @@ class UsingStatementWithAltName(BaseNode):
         return self._name
 
     def compile(self, global_state: Assembler) -> None:
-        return super().compile(global_state)
+        global_state.add_file_dep(self._name)
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

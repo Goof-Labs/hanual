@@ -24,6 +24,10 @@ class NamespaceAccessor(BaseNode, ABC):
         return self
 
     @property
+    def full_path(self) -> str:
+        return "/"
+
+    @property
     def path(self):
         return self._path
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hanual.compile.serialization.dump import HanualFileSerializer
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
 from hanual.lang.builtin_parser import get_parser
@@ -24,8 +26,8 @@ class HanualMainClass:
     def run(self, src: str) -> CodeBlock:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
-        whisper = self.parser.parse(whisper)  # [0][1]
-        # whisper = self.compiler.compile(whisper)
+        whisper = self.parser.parse(whisper)[0][1]
+        whisper = self.compiler.compile(whisper)
         # whisper = self.dump.dump(whisper, src)
         return whisper
 
@@ -51,9 +53,10 @@ fn print(value)
     end
 end
 
+print("Hello world")
 
 """
 )
-# pp.pprint(res)
-print(dump_tree(res, depth=25))
+pp.pprint(res)
+# print(dump_tree(res, depth=25))
 # pp.pprint(res.as_dict())

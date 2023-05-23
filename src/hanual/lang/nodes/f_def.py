@@ -16,6 +16,8 @@ class FunctionDefinition(BaseNode):
     def __init__(
         self: FunctionDefinition, name: Token, args: Arguments, inner: CodeBlock
     ) -> None:
+        args.function_def = True
+
         self._name: Token = name
         self._arguments = args
         self._inner = inner
@@ -34,7 +36,7 @@ class FunctionDefinition(BaseNode):
 
     def compile(self, global_state: Assembler) -> Any:
         label = global_state.add_label(self._name.value)
-        global_state.add_function(label)
+        global_state.add_fn_to_table(self._name, label)
 
         self._arguments.compile(global_state)
         self._inner.compile(global_state)

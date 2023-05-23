@@ -35,6 +35,10 @@ class Compiler:
         tree.compile(self._assembler)
         return self._assembler.instructions
 
+    @property
+    def assembler(self):
+        return self._assembler
+
     def compile(self, tree):
         return CompileInfo(
             instructions=self.compile_src(tree),

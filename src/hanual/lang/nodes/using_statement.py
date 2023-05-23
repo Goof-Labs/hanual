@@ -21,7 +21,7 @@ class UsingStatement(BaseNode, ABC):
         return self._nsa
 
     def compile(self, global_state: Assembler) -> None:
-        global_state.add_file_dep(self._nsa.real_path)
+        global_state.add_file_dep(self._nsa.full_path)
 
     def as_dict(self):
         super().as_dict()

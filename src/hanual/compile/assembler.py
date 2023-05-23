@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Sequence, Union, Optional, TYPE_CHECKING
 from .label import Label
-
+from io import StringIO
 
 if TYPE_CHECKING:
     from .instruction import Instruction
@@ -98,6 +98,20 @@ class Assembler:
 
     def push_value(self, name):
         self._stk.push(name)
+
+    def get_asm(self):
+        asm = StringIO()
+
+        for instr in self._instructions:
+            if isinstance(instr, Label):
+                asm.write(instr.mangled_id + ":")
+
+            else:
+                instr.compile(asm)
+
+            asm.write("\n")
+
+        return asm.getvalue()
 
     @property
     def instructions(self):

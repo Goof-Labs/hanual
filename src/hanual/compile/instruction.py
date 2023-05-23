@@ -194,6 +194,9 @@ class InstructionJEZ(Instruction):
         def __init__(self):
             super().__init__(opcode=self._op_code)
 
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write(f"JEZ {self._next}")
+
 
 class InstructionJNZ(Instruction):
     _op_code = InstructionEnum.JNZ
@@ -245,6 +248,9 @@ class InstructionYNK(Instruction):
 
         def __init__(self):
             super().__init__(opcode=self._op_code)
+
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write(f"YNK {self._next}")
 
 
 class InstructionPP1(Instruction):
@@ -311,6 +317,9 @@ class InstructionPGC(Instruction):
         def __init__(self):
             super().__init__(opcode=self._op_code)
 
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write(f"PGC {self._next}")
+
 
 class InstructionPGA(Instruction):
     _op_code = InstructionEnum.PGA
@@ -324,6 +333,9 @@ class InstructionPGA(Instruction):
         def __init__(self):
             super().__init__(opcode=self._op_code)
 
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write(f"PGA {self._next}")
+
 
 class InstructionPK2(Instruction):
     _op_code = InstructionEnum.PK2
@@ -336,6 +348,9 @@ class InstructionPK2(Instruction):
 
         def __init__(self):
             super().__init__(opcode=self._op_code)
+
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write("PK2")
 
 
 class InstructionPK3(Instruction):
@@ -389,6 +404,9 @@ class InstructionPKN(Instruction):
         def __init__(self):
             super().__init__(opcode=self._op_code)
 
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write(f"PKN {self._next}")
+
 
 class InstructionPK1(Instruction):
     _op_code = InstructionEnum.PK1
@@ -401,6 +419,9 @@ class InstructionPK1(Instruction):
 
         def __init__(self):
             super().__init__(opcode=self._op_code)
+
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write("PK1")
 
 
 class InstructionRZE(Instruction):
@@ -427,6 +448,9 @@ class InstructionCAL(Instruction):
 
         def __init__(self):
             super().__init__(opcode=self._op_code)
+
+    def compile(self, buffer: StringIO) -> str:
+        buffer.write("CAL")
 
 
 class InstructionRET(Instruction):

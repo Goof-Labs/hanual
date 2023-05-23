@@ -34,8 +34,10 @@ class HanualMainClass:
 
 main = HanualMainClass()
 
-res = main.run(
-    r"""
+with open(r"D:\programing\hanual\hanual\src\stdlib\io.hnl") as f:
+    res = main.run(f.read())
+
+r"""
 use std::bufferlib::string_builder as str_builder
 use std::bufferlib::add_char
 use std::foundation::printc
@@ -56,7 +58,10 @@ end
 print("Hello world")
 
 """
-)
-pp.pprint(res)
+print(main.compiler.assembler.get_asm())
+# pp.pprint(res.instructions)
+# pp.pprint(res.deps)
+# pp.pprint(res)
+
 # print(dump_tree(res, depth=25))
 # pp.pprint(res.as_dict())

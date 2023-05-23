@@ -16,7 +16,7 @@ class Arguments(BaseNode):
 
     def __init__(self, children: Union[List[T], T]) -> None:
         self._children: List[Token]
-        self._function_def = False
+        self.function_def = False
 
         if isinstance(children, Token):
             self._children = [children]
@@ -40,22 +40,14 @@ class Arguments(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
-    @property
-    def function_def(self):
-        return self._function_def
-
     def compile(self, global_state: Assembler) -> Any:
         # function definitions and calling is handled differently by args
-        if self._function_def:
+        if self.function_def:
             for name in self._children:
                 assert isinstance(name, Token)
-
-                if name.type == "ID":
-                    global_state.pull_value(name)
-
-                else:
-                    idx = global_state.add_constant(name.value)
-                    global_state.add_instructions(InstructionPGC(idx))
+                # The bytecode will wrap the arguments into a tuple, so we probably want to unpack them.
+                # Yes this is inefficient to pack and then unpack but still
+                global_state.push_value(name.value)
 
         # calling
         else:
@@ -66,7 +58,7 @@ class Arguments(BaseNode):
                 elif isinstance(obj, Token):
                     # variable ID
                     if obj.type == "ID":
-                        global_state.pull_value(obj.value)
+                        global_state.pull_value(obj)
 
                     elif obj.type in ("NUM", "STR"):
                         val = global_state.add_constant(obj)

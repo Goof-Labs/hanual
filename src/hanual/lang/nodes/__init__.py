@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 
+from .using_statement_alt_name import UsingStatementWithAltName
 from .namespace_acessor import NamespaceAccessor
 from .while_statement import WhileStatement
 from .break_statement import BreakStatement

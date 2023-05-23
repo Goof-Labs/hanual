@@ -34,9 +34,13 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
-use std::str_len
-use std::printc
-use std::getc
+use std::bufferlib::string_builder as str_builder
+use std::bufferlib::add_char
+use std::foundation::printc
+use std::foundation::getch
+use std::strlib::str_len
+use std::strlib::getc
+
 
 fn print(value)
     let i = 0
@@ -46,6 +50,8 @@ fn print(value)
         i = i + 1
     end
 end
+
+
 """
 )
 # pp.pprint(res)

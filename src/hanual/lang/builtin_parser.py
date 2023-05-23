@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from hanual.lang.nodes import (
+    UsingStatementWithAltName,
     AlgebraicExpression,
     FunctionDefinition,
     AnonymousFunction,
@@ -57,6 +58,11 @@ def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
 @par.rule("NSA ID")
 def namespace_accessor(ts: DefaultProduction[Token, Token]) -> NamespaceAccessor:
     return NamespaceAccessor(ts[1])
+
+
+@par.rule("namespace_accessor namespace_accessor")
+def namespace_accessor(ts: DefaultProduction[NamespaceAccessor, NamespaceAccessor]):
+    return ts[0].add_child(ts[1])
 
 
 @par.rule("ID namespace_accessor")
@@ -395,9 +401,17 @@ def function_definition(ts: DefaultProduction, has_end: bool):
 ###########################
 
 
-@par.rule("USE namespace_accessor")
+@par.rule(
+    "USE namespace_accessor",
+    unless_ends=["AS", "NSA"],
+)
 def using(ts: DefaultProduction):
     return UsingStatement(ts[1])
+
+
+@par.rule("USE namespace_accessor AS ID")
+def using(ts: DefaultProduction[Token, NamespaceAccessor, Token, Token]):
+    return UsingStatementWithAltName(ts[1], ts[3])
 
 
 ###########################

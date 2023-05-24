@@ -36,14 +36,14 @@ class FunctionDefinition(BaseNode):
 
     def compile(self, global_state: Assembler) -> Any:
         label = global_state.add_label(self._name.value)
-        global_state.add_fn_to_table(self._name, label)
+        global_state.add_function_rec(label)
 
         self._arguments.compile(global_state)
         self._inner.compile(global_state)
 
         # TODO Add returning
 
-        global_state.add_fn_to_table(self._name, label)
+        global_state.add_function_rec(label)
 
     def as_dict(self) -> Dict[str, Any]:
         return {

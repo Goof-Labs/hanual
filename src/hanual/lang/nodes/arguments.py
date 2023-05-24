@@ -47,7 +47,7 @@ class Arguments(BaseNode):
                 assert isinstance(name, Token)
                 # The bytecode will wrap the arguments into a tuple, so we probably want to unpack them.
                 # Yes this is inefficient to pack and then unpack but still
-                global_state.push_value(name.value)
+                # TODO
 
         # calling
         else:

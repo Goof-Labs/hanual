@@ -1,9 +1,9 @@
-# Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It is speedy as nim is complied to C.
-# !! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING !!
-# ok
+#[
+Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It is speedy as nim is complied to C.
+!! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING !!
 
-type
-    instructions = enum
+        # Notes on bytecode
+
         NOP = 0b0000_0000,
     
         JMP = 0b1110_0000,  # unconditional Jump
@@ -33,21 +33,19 @@ type
         
         CAL = 0b0100_0001,  # Call function
         RET = 0b0000_0001  # return
-
-
-#[
-    !!
-    I have removed memory management for now as the only things I can find on it is that it is 'managed by nim'. I'll do something about it tomorrow.
-    Also yes I am perfectly aware that this code makes no sense and you're probably thinking what the fudge am I doing.
-    I have a plan. I am also aware that that sounds very sketchy and unreliable...
-    !! 
 ]#
+
+# Imports
+import os
+import std/os
 
 # Parse file into various parts (Instruction, const, etc. pools)
 
-let file2parse = readFile("thereallylongfilethatiscool.chnl")
+var
+    f: File
+    end: False
 
-func parse_file(): return type =
+while end != True:
     ...
 
 

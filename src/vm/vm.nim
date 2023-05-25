@@ -36,6 +36,13 @@ Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It 
 
         # File extension (Not related to chenobal)
         .chnl
+
+        # Docs links
+        https://nim-lang.org/docs/manual.html#exception-handling
+        https://nim-lang.org/docs/manual.html#statements-and-expressions-while-statement
+        https://nim-lang.org/docs/os.html
+        https://nim-lang.org/docs/tut2.html#exceptions-raise-statement
+        https://stackoverflow.com/questions/34427858/reading-bytes-from-many-files-performance
 ]#
 
 # Imports
@@ -49,7 +56,8 @@ var
 
 if open(f, "main.chnl"):
     while end != True:
-        ...
+        for instructions in f:
+            ...
 else:
     raise "The main file does not exist, please create one."    
 

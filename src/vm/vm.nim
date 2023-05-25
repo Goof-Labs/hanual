@@ -1,9 +1,9 @@
-# Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It is speedy as nim is complied to C.
-# !! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING !!
-# ok
+#[
+Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It is speedy as nim is complied to C.
+!! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING !!
 
-type
-    instructions = enum
+        # Notes on bytecode
+
         NOP = 0b0000_0000,
     
         JMP = 0b1110_0000,  # unconditional Jump
@@ -34,22 +34,32 @@ type
         CAL = 0b0100_0001,  # Call function
         RET = 0b0000_0001  # return
 
+        # File extension (Not related to chenobal)
+        .chnl
 
-#[
-    !!
-    I have removed memory management for now as the only things I can find on it is that it is 'managed by nim'. I'll do something about it tomorrow.
-    Also yes I am perfectly aware that this code makes no sense and you're probably thinking what the fudge am I doing.
-    I have a plan. I am also aware that that sounds very sketchy and unreliable...
-    !! 
+        # Docs links
+        https://nim-lang.org/docs/manual.html#exception-handling
+        https://nim-lang.org/docs/manual.html#statements-and-expressions-while-statement
+        https://nim-lang.org/docs/os.html
+        https://nim-lang.org/docs/tut2.html#exceptions-raise-statement
+        https://stackoverflow.com/questions/34427858/reading-bytes-from-many-files-performance
 ]#
 
+# Imports
+import os
+import std/os
+
 # Parse file into various parts (Instruction, const, etc. pools)
+var
+    f: File
+    end: False
 
-let file2parse = readFile("thereallylongfilethatiscool.chnl")
-
-func parse_file(): return type =
-    ...
-
+if open(f, "main.chnl"):
+    while end != True:
+        for instructions in f:
+            ...
+else:
+    raise "The main file does not exist, please create one."    
 
 for instructions in somerandomfile:
     instructions.NOP

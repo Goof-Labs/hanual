@@ -33,6 +33,9 @@ Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It 
         
         CAL = 0b0100_0001,  # Call function
         RET = 0b0000_0001  # return
+
+        # File extension (Not related to chenobal)
+        .chnl
 ]#
 
 # Imports
@@ -40,14 +43,15 @@ import os
 import std/os
 
 # Parse file into various parts (Instruction, const, etc. pools)
-
 var
     f: File
     end: False
 
-while end != True:
-    ...
-
+if open(f, "main.chnl"):
+    while end != True:
+        ...
+else:
+    raise "The main file does not exist, please create one."    
 
 for instructions in somerandomfile:
     instructions.NOP

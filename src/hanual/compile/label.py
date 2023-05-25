@@ -5,10 +5,9 @@ from random import randbytes
 
 
 class Label:
-    def __init__(self, name: str, idx: int = 0) -> None:
+    def __init__(self, name: str) -> None:
         self._mangled = Label.mangle_id(name)
         self._name = name
-        self._idx = idx
 
     @property
     def name(self) -> str:
@@ -24,12 +23,8 @@ class Label:
         # about having a name that starts with a
         return "_" + randbytes(50).hex() + "__" + name
 
-    @property
-    def idx(self):
-        return self._idx
-
     def __str__(self):
-        return f"Instruction({self.name=} {self.mangled_id=} {self._idx=})"
+        return f"Instruction({self.name=} {self.mangled_id=})"
 
     def __repr__(self):
         return str(self)

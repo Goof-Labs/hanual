@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 
-from abc import ABC, abstractmethod
-from typing import Union, Optional
-from io import StringIO
+from typing import Union, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .instructions import *
 
 """
 Each instruction is a byte so thare are a possible of 256 possible instructions.
@@ -51,6 +52,8 @@ class InstructionEnum:
 
     FPA = 0b1000_0000  # Func Pointer Asignment, will take a function pointer from heap and put in register, FP
     CFA = 0b0000_0001  # Clear Function Args
+
+    # may use flag to indicate if from const pool instead
     AFA = 0b1000_0010  # Add Function Arguments, load a value of heap and add to the function arguments
 
     MVA = 0b1000_0001  # move into registers ABCDE
@@ -60,7 +63,7 @@ class InstructionEnum:
     MVD = 0b1000_0111
     MVE = 0b1000_1000
 
-    FLG = 0b1000_0011  # move a byte from heap into Flag register
+    FLG = 0b1000_0011  # move a byte from A register into Flag register
 
     RZE = 0b0010_0000  # Raise Exception
 
@@ -80,7 +83,7 @@ class InstructionInfo:
         return self._opcode & 1 != 0
 
     @property
-    def stack_change(self) -> bool:
+    def heap_change(self) -> bool:
         # 7th bit
         return self._opcode & 7 != 0
 
@@ -95,7 +98,7 @@ class InstructionInfo:
         return self._opcode & 0x0F != 0
 
 
-class Instruction(InstructionInfo, ABC):
+class Instruction(InstructionInfo):
     def __init__(self, opcode: int, argument: Union[int, None] = None):
         super().__init__(opcode, argument)
 
@@ -119,10 +122,34 @@ class Instruction(InstructionInfo, ABC):
 
         return None
 
-    @abstractmethod
-    def compile(self, buffer: StringIO) -> str:
-        """
-        will append to a buffer what the value of the
-        instruction should be.
-        """
-        raise NotImplementedError
+
+def _constructor_with_arg(self, opcode: int):
+    super(Instruction, self).__init__(self.inst, opcode)
+
+
+def _constructor_no_arg(self):
+    super(Instruction, self).__init__(self.inst)
+
+
+for name in dir(InstructionEnum):
+    if "_" in name:
+        continue
+
+    # get the instruction byte e.g byte to repr a NOP
+    inst = getattr(InstructionEnum, name)
+
+    if inst & 1 != 0:  # has an argument
+        constructor = _constructor_with_arg
+    else:
+        constructor = _constructor_no_arg
+
+    tmp = type(
+        f"Instruction{name}",
+        (Instruction,),
+        {
+            "__init__": constructor,
+            "inst": inst,
+        },
+    )
+
+    exec(f"Instruction{name} = tmp")

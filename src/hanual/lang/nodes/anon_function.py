@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, TYPE_CHECKING, Union
 from hanual.compile.assembler import Assembler
 from hanual.compile.instruction import *
+from hanual.compile.label import Label
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from .anon_args import AnonArgs
@@ -27,10 +28,13 @@ class AnonymousFunction(BaseNode, ABC):
         self._args = args
 
     def compile(self, global_state: Assembler) -> None:
-        fn_start = global_state.add_label()  # no name needed
+        # no name needed
+        fn_lbl = Label("sad_unnamed_function")
 
-        self.fn_name = fn_start.mangled_id
-        global_state.add_fn_to_table(fn_start.mangled_id, fn_start)
+        global_state.labels.append(fn_lbl)
+        self.fn_name = fn_lbl.mangled_id
+
+        global_state.function_table.add(fn_lbl)
 
         self._inner.compile(global_state)
 

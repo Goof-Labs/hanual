@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import Instruction, InstructionPGC
+from hanual.compile.instruction import (
+    InstructionCFA,
+    InstructionAFA,
+    InstructionFLG,
+    InstructionMVA,
+)
 from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
@@ -51,25 +56,22 @@ class Arguments(BaseNode):
 
         # calling
         else:
+            global_state.instructions.append(InstructionCFA())
+
             for obj in self.children:
                 if hasattr(obj, "compile"):
                     obj.compile(global_state)
 
                 elif isinstance(obj, Token):
-                    # variable ID
                     if obj.type == "ID":
-                        global_state.pull_value(obj)
+                        # get index of value, move ptr into A register move flag to move A register into function args
+                        id_ = global_state.heap.index(obj.value)
+                        global_state.instructions.append(InstructionMVA(id_))
+                        global_state.instructions.append(InstructionFLG(0b1000_0000))
+                        global_state.instructions.append(InstructionAFA(0b0000_0000))
 
-                    elif obj.type in ("NUM", "STR"):
-                        val = global_state.add_constant(obj)
-
-                        global_state.add_instructions(InstructionPGC(val))
-
-                    else:
-                        raise Exception
-
-                else:
-                    raise Exception
+                    elif obj.type == "ID" or obj.type == "":
+                        ...
 
     def as_dict(self) -> Dict[str, Any]:
         return {

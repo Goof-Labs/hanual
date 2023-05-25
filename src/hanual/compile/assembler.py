@@ -1,39 +1,39 @@
 from __future__ import annotations
 
 
-from typing import Sequence, Union, Optional, TYPE_CHECKING
-from .label import Label
-from io import StringIO
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from typing import Set, List, Union
     from .instruction import Instruction
+    from .label import Label
 
 
 class Assembler:
     def __init__(self):
-        self._function_table = set()
-        self._file_deps = set()
-        self._instructions = []
-        self._fn_deps = set()
-        self._labels = []
-        self._index = 0
-        self._heap = []
+        self.constants: Set[Union[str, int]] = set()
+        self.instructions: List[Instruction] = []
+        self.function_table: Set[Label] = set()
+        self.file_deps: Set[str] = set()
+        self.fn_deps: Set[str] = set()
+        self.labels: List[Label] = []
+        self.heap: List[str] = []
+        self.index: int = 0
 
-    def add_instruction(self, instruction: Instruction) -> None:
-        self._instructions.append(instruction)
-        self._index += 1
+    def add_instruction(self, i: Instruction):
+        self.instructions.append(i)
+        self.index += 1
 
-    def add_file_dep(self, file_name: str) -> None:
-        self._file_deps.add(file_name)
+    def mov(self, tar: Union[str, int], dest: Union[str, int]) -> None:
+        match (tar in ("A", "B", "C", "D", "E"), dest in ("A", "B", "C", "D", "E")):
+            case True, True:
+                # reg -> reg
+                ...
 
-    def add_function_dep(self, name: str) -> None:
-        self._fn_deps.add(name)
+            case False, True:
+                # Heap -> reg
+                ...
 
-    def add_function_rec(self, label: Label) -> None:
-        self._function_table.add(label)
-
-    def add_label(self, label: Label) -> None:
-        self._labels.append(label)
-
-    def add_to_heap(self, name: str) -> None:
-        self._heap.append(name)
+            case True, False:
+                # reg -> heap
+                ...

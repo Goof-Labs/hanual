@@ -2,9 +2,10 @@ from __future__ import annotations
 from hanual.compile import Assembler
 
 from hanual.compile.instruction import (
-    InstructionPK2,
-    InstructionPGA,
     InstructionCAL,
+    InstructionAFA,
+    InstructionFPA,
+    InstructionCFA,
 )
 from hanual.lang.lexer import Token
 from typing import Any, Dict, Union
@@ -35,11 +36,15 @@ class AlgebraicExpression(BaseNode):
         # LEFT
         if isinstance(self._left, Token):
             if self._left.type == "ID":
-                global_state.pull_value(self._left.value)
+                # get the heap index of the left value
+                left_name: int = global_state.heap.index(self._left.value)
+                # add it to the function argument register
+                global_state.instructions.append(InstructionFPA(left_name))
 
             elif self._left.type == "NUM":
-                num_id = global_state.add_constant(self._left.value)
-                global_state.push_value(num_id)
+                global_state.constants.add(self._left.value)
+                const_id = list(global_state.constants).index(self._left.value)
+                global_state.instructions.append(InstructionFPA(const_id))
 
             else:
                 raise Exception(f"bad token {self._left}")
@@ -53,30 +58,21 @@ class AlgebraicExpression(BaseNode):
             )
 
         # RIGHT
-        if isinstance(self._right, Token):
-            if self._right.type == "ID":
-                global_state.pull_value(self._right)
+        if isinstance(self._rigth, Token):
+            if self._rigth.type == "ID":
+                # get the heap index of the left value
+                left_name: int = global_state.heap.index(self._rigth.value)
+                # add it to the function argument register
+                global_state.instructions.append(InstructionFPA(left_name))
 
-            elif self._right.type == "NUM":
-                num_id = global_state.add_constant(self._right.value)
-                global_state.push_value(num_id)
+            elif self._rigth.type == "NUM":
+                global_state.constants.add(self._rigth.value)
+                const_id = list(global_state.constants).index(self._rigth.value)
+                global_state.instructions.append(InstructionFPA(const_id))
 
             else:
-                raise Exception(f"bad token {self._right}")
+                raise Exception(f"bad token {self._rigth}")
 
-        elif hasattr(self._right, "compile"):
-            self._right.compile(global_state)
-
-        else:
-            raise Exception(
-                f"{self._left} is not a token and has no attribute 'compile'"
-            )
-
-        # assuming that the value of both the left and right have been pushed onto the stack we will
-        # call the operator as a function
-
-        global_state.add_instructions(InstructionPK2())
-
-        op_fn = global_state.add_function(self._op)
-        global_state.add_instructions(InstructionPGA(op_fn))
+        op_fn = global_state.fn_deps.add(self._op)
+        global_state.instructions.append(InstructionFPA(op_fn))
         global_state.add_instructions(InstructionCAL())

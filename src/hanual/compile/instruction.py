@@ -50,6 +50,7 @@ class InstructionEnum:
     JNZ = 0b1010_0010  # Jump not 0
     JIE = 0b1010_0011  # jump if error
 
+    LDC = 0b1100_0000
     FPA = 0b1000_0000  # Func Pointer Asignment, will take a function pointer from heap and put in register, FP
     CFA = 0b0000_0001  # Clear Function Args
 
@@ -62,10 +63,13 @@ class InstructionEnum:
     MVC = 0b1000_0110
     MVD = 0b1000_0111
     MVE = 0b1000_1000
+    MVG = 0b1000_1001  # move into status
 
     FLG = 0b1000_0011  # move a byte from A register into Flag register
 
     RZE = 0b0010_0000  # Raise Exception
+
+    INT = 0b1000_1111  # Interupt
 
     CAL = 0b0100_0001  # Call function
     RET = 0b0000_0001  # return

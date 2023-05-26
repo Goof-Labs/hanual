@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import (
-    InstructionPGC,
-    InstructionPK2,
-    InstructionPGA,
-    InstructionCAL,
-)
+# from hanual.compile.instruction import (
+#    InstructionPGC,
+#    InstructionPK2,
+#    InstructionPGA,
+#    InstructionCAL,
+# )
 from typing import Any, Dict, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
@@ -36,6 +36,7 @@ class Condition(BaseNode, ABC):
         return self._right
 
     def compile(self, global_state: Assembler) -> Any:
+        raise NotImplementedError
         # LEFT
         if isinstance(self._left, Token):
             if self._left.type == "NUM":

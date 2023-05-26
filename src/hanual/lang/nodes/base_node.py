@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Union, Tuple, TypeVar, Any, Dict, TYPE_CHECKING
+from typing import Union, Tuple, TypeVar, Dict, TYPE_CHECKING, Any
+from hanual.lang.runtime import RuntimeEnvironment
 from hanual.lang.builtin_lexer import Token
 from abc import ABC, abstractmethod
 
@@ -28,6 +29,14 @@ class BaseNode(ABC):
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,
         that corresponds to valid hanual bytecode.
+        """
+        raise NotImplementedError
+
+    #    @abstractmethod
+    def run(self, global_state: RuntimeEnvironment) -> None:
+        """
+        If we are running the code directelly then we
+        will need to be able to execute each node
         """
         raise NotImplementedError
 

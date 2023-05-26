@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import (
-    InstructionPK1,
-    InstructionPK2,
-    InstructionPK3,
-    InstructionPK4,
-    InstructionPK5,
-    InstructionPKN,
-    InstructionPGA,
-    InstructionCAL,
-)
+# from hanual.compile.instruction import (
+#    InstructionPK1,
+#    InstructionPK2,
+#    InstructionPK3,
+#    InstructionPK4,
+#    InstructionPK5,
+#    InstructionPKN,
+#    InstructionPGA,
+#    InstructionCAL,
+# )
 from typing import Any, Dict, TYPE_CHECKING
 from .base_node import BaseNode
 
@@ -25,6 +25,7 @@ class FunctionCall(BaseNode):
         self._name: Token = name
 
     def compile(self, global_state: Assembler) -> Any:
+        return NotImplementedError
         self._args.compile(global_state)
 
         #  we have special instructions that pack N amounts of elements on stack into a tuple, this lets us use them

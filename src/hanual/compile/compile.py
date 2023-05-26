@@ -2,21 +2,18 @@ from __future__ import annotations
 
 
 from hanual.compile.instruction import Instruction
-from typing import NamedTuple, List, Dict
+from typing import NamedTuple, List
 from hanual.lang.lexer import Token
 from .assembler import Assembler
-from .label import Label
 
 
 class DepInfo(NamedTuple):
     file_deps: List[str]
     consts: List[Token]
-    refs: List[str]
 
 
 class CompileInfo(NamedTuple):
     instructions: List[Instruction]
-    functions: Dict[str, Label]
     deps: DepInfo
 
 
@@ -26,14 +23,13 @@ class Compiler:
 
     def get_deps(self):
         return DepInfo(
-            file_deps=self._assembler.file_deps,
-            consts=self._assembler.constants,
-            refs=self._assembler.refs,
+            file_deps=self._assembler._external_fls,
+            consts=self._assembler._external_fns,
         )
 
     def compile_src(self, tree):
         tree.compile(self._assembler)
-        return self._assembler.instructions
+        return self._assembler._code
 
     @property
     def assembler(self):
@@ -43,5 +39,4 @@ class Compiler:
         return CompileInfo(
             instructions=self.compile_src(tree),
             deps=self.get_deps(),
-            functions=self._assembler.functions,
         )

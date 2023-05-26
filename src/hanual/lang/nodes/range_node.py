@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import (
-    InstructionPGC,
-    InstructionPK2,
-    InstructionPGA,
-    InstructionCAL,
-)
+# from hanual.compile.instruction import (
+#    InstructionPGC,
+#    InstructionPK2,
+#    InstructionPGA,
+#    InstructionCAL,
+# )
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from typing_extensions import Self
 from .base_node import BaseNode
@@ -26,6 +26,7 @@ class RangeNode(BaseNode):
         self._to = to_
 
     def compile(self, global_state: Assembler) -> Any:
+        return NotImplementedError
         # This is another builtin function, range
 
         # push the starting value to the top

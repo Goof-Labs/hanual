@@ -8,8 +8,9 @@ class HanualLexer(Lexer):
     rules = [
         # NAMES
         ("CTX", rx(r"\$[a-zA-Z_][a-zA-Z0-9_]*")),
-        ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
+        ("MNM", rx(r"\~[a-zA-Z_][a-zA-Z0-9_]*")),
         ("ADT", rx(r"\\[a-zA-Z0-9_]+")),  # algebraic datatype \name
+        ("ID", rx(r"[a-zA-Z_][a-zA-Z0-9_]*")),
         # KEYWORDS
         ("SHOUT", kw("SHOUT")),
         ("FN", kw("fn")),
@@ -26,6 +27,7 @@ class HanualLexer(Lexer):
         ("LET", kw("let")),
         ("END", kw("end")),
         ("USE", kw("use")),
+        ("WHR", kw("where")),
         # SYMBOLS
         ("STR", rx(r"(\".*?(?<!\\)(\\\\)*\"|'.*?(?<!\\)(\\\\)*')")),
         ("EL", rx(r"\=\=|\!\=|\>|\<|\<\=|\>\=")),

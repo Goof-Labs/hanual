@@ -1,5 +1,4 @@
 from __future__ import annotations
-from hanual.compile import Assembler
 
 from hanual.compile.instruction import (
     InstructionCAL,
@@ -7,9 +6,12 @@ from hanual.compile.instruction import (
     InstructionFPA,
     InstructionCFA,
 )
+from typing import Any, Dict, Union, TYPE_CHECKING
 from hanual.lang.lexer import Token
-from typing import Any, Dict, Union
 from .base_node import BaseNode
+
+if TYPE_CHECKING:
+    from hanual.compile.assembler import Assembler
 
 
 class AlgebraicExpression(BaseNode):

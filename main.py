@@ -34,34 +34,23 @@ class HanualMainClass:
 
 main = HanualMainClass()
 
-with open(r"D:\programing\hanual\hanual\src\stdlib\io.hnl") as f:
-    res = main.run(f.read())
+res = main.run(
+    r"""
+let x = 0
 
-r"""
-use std::bufferlib::string_builder as str_builder
-use std::bufferlib::add_char
-use std::foundation::printc
-use std::foundation::getch
-use std::strlib::str_len
-use std::strlib::getc
-
-
-fn print(value)
-    let i = 0
-
-    while ( i < str_len(value))
-        printc(getc(value, i))
-        i = i + 1
-    end
+while x < 10
+    println(tostr(x))
 end
 
-print("Hello world")
 
 """
-print(main.compiler.assembler.get_asm())
+)
+
+# print(res.run())
+
 # pp.pprint(res.instructions)
 # pp.pprint(res.deps)
 # pp.pprint(res)
 
-# print(dump_tree(res, depth=25))
+print(dump_tree(res, depth=25))
 # pp.pprint(res.as_dict())

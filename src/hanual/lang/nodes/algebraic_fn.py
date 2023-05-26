@@ -2,9 +2,11 @@ from __future__ import annotations
 
 
 from .algebraic_expr import AlgebraicExpression
-from hanual.compile import Assembler
+from typing import Any, Dict, TYPE_CHECKING
 from .base_node import BaseNode
-from typing import Any, Dict
+
+if TYPE_CHECKING:
+    from hanual.compile import Assembler
 
 
 class AlgebraicFunc(BaseNode):

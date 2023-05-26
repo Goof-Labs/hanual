@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import InstructionPGC, InstructionPGA
+# from hanual.compile.instruction import InstructionPGC, InstructionPGA
 from hanual.lang.builtin_lexer import Token
 from typing import Dict, Any, TYPE_CHECKING
 from .base_node import BaseNode
@@ -15,6 +15,7 @@ class ReturnStatement(BaseNode, ABC):
         self._value = value
 
     def compile(self, global_state: Assembler) -> Any:
+        raise NotImplementedError
         if isinstance(self._value, Token):
             if self._value.type == "ID":
                 global_state.pull_value(self._value.value)

@@ -5,12 +5,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict
 
-from hanual.compile import Assembler
 from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
     from .namespace_acessor import NamespaceAccessor
+    from hanual.compile.assembler import Assembler
     from hanual.lang.lexer import Token
 
 

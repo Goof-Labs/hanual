@@ -28,5 +28,5 @@ class VarChange(BaseNode):
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()
 
-    def compile(self, global_state: Assembler) -> None:
-        self._value.compile(global_state)
+    def compile(self) -> None:
+        raise NotImplementedError

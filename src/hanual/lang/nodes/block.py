@@ -34,9 +34,9 @@ class CodeBlock(BaseNode, ABC):
     def children(self):
         return self._children
 
-    def compile(self, state: Assembler) -> Any:
+    def compile(self, ir) -> Any:
         for child in self.children:
-            child.compile(state)
+            child.compile(ir)
 
     def as_dict(self) -> List[Any]:
         return [c.as_dict() if hasattr(c, "as_dict") else c for c in self.children]

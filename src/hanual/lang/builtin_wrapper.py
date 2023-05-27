@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from .preprocess.preprocesser import PrePeoccesser
 from .builtin_parser import get_parser, PParser
-from hanual.compile.assembler import Assembler
 from typing import Optional, TYPE_CHECKING
 from .builtin_lexer import HanualLexer
 
@@ -13,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class BuiltinWrapper:
-
     # This class wiss spit out the ast
 
     __slots__ = "_preproc", "_lexer", "_parser", "_assembler"
@@ -25,7 +23,6 @@ class BuiltinWrapper:
         parser: Optional[PParser] = None,
         asembler: Optional[Assembler] = None,
     ) -> None:
-
         # preproc setup
         if preprocesser is None:
             self._preproc = PrePeoccesser()
@@ -65,8 +62,8 @@ class BuiltinWrapper:
             src, prefix="@", starting_defs=flags.definitions
         )
         whisper = self._lexer.tokenize(whisper)
-        
+
         self._parser.toggle_debug_messages(True)
-        
+
         whisper = self._parser.parse(whisper)
         return whisper

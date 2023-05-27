@@ -1,17 +1,12 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import (
-    InstructionCFA,
-    InstructionAFA,
-    InstructionFLG,
-    InstructionMVA,
-)
 from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
+    from hanual.compile.ir import IR
+
 
 T = TypeVar("T")
 
@@ -45,33 +40,18 @@ class Arguments(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
-    def compile(self, global_state: Assembler) -> Any:
-        # function definitions and calling is handled differently by args
-        if self.function_def:
-            for name in self._children:
-                assert isinstance(name, Token)
-                # The bytecode will wrap the arguments into a tuple, so we probably want to unpack them.
-                # Yes this is inefficient to pack and then unpack but still
-                # TODO
+    def compile(self, ir: IR) -> None:
+        reg = ir.reserve_reg()
 
-        # calling
-        else:
-            global_state.instructions.append(InstructionCFA())
+        for item in self._children:
+            if hasattr(item, "compile"):
+                item.compile(ir, to=reg)
+                ir.mov("FA", reg)
 
-            for obj in self.children:
-                if hasattr(obj, "compile"):
-                    obj.compile(global_state)
+            else:
+                ir.mov("FA", item.value)
 
-                elif isinstance(obj, Token):
-                    if obj.type == "ID":
-                        # get index of value, move ptr into A register move flag to move A register into function args
-                        id_ = global_state.heap.index(obj.value)
-                        global_state.instructions.append(InstructionMVA(id_))
-                        global_state.instructions.append(InstructionFLG(0b1000_0000))
-                        global_state.instructions.append(InstructionAFA(0b0000_0000))
-
-                    elif obj.type == "ID" or obj.type == "":
-                        ...
+        ir.free_reg(reg)
 
     def as_dict(self) -> Dict[str, Any]:
         return {

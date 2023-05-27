@@ -6,10 +6,6 @@ from .base_node import BaseNode
 from abc import ABC
 
 
-if TYPE_CHECKING:
-    from hanual.compile.assembler import Assembler
-
-
 class UsingStatement(BaseNode, ABC):
     __slots__ = ("_nsa",)
 
@@ -20,8 +16,8 @@ class UsingStatement(BaseNode, ABC):
     def path(self):
         return self._nsa
 
-    def compile(self, global_state: Assembler) -> None:
-        global_state.add_file_dep(self._nsa.full_path)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self):
         super().as_dict()

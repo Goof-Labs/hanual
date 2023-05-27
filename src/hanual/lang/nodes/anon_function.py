@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, TYPE_CHECKING, Union
-from hanual.compile.assembler import Assembler
-from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
@@ -27,16 +25,8 @@ class AnonymousFunction(BaseNode, ABC):
         self._inner = inner
         self._args = args
 
-    def compile(self, global_state: Assembler) -> None:
-        # no name needed
-        fn_lbl = Label("sad_unnamed_function")
-
-        global_state.labels.append(fn_lbl)
-        self.fn_name = fn_lbl.mangled_id
-
-        global_state.function_table.add(fn_lbl)
-
-        self._inner.compile(global_state)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return {"args": self._args, "innter": self._inner}

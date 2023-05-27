@@ -10,7 +10,6 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .namespace_acessor import NamespaceAccessor
-    from hanual.compile.assembler import Assembler
     from hanual.lang.lexer import Token
 
 
@@ -27,8 +26,8 @@ class UsingStatementWithAltName(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self, global_state: Assembler) -> None:
-        global_state.add_file_dep(self._name)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

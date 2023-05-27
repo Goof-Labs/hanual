@@ -301,12 +301,12 @@ def if_statement(ts: DefaultProduction, type_: int):
 
 
 @par.rule(
-    "WHL LPAR condition RPAR line END",
-    "WHL LPAR condition RPAR lines END",
+    "WHL condition line END",
+    "WHL condition lines END",
     # nobody
-    "WHL LPAR condition RPAR END",
+    "WHL condition END",
     types={
-        "WHL LPAR condition RPAR END": False,
+        "WHL condition END": False,
     },
 )
 def while_stmt(ts: DefaultProduction, no_body: bool = True):

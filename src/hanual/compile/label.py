@@ -5,9 +5,10 @@ from random import randbytes
 
 
 class Label:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, idx: int) -> None:
         self._mangled = Label.mangle_id(name)
         self._name = name
+        self._idx = idx
 
     @property
     def name(self) -> str:
@@ -16,6 +17,10 @@ class Label:
     @property
     def mangled_id(self) -> str:
         return self._mangled
+
+    @property
+    def idx(self):
+        return self._idx
 
     @staticmethod
     def mangle_id(name: str) -> str:

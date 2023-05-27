@@ -13,8 +13,8 @@ class BreakStatement(BaseNode):
         self._tk = node
         self._cx = ctx
 
-    def compile(self, global_state: Assembler) -> Any:
-        return super().compile(global_state)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return {"type": "break", "ctx": self._cx}

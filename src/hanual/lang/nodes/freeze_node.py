@@ -20,7 +20,7 @@ class FreezeNode(BaseNode, ABC):
     def __init__(self: BaseNode, var: T) -> None:
         self._var: T = var
 
-    def compile(self, global_state: Assembler) -> Any:
+    def compile(self) -> None:
         raise NotImplementedError
 
     @property

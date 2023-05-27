@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from hanual.compile.instruction import InstructionJEZ
 from hanual.lang.nodes.base_node import BaseNode
 from typing import Any, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.conditions import Condition
     from hanual.lang.nodes.block import CodeBlock
-    from hanual.compile import Assembler
+    from hanual.compile.ir import IR
 
 
 class WhileStatement(BaseNode):
@@ -33,10 +32,10 @@ class WhileStatement(BaseNode):
             else self._body,
         }
 
-    def compile(self, global_state: Assembler) -> Any:
-        while_start = global_state.add_label("while_loop", add_now=False)
+    def compile(self, ir: IR) -> None:
+        start = ir.label("sad_while")
 
-        self._body.compile(global_state)
-        self._while.compile(global_state)  # push a true or false to stack
-        # if the while is true we jump
-        global_state.add_instructions(InstructionJEZ(while_start.idx))
+        self._body.compile(ir)
+
+        self._while.compile(ir)
+        ir.cjmp(start)

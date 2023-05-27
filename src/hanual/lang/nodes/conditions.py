@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-# from hanual.compile.instruction import (
-#    InstructionPGC,
-#    InstructionPK2,
-#    InstructionPGA,
-#    InstructionCAL,
-# )
 from typing import Any, Dict, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
+    from hanual.compile.ir import IR
 
 
 class Condition(BaseNode, ABC):
@@ -35,42 +29,21 @@ class Condition(BaseNode, ABC):
     def right(self):
         return self._right
 
-    def compile(self, global_state: Assembler) -> Any:
-        raise NotImplementedError
-        # LEFT
-        if isinstance(self._left, Token):
-            if self._left.type == "NUM":
-                cid = global_state.add_constant(self._left.value)
-                global_state.add_instructions(InstructionPGC(cid))
-
-            elif self._left.type == "ID":
-                global_state.pull_value(self._left.value)
-
-            else:
-                raise NotImplementedError
+    def compile(self, ir: IR) -> None:
+        if hasattr(self._left, "compile"):
+            self._left.compile(ir, to="FA")
 
         else:
-            self._left.compile(global_state)
+            ir.mov("FA", self._left.value)
 
-        # RIGHT
-        if isinstance(self._right, Token):
-            if self._right.type == "NUM":
-                cid = global_state.add_constant(self._right.value)
-                global_state.add_instructions(InstructionPGC(cid))
-
-            elif self._right.type == "ID":
-                global_state.pull_value(self._right.value)
+        if hasattr(self._left, "compile"):
+            self._left.compile(ir, to="FA")
 
         else:
-            self._right.compile(global_state)
+            ir.mov("FA", self._right.value)
 
-        # pack left and right into tuple
-        global_state.add_instructions(InstructionPK2())
-
-        # one of +-/*% and yes these are functions now
-        op_id = global_state.add_reference(self._op.value)
-        global_state.add_instructions(InstructionPGA(op_id))
-        global_state.add_instructions(InstructionCAL())
+        ir.mov("FP", self._op.value)
+        ir.call()
 
     def as_dict(self) -> Dict[str, Any]:
         return {

@@ -14,8 +14,8 @@ class AnonArgs(BaseNode):
     def __init__(self: BaseNode, args: Arguments) -> None:
         self._args = args
 
-    def compile(self, global_state: Assembler) -> Any:
-        self._args.compile(global_state)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return self._args.as_dict()

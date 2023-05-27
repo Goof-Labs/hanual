@@ -328,16 +328,6 @@ def function_marker(ts: DefaultProduction):
     return ts[1]
 
 
-# @par.rule("LPAR f_call")
-# def par_f_mark(ts):
-#    return ts[1]
-
-
-# @par.rule("par_f_mark RPAR")
-# def cond_f_call(ts):
-#    return ts[0]
-
-
 ###########################
 # FUNCTION DEF
 ###########################

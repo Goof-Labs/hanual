@@ -16,8 +16,8 @@ class FunctionCall(BaseNode):
         self._name: Token = name
 
     def compile(self, ir: IR, to: Optional[str] = None) -> None:
-        ir.mov("FP", self._name.value)
         self._args.compile(ir)
+        ir.mov("FP", self._name.value)
         ir.call()
 
         if not to is None:

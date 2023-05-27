@@ -9,7 +9,6 @@ from typing import (
     Optional,
     TypeVar,
     Type,
-    Literal,
 )
 from .productions import DefaultProduction
 from copy import deepcopy
@@ -32,6 +31,7 @@ class PParser:
 
     def __init__(self) -> None:
         self.rules: Dict[str, Tuple[str, Proxy]] = {}
+        self._always: List = []
         self.debug = False
 
         logging.basicConfig(level=logging.DEBUG)
@@ -143,6 +143,20 @@ class PParser:
             # expand all rules, so they have their own individual function associated
             for rule in rules:
                 self.rules[rule] = func.__name__, prox
+
+        return inner
+
+    def always(self: PParser):
+        """
+        This will always run on each reduction of the stack or after every check.
+        This is verry usefull when you want to change the tokens while the code is
+        represented as a partial tree or stream of rokens.
+
+        WARNING: this can really mess up the stack if you are not carefull so be carefull
+        """
+
+        def inner(func):
+            self._always.append(func)
 
         return inner
 

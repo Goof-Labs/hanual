@@ -32,11 +32,14 @@ main = HanualMainClass()
 
 res = main.run(
     r"""
+print(strcat("Hello", "world"))
+
+
 let x = 0
 
-while 1 == 1
+while x < 10
+    x = x + 1
 end
-
 """
 )
 

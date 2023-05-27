@@ -306,24 +306,14 @@ def if_statement(ts: DefaultProduction, type_: int):
     # nobody
     "WHL condition END",
     types={
-        "WHL condition END": False,
+        "WHL condition END": True,
     },
 )
 def while_stmt(ts: DefaultProduction, no_body: bool = True):
     if no_body:
-        return WhileStatement(ts[2], CodeBlock([]))
+        return WhileStatement(ts[1], CodeBlock([]))
 
-    con = None
-    blk = None
-
-    for t in ts:
-        if isinstance(t, Condition):
-            con = t
-
-        if isinstance(t, CodeBlock):
-            blk = t
-
-    return WhileStatement(condition=con, body=blk)
+    return WhileStatement(condition=ts[1], body=ts[2])
 
 
 ###########################

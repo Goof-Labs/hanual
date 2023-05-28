@@ -6,6 +6,8 @@ from hanual.lang.nodes import (
     FunctionDefinition,
     AnonymousFunction,
     NamespaceAccessor,
+    StructDefinition,
+    StrongFieldList,
     ReturnStatement,
     UsingStatement,
     AssignmentNode,
@@ -14,6 +16,7 @@ from hanual.lang.nodes import (
     AlgebraicFunc,
     FunctionCall,
     IfStatement,
+    StrongField,
     FreezeNode,
     BinOpNode,
     Condition,
@@ -27,8 +30,58 @@ from hanual.lang.nodes import (
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.builtin_lexer import Token
 from hanual.lang.pparser import PParser
+from typing import Union
 
 par = PParser()
+
+###########################
+# STRUCTS
+###########################
+
+
+@par.rule("ID COL ID")
+def strong_field(ts: DefaultProduction[Token, Token, Token]) -> StrongField:
+    return StrongField(ts[0], ts[2])
+
+
+@par.rule(
+    "SCT ID",
+    "SCT ID COL ID",
+    "SCT ID COL args",
+    unless_ends=["COL"],
+)
+def struct_header(
+    ts: DefaultProduction[Token, Token]
+) -> DefaultProduction[Token, Token]:
+    # This header exists to provide the `struct NAME` part of the
+    # struct, we want to not do this if the following character is
+    # a `:` colon, this means that we want to inherit from another
+    # struct. This rule just makes the actuall
+    return ts
+
+
+@par.rule("strong_field strong_field")
+def strong_fields(ts: DefaultProduction[StrongField, StrongField]) -> StrongFieldList:
+    return StrongFieldList().add_field(ts[0]).add_field(ts[1])
+
+
+@par.rule("strong_fields strong_field")
+def strong_fields(
+    ts: DefaultProduction[StrongFieldList, StrongField]
+) -> StrongFieldList:
+    return ts[0].add_field(ts[1])
+
+
+@par.rule("struct_header strong_field END", "struct_header strong_fields END")
+def struct_def(
+    ts: DefaultProduction[
+        DefaultProduction[Token, Token],  # struct header
+        Union[StrongField, StrongFieldList],  # struct fields
+        Token,  # end token
+    ]
+) -> StructDefinition:
+    return StructDefinition(ts[0][1].value, ts[1])
+
 
 ###########################
 # BINARY OPERATIONS
@@ -474,6 +527,7 @@ def h_range(ts: DefaultProduction):
     "while_stmt",
     "break_stmt",
     "var_change",
+    "struct_def",
     "freeze",
     "f_call",
     "using",

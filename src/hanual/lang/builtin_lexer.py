@@ -28,6 +28,7 @@ class HanualLexer(Lexer):
         ("END", kw("end")),
         ("USE", kw("use")),
         ("WHR", kw("where")),
+        ("SCT", kw("struct")),
         # SYMBOLS
         ("STR", rx(r"(\".*?(?<!\\)(\\\\)*\"|'.*?(?<!\\)(\\\\)*')")),
         ("EL", rx(r"\=\=|\!\=|\>|\<|\<\=|\>\=")),
@@ -38,6 +39,7 @@ class HanualLexer(Lexer):
         ("NUM", rx(r"\d+(\.\d+)?")),
         ("COM", rx(r"\,")),
         ("NSA", rx(r"\:\:")),  # name space access
+        ("COL", rx(r"\:")),
         ("DOT", rx(r"\.")),
         ("LSB", rx(r"\[")),
         ("RSB", rx(r"\]")),

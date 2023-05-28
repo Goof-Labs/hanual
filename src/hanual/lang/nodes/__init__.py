@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from .using_statement_alt_name import UsingStatementWithAltName
 from .namespace_acessor import NamespaceAccessor
+from .strong_field_list import StrongFieldList
 from .while_statement import WhileStatement
 from .break_statement import BreakStatement
 from .using_statement import UsingStatement
@@ -10,8 +11,10 @@ from .algebraic_expr import AlgebraicExpression
 from .anon_function import AnonymousFunction
 from .algebraic_fn import AlgebraicFunc
 from .if_statement import IfStatement
+from .strong_field import StrongField
 from .return_stmt import ReturnStatement
 from .freeze_node import FreezeNode
+from .struct_def import StructDefinition
 from .assignment import AssignmentNode
 from .conditions import Condition
 from .range_node import RangeNode

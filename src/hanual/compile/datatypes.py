@@ -27,12 +27,19 @@ class String(_Pointerable, _Serializeable):
     def __init__(self, value: str) -> None:
         self._value = value
 
+    def serialize(self) -> bytes:
+        return super().serialize()
+
+    @property
+    def value(self):
+        return self._value
+
 
 class Intager(_Pointerable, _Serializeable):
     # size is the size of our intager, e.g i32
     # value is the actual value of the intager
     def __init__(self, size: int, value: int) -> None:
-        if not log2(size).is_intager():
+        if not log2(size).is_integer():
             raise Exception(
                 f"{size} is not a power of 2, i.e. not 2, 4, 8, 16, 32, ..."
             )
@@ -40,12 +47,26 @@ class Intager(_Pointerable, _Serializeable):
         self._size = size
         self._value = value
 
+    def serialize(self) -> bytes:
+        return super().serialize()
+
+    @property
+    def value(self):
+        return self._value
+
 
 class Float(_Pointerable, _Serializeable):
     def __init__(self, val: float) -> None:
         a, b = val.as_integer_ratio()
         self.n1 = Intager(a)
         self.n2 = Intager(b)
+
+    def serialize(self) -> bytes:
+        return super().serialize()
+
+    @property
+    def value(self):
+        return self._value
 
 
 class Array(_Pointerable, _Serializeable):

@@ -15,7 +15,7 @@ class Arguments(BaseNode):
     __slots__ = "_children", "_function_def"
 
     def __init__(self, children: Union[List[T], T]) -> None:
-        self._children: List[Token]
+        self._children: List[Token, BaseNode]
         self.function_def = False
 
         if isinstance(children, Token):
@@ -43,13 +43,15 @@ class Arguments(BaseNode):
     def compile(self, ir: IR) -> None:
         reg = ir.reserve_reg()
 
+        item: Union[BaseNode, Token]
+
         for item in self._children:
             if hasattr(item, "compile"):
                 item.compile(ir, to=reg)
                 ir.mov("FA", reg)
 
             else:
-                ir.mov("FA", item.value)
+                ir.mov("FA", ir.infer(item.value))
 
         ir.free_reg(reg)
 

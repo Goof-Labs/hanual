@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 
+from .datatypes import String, Intager, Float
 from .jump import Jump, ConditionalJump
+from typing import Union, List
 from .comparisons import Cmp
 from .basics import Call
 from .label import Label
-from typing import Self
 from .mem import Move
 
 
@@ -20,8 +21,8 @@ class IR:
         return cls._instance
 
     def __init__(self) -> None:
+        self.constants: List[Union[String, Intager, Float]] = []
         self.instructions = []
-        self.constants = []
         self.labels = []
         self.names = []
         self.regs = {k: False for k in ("A", "B", "C", "D", "E")}
@@ -80,3 +81,48 @@ class IR:
             raise Exception(f"{k!r} is not a register")
 
         self.regs[k] = False
+
+    # CONSTANTS
+
+    def int_con(self, const: int):
+        con = Intager(32, const)
+
+        if not const in map(lambda x: x.value, self.constants):
+            self.constants.append(con)
+
+        return self.constants.index(con)
+
+    def str_con(self, const: str):
+        con = String(const)
+
+        if not con in self.constants:
+            self.constants.append(con)
+
+        return self.constants.index(con)
+
+    def flt_con(self, const: float):
+        con = Float(const)
+
+        if not con in self.constants:
+            self.constants.append(con)
+
+        return self.constants.index(const)
+
+    def infer(self, item: Union[str, int, float]):
+        if isinstance(item, str):
+            return self.str_con(item)
+
+        elif isinstance(item, int):
+            return self.int_con(item)
+
+        elif isinstance(item, float):
+            return self.flt_con(item)
+
+        else:
+            raise Exception
+
+    def const(self, const: Union[String, Intager, Float]):
+        if not const in self.constants:
+            self.constants.append(const)
+
+        return self.constants.index(const)

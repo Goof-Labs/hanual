@@ -18,6 +18,7 @@ from hanual.lang.nodes import (
     IfStatement,
     StrongField,
     FreezeNode,
+    HanualList,
     BinOpNode,
     Condition,
     NewStruct,
@@ -86,6 +87,16 @@ def struct_def(
 
 
 ###########################
+# [LISTS, FOR, ELEMENTS]
+###########################
+
+
+@par.rule("LSB args RSB")
+def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
+    return HanualList(ts[1])
+
+
+###########################
 # DOT NOTATION.YAY()
 ###########################
 
@@ -151,21 +162,34 @@ def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
 ###########################
 
 
-@par.rule("COM NUM", "COM expr", "COM f_call", "COM ID", "COM STR")
-def args(ts: DefaultProduction[Token, any]):
+@par.rule(
+    "COM NUM",
+    "COM expr",
+    "COM f_call",
+    "COM ID",
+    "COM STR",
+    "COM args",
+    "COM args_",
+)
+def args_(ts: DefaultProduction[Token, any]):
     return Arguments(ts[1])
 
 
 @par.rule(
-    "ID args",
-    "expr args",
-    "f_call args",
-    "STR args",
-    "NUM args",
-    "arg args",
+    "ID args_",
+    "expr args_",
+    "f_call args_",
+    "STR args_",
+    "NUM args_",
+    "args args_",
 )
 def args(ts: DefaultProduction[any, Arguments]):
     return ts[1].add_child(ts[0])
+
+
+@par.rule("args_ args_")
+def args_(ts: DefaultProduction[Arguments, Arguments]) -> Arguments:
+    return ts[0].add_child(ts[1])
 
 
 @par.rule("LPAR args RPAR")
@@ -529,32 +553,13 @@ def using(ts: DefaultProduction[Token, Token]) -> UsingStatement:
 
 
 ###########################
-# ANONEMOUS FUNCTIONS ARGS
-###########################
-
-
-@par.rule(
-    "LSB arg RSB",
-    "LSB ID RSB",
-    types={"LSB ID RSB": True},
-)
-def anon_func_args(
-    ts: DefaultProduction[Token, Arguments, Token], _1arg: bool
-) -> AnonArgs:
-    if _1arg:
-        return AnonArgs(Arguments(ts[1]))
-
-    return AnonArgs(ts[1])
-
-
-###########################
 # ANONEMOUS FUNCTIONS
 ###########################
 
 
 @par.rule(
-    "anon_func_args do line end",
-    "anon_func_args do lines end",
+    "args do line end",
+    "args do lines end",
 )
 def anon_function(
     ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]

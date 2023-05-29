@@ -14,6 +14,7 @@ from .if_statement import IfStatement
 from .strong_field import StrongField
 from .return_stmt import ReturnStatement
 from .freeze_node import FreezeNode
+from .hanual_list import HanualList
 from .struct_def import StructDefinition
 from .assignment import AssignmentNode
 from .conditions import Condition

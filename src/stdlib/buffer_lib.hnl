@@ -10,9 +10,13 @@ struct Buffer
     _idx: int
 end
 
-fn from_collection(mode)
-    /* asdf */
-    let buff = Buffer()
+fn from_collection(collection)
+    let buff = new Buffer()
+
+    buff.buffer = collection
+    buff._idx = 0
+
+    return buff
 end
 
 @end

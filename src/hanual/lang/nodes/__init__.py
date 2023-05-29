@@ -19,6 +19,7 @@ from .assignment import AssignmentNode
 from .conditions import Condition
 from .range_node import RangeNode
 from .var_change import VarChange
+from .new_struct import NewStruct
 from .arguments import Arguments
 from .dot_chain import DotChain
 from .base_node import BaseNode

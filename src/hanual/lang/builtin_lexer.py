@@ -26,6 +26,7 @@ class HanualLexer(Lexer):
         ("RET", kw("return")),
         ("LET", kw("let")),
         ("END", kw("end")),
+        ("NEW", kw("new")),
         ("USE", kw("use")),
         ("WHR", kw("where")),
         ("SCT", kw("struct")),

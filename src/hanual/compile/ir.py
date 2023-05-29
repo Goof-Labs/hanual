@@ -92,7 +92,7 @@ class IR:
     def int_con(self, const: int):
         con = Intager(32, const)
 
-        if not const in map(lambda x: x.value, self.constants):
+        if const not in map(lambda x: x.value, self.constants):
             self.constants.append(con)
 
         return self.constants.index(con)
@@ -100,7 +100,7 @@ class IR:
     def str_con(self, const: str):
         con = String(const)
 
-        if not con in self.constants:
+        if con not in self.constants:
             self.constants.append(con)
 
         return self.constants.index(con)
@@ -108,7 +108,7 @@ class IR:
     def flt_con(self, const: float):
         con = Float(const)
 
-        if not con in self.constants:
+        if con not in self.constants:
             self.constants.append(con)
 
         return self.constants.index(const)

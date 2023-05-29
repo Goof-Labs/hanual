@@ -20,6 +20,7 @@ from hanual.lang.nodes import (
     FreezeNode,
     BinOpNode,
     Condition,
+    NewStruct,
     CodeBlock,
     Arguments,
     RangeNode,
@@ -226,6 +227,14 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
 
 
 ###########################
+# NEW STRUCT
+###########################
+@par.rule("NEW f_call")
+def new_struct(ts: DefaultProduction[Token, FunctionCall]) -> NewStruct:
+    return NewStruct(ts[1])
+
+
+###########################
 # ALGEBRAIC OPERATIONS
 ###########################
 
@@ -263,7 +272,13 @@ def algebraic_fn(ts):
 ###########################
 
 
-@par.rule("LET ID EQ NUM", "LET ID EQ f_call", "LET ID EQ STR", unless_ends=["DOT"])
+@par.rule(
+    "LET ID EQ NUM",
+    "LET ID EQ f_call",
+    "LET ID EQ STR",
+    "LET ID EQ new_struct",
+    unless_ends=["DOT"],
+)
 def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
@@ -278,7 +293,21 @@ def assignment(ts: DefaultProduction):
 ###########################
 
 
-@par.rule("ID EQ NUM", "ID EQ f_call", "ID EQ STR", "ID EQ expr", unless_ends=["DOT"])
+@par.rule(
+    "ID EQ NUM",
+    "ID EQ f_call",
+    "ID EQ STR",
+    "ID EQ expr",
+    "ID EQ ID",
+    "ID EQ iwith_dot",
+    "iwith_dot EQ NUM",
+    "iwith_dot EQ f_call",
+    "iwith_dot EQ STR",
+    "iwith_dot EQ expr",
+    "iwith_dot EQ ID",
+    "iwith_dot EQ iwith_dot",
+    unless_ends=["DOT", "LPAR"],
+)
 def var_change(ts: DefaultProduction):
     return VarChange(ts[0], ts[2])
 

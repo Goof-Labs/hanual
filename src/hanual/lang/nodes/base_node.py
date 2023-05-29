@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union, Tuple, TypeVar, Dict, TYPE_CHECKING, Any
+from typing import Union, Tuple, TypeVar, Optional, Dict, TYPE_CHECKING, Any
 from hanual.lang.builtin_lexer import Token
 from abc import ABC, abstractmethod
 
@@ -23,7 +23,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self, ir: IR) -> None:
+    def compile(self, ir: IR, to: Optional[str]) -> None:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

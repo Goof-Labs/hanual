@@ -24,6 +24,7 @@ from hanual.lang.nodes import (
     Arguments,
     RangeNode,
     VarChange,
+    DotChain,
     AnonArgs,
 )
 
@@ -81,6 +82,27 @@ def struct_def(
     ]
 ) -> StructDefinition:
     return StructDefinition(ts[0][1].value, ts[1])
+
+
+###########################
+# DOT NOTATION.YAY()
+###########################
+
+
+@par.rule("DOT ID")
+def dot_id(ts: DefaultProduction[Token, Token]) -> DotChain:
+    dc = DotChain()
+    return dc.add_name(ts[1])
+
+
+@par.rule("iwith_dot dot_id")
+def iwith_dot(ts: DefaultProduction[DotChain, DotChain]) -> DotChain:
+    return ts[0].add_name(ts[1])
+
+
+@par.rule("ID dot_id", unless_starts=["DOT"])
+def iwith_dot(ts: DefaultProduction[Token, DotChain]) -> DotChain:
+    return ts[1].add_name(ts[0])
 
 
 ###########################
@@ -170,6 +192,31 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
+        return FunctionCall(name=ts[0], arguments=ts[1])
+
+    if isinstance(ts[2], Token):
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
+
+    return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
+
+
+@par.rule(
+    "iwith_dot LPAR expr RPAR",
+    "iwith_dot LPAR ID RPAR",
+    "iwith_dot LPAR STR RPAR",
+    "iwith_dot LPAR NUM RPAR",
+    "iwith_dot LPAR f_call RPAR",
+    "iwith_dot LPAR RPAR",
+    "iwith_dot par_args",
+    types={"iwith_dot LPAR RPAR": 1, "iwith_dot par_args": 2},
+)
+def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
+    if mode == 1:
+        # ( )
+        return FunctionCall(name=ts[0], arguments=Arguments([]))
+
+    if mode == 2:
+        # automatic args
         return FunctionCall(name=ts[0], arguments=ts[1])
 
     if isinstance(ts[2], Token):
@@ -445,6 +492,11 @@ def using(ts: DefaultProduction):
 @par.rule("USE namespace_accessor AS ID")
 def using(ts: DefaultProduction[Token, NamespaceAccessor, Token, Token]):
     return UsingStatementWithAltName(ts[1], ts[3])
+
+
+@par.rule("USE ID", unless_ends=["NSA"])
+def using(ts: DefaultProduction[Token, Token]) -> UsingStatement:
+    return UsingStatement(NamespaceAccessor(ts[1]))
 
 
 ###########################

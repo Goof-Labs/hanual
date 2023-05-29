@@ -35,7 +35,7 @@ class StructDefinition(BaseNode):
         return self._name
 
     def compile(self, ir: IR) -> None:
-        raise NotImplementedError
+        ir.add_struct(self._name, self._fields)
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

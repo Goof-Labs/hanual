@@ -26,7 +26,12 @@ class IR:
         self.labels = []
         self.names = []
         self.regs = {k: False for k in ("A", "B", "C", "D", "E")}
+        self.deps = set()
+        self.structs = {}
         self.idx = 0
+
+    def dep(self, path: str) -> None:
+        self.deps.add(path)
 
     def label(self, name: str) -> Label:
         # add a label
@@ -126,3 +131,10 @@ class IR:
             self.constants.append(const)
 
         return self.constants.index(const)
+
+    def add_struct(self, name: str, fields):
+        self.structs[name] = fields
+
+    def unpack(self, num_args: int):
+        # TODO implement
+        return 1, 2, 3, 4, 4

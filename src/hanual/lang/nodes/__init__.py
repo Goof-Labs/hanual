@@ -20,6 +20,7 @@ from .conditions import Condition
 from .range_node import RangeNode
 from .var_change import VarChange
 from .arguments import Arguments
+from .dot_chain import DotChain
 from .base_node import BaseNode
 from .anon_args import AnonArgs
 from .f_call import FunctionCall

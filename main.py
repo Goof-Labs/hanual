@@ -30,11 +30,11 @@ class HanualMainClass:
 
 main = HanualMainClass()
 
-res = main.run(
-    r"""
-IO.print("Hello world")
-"""
-)
+f = open(r"src\stdlib\buffer_lib.hnl")
+
+res = main.run(f.read())
+
+f.close()
 
 ir = IR()
 
@@ -45,8 +45,8 @@ ir = IR()
 
 print(dump_tree(res, depth=12))
 
-res.compile(ir)
-print(dump_tree(ir, depth=12))
+res[0][1].compile(ir)
+# print(dump_tree(ir, depth=12))
 
 
 # print(dump_tree(res, depth=25))

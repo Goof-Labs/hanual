@@ -5,7 +5,7 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
-    from hanual.compile import Assembler
+    from hanual.compile.ir import IR
     from .arguments import Arguments
     from .block import CodeBlock
 
@@ -14,7 +14,10 @@ class FunctionDefinition(BaseNode):
     __slots__ = "_name", "_arguments", "_inner"
 
     def __init__(
-        self: FunctionDefinition, name: Token, args: Arguments, inner: CodeBlock
+        self: FunctionDefinition,
+        name: Token,
+        args: Arguments,
+        inner: CodeBlock,
     ) -> None:
         args.function_def = True
 
@@ -34,8 +37,13 @@ class FunctionDefinition(BaseNode):
     def inner(self) -> CodeBlock:
         return self._inner
 
-    def compile(self) -> None:
-        raise NotImplementedError
+    def compile(self, ir: IR) -> None:
+        ir.label(self._name.value)
+        # TODO get arguments
+
+        ir.unpack(len(self._arguments.children))
+
+        self.inner.compile(ir)
 
     def as_dict(self) -> Dict[str, Any]:
         return {

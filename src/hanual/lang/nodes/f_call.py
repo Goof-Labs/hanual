@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, TYPE_CHECKING, Optional
+from typing import Any, Dict, TYPE_CHECKING, Optional, Union
+from .dot_chain import DotChain
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -12,12 +13,19 @@ if TYPE_CHECKING:
 
 class FunctionCall(BaseNode):
     def __init__(self: BaseNode, name: Token, arguments: Arguments) -> None:
+        self._name: Union[Token, DotChain] = name
         self._args: Arguments = arguments
-        self._name: Token = name
 
     def compile(self, ir: IR, to: Optional[str] = None) -> None:
         self._args.compile(ir)
-        ir.mov("FP", self._name.value)
+        # validate paths for.paths.that.contain.a.dot
+        if isinstance(self._name, DotChain):
+            ir.mov("FP", self._name.chain)
+
+        else:
+            # token
+            ir.mov("FP", self._name.value)
+
         ir.call()
 
         if not to is None:

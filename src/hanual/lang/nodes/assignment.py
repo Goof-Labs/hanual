@@ -40,7 +40,7 @@ class AssignmentNode(BaseNode, Generic[T]):
         if hasattr(self._value, "compile"):
             reg = ir.reserve_reg()
 
-            self._value.compile(to=reg)
+            self._value.compile(ir, to=reg)
             ir.mov(var, reg)
 
             ir.free_reg(reg)

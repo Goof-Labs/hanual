@@ -1,0 +1,18 @@
+@nif __inc_buffer_lib__
+
+@def __inc_buffer_lib__
+
+use collections_lib
+use status_lib
+
+struct Buffer
+    buffer: Collection
+    _idx: int
+end
+
+fn from_collection(mode)
+    /* asdf */
+    let buff = Buffer()
+end
+
+@end

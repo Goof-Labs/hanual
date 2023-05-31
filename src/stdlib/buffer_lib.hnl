@@ -1,8 +1,10 @@
+/*
 @nif __inc_buffer_lib__
 
 @def __inc_buffer_lib__
 
 use collections_lib
+use foundation
 use status_lib
 
 struct Buffer
@@ -19,5 +21,15 @@ fn from_collection(collection)
     return buff
 end
 
+fn read(buffer, num_bytes)
+end
+
 @end
-[1, 2, 3,4 ,4]
+
+*/
+
+if (a == 5)
+    print("5")
+elif (b == 6)
+    print("6")
+end

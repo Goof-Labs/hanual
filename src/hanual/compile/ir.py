@@ -2,10 +2,10 @@ from __future__ import annotations
 
 
 from .datatypes import String, Intager, Float
+from typing import Union, List, Optional
 from .jump import Jump, ConditionalJump
-from typing import Union, List
+from .basics import Call, GetProp
 from .comparisons import Cmp
-from .basics import Call
 from .label import Label
 from .mem import Move
 
@@ -39,8 +39,8 @@ class IR:
         self.labels.append(label)
         return label
 
-    def mov(self, to, val) -> None:
-        self.instructions.append(Move(to, val))
+    def mov(self, to, val, append: Optional[bool] = False) -> None:
+        self.instructions.append(Move(to, val, append))
         self.idx += 1
 
     def jmp(self, to: Label):
@@ -134,6 +134,9 @@ class IR:
 
     def add_struct(self, name: str, fields):
         self.structs[name] = fields
+
+    def get_property(self, name: str, prop: str) -> None:
+        self.instructions.append(GetProp(name, prop))
 
     def unpack(self, num_args: int):
         # TODO implement

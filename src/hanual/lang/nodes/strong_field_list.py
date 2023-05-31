@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, TypeVar, Self, List
+from typing import TYPE_CHECKING, Any, Dict, TypeVar, List
+from typing_extensions import Self
 from .base_node import BaseNode
 
 

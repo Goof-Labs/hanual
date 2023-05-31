@@ -1,5 +1,9 @@
+from typing import Optional
+
+
 class Move:
-    def __init__(self, to, val) -> None:
+    def __init__(self, to, val, append: Optional[bool] = False) -> None:
+        self._append = append
         self._val = val
         self._to = to
 

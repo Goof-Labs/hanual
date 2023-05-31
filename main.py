@@ -36,7 +36,7 @@ res = main.run(f.read())
 
 f.close()
 
-ir = IR()
+# ir = IR()
 
 
 # pp.pprint(res.instructions)
@@ -45,7 +45,7 @@ ir = IR()
 
 print(dump_tree(res, depth=12))
 
-res[0][1].compile(ir)
+# res[0][1].compile(ir)
 # print(dump_tree(ir, depth=12))
 
 

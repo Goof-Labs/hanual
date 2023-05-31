@@ -14,6 +14,8 @@ from hanual.lang.nodes import (
     WhileStatement,
     BreakStatement,
     AlgebraicFunc,
+    ElifStatement,
+    ElseStatement,
     FunctionCall,
     IfStatement,
     StrongField,
@@ -28,6 +30,7 @@ from hanual.lang.nodes import (
     VarChange,
     DotChain,
     AnonArgs,
+    IfChain,
 )
 
 from hanual.lang.productions import DefaultProduction
@@ -421,31 +424,102 @@ def condition(ts: DefaultProduction):
     "IF LPAR condition RPAR lines END",
     "IF LPAR condition RPAR lines END",
     "IF LPAR condition RPAR END",
-    "IF cond_f_call line END",
-    "IF cond_f_call lines END",
-    "IF cond_f_call lines END",
-    "IF cond_f_call END",
     types={
         "IF LPAR condition RPAR line END": 1,
         "IF LPAR condition RPAR lines END": 1,
         "IF LPAR condition RPAR END": 2,
-        "IF cond_f_call line END": 3,
-        "IF cond_f_call lines END": 3,
-        "IF cond_f_call END": 4,
     },
 )
 def if_statement(ts: DefaultProduction, type_: int):
     if type_ == 1:
-        return IfStatement(condition=ts[2], if_true=ts[4])
+        return IfStatement(ts[2], ts[4])
 
     elif type_ == 2:
-        return IfStatement(condition=ts[2], if_true=CodeBlock([]))
+        return IfStatement(ts[2], CodeBlock([]))
 
     elif type_ == 3:
-        return IfStatement(condition=ts[1], if_true=ts[2])
+        return IfStatement(ts[1], ts[2])
 
     elif type_ == 4:
-        return IfStatement(condition=ts[1], if_true=CodeBlock([]))
+        return IfStatement(ts[1], CodeBlock([]))
+
+
+@par.rule(
+    "IF LPAR condition RPAR line EIF",
+    "IF LPAR condition RPAR lines EIF",
+    "IF LPAR condition RPAR lines EIF",
+    "IF LPAR condition RPAR EIF",
+    types={
+        "IF LPAR condition RPAR line EIF": 1,
+        "IF LPAR condition RPAR lines EIF": 1,
+        "IF LPAR condition RPAR EIF": 2,
+    },
+)
+def if_chain_start(ts: DefaultProduction, type_: int):
+    chain = IfChain()
+
+    if type_ == 1:
+        return chain.add_node(IfStatement(ts[2], ts[4]))
+
+    elif type_ == 2:
+        return chain.add_node(IfStatement(ts[2], CodeBlock([])))
+
+    elif type_ == 3:
+        return chain.add_node(IfStatement(ts[1], ts[2]))
+
+    elif type_ == 4:
+        return chain.add_node(IfStatement(ts[1], CodeBlock([])))
+
+
+@par.rule(
+    "if_chain_start LPAR condition RPAR line EIF",
+    "if_chain_start LPAR condition RPAR lines EIF",
+)
+def condition_chain(ts: DefaultProduction[IfChain, Token, Condition, Token]) -> IfChain:
+    return ts[0].add_node(ElifStatement(ts[2], ts[4]))
+
+
+@par.rule(
+    "if_chain_start LPAR condition RPAR line ELS line END",
+    "if_chain_start LPAR condition RPAR lines ELS line END",
+    "if_chain_start LPAR condition RPAR line ELS lines END",
+    "if_chain_start LPAR condition RPAR lines ELS lines END",
+)
+def if_chain(
+    ts: DefaultProduction[
+        IfChain,  # original elif chain
+        Token,  # lpar
+        Condition,  # condition
+        Token,  # RPAR
+        CodeBlock,  # block
+        Token,  # ELSE
+        CodeBlock,  # line(s)
+        Token,  # END
+    ]
+) -> IfChain:
+    return ts[0].add_node(ts[2], ts[4]).add_else(ts[6])
+
+
+@par.rule(
+    "if_chain_start LPAR condition RPAR line END",
+    "if_chain_start LPAR condition RPAR lines END",
+)
+def if_chain(
+    ts: DefaultProduction[
+        IfChain,
+        Token,
+        Condition,
+        Token,
+        CodeBlock,
+        Token,
+    ]
+) -> IfChain:
+    return ts[0]
+
+
+@par.rule("condition_chain END")
+def if_chain(ts: DefaultProduction[IfChain]) -> IfChain:
+    return ts
 
 
 ###########################

@@ -8,6 +8,8 @@ from .while_statement import WhileStatement
 from .break_statement import BreakStatement
 from .using_statement import UsingStatement
 from .algebraic_expr import AlgebraicExpression
+from .elif_statement import ElifStatement
+from .else_statement import ElseStatement
 from .anon_function import AnonymousFunction
 from .algebraic_fn import AlgebraicFunc
 from .if_statement import IfStatement
@@ -25,6 +27,7 @@ from .arguments import Arguments
 from .dot_chain import DotChain
 from .base_node import BaseNode
 from .anon_args import AnonArgs
+from .if_chain import IfChain
 from .f_call import FunctionCall
 from .f_def import FunctionDefinition
 from .binop import BinOpNode

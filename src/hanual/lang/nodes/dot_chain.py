@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, Self, Union, List, TYPE_CHECKING
-from hanual.compile.ir import IR
+from typing import Any, Dict, Union, List, TYPE_CHECKING
 from hanual.lang.lexer import Token
+from typing_extensions import Self
+from hanual.compile.ir import IR
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

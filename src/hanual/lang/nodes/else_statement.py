@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, Dict
+
+from typing import TYPE_CHECKING, Any, Dict, Optional
+
+from hanual.compile.ir import IR
 from .base_node import BaseNode
-from .block import CodeBlock
-from abc import ABC
 
 
 if TYPE_CHECKING:
@@ -11,8 +12,8 @@ if TYPE_CHECKING:
     from .block import CodeBlock
 
 
-class IfStatement(BaseNode, ABC):
-    def __init__(self: IfStatement, condition: Condition, block: CodeBlock) -> None:
+class ElseStatement(BaseNode):
+    def __init__(self: BaseNode, condition: Condition, block: CodeBlock) -> None:
         self._condition: Condition = condition
         self._block: CodeBlock = block
 
@@ -24,8 +25,8 @@ class IfStatement(BaseNode, ABC):
     def block(self) -> CodeBlock:
         return self._block
 
-    def compile(self) -> None:
-        raise NotImplementedError
+    def compile(self, ir: IR, to: str | None) -> None:
+        return super().compile(ir, to)
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

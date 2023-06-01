@@ -188,7 +188,6 @@ class PParser:
                 # compare the stack from top to bottom so we need to reverse
                 stk_coppy = deepcopy(stack)
                 stk_coppy.reverse()
-
                 pattern_lst.reverse()
 
                 # would not zip up nicely

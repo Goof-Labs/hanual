@@ -6,7 +6,7 @@ from typing import Any, Dict, TYPE_CHECKING
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
+    ...
 
 
 class AlgebraicFunc(BaseNode):
@@ -19,5 +19,5 @@ class AlgebraicFunc(BaseNode):
     def as_dict(self) -> Dict[str, Any]:
         return {"name": self._name, "expr": self.get_repr(self._expr)}
 
-    def compile(self, global_state: Assembler) -> Any:
+    def compile(self, global_state) -> Any:
         raise NotImplementedError

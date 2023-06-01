@@ -8,7 +8,7 @@ from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
-    from hanual.compile.ir import IR
+    ...
 
 
 class StructDefinition(BaseNode):
@@ -34,8 +34,8 @@ class StructDefinition(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self, ir: IR) -> None:
-        ir.add_struct(self._name, self._fields)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

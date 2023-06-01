@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-# from hanual.compile.instruction import (
-#    InstructionPGC,
-#    InstructionPK2,
-#    InstructionPGA,
-#    InstructionCAL,
-# )
+
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from typing_extensions import Self
 from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
     from hanual.lang.lexer import Token
 
 

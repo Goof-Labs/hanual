@@ -5,7 +5,7 @@ from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
+    ...
 
 T = TypeVar("T")
 

@@ -7,7 +7,7 @@ from abc import ABC
 
 
 if TYPE_CHECKING:
-    from hanual.compile.ir import IR
+    ...
 
 
 class UsingStatement(BaseNode, ABC):
@@ -20,8 +20,8 @@ class UsingStatement(BaseNode, ABC):
     def path(self):
         return self._nsa
 
-    def compile(self, ir: IR) -> None:
-        ir.dep(self.path)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self):
         super().as_dict()

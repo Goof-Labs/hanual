@@ -7,7 +7,7 @@ from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
-    from hanual.compile.ir import IR
+    ...
 
 T = TypeVar("T", bound=BaseNode)
 
@@ -28,17 +28,5 @@ class VarChange(BaseNode):
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()
 
-    def compile(self, ir: IR) -> None:
-        reg = ir.reserve_reg()
-
-        if isinstance(self._value, Token):
-            ir.mov(reg, self._value.value)
-
-        else:
-            self._value.compile(ir, to=reg)
-
-        name = ir.find_name(self._name.value)
-
-        ir.mov(name, reg)
-
-        ir.free_reg(reg)
+    def compile(self) -> None:
+        raise NotImplementedError

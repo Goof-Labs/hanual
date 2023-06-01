@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 
 if TYPE_CHECKING:
-    from hanual.compile.ir import IR
+    ...
 
 
 T = TypeVar("T")
@@ -23,7 +23,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self, ir: IR, to: Optional[str]) -> None:
+    def compile(self) -> None:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

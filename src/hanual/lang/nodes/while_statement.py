@@ -6,7 +6,6 @@ from typing import Any, Dict, TYPE_CHECKING
 if TYPE_CHECKING:
     from hanual.lang.nodes.conditions import Condition
     from hanual.lang.nodes.block import CodeBlock
-    from hanual.compile.ir import IR
 
 
 class WhileStatement(BaseNode):
@@ -32,10 +31,5 @@ class WhileStatement(BaseNode):
             else self._body,
         }
 
-    def compile(self, ir: IR) -> None:
-        start = ir.label("sad_while")
-
-        self._body.compile(ir)
-
-        self._while.compile(ir)
-        ir.cjmp(start)
+    def compile(self) -> None:
+        raise NotImplementedError

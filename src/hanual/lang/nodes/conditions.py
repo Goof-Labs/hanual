@@ -6,7 +6,7 @@ from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.compile.ir import IR
+    ...
 
 
 class Condition(BaseNode, ABC):
@@ -29,21 +29,8 @@ class Condition(BaseNode, ABC):
     def right(self):
         return self._right
 
-    def compile(self, ir: IR) -> None:
-        if hasattr(self._left, "compile"):
-            self._left.compile(ir, to="FA")
-
-        else:
-            ir.mov("FA", self._left.value)
-
-        if hasattr(self._left, "compile"):
-            self._left.compile(ir, to="FA")
-
-        else:
-            ir.mov("FA", self._right.value)
-
-        ir.mov("FP", self._op.value)
-        ir.call()
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return {

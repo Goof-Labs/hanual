@@ -5,7 +5,7 @@ from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 
 if TYPE_CHECKING:
-    from hanual.compile.ir import IR
+    ...
 
 
 T = TypeVar("T")
@@ -40,20 +40,8 @@ class Arguments(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
-    def compile(self, ir: IR) -> None:
-        reg = ir.reserve_reg()
-
-        item: Union[BaseNode, Token]
-
-        for item in self._children:
-            if hasattr(item, "compile"):
-                item.compile(ir, to=reg)
-                ir.mov("FA", reg)
-
-            else:
-                ir.mov("FA", ir.infer(item.value))
-
-        ir.free_reg(reg)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return {

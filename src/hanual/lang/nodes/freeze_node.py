@@ -8,7 +8,7 @@ from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
+    ...
 
 
 T = TypeVar("T", bound=Token)

@@ -7,7 +7,6 @@ from typing_extensions import Self
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
     from hanual.lang.builtin_lexer import Token
 
 

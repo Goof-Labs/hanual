@@ -5,7 +5,7 @@ from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.compile import Assembler
+    ...
 
 
 class BreakStatement(BaseNode):

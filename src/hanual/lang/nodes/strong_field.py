@@ -5,7 +5,6 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
-    from hanual.compile.ir import IR
 
 
 # typevar to represent a type in the language

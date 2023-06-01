@@ -21,7 +21,7 @@ class StrongFieldList(BaseNode):
         return self._fields
 
     def compile(self) -> None:
-        return super().compile()
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

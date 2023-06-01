@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import Any, Dict, Union, List, TYPE_CHECKING
 from typing_extensions import Self
-from hanual.compile.ir import IR
 from .base_node import BaseNode
 
 
@@ -29,8 +28,8 @@ class IfChain(BaseNode):
         self._statements.append(node)
         return self
 
-    def compile(self, ir: IR, to: str | None) -> None:
-        return super().compile(ir, to)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

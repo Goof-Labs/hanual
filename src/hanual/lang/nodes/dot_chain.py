@@ -4,7 +4,6 @@ from __future__ import annotations
 from typing import Any, Dict, Union, List, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from typing_extensions import Self
-from hanual.compile.ir import IR
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -31,8 +30,8 @@ class DotChain(BaseNode):
     def chain(self) -> List[Token]:
         return self._chain
 
-    def compile(self, ir: IR) -> None:
-        return super().compile(ir)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

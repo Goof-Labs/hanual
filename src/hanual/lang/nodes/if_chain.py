@@ -28,8 +28,8 @@ class IfChain(BaseNode):
         self._statements.append(node)
         return self
 
-    def compile(self) -> None:
-        raise NotImplementedError
+    def compile(self, ir) -> None:
+        ...
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

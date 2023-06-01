@@ -60,4 +60,4 @@ if open(f, "main.chnl"):
         for instructions in f:
             ...
 else:
-    raise "The main file does not exist, please create one you aby."
+    raise "The main file does not exist, please create one. Thanks, bye :]"

@@ -1,6 +1,7 @@
 #[
 Nim VM, Virtual machine for compiling and interepreting the hanual bytecode. It is speedy as nim is complied to C.
 !! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING !!
+because I definitely do.
 
         # Notes on bytecode
 
@@ -59,7 +60,4 @@ if open(f, "main.chnl"):
         for instructions in f:
             ...
 else:
-    raise "The main file does not exist, please create one."    
-
-for instructions in somerandomfile:
-    instructions.NOP
+    raise "The main file does not exist, please create one you aby."

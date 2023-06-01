@@ -30,7 +30,7 @@ class HanualMainClass:
 
 main = HanualMainClass()
 
-f = open(r"src\stdlib\buffer_lib.hnl")
+f = open(r"src/stdlib/buffer_lib.hnl")
 
 res = main.run(f.read())
 

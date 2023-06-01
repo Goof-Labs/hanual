@@ -24,3 +24,7 @@ class IR:
 
         except IndexError:
             return None
+
+    @property
+    def add_instruction(self):
+        ...

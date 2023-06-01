@@ -5,7 +5,8 @@ from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 
 if TYPE_CHECKING:
-    ...
+    from hanual.runtime import RuntimeEnvironment, ExecStatus
+    from hanual.lang.errors import Error
 
 
 T = TypeVar("T")
@@ -42,6 +43,9 @@ class Arguments(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
 
     def as_dict(self) -> Dict[str, Any]:
         return {

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import Union, Tuple, TypeVar, Optional, Dict, TYPE_CHECKING, Any
+from typing import Union, Tuple, TypeVar, Dict, TYPE_CHECKING, Any
+from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.runtime.status import ExecStatus
 from hanual.lang.builtin_lexer import Token
+from hanual.lang.errors import Error
 from abc import ABC, abstractmethod
-
 
 if TYPE_CHECKING:
     ...
@@ -30,6 +32,15 @@ class BaseNode(ABC):
         that corresponds to valid hanual bytecode.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        """
+        A method that takes in the runtime and will
+        evaluate the expression. e.g BioOp("+", 1, 2)
+        should return 3.
+        """
+        return NotImplementedError
 
     @abstractmethod
     def as_dict(self) -> Dict[str, Any]:

@@ -1,11 +1,17 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, TYPE_CHECKING, Optional, Union
+from typing import Any, Dict, TYPE_CHECKING, Union
+
+from hanual.lang.errors import Error
+from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.runtime.status import ExecStatus
 from .dot_chain import DotChain
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
+    from hanual.runtime import RuntimeEnvironment, ExecStatus
+    from hanual.lang.errors import Error
     from hanual.lang.lexer import Token
     from .arguments import Arguments
 
@@ -17,6 +23,9 @@ class FunctionCall(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
 
     @property
     def name(self) -> Token:

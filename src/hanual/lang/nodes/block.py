@@ -1,10 +1,6 @@
 from __future__ import annotations
 
 from typing import List, Union, TypeVar, Any, TYPE_CHECKING
-
-from hanual.lang.errors import Error
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 from abc import ABC
 
@@ -19,7 +15,7 @@ class CodeBlock(BaseNode, ABC):
     __slots__ = ("_children",)
 
     def __init__(self, children: Union[List[T], T]) -> None:
-        self._children = []
+        self._children: List[BaseNode] = []
         self.add_child(children)
 
     def add_child(self, child: CodeBlock):
@@ -36,7 +32,12 @@ class CodeBlock(BaseNode, ABC):
         return self
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+        for child in self._children:
+            # If we have an error then we raise it, otherwise I just discard the return value and keep going
+            err, _ = sts = child.execute(rte)
+
+            if err:
+                return sts
 
     def compile(self, ir) -> Any:
         for child in self.children:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import NamedTuple, Union, TypeVar, Tuple, Generator
 from typing_extensions import LiteralString
-from .errors import IligalCharacterError
+from .errors import HNLIligalCharacterError
 import re
 
 
@@ -66,7 +66,7 @@ class Lexer:
                 continue
 
             elif kind == "MISMATCH":
-                IligalCharacterError().be_raised(
+                HNLIligalCharacterError().be_raised(
                     sample_code=lines[line_no - 1],
                     line=line_no,
                     col=col,
@@ -75,7 +75,9 @@ class Lexer:
                 )
 
             if hasattr(self, f"t_{kind}"):
-                yield getattr(self, f"t_{kind}")(kind, valu, line_no, col, lines[line_no - 1])
+                yield getattr(self, f"t_{kind}")(
+                    kind, valu, line_no, col, lines[line_no - 1]
+                )
                 continue
 
             yield Token(kind, valu, line_no, col, lines[line_no - 1])

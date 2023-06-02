@@ -31,7 +31,8 @@ class FunctionCall(BaseNode):
         inter_rep.move(Register.FP, id_)
 
         inter_rep.call_the_funky_function()
-        
+
+        inter_rep.free_mem_ref(id_)
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

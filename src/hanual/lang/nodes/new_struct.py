@@ -2,7 +2,10 @@ from __future__ import annotations
 
 
 from typing import TYPE_CHECKING, Any, Dict
+from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
+from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 
 
@@ -26,6 +29,9 @@ class NewStruct(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

@@ -6,6 +6,7 @@ from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
 from hanual.lang.nodes.block import CodeBlock
+from hanual.runtime import RuntimeEnvironment
 from hanual.compile.ir import IR
 from pprint import PrettyPrinter
 
@@ -24,27 +25,33 @@ class HanualMainClass:
     def run(self, src: str) -> CodeBlock:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
-        whisper = self.parser.parse(whisper)  # [0][1]
+        whisper = self.parser.parse(whisper)[0][1]
         return whisper
 
 
 main = HanualMainClass()
 
-f = open(r"src/stdlib/buffer_lib.hnl")
+# f = open(r"src/stdlib/buffer_lib.hnl")
 
-res = main.run(f.read())
+# res = main.run(f.read())
 
-f.close()
+# f.close()
 
 # ir = IR()
+rte = RuntimeEnvironment()
 
+res = main.run(
+    """
+print("HELLO")
+"""
+)
 
 # pp.pprint(res.instructions)
 # pp.pprint(res.deps)
 # pp.pprint(res.compile(ir))
 
 print(dump_tree(res, depth=12))
-
+res.execute(rte)
 # res[0][1].compile(ir)
 # print(dump_tree(ir, depth=12))
 

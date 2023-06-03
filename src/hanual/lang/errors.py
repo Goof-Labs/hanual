@@ -30,12 +30,12 @@ class Error:
         code = sample_code.strip(" ")
 
         print(
-            f"{Fore.RED}{self.stage if not stage else stage}-ERROR: {type(self).__name__}, at line {line}"
+            f"{Fore.RED}{self.stage if not stage else stage}-ERROR: {type(self).__name__.removeprefix('HNL')}, at line {line}"
         )
         print()
         print(f"{Fore.YELLOW}{'-'*50}")
         print(f"|{str(line).zfill(5)}> {Fore.YELLOW}{code}")
-        print(f"^".rjust(col + 9))
+        print(f"^".rjust(col + 8))
         print(f"{Fore.YELLOW}{'-'*50}")
         print()
 
@@ -45,11 +45,11 @@ class Error:
         exit()
 
 
-class HanualRuntimeError(Error):
+class HNLRuntimeError(Error):
     in_code: bool
 
     def be_raised(
-        self: HanualRuntimeError,
+        self: HNLRuntimeError,
         sample_code: str,
         line: int,
         col: int,
@@ -58,13 +58,13 @@ class HanualRuntimeError(Error):
     ) -> NoReturn:
         super().be_raised(sample_code, line, col, explain, stage)
 
-    def be_raised_runtime(self: HanualRuntimeError, explain: str) -> NoReturn:
+    def be_raised_runtime(self: HNLRuntimeError, explain: str) -> NoReturn:
         init(autoreset=True)
         print(f"{Fore.RED}{self.stage}-ERROR: {type(self).__name__} , {explain}")
         exit()
 
 
-class IligalCharacterError(Error):
+class HNLIligalCharacterError(Error):
     id = iota()
 
     stage = "lexing"
@@ -87,7 +87,7 @@ class IligalCharacterError(Error):
     """
 
 
-class NameNotFoundError(Error):
+class HNLNameNotFoundError(Error):
     id = iota()
 
     stage = "compiling"
@@ -110,42 +110,22 @@ class NameNotFoundError(Error):
     """
 
 
-class ProjectTomlNotFound(HanualRuntimeError):
+class HNLFileNotFound(Error):
     id = iota()
 
-    stage = "exploring"
+    stage = "running"
 
     """
-    Overview: You need a 'project.toml' file in your directory.
+    Overview: When the program tries to load a dependany that does not exist or read/write to a non existant file.
     
     ::Details::
-    ===========
     
-    You need a project.toml file in your folder, this is required for a project and provides all settings
-    for a project.
+    When the language tries to read a file that does not exist, weather by loading a dependancy or performing
+    an I/O operation, this error is raised. This is a safer option then making any assumsions about the contense
+    of the file.
     
-    ::Fix This::
-    ============
+    ::Fix this::
     
-    you will need to create a project.toml file in the directory with all the source code.
-    """
-
-
-class TomlNameNotFound(HanualRuntimeError):
-    id = iota()
-
-    stage = "exploring"
-
-    """
-    Overview: Toml file is missing a key.
-    
-    ::Details::
-    ===========
-    
-    This error is raised when there is a name missing from the project.toml file.
-    
-    ::Fix This::
-    ============
-    
-    You will need to add the name to the toml file.
+    You may want to check if the file you want to open exists. If you are using an external libruary make sure
+    that it is in your system path or in your project directory. Also check for any typoes.
     """

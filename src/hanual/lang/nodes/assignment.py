@@ -2,7 +2,10 @@ from __future__ import annotations
 
 # from hanual.compile.instruction import Instruction, InstructionPGC
 from typing import TypeVar, Generic, Any, Dict
+from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
+from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 
 
@@ -24,6 +27,12 @@ class AssignmentNode(BaseNode, Generic[T]):
     def value(self) -> T:
         return self._value
 
+    def compile(self) -> None:
+        raise NotImplementedError
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
+
     def as_dict(self) -> Dict[str, Any]:
         return {
             "type": type(self).__name__,
@@ -32,6 +41,3 @@ class AssignmentNode(BaseNode, Generic[T]):
             if hasattr(self._value, "as_dict")
             else self._value,
         }
-
-    def compile(self) -> None:
-        raise NotImplementedError

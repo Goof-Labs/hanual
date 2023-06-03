@@ -39,7 +39,7 @@ class BaseNode(ABC):
         evaluate the expression. e.g BioOp("+", 1, 2)
         should return 3.
         """
-        return NotImplementedError
+        raise NotImplementedError
 
     @abstractmethod
     def as_dict(self) -> Dict[str, Any]:

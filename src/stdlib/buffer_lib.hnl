@@ -1,4 +1,4 @@
-/*
+
 @nif __inc_buffer_lib__
 
 @def __inc_buffer_lib__
@@ -25,11 +25,3 @@ fn read(buffer, num_bytes)
 end
 
 @end
-
-*/
-
-if (a == 5)
-    print("5")
-elif (b == 6)
-    print("6")
-end

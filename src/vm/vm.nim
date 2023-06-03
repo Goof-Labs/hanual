@@ -50,10 +50,11 @@ because I definitely do.
 import os
 import std/os
 
-# Parse file into various parts (Instruction, const, etc. pools)
+# Get the file, f is the default file that will be read from. This can be customised by changing the custom_input variable.
 var
     f: File
     end: False
+    custom_input: File
 
 if open(f, "main.chnl"):
     while end != True:

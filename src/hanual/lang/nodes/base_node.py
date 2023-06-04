@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     from hanual.runtime.runtime import RuntimeEnvironment
+    from hanual.compile.state_fragment import Fragment
     from hanual.runtime.status import ExecStatus
 
 
@@ -24,7 +25,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self) -> None:
+    def compile(self) -> Fragment:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

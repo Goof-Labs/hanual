@@ -7,7 +7,6 @@ from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
 from hanual.lang.nodes.block import CodeBlock
 from hanual.runtime import RuntimeEnvironment
-from hanual.compile.ir import IR
 from pprint import PrettyPrinter
 
 
@@ -37,21 +36,34 @@ main = HanualMainClass()
 
 # f.close()
 
-# ir = IR()
-rte = RuntimeEnvironment()
+# rte = RuntimeEnvironment()
 
 res = main.run(
     """
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
+print("HELLO")
 print("HELLO")
 """
 )
 
 # pp.pprint(res.instructions)
 # pp.pprint(res.deps)
-# pp.pprint(res.compile(ir))
+print(dump_tree(res.compile()))
+
 
 print(dump_tree(res, depth=12))
-res.execute(rte)
+# res.execute(rte)
 # res[0][1].compile(ir)
 # print(dump_tree(ir, depth=12))
 

@@ -1,76 +1,46 @@
-from abc import ABC, abstractmethod
-from typing import Union
-from io import BytesIO
+from typing import NamedTuple, Union
+from .label import Label
+
+"""
+ABCD E
+VVVV VVVV
+0000 0000
+
+A: load next 4 bytes as operang
+B: load next 8 bytes as operang
+C: changes heap
+D: jumps to different instruction
+E: the last nibble is a unique identifier
+"""
 
 
-_records = {}
+class MOV(NamedTuple):
+    frm: Union[str, int]
+    to: Union[str, int]
 
 
-def instruction(
-    *,
-    load_next4: bool = False,
-    load_next_8: bool = False,
-    change_heap: bool = False,
-    may_jump: bool = False,
-):
-    opcode = _records.get((load_next4, load_next_8, change_heap, may_jump), 0)
-
-    def decor(cls):
-        cls.opcode = (
-            load_next4
-            << 8 + load_next_8
-            << 7 + change_heap
-            << 6 + may_jump
-            << 5 + opcode
-        )
-
-    _records[(load_next4, load_next_8, change_heap, may_jump)] = opcode + 1
-    return decor
+class CAL(NamedTuple):
+    ...
 
 
-class BaseInstruction(ABC):
-    opcode: int = 0
-
-    @abstractmethod
-    def serialize(self) -> bytes:
-        raise NotImplementedError
+class JMP(NamedTuple):
+    to: Label
 
 
-@instruction(
-    load_next4=True,
-    load_next_8=False,
-    change_heap=True,
-    may_jump=False,
-)
-class InstructionMOV(BaseInstruction):
-    def __init__(self, to, val) -> None:
-        self.val: Union[int, str] = val
-        self.to: Union[int, str] = to
+class JNZ(NamedTuple):
+    to: Label
 
-    def serialize(self):
-        bytes_ = BytesIO()
 
-        if isinstance(self.to, str):  # register
-            # 0x00 means register
-            bytes_.write(b"\x00")
-            bytes_.write(
-                ["A", "B", "C", "D", "E", "FL", "G", "FP", "FA"]
-                .index(self.to)
-                .to_bytes()
-            )
+class MKPTR(NamedTuple):
+    of: str
 
-        else:  #  a heap addr
-            bytes_.write(b"\xFF")
-            bytes_.write(self.to.to_bytes())
 
-        if isinstance(self.val, str):  # register
-            bytes_.write(b"\x00")
-            bytes_.write(
-                ["A", "B", "C", "D", "E", "FL", "G", "FP", "FA"]
-                .index(self.val)
-                .to_bytes()
-            )
+class LDP(NamedTuple):
+    ptr: int
 
-        else:  #  a heap addr
-            bytes_.write(b"\xFF")
-            bytes_.write(self.val.to_bytes())
+
+class JIX(NamedTuple):
+    to: Label
+
+
+__all__ = ["MOV", "CAL", "JMP", "JNZ", "MKPTR", "LDP", "JIX"]

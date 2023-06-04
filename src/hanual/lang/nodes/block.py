@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import List, Union, TypeVar, Any, TYPE_CHECKING
+from hanual.compile.state_fragment import Fragment
 from .base_node import BaseNode
 from abc import ABC
 
@@ -39,9 +40,13 @@ class CodeBlock(BaseNode, ABC):
             if err:
                 return sts
 
-    def compile(self, ir) -> Any:
+    def compile(self) -> Any:
+        frg = Fragment()
+
         for child in self.children:
-            child.compile(ir)
+            frg.add_frag(child.compile())
+
+        return frg
 
     @property
     def children(self):

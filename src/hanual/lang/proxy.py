@@ -28,8 +28,8 @@ class Proxy:
         self._fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]] = fn
         self._prod: Type[P] = prod or DefaultProduction
         self._types = types or {}
-        self._unless_b = unless_start or ()
-        self._unless_e = unless_end or ()
+        self._unless_b = unless_start or tuple()
+        self._unless_e = unless_end or tuple()
 
     @property
     def prod(self) -> Type[P]:

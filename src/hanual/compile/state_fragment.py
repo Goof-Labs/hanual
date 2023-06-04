@@ -1,5 +1,6 @@
 from .instructions import *
 from enum import StrEnum
+from .label import Label
 
 """
 ABCD E
@@ -24,6 +25,7 @@ class Registers(StrEnum):
     G: str = "G"
     FA: str = "FA"
     FP: str = "FP"
+    AC: str = "AC"
 
 
 """
@@ -74,7 +76,9 @@ class Fragment:
         self.external_files = []
         self.external_funcs = []
         self.instructions = []
+        self.indentifiers = []
         self.constants = []
+        self.labels = []
 
     def add_const(self, const):
         if not const in self.constants:
@@ -98,6 +102,11 @@ class Fragment:
         self.constants.extend(frag.constants)
         self.constants = list(dict.fromkeys(self.constants))
 
+        self.indentifiers.extend(frag.indentifiers)
+        self.indentifiers = list(set(self.indentifiers))
+
+        self.labels.extend(frag.labels)
+
         self.instructions.extend(frag.instructions)
 
     def add_external_func(self, name):
@@ -105,3 +114,20 @@ class Fragment:
             self.external_funcs.append(name)
 
         return self.external_funcs.index(name)
+
+    def add_name(self, name):
+        if not name in self.indentifiers:
+            self.indentifiers.append(name)
+
+        return self.indentifiers.index(name)
+
+    def add_label(self, name: str = "lost-pleb"):
+        lbl = Label(name)
+        self.labels.append(lbl)
+        return lbl
+
+    def __str__(self) -> str:
+        return f"{type(self).__name__}({self.export_symbols=}, {self.external_files=}, {self.external_funcs=}, {self.constants=}, {self.instructions=})"
+
+    def __repr__(self) -> str:
+        return str(self)

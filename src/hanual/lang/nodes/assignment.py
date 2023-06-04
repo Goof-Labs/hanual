@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-# from hanual.compile.instruction import Instruction, InstructionPGC
-from typing import TypeVar, Generic, Any, Dict
+from hanual.compile.state_fragment import Fragment, MOV, Registers
+from typing import TypeVar, Generic, Any, Dict, TYPE_CHECKING
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 
+if TYPE_CHECKING:
+    from hanual.runtime.runtime import RuntimeEnvironment
+    from hanual.runtime.status import ExecStatus
 
 T = TypeVar("T", BaseNode, Token)
 
@@ -28,7 +29,31 @@ class AssignmentNode(BaseNode, Generic[T]):
         return self._value
 
     def compile(self) -> None:
-        raise NotImplementedError
+        frag = Fragment()
+
+        name_id = frag.add_name(self._target.value)
+
+        if isinstance(self._value, Token):
+            if self._value.type == "ID":
+                n1 = frag.add_name(self._value.value)
+                frag.add_instr(MOV(to=name_id, frm=n1))
+
+            elif self._value.type == "STR":
+                val = frag.add_const(self._value.value)
+                frag.add_instr(MOV(to=name_id, frm=val))
+
+            elif self._value.type == "NUM":
+                val = frag.add_const(self._value.value)
+                frag.add_instr(MOV(to=name_id, frm=val))
+
+            else:
+                raise NotImplementedError
+
+        else:
+            frag.add_frag(self._value.compile())
+            frag.add_instr(MOV(to=name_id, frm=Registers.AC))
+
+        return frag
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

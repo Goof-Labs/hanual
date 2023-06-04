@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from hanual.compile.state_fragment import Fragment, MOV, JNZ
 from hanual.lang.nodes.base_node import BaseNode
 from typing import Any, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from hanual.runtime.runtime import RuntimeEnvironment
+    from hanual.runtime.status import ExecStatus, Error
     from hanual.lang.nodes.conditions import Condition
     from hanual.lang.nodes.block import CodeBlock
 
@@ -21,6 +24,21 @@ class WhileStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
+    def compile(self) -> None:
+        frag = Fragment()
+
+        start = frag.add_label()
+
+        frag.add_frag(self._body.compile())
+        frag.add_frag(self._while.compile())
+
+        frag.add_instr(JNZ(start))
+
+        return frag
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
+
     def as_dict(self) -> Dict[str, Any]:
         return {
             "condition": self._while.as_dict()
@@ -30,6 +48,3 @@ class WhileStatement(BaseNode):
             if hasattr(self._body, "as_dict")
             else self._body,
         }
-
-    def compile(self) -> None:
-        raise NotImplementedError

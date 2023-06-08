@@ -38,18 +38,7 @@ class BinOpNode(BaseNode, ABC):
         return self._op
 
     def compile(self) -> None:
-        frag = Fragment()
-
-        if isinstance(self._left, Token):
-            ...
-
-        else:
-            assert hasattr(
-                self._left, "compile"
-            ), f"{self._left} needs a compile method or be a token"
-            self._left.compile()
-
-        return frag
+        raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

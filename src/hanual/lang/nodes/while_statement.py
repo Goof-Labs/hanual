@@ -25,16 +25,7 @@ class WhileStatement(BaseNode):
         return self._body
 
     def compile(self) -> None:
-        frag = Fragment()
-
-        start = frag.add_label()
-
-        frag.add_frag(self._body.compile())
-        frag.add_frag(self._while.compile())
-
-        frag.add_instr(JNZ(start))
-
-        return frag
+        raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

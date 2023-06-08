@@ -23,27 +23,7 @@ class FunctionCall(BaseNode):
         self._args: Arguments = arguments
 
     def compile(self) -> None:
-        frg = Fragment()
-
-        for arg in self._args.children:
-            if isinstance(arg, Token):
-                if arg.type == "ID":
-                    frg.add_instr(MOV(MKPTR(arg.value), Registers.FA))
-
-                elif arg.type == "STR":
-                    frg.add_instr(MOV(frg.add_const(arg.value), Registers.FA))
-
-                else:
-                    raise NotImplementedError(arg)
-
-            else:
-                arg.compile(to=Registers.FA)
-
-        id_ = frg.add_external_func(self._name.value)
-        frg.add_instr(MOV(to=Registers.FP, frm=id_))
-        frg.add_instr(CAL())
-
-        return frg
+        raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

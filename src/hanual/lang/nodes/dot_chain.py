@@ -4,8 +4,6 @@ from __future__ import annotations
 from typing import Any, Dict, Union, List, TYPE_CHECKING
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
-from typing_extensions import Self
-
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode

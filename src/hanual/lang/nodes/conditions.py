@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, TYPE_CHECKING
 from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.compile.state_fragment import Fragment
 from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 from abc import ABC

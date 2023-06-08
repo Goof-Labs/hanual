@@ -4,7 +4,6 @@ from __future__ import annotations
 from hanual.runtime import RuntimeEnvironment, ExecStatus
 from typing import Any, Dict, Union, List, TYPE_CHECKING
 from hanual.lang.errors import Error
-from typing_extensions import Self
 from .base_node import BaseNode
 
 
@@ -27,7 +26,7 @@ class IfChain(BaseNode):
         return self
 
     def compile(self, ir) -> None:
-        ...
+        raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         for statement in self._statements:

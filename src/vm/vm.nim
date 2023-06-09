@@ -32,4 +32,4 @@ if open(f, "main.chnl"):
         for instructions in f:
             ...
 else:
-    raise "The main file does not exist, please create one. Thanks, bye :]"
+    raise "The main file does not exist, touch the main.chnl file if you are on unix based systems"

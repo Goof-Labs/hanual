@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING, Dict, Union
+from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
+from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 from abc import ABC
 
 
 if TYPE_CHECKING:
-    ...
+    from hanual.compile.state_fragment import Fragment
 
 
 class BinOpNode(BaseNode, ABC):
@@ -36,6 +39,9 @@ class BinOpNode(BaseNode, ABC):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
 
     def as_dict(self) -> Dict[str, Any]:
         return {

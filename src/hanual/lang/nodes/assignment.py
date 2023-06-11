@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-# from hanual.compile.instruction import Instruction, InstructionPGC
-from typing import TypeVar, Generic, Any, Dict
+from hanual.compile.state_fragment import Fragment, MOV, Registers
+from typing import TypeVar, Generic, Any, Dict, TYPE_CHECKING
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 
+if TYPE_CHECKING:
+    from hanual.runtime.runtime import RuntimeEnvironment
+    from hanual.runtime.status import ExecStatus
 
 T = TypeVar("T", BaseNode, Token)
 

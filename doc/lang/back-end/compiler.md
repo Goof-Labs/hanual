@@ -8,7 +8,7 @@ This language is compiled to a custom bytecode, with file size and speed in mind
 
 | File                        |
 |-----------------------------|
-| Magic "LOL" as ascii bytes  |
+| Magic "LMAO" as ascii bytes  |
 | Major version 1 byte        |
 | Minor version 1 byte        |
 | Number of constants 2 bytes |
@@ -21,7 +21,7 @@ This language is compiled to a custom bytecode, with file size and speed in mind
 
 ## Magic
 
-The top level LOL bytes shows this file is useable by the hanual runtime.
+The top level LMAO bytes shows this file is useable by the hanual runtime.
 
 ## Major version
 

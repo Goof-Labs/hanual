@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Callable, Any, Dict, Type, Union, Sequence, Optional
 from .productions import DefaultProduction, P
-from typing_extensions import Self
 
 """
 This is a proxy class that wraps around a function, I
@@ -28,8 +27,8 @@ class Proxy:
         self._fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]] = fn
         self._prod: Type[P] = prod or DefaultProduction
         self._types = types or {}
-        self._unless_b = unless_start or ()
-        self._unless_e = unless_end or ()
+        self._unless_b = unless_start or tuple()
+        self._unless_e = unless_end or tuple()
 
     @property
     def prod(self) -> Type[P]:

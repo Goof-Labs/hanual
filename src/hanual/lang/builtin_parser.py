@@ -333,7 +333,7 @@ def assignment(ts: DefaultProduction):
     "iwith_dot EQ expr",
     "iwith_dot EQ ID",
     "iwith_dot EQ iwith_dot",
-    unless_ends=["DOT", "LPAR"],
+    unless_ends=["DOT", "LPAR", "OP"],
 )
 def var_change(ts: DefaultProduction):
     return VarChange(ts[0], ts[2])

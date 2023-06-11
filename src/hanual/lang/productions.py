@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TypeVar, List, Optional, Any, Generic, Union
-from typing_extensions import Self
 from sys import version_info
 from abc import ABC
 

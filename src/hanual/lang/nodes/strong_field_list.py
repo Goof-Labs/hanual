@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, TypeVar, List
-from typing_extensions import Self
-
 from hanual.lang.errors import Error
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus

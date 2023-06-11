@@ -3,16 +3,17 @@ from __future__ import annotations
 
 from typing import Any, Dict, TYPE_CHECKING, Union
 
+from hanual.compile.state_fragment import Fragment, MOV, MKPTR, CAL, Registers
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
 from hanual.lang.errors import Error
+from hanual.lang.lexer import Token
 from .dot_chain import DotChain
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.runtime import RuntimeEnvironment, ExecStatus
     from hanual.lang.errors import Error
-    from hanual.lang.lexer import Token
     from .arguments import Arguments
 
 
@@ -21,18 +22,8 @@ class FunctionCall(BaseNode):
         self._name: Union[Token, DotChain] = name
         self._args: Arguments = arguments
 
-    def compile(self, inter_rep) -> None:
-        fn_name = self._name.value
-        fn_args = self._args
-
-        fn_args.compile()
-
-        id_ = inter_rep.get_mem_ref(fn_name)
-        inter_rep.move(Register.FP, id_)
-
-        inter_rep.call_the_funky_function()
-
-        inter_rep.free_mem_ref(id_)
+    def compile(self) -> None:
+        raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

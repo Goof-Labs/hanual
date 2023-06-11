@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, TypeVar
+from hanual.compile.constant import Constant
 
 from hanual.lang.errors import Error
 from hanual.runtime.runtime import RuntimeEnvironment
@@ -16,12 +17,12 @@ T = TypeVar("T")
 
 
 class StrongField(BaseNode):
-    def __init__(self: BaseNode, name: str, type_: T) -> None:
-        self._name: str = name
+    def __init__(self: BaseNode, name: Token, type_: T) -> None:
+        self._name: Token = name
         self._type: T = type_
 
     @property
-    def name(self) -> str:
+    def name(self) -> Token:
         return self._name
 
     @property
@@ -33,6 +34,12 @@ class StrongField(BaseNode):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def get_constants(self) -> list[Constant]:
+        return []
+
+    def get_names(self) -> list[str]:
+        return [self.name.value]
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from hanual.compile.state_fragment import Fragment, MOV, Registers
 from typing import TypeVar, Generic, Any, Dict, TYPE_CHECKING
+from hanual.compile.constant import Constant
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
@@ -30,6 +30,17 @@ class AssignmentNode(BaseNode, Generic[T]):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def get_constants(self) -> list[Constant]:
+        # if we want to set the value to a literal then we add it as a constant
+        if isinstance(self._value, Token):
+            if self._value.type in ("STR", "NUM"):
+                return [Constant(self._value.value)]
+
+        return []
+
+    def get_names(self) -> list[str]:
+        return [self._target.value]
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

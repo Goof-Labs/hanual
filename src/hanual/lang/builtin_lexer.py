@@ -47,6 +47,7 @@ class HanualLexer(Lexer):
         ("DOT", rx(r"\.")),
         ("LSB", rx(r"\[")),
         ("RSB", rx(r"\]")),
+        ("BAR", rx(r"\|")),
         # special cases
         ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+|//.*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/")),

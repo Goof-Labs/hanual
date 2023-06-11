@@ -1,6 +1,6 @@
 from __future__ import annotations
+from hanual.compile.constant import Constant
 
-from hanual.compile.state_fragment import Fragment, MOV, JNZ
 from hanual.lang.nodes.base_node import BaseNode
 from typing import Any, Dict, TYPE_CHECKING
 
@@ -29,6 +29,12 @@ class WhileStatement(BaseNode):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def get_constants(self) -> list[Constant]:
+        return [*self._while.get_constants(), *self._body.get_constants()]
+
+    def get_names(self) -> list[str]:
+        return [*self._while.get_names(), *self._body.get_names()]
 
     def as_dict(self) -> Dict[str, Any]:
         return {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
+from hanual.compile.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 
@@ -16,7 +17,7 @@ class Arguments(BaseNode):
     __slots__ = "_children", "_function_def"
 
     def __init__(self, children: Union[List[T], T]) -> None:
-        self._children: List[Token, BaseNode]
+        self._children: List[Token, BaseNode] = []
         self.function_def = False
 
         if isinstance(children, Token):
@@ -46,6 +47,38 @@ class Arguments(BaseNode):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def get_names(self) -> list[str]:
+        names = []
+
+        for child in self._children:
+            if isinstance(child, Token):
+                if child.type == "ID":
+                    names.append(child)
+
+            elif not self._function_def:
+                names.extend(child.get_names())
+
+        return names
+
+    def get_constants(self) -> list[Constant]:
+        # function definitions can't have constants as arguments
+        # like does this make any sense
+        # def spam(1, 2, 3, 4): ...
+        if self._function_def:
+            return []
+
+        lst = []
+
+        for child in self._children:
+            if isinstance(child, Token):
+                if child.type in ("STR", "NUM"):
+                    lst.append(Constant(child.value))
+
+            else:
+                lst.extend(child.get_constants())
+
+        return lst
 
     def as_dict(self) -> Dict[str, Any]:
         return {

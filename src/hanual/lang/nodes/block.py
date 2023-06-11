@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from typing import List, Union, TypeVar, Any, TYPE_CHECKING
-from hanual.compile.state_fragment import Fragment
+
+from hanual.compile.constant import Constant
 from .base_node import BaseNode
 from abc import ABC
 
@@ -47,6 +48,22 @@ class CodeBlock(BaseNode, ABC):
             frg.add_frag(child.compile())
 
         return frg
+
+    def get_constants(self) -> list[Constant]:
+        lst = []
+
+        for node in self._children:
+            lst.extend(node.get_constants())
+
+        return lst
+
+    def get_names(self) -> list[Constant]:
+        lst = []
+
+        for node in self._children:
+            lst.extend(node.get_names())
+
+        return lst
 
     @property
     def children(self):

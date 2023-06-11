@@ -6,6 +6,7 @@ from hanual.lang.nodes import (
     FunctionDefinition,
     AnonymousFunction,
     NamespaceAccessor,
+    ImplicitCondition,
     StructDefinition,
     StrongFieldList,
     ReturnStatement,
@@ -13,9 +14,9 @@ from hanual.lang.nodes import (
     AssignmentNode,
     WhileStatement,
     BreakStatement,
+    ImplicitBinop,
     AlgebraicFunc,
     ElifStatement,
-    ElseStatement,
     FunctionCall,
     IfStatement,
     StrongField,
@@ -28,15 +29,16 @@ from hanual.lang.nodes import (
     Arguments,
     RangeNode,
     VarChange,
+    ShoutNode,
     DotChain,
     AnonArgs,
     IfChain,
+    ForLoop,
 )
-
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.builtin_lexer import Token
 from hanual.lang.pparser import PParser
-from typing import Union
+from typing import Union, Literal
 
 par = PParser()
 
@@ -100,6 +102,49 @@ def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
 
 
 ###########################
+# FOR LOOPS
+###########################
+
+
+@par.rule(
+    "FOR assignment BAR impl_condition BAR impl_binop END",
+    "FOR assignment BAR impl_condition BAR impl_binop line END",
+    "FOR assignment BAR impl_condition BAR impl_binop lines END",
+    types={"FOR assignment BAR impl_condition BAR impl_binop END": True},
+)
+def for_loop(
+    ts: Union[
+        # for if the code block is non existant
+        DefaultProduction[
+            Token,
+            AssignmentNode,
+            Token,
+            ImplicitCondition,
+            Token,
+            ImplicitBinop,
+            Token,
+        ],
+        # if we have lines or a line of code
+        DefaultProduction[
+            Token,
+            AssignmentNode,
+            Token,
+            ImplicitCondition,
+            Token,
+            ImplicitBinop,
+            CodeBlock,
+            Token,
+        ],
+    ],
+    no_body: Union[Literal[True], Literal[None]],
+) -> ForLoop:
+    if no_body:
+        return ForLoop(ts[3], ts[2], ts[5], CodeBlock([]))
+
+    return ForLoop(ts[3], ts[2], ts[5], ts[6])
+
+
+###########################
 # DOT NOTATION.YAY()
 ###########################
 
@@ -138,6 +183,37 @@ def expr(ts: DefaultProduction[BinOpNode, Token, Token]) -> BinOpNode:
 @par.rule("ID OP NUM")
 def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     return BinOpNode(ts[1], ts[0], ts[2])
+
+
+@par.rule("ID OP ID")
+def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
+    return BinOpNode(ts[1], ts[0], ts[2])
+
+
+###########################
+# IMPLICIT CONDITIONDS
+###########################
+
+
+@par.rule(
+    "EL NUM",
+    "EL STR",
+    "EL ID",
+    "EL f_call",
+    unless_starts=["NUM", "ID", "f_call", "STR"],
+)
+def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
+    return ImplicitCondition(ts[0], ts[1])
+
+
+###########################
+# IMPLICIT BINOP
+###########################
+
+
+@par.rule("OP OP NUM", "OP OP ID", "OP OP f_call", unless_ends=["LPAR"])
+def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
+    return "IMPLBINOP"
 
 
 ###########################
@@ -214,6 +290,29 @@ def par_args(ts):
     "ID LPAR RPAR",
     "ID par_args",
     types={"ID LPAR RPAR": 1, "ID par_args": 2},
+)
+def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
+    if mode == 1:
+        return FunctionCall(name=ts[0], arguments=Arguments([]))
+
+    if mode == 2:
+        return FunctionCall(name=ts[0], arguments=ts[1])
+
+    if isinstance(ts[2], Token):
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
+
+    return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
+
+
+@par.rule(
+    "namespace_accessor LPAR expr RPAR",
+    "namespace_accessor LPAR ID RPAR",
+    "namespace_accessor LPAR STR RPAR",
+    "namespace_accessor LPAR NUM RPAR",
+    "namespace_accessor LPAR f_call RPAR",
+    "namespace_accessor LPAR RPAR",
+    "namespace_accessor par_args",
+    types={"namespace_accessor LPAR RPAR": 1, "namespace_accessor par_args": 2},
 )
 def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
     if mode == 1:
@@ -359,12 +458,7 @@ def ret(ts: DefaultProduction):
     return ReturnStatement(None)
 
 
-@par.rule("RET ID", "RET NUM", unless_ends=["LPAR"])
-def ret(ts: DefaultProduction):
-    return ReturnStatement(ts[1])
-
-
-@par.rule("RET f_call")
+@par.rule("RET ID", "RET NUM", "RET f_call", "RET expr", unless_ends=["LPAR", "OP"])
 def ret(ts: DefaultProduction):
     return ReturnStatement(ts[1])
 
@@ -420,70 +514,64 @@ def condition(ts: DefaultProduction):
 
 
 @par.rule(
-    "IF LPAR condition RPAR line END",
-    "IF LPAR condition RPAR lines END",
-    "IF LPAR condition RPAR lines END",
-    "IF LPAR condition RPAR END",
+    "IF condition line END",
+    "IF condition lines END",
+    "IF condition lines END",
+    "IF condition END",
     types={
-        "IF LPAR condition RPAR line END": 1,
-        "IF LPAR condition RPAR lines END": 1,
-        "IF LPAR condition RPAR END": 2,
+        "IF condition line END": 1,
+        "IF condition lines END": 1,
+        "IF condition END": 2,
     },
 )
 def if_statement(ts: DefaultProduction, type_: int):
     if type_ == 1:
-        return IfStatement(ts[2], ts[4])
+        return IfStatement(ts[1], ts[2])
 
     elif type_ == 2:
-        return IfStatement(ts[2], CodeBlock([]))
-
-    elif type_ == 3:
-        return IfStatement(ts[1], ts[2])
+        return IfStatement(ts[1], CodeBlock([]))
 
     elif type_ == 4:
         return IfStatement(ts[1], CodeBlock([]))
 
 
 @par.rule(
-    "IF LPAR condition RPAR line EIF",
-    "IF LPAR condition RPAR lines EIF",
-    "IF LPAR condition RPAR lines EIF",
-    "IF LPAR condition RPAR EIF",
+    "IF condition line EIF",
+    "IF condition lines EIF",
+    "IF condition lines EIF",
+    "IF condition EIF",
     types={
-        "IF LPAR condition RPAR line EIF": 1,
-        "IF LPAR condition RPAR lines EIF": 1,
-        "IF LPAR condition RPAR EIF": 2,
+        "IF condition line EIF": 1,
+        "IF condition lines EIF": 1,
+        "IF condition EIF": 2,
     },
 )
 def if_chain_start(ts: DefaultProduction, type_: int):
     chain = IfChain()
 
     if type_ == 1:
-        return chain.add_node(IfStatement(ts[2], ts[4]))
+        return chain.add_node(IfStatement(ts[1], ts[2]))
 
     elif type_ == 2:
-        return chain.add_node(IfStatement(ts[2], CodeBlock([])))
-
-    elif type_ == 3:
-        return chain.add_node(IfStatement(ts[1], ts[2]))
+        return chain.add_node(IfStatement(ts[1], CodeBlock([])))
 
     elif type_ == 4:
         return chain.add_node(IfStatement(ts[1], CodeBlock([])))
 
 
 @par.rule(
-    "if_chain_start LPAR condition RPAR line EIF",
-    "if_chain_start LPAR condition RPAR lines EIF",
+    "if_chain_start condition line EIF",
+    "if_chain_start condition lines EIF",
 )
 def condition_chain(ts: DefaultProduction[IfChain, Token, Condition, Token]) -> IfChain:
-    return ts[0].add_node(ElifStatement(ts[2], ts[4]))
+    return ts[0].add_node(ElifStatement(ts[1], ts[2]))
 
 
 @par.rule(
-    "if_chain_start LPAR condition RPAR line ELS line END",
-    "if_chain_start LPAR condition RPAR lines ELS line END",
-    "if_chain_start LPAR condition RPAR line ELS lines END",
-    "if_chain_start LPAR condition RPAR lines ELS lines END",
+    "if_chain_start condition line ELS line END",
+    "if_chain_start condition lines ELS line END",
+    "if_chain_start condition line ELS lines END",
+    "if_chain_start condition lines ELS lines END",
 )
 def if_chain(
     ts: DefaultProduction[
@@ -497,12 +585,12 @@ def if_chain(
         Token,  # END
     ]
 ) -> IfChain:
-    return ts[0].add_node(ts[2], ts[4]).add_else(ts[6])
+    return ts[0].add_node(ElifStatement(ts[1], ts[2])).add_else(ts[4])
 
 
 @par.rule(
-    "if_chain_start LPAR condition RPAR line END",
-    "if_chain_start LPAR condition RPAR lines END",
+    "if_chain_start condition line END",
+    "if_chain_start condition lines END",
 )
 def if_chain(
     ts: DefaultProduction[
@@ -541,6 +629,16 @@ def while_stmt(ts: DefaultProduction, no_body: bool = True):
         return WhileStatement(ts[1], CodeBlock([]))
 
     return WhileStatement(condition=ts[1], body=ts[2])
+
+
+###########################
+# SHOUT
+###########################
+
+
+@par.rule("SHOUT")
+def shout(ts: DefaultProduction[Token]) -> ShoutNode:
+    return ShoutNode(ts[0])
 
 
 ###########################
@@ -688,11 +786,14 @@ def h_range(ts: DefaultProduction):
     "break_stmt",
     "var_change",
     "struct_def",
+    "for_loop",
+    "if_chain",
     "freeze",
     "f_call",
+    "shout",
     "using",
     "ret",
-    unless_ends=["RPAR"],
+    unless_ends=["RPAR", "COM", "BAR"],
 )
 def line(ts):
     return CodeBlock(ts[0])

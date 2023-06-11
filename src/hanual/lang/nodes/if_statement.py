@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING, Dict
+from hanual.compile.constant import Constant
 
 from hanual.lang.errors import Error
 from hanual.runtime.runtime import RuntimeEnvironment
@@ -32,6 +33,22 @@ class IfStatement(BaseNode, ABC):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def get_constants(self) -> list[Constant]:
+        consts = []
+
+        consts.extend(self._condition.get_constants())
+        consts.extend(self._block.get_constants())
+
+        return consts
+
+    def get_names(self) -> list[Constant]:
+        names = []
+
+        names.extend(self._condition.get_names())
+        names.extend(self._block.get_names())
+
+        return names
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from hanual.compile.constant import Constant
 
 
 from hanual.runtime import RuntimeEnvironment, ExecStatus
@@ -11,6 +12,7 @@ if TYPE_CHECKING:
     from .elif_statement import ElifStatement
     from .else_statement import ElseStatement
     from .if_statement import IfStatement
+    from typing_extensions import Self
 
 
 class IfChain(BaseNode):
@@ -27,6 +29,22 @@ class IfChain(BaseNode):
 
     def compile(self, ir) -> None:
         raise NotImplementedError
+
+    def get_constants(self) -> list[Constant]:
+        consts = []
+
+        for stmt in self._statements:
+            consts.extend(stmt.get_constants())
+
+        return consts
+
+    def get_names(self) -> list[str]:
+        names = []
+
+        for stmt in self._statements:
+            names.extend(stmt.get_names())
+
+        return names
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         for statement in self._statements:

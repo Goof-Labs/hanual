@@ -215,8 +215,19 @@ class PParser:
                 # create arguments for proxy
                 p_args = []
 
+                copy = None
+
+                if proxy.unless_start:
+                    copy = deepcopy(stack)
+
                 for _ in range(debth + 1):
                     p_args.append(stack.pop()[1])
+
+                if stack and proxy.unless_start and not copy is None:
+                    if stack[-1][0] in proxy.unless_start:
+                        # revert changes
+                        stack = copy
+                        continue
 
                 # make normal
                 pattern_lst.reverse()

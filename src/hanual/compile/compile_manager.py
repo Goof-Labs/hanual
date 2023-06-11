@@ -12,9 +12,9 @@ class CompileManager:
         Instructions
         Instructions
         Instructions
-        
+
         FUNCTION_1_ENTERY
-        
+
         Function_instructions
         Function_instructions
         Function_instructions
@@ -31,3 +31,8 @@ class CompileManager:
         compiled.
         """
 
+    def collect_names(self):
+        ...
+
+    def collect_constants(self):
+        ...

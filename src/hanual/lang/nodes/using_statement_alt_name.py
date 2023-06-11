@@ -5,11 +5,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict
 
+
 from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
+    from hanual.runtime.runtime import RuntimeEnvironment
     from .namespace_acessor import NamespaceAccessor
+    from hanual.compile.constant import Constant
+    from hanual.runtime.status import ExecStatus
+    from hanual.lang.errors import Error
     from hanual.lang.lexer import Token
 
 
@@ -28,6 +33,15 @@ class UsingStatementWithAltName(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def get_constants(self) -> list[Constant]:
+        return []
+
+    def get_names(self) -> list[str]:
+        return [self._name.value]
+
+    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+        return super().execute(rte)
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

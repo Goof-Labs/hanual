@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     from hanual.runtime.runtime import RuntimeEnvironment
-    from hanual.compile.state_fragment import Fragment
+    from hanual.compile.constant import Constant
     from hanual.runtime.status import ExecStatus
 
 
@@ -25,7 +25,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self) -> Fragment:
+    def compile(self):
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,
@@ -40,6 +40,14 @@ class BaseNode(ABC):
         evaluate the expression. e.g BioOp("+", 1, 2)
         should return 3.
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_names(self) -> list[str]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_constants(self) -> list[Constant]:
         raise NotImplementedError
 
     @abstractmethod

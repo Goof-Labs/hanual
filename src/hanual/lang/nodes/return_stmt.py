@@ -1,4 +1,5 @@
 from __future__ import annotations
+from hanual.compile.constant import Constant
 
 from hanual.lang.builtin_lexer import Token
 from typing import Dict, Any, TYPE_CHECKING
@@ -19,6 +20,22 @@ class ReturnStatement(BaseNode, ABC):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def get_constants(self) -> list[Constant]:
+        if isinstance(self._value, Token):
+            if self._value.type in ("STR", "INT"):
+                return [self._value.value]
+
+        else:
+            return self._value.get_constants()
+
+    def get_names(self) -> list[str]:
+        if isinstance(self._value, Token):
+            if self._value.type == "ID":
+                return [self._value.value]
+
+        else:
+            return self._value.get_names()
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

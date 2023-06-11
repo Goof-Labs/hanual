@@ -1,4 +1,5 @@
 from __future__ import annotations
+from hanual.compile.constant import Constant
 
 
 from hanual.lang.errors import Error, HNLFileNotFound
@@ -31,6 +32,12 @@ class UsingStatement(BaseNode, ABC):
 
     def compile(self, ir) -> None:
         raise NotImplementedError
+
+    def get_constants(self) -> list[Constant]:
+        return []
+
+    def get_names(self) -> list[str]:
+        return []
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         for path in environ["path"].split(";"):

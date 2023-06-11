@@ -24,7 +24,7 @@ class HanualMainClass:
     def run(self, src: str) -> CodeBlock:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
-        whisper = self.parser.parse(whisper)[0][1]
+        whisper = self.parser.parse(whisper)  # [0][1]
         return whisper
 
 
@@ -46,6 +46,37 @@ while x < 10
     print("HELLO")
     x = x + 1
 end
+
+freeze x
+
+SHOUT
+
+fn test(a, aa)
+    return a + aa
+end
+
+
+if x == 1
+    print(1)
+elif x == 2
+    print(2)
+else
+    print(x)
+end
+
+use std
+use std::io as IO
+
+std::print("hi from std")
+
+struct hi
+    x: int
+    y: int
+end
+
+for let i=0|<10|++1
+    print(i)
+end
 """
 )
 
@@ -54,7 +85,7 @@ end
 print(dump_tree(res, depth=12))
 
 
-print(dump_tree(res.compile()))
+print(dump_tree(res[0][1].compile()))
 # res.execute(rte)
 # res[0][1].compile(ir)
 # print(dump_tree(ir, depth=12))

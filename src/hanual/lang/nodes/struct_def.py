@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, Union
+from hanual.compile.constant import Constant
 
 from hanual.lang.errors import Error
 from hanual.runtime.runtime import RuntimeEnvironment
@@ -43,6 +44,22 @@ class StructDefinition(BaseNode):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def get_names(self) -> list[Constant]:
+        names = []
+
+        for field in self._fields:
+            names.extend(field.get_names())
+
+        return names
+
+    def get_constants(self) -> list[Constant]:
+        consts = []
+
+        for field in self._fields:
+            consts.extend(field.get_constants())
+
+        return consts
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

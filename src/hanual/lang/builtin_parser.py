@@ -80,7 +80,7 @@ def strong_fields(
     return ts[0].add_field(ts[1])
 
 
-@par.rule("struct_header strong_field END", "struct_header strong_fields END")
+@par.rule("struct_header LCB strong_field RCB", "struct_header LCB strong_fields RCB")
 def struct_def(
     ts: DefaultProduction[
         DefaultProduction[Token, Token],  # struct header
@@ -107,10 +107,10 @@ def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
 
 
 @par.rule(
-    "FOR assignment BAR impl_condition BAR impl_binop END",
-    "FOR assignment BAR impl_condition BAR impl_binop line END",
-    "FOR assignment BAR impl_condition BAR impl_binop lines END",
-    types={"FOR assignment BAR impl_condition BAR impl_binop END": True},
+    "FOR assignment BAR impl_condition BAR impl_binop LCB RCB",
+    "FOR assignment BAR impl_condition BAR impl_binop LCB line RCB",
+    "FOR assignment BAR impl_condition BAR impl_binop LCB lines RCB",
+    types={"FOR assignment BAR impl_condition BAR impl_binop LCB RCB": True},
 )
 def for_loop(
     ts: Union[
@@ -203,7 +203,7 @@ def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     unless_starts=["NUM", "ID", "f_call", "STR"],
 )
 def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
-    return ImplicitCondition(ts[0], ts[1])
+    return ImplicitCondition(ts[0], tsRCB)
 
 
 ###########################
@@ -514,14 +514,14 @@ def condition(ts: DefaultProduction):
 
 
 @par.rule(
-    "IF condition line END",
-    "IF condition lines END",
-    "IF condition lines END",
-    "IF condition END",
+    "IF condition LCB line RCB",
+    "IF condition LCB lines RCB",
+    "IF condition LCB lines RCB",
+    "IF condition LCB RCB",
     types={
-        "IF condition line END": 1,
-        "IF condition lines END": 1,
-        "IF condition END": 2,
+        "IF condition LCB line RCB": 1,
+        "IF condition LCB lines RCB": 1,
+        "IF condition LCB RCB": 2,
     },
 )
 def if_statement(ts: DefaultProduction, type_: int):
@@ -616,12 +616,12 @@ def if_chain(ts: DefaultProduction[IfChain]) -> IfChain:
 
 
 @par.rule(
-    "WHL condition line END",
-    "WHL condition lines END",
+    "WHL condition LCB line RCB",
+    "WHL condition LCB lines RCB",
     # nobody
-    "WHL condition END",
+    "WHL condition LCB RCB",
     types={
-        "WHL condition END": True,
+        "WHL condition LCB RCB": True,
     },
 )
 def while_stmt(ts: DefaultProduction, no_body: bool = True):
@@ -660,11 +660,11 @@ def function_marker(ts: DefaultProduction):
 
 # NO CONTEXT
 @par.rule(
-    "function_marker END",
-    "function_marker line END",
-    "function_marker lines END",
+    "function_marker LCB RCB",
+    "function_marker LCB line RCB",
+    "function_marker LCB lines RCB",
     types={
-        "function_marker END": False,
+        "function_marker LCB RCB": False,
     },
     unless_ends=["AS"],
 )
@@ -682,11 +682,11 @@ def function_definition(ts: DefaultProduction, has_end: bool):
 
 # WITH CONTEXT
 @par.rule(
-    "function_marker AS CTX END CTX",
-    "function_marker AS CTX line END CTX",
-    "function_marker AS CTX lines END CTX",
+    "function_marker AS CTX LCB RCB CTX",
+    "function_marker AS CTX LCB line RCB CTX",
+    "function_marker AS CTX LCB lines RCB CTX",
     types={
-        "function_marker AS CTX END CTX": False,
+        "function_marker AS CTX LCB RCB CTX": False,
     },
 )
 def function_definition(ts: DefaultProduction, has_end: bool):

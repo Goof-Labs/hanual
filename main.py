@@ -42,41 +42,20 @@ res = main.run(
     """
 let x = 0
 
-while x < 10
-    print("HELLO")
+fn test() {
+}
+
+if x == 3 {
+    print(69)
+}
+
+while x > 10 {
     x = x + 1
-end
+}
 
-freeze x
-
-SHOUT
-
-fn test(a, aa)
-    return a + aa
-end
-
-
-if x == 1
-    print(1)
-elif x == 2
-    print(2)
-else
-    print(x)
-end
-
-use std
-use std::io as IO
-
-std::print("hi from std")
-
-struct hi
-    x: int
-    y: int
-end
-
-for let i=0|<10|++1
-    print(i)
-end
+struct x {
+    s: i32
+}
 """
 )
 

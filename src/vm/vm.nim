@@ -21,8 +21,14 @@ because I definitely do.
 # Imports
 import std/os
 
-# Get the file, f is the default file that will be read from. This can be customised by changing the custom_input variable.
+# Define countLines
+func countLines(l: iterator(f: string): string, f: string): int =
+  var n = 0
+  for _ in ls(f):
+    n += 1
+  return n
 
+# Get the file, f is the default file that will be read from. This can be customised by changing the custom_input variable.
 var break_out = "no"
 
 let f = readFile("main.chnl")

@@ -4,6 +4,7 @@ from typing import Any, TYPE_CHECKING, Dict, Union
 from hanual.compile.constant import Constant
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
@@ -75,6 +76,9 @@ class BinOpNode(BaseNode, ABC):
                 names.append(self._right.value)
 
         return names
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return {

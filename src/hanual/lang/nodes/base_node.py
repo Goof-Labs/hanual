@@ -51,6 +51,10 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def find_priority(self) -> list[BaseNode]:
+        raise NotImplementedError
+
+    @abstractmethod
     def as_dict(self) -> Dict[str, Any]:
         """
         Instead of having very awkward __str__ methods that

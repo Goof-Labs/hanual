@@ -36,6 +36,9 @@ class WhileStatement(BaseNode):
     def get_names(self) -> list[str]:
         return [*self._while.get_names(), *self._body.get_names()]
 
+    def find_priority(self) -> list[BaseNode]:
+        return self._body.find_priority()
+
     def as_dict(self) -> Dict[str, Any]:
         return {
             "condition": self._while.as_dict()

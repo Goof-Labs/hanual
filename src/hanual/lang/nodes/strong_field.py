@@ -41,5 +41,8 @@ class StrongField(BaseNode):
     def get_names(self) -> list[str]:
         return [self.name.value]
 
+    def find_priority(self) -> list[BaseNode]:
+        return []
+
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, TYPE_CHECKING, Union
 from hanual.compile.constant import Constant
+from hanual.lang.nodes.base_node import BaseNode
 
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
@@ -46,6 +47,9 @@ class FunctionCall(BaseNode):
         lst.extend(self._args.get_names())
 
         return lst
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return {"args": self._args.as_dict(), "name": self._name}

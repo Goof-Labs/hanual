@@ -24,10 +24,10 @@ class StructDefinition(BaseNode):
     ) -> None:
         # if [param:fields] is a StrongField then we make one and add it to it
         if isinstance(fields, StrongField):
-            self._fields = StrongFieldList().add_field(fields)
+            self._fields: StrongFieldList = StrongFieldList().add_field(fields)
 
         else:
-            self._fields = fields
+            self._fields: StrongFieldList = fields
 
         self._name = name
 
@@ -48,7 +48,7 @@ class StructDefinition(BaseNode):
     def get_names(self) -> list[Constant]:
         names = []
 
-        for field in self._fields:
+        for field in self._fields.fields:
             names.extend(field.get_names())
 
         return names
@@ -56,10 +56,17 @@ class StructDefinition(BaseNode):
     def get_constants(self) -> list[Constant]:
         consts = []
 
-        for field in self._fields:
-            consts.extend(field.get_constants())
+        for field in self._fields.fields:
+            if isinstance(field, Token):
+                consts.append(field.value)
+
+            else:
+                consts.extend(field.get_constants())
 
         return consts
+
+    def find_priority(self) -> list[BaseNode]:
+        return [self]
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

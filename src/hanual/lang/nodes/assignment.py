@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from typing import TypeVar, Generic, Any, Dict, TYPE_CHECKING
 from hanual.compile.constant import Constant
+from hanual.compile.instruction import *
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -29,7 +31,20 @@ class AssignmentNode(BaseNode, Generic[T]):
         return self._value
 
     def compile(self) -> None:
-        raise NotImplementedError
+        if isinstance(self._value, Token):
+            if self._value.type == "ID":
+                # if we want to allocate one variable to another we make a coppy, this may change at optim time
+                return [CPY[self._target.value, self._value.value]]
+
+            elif self._value.type in ("STR", "NUM"):
+                # we move a constant into a register
+                return [MOV[self._target.value, self._value.value]]
+
+            else:
+                raise NotImplementedError
+
+        else:
+            return [*self._value.compile(), CPY[self._target.value, "RES"]]
 
     def get_constants(self) -> list[Constant]:
         # if we want to set the value to a literal then we add it as a constant
@@ -44,6 +59,9 @@ class AssignmentNode(BaseNode, Generic[T]):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return {

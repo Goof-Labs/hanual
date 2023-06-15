@@ -65,7 +65,7 @@ class Arguments(BaseNode):
         # function definitions can't have constants as arguments
         # like does this make any sense
         # def spam(1, 2, 3, 4): ...
-        if self._function_def:
+        if self.function_def:
             return []
 
         lst = []
@@ -79,6 +79,9 @@ class Arguments(BaseNode):
                 lst.extend(child.get_constants())
 
         return lst
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return {

@@ -23,7 +23,7 @@ class StrongFieldList(BaseNode):
         return self
 
     @property
-    def field(self) -> List[T]:
+    def fields(self) -> List[T]:
         return self._fields
 
     def compile(self) -> None:

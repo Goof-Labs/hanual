@@ -4,6 +4,7 @@ from typing import Any, Dict, TYPE_CHECKING
 from hanual.compile.constant import Constant
 
 from hanual.lang.errors import Error
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
@@ -58,6 +59,9 @@ class FunctionDefinition(BaseNode):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def find_priority(self) -> list[BaseNode]:
+        return [self]
 
     def as_dict(self) -> Dict[str, Any]:
         return {

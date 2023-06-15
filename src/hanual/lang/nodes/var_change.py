@@ -54,5 +54,9 @@ class VarChange(BaseNode):
 
         return names
 
+    def find_priority(self) -> list[BaseNode]:
+        # TODO take blocks or lambda functions into account
+        return []
+
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

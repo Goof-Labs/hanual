@@ -4,6 +4,7 @@ from typing import Any, TYPE_CHECKING, Dict
 from hanual.compile.constant import Constant
 
 from hanual.lang.errors import Error
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
@@ -52,6 +53,9 @@ class IfStatement(BaseNode, ABC):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def find_priority(self) -> list[BaseNode]:
+        return self._block.find_priority()
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

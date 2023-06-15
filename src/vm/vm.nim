@@ -25,7 +25,7 @@ import std/os
 # Get the file, f is the default file that will be read from. This can be customised by changing the custom_input variable.
 var
     f: File
-    end: False
+    break_out: False
     custom_input: File
 
 let f = readFile("main.chnl")

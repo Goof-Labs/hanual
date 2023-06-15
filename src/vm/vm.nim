@@ -28,9 +28,8 @@ var
     end: False
     custom_input: File
 
-if open(f, "main.chnl"):
-    while end != True:
-        for instructions in f:
-            ...
+let f = readFile("main.chnl")
+echo countLines("test.txt")
+
 else:
     raise "The main file does not exist, touch the main.chnl file if you are on unix based systems. Thanks bye :]"

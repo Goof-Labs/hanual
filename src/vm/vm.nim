@@ -19,17 +19,13 @@ because I definitely do.
 ]#
 
 # Imports
-import os
 import std/os
 
 # Get the file, f is the default file that will be read from. This can be customised by changing the custom_input variable.
-var
-    f: File
-    break_out: False
-    custom_input: File
+
+var break_out = "no"
 
 let f = readFile("main.chnl")
 echo countLines("test.txt")
 
-else:
-    raise "The main file does not exist, touch the main.chnl file if you are on unix based systems. Thanks bye :]"
+# raise "The main file does not exist, touch the main.chnl file if you are on unix based systems. Thanks bye :]"

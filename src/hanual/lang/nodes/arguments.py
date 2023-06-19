@@ -4,6 +4,7 @@ from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
 from hanual.compile.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
+from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
     from hanual.runtime import RuntimeEnvironment, ExecStatus
@@ -43,6 +44,7 @@ class Arguments(BaseNode):
         return self._children
 
     def compile(self) -> None:
+        return [UPK(self._children)]
         raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:

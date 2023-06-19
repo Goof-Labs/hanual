@@ -5,6 +5,7 @@ from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, TYPE_CHECKING, Union
 from hanual.compile.constant import Constant
 from hanual.runtime.status import ExecStatus
+from hanual.compile.instruction import *
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
@@ -35,7 +36,14 @@ class Condition(BaseNode, ABC):
         return self._right
 
     def compile(self) -> None:
-        raise NotImplementedError
+        instructions = []
+        # LEFT SIDE
+
+        if isinstance(self._left, Token):
+            if self._left.type in ("STR", "INT"):
+                instructions.append(CMP())
+
+        return instructions
 
     def get_constants(self) -> list[Constant]:
         consts = []

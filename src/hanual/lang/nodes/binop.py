@@ -8,6 +8,7 @@ from hanual.lang.nodes.base_node import BaseNode
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
+from hanual.compile.instruction import *
 from abc import ABC
 
 
@@ -40,7 +41,43 @@ class BinOpNode(BaseNode, ABC):
         return self._op
 
     def compile(self) -> None:
-        raise NotImplementedError
+        instructions = []
+
+        reg_1 = new_reg()
+        reg_2 = new_reg()
+
+        # LEFT SIDE
+        if isinstance(self._left, Token):
+            if self._left.type in ("STR", "NUM"):
+                instructions.append(MOV[reg_1, self._left.value])
+
+            elif self._left.type == "ID":
+                instructions.append(MOV[reg_2, self._left.value])
+
+            else:
+                raise NotImplementedError
+
+        else:
+            instructions.extend(self._left.compile())
+            instructions.append(MOV[reg_1, "AC"])
+
+        # RIGHT SIDE
+        if isinstance(self._right, Token):
+            if self._right.type in ("STR", "NUM"):
+                instructions.append(MOV[reg_2, self._right.value])
+
+            elif self._right.type == "ID":
+                instructions.append(MOV[reg_2, self._right.value])
+
+            else:
+                raise NotImplementedError
+
+        else:
+            instructions.extend(self._right.compile())
+            instructions.append(MOV[reg_2, "AC"])
+
+        instructions.append(EXC[self._op.value, reg_1, reg_2])
+        return instructions
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

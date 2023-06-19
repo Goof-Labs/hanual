@@ -4,6 +4,15 @@ from random import randbytes
 
 
 class Label:
-    def __init__(self, name: str) -> None:
+    __slots__ = "_name", "_id"
+
+    def __init__(self, name: str, mangle: bool=False) -> None:
         self._name: str = name
-        self._id: str = randbytes(63).hex()
+
+        if mangle:
+            self._id: str = randbytes(63).hex()
+            self._name+="__"+self._id
+
+    @property
+    def name(self):
+        return self._name

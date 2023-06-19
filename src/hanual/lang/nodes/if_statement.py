@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING, Dict
-from hanual.compile.constant import Constant
 
-from hanual.lang.errors import Error
-from hanual.lang.nodes.base_node import BaseNode
 from hanual.runtime.runtime import RuntimeEnvironment
+from hanual.compile.constant import Constant
 from hanual.runtime.status import ExecStatus
+from hanual.compile.instruction import *
+from hanual.compile.label import Label
+from hanual.lang.errors import Error
 from .base_node import BaseNode
 from .block import CodeBlock
 from abc import ABC
@@ -33,7 +34,22 @@ class IfStatement(BaseNode, ABC):
         return self._block
 
     def compile(self) -> None:
-        raise NotImplementedError
+        # The asm genorated by this goes
+        # CMP [condition]
+        # JMP-FALSE IF_lable
+        # code
+        # code
+        # IF_lable
+        # This means that we only jump if the condition is false
+        instructions = []
+
+        false_lbl = Label("IF", mangle=True)
+
+        instructions.extend(self._condition.compile()) # compare and put into ac
+
+        instructions.append(JIF(false_lbl))
+
+        return instructions
 
     def get_constants(self) -> list[Constant]:
         consts = []

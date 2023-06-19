@@ -40,7 +40,9 @@ class StructDefinition(BaseNode):
         return self._name
 
     def compile(self) -> None:
-        raise NotImplementedError
+        # Structs are data representation methords and need to be treated as such
+        # The struct info is treated as an array (under the hood)
+        return []
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

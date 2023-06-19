@@ -48,5 +48,8 @@ class StrongFieldList(BaseNode):
 
         return consts
 
+    def find_priority(self):
+        return []
+
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

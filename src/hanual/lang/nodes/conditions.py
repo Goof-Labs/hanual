@@ -39,9 +39,34 @@ class Condition(BaseNode, ABC):
         instructions = []
         # LEFT SIDE
 
+        reg_l = new_reg()
+        reg_r = new_reg()
+
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "INT"):
-                instructions.append(CMP())
+                instructions.append(MOV[reg_l, self._left.value])
+
+            elif self._left.type == "ID":
+                instructions.append(CPY[reg_l, self._left.value])
+
+        else:
+            instructions.extend(self._left.compile())
+            instructions.append(MOV[reg_l, "AC"])
+
+        # RIGHT SIDE
+        if isinstance(self._right, Token):
+            if self._right.type in ("STR", "INT"):
+                instructions.append(MOV[reg_r, self._right.value])
+
+            elif self._right.type == "ID":
+                instructions.append(CPY[reg_r, self._right.value])
+
+        else:
+            instructions.extend(self._right.compile())
+            instructions.append(MOV[reg_r, "AC"])
+
+        instructions.append(EXC[self._op.value, reg_l, reg_r])
+        instructions.append(CMP[None])
 
         return instructions
 
@@ -69,14 +94,14 @@ class Condition(BaseNode, ABC):
 
         if isinstance(self._left, Token):
             if self._left.type == "ID":
-                names.append(self._left.type)
+                names.append(self._left.value)
 
         else:
             names.extend(self._left.get_names())
 
         if isinstance(self._right, Token):
             if self._right.type == "ID":
-                names.append(self._right.type)
+                names.append(self._right.value)
 
         else:
             names.extend(self._right.get_names())

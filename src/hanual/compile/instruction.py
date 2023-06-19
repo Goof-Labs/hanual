@@ -4,6 +4,7 @@ from hanual.lang.lexer import Token
 from io import StringIO
 from random import randbytes
 
+
 class BaseInstruction(ABC):
     @abstractmethod
     def serialize(self):
@@ -36,6 +37,9 @@ class BaseInstruction(ABC):
     # This makes it easier to distinguish class inits
     # vs instruction inits
     def __class_getitem__(cls, to):
+        if to is None:
+            return cls()
+
         return cls(*to)
 
 
@@ -65,12 +69,36 @@ class MOV(BaseInstruction):
     def __str__(self) -> str:
         return f"MOV[{self.to=} {self.val=}]"
 
+
 class CALL(BaseInstruction):
     ...
 
 
 class JMP(BaseInstruction):
-    ...
+    def __init__(self, target):
+        self._target = target
+
+    @property
+    def target(self):
+        return self._target
+
+    @property
+    def load_next4(self):
+        return False
+
+    @property
+    def load_next8(self):
+        return True
+
+    @property
+    def operang(self) -> bool:
+        return self.target
+
+    def serialize(self):
+        return super().serialize()
+
+    def __str__(self) -> str:
+        return f"JMP[{self.to=} {self.val=}]"
 
 
 class JIT(BaseInstruction):
@@ -128,17 +156,64 @@ class JIF(BaseInstruction):
 
 
 class CMP(BaseInstruction):
-    ...
+    def __init__(self):
+        ...
+
+    @property
+    def load_next4(self) -> bool:
+        return False
+
+    @property
+    def load_next8(self) -> bool:
+        return False
+
+    @property
+    def operang(self):
+        return ""
+
+    def serialize(self):
+        raise NotImplementedError
+
+    def __str__(self):
+        return f"CMP"
 
 
 class CPY(BaseInstruction):
-    ...
+    def __init__(self, to, val):
+        self._val = val
+        self._to = to
+
+    @property
+    def val(self):
+        return self._val
+
+    @property
+    def to(self):
+        return self._to
+
+    @property
+    def load_next4(self) -> bool:
+        return False
+
+    @property
+    def load_next8(self) -> bool:
+        return True
+
+    @property
+    def operang(self):
+        return f"{self._to, self._val}"
+
+    def serialize(self):
+        raise NotImplementedError
+
+    def __str__(self):
+        return f"CPY[{self._to} {self._val}]"
 
 
 class RET(BaseInstruction):
     def __init__(self, value):
         self._value = value
-    
+
     @property
     def value(self):
         return self._value
@@ -150,7 +225,7 @@ class RET(BaseInstruction):
     @property
     def load_next8(self):
         return True
-    
+
     def serialize(self):
         raise NotImplementedError
 
@@ -163,6 +238,7 @@ class RET(BaseInstruction):
 
     def __str__(self):
         return f"RET[{self._value}]"
+
 
 class UPK(BaseInstruction):
     def __init__(self, names: list[str | Token]):
@@ -201,6 +277,7 @@ class UPK(BaseInstruction):
 
         return f"UPK[{val.getvalue()}]"
 
+
 class EXC(BaseInstruction):
     def __init__(self, op, left, right):
         self._right = right
@@ -214,7 +291,6 @@ class EXC(BaseInstruction):
     @property
     def left(self):
         return self._left
-
 
     @property
     def right(self):
@@ -238,8 +314,10 @@ class EXC(BaseInstruction):
     def __str__(self):
         return f"EXC[{self._op} {self._left} {self._rigth}]"
 
+
 def new_reg():
-    return ["REG_"+randbytes(64).hex()]
+    return ["REG_" + randbytes(64).hex()]
+
 
 # for windcard imports
 __all__ = [

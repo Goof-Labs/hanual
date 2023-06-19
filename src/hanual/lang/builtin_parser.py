@@ -107,10 +107,10 @@ def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
 
 
 @par.rule(
-    "FOR assignment BAR impl_condition BAR impl_binop LCB RCB",
-    "FOR assignment BAR impl_condition BAR impl_binop LCB line RCB",
-    "FOR assignment BAR impl_condition BAR impl_binop LCB lines RCB",
-    types={"FOR assignment BAR impl_condition BAR impl_binop LCB RCB": True},
+    "FOR assignment COM impl_condition COM impl_binop LCB RCB",
+    "FOR assignment COM impl_condition COM impl_binop LCB line RCB",
+    "FOR assignment COM impl_condition COM impl_binop LCB lines RCB",
+    types={"FOR assignment COM impl_condition COM impl_binop LCB RCB": True},
 )
 def for_loop(
     ts: Union[
@@ -139,9 +139,9 @@ def for_loop(
     no_body: Union[Literal[True], Literal[None]],
 ) -> ForLoop:
     if no_body:
-        return ForLoop(ts[3], ts[2], ts[5], CodeBlock([]))
+        return ForLoop(ts[3], ts[1], ts[5], CodeBlock([]))
 
-    return ForLoop(ts[3], ts[2], ts[5], ts[6])
+    return ForLoop(ts[3], ts[1], ts[5], ts[6])
 
 
 ###########################
@@ -213,7 +213,7 @@ def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
 
 @par.rule("OP OP NUM", "OP OP ID", "OP OP f_call", unless_ends=["LPAR"])
 def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
-    return "IMPLBINOP"
+    return ImplicitBinop(ts[0], ts[2])
 
 
 ###########################

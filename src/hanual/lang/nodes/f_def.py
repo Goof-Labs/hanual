@@ -25,7 +25,7 @@ class FunctionDefinition(BaseNode):
         name: Token,
         args: Arguments,
         inner: CodeBlock,
-        ) -> None:
+    ) -> None:
         args.function_def = True
 
         self._name: Token = name
@@ -46,10 +46,10 @@ class FunctionDefinition(BaseNode):
 
     def compile(self) -> None:
         return [
-            Label(self._name.value), # jump point
-            *self._arguments.compile(), # put arguments into namespace
-            *self._inner.compile(), # compile block
-            RET(None), # return
+            Label(self._name.value),  # jump point
+            *self._arguments.compile(),  # put arguments into namespace
+            *self._inner.compile(),  # compile block
+            RET(None),  # return
         ]
 
     def get_names(self) -> list[str]:

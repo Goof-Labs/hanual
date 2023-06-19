@@ -59,7 +59,8 @@ struct x {
     s: i32
 }
 
-for let n = 0, >10, ++1
+for let n = 0, >10, ++1 {
+}
 """
 )
 

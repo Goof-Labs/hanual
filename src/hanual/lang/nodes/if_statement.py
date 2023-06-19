@@ -45,7 +45,7 @@ class IfStatement(BaseNode, ABC):
 
         false_lbl = Label("IF", mangle=True)
 
-        instructions.extend(self._condition.compile()) # compare and put into ac
+        instructions.extend(self._condition.compile())  # compare and put into ac
 
         instructions.append(JIF(false_lbl))
 

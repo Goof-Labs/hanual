@@ -1,6 +1,15 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from hanual.lang.nodes.base_node import BaseNode
+
+
 class CompileManager:
     def __init__(self, tree) -> None:
-        self._tree = tree
+        self._tree: BaseNode = tree
+        self._instructions = []
+        self._names = []
+        self._const = []
 
     def compile_priority(self):
         """
@@ -32,7 +41,22 @@ class CompileManager:
         """
 
     def collect_names(self):
-        ...
+        self._names = self._tree.get_names()
 
     def collect_constants(self):
-        ...
+        self._const = self._tree.get_constants()
+
+    def compile_tree(self):
+        self._instructions = self._tree.compile()
+
+    @property
+    def instructions(self):
+        return self._instructions
+
+    @property
+    def names(self):
+        return self._names
+
+    @property
+    def consts(self):
+        return self._const

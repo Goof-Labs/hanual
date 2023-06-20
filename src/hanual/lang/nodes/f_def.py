@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from typing import Any, Dict, TYPE_CHECKING
-from hanual.compile.constant import Constant
 
+from hanual.compile.constant import Constant
 from hanual.lang.errors import Error
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
+from hanual.compile.label import Label
+from hanual.compile.instruction import RET
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -42,7 +45,12 @@ class FunctionDefinition(BaseNode):
         return self._inner
 
     def compile(self) -> None:
-        raise NotImplementedError
+        return [
+            Label(self._name.value),  # jump point
+            *self._arguments.compile(),  # put arguments into namespace
+            *self._inner.compile(),  # compile block
+            RET(None),  # return
+        ]
 
     def get_names(self) -> list[str]:
         names = []
@@ -58,6 +66,9 @@ class FunctionDefinition(BaseNode):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def find_priority(self) -> list[BaseNode]:
+        return [self]
 
     def as_dict(self) -> Dict[str, Any]:
         return {

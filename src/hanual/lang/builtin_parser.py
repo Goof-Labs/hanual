@@ -88,7 +88,7 @@ def struct_def(
         Token,  # end token
     ]
 ) -> StructDefinition:
-    return StructDefinition(ts[0][1].value, ts[1])
+    return StructDefinition(ts[0][1].value, ts[2])
 
 
 ###########################
@@ -107,10 +107,10 @@ def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
 
 
 @par.rule(
-    "FOR assignment BAR impl_condition BAR impl_binop LCB RCB",
-    "FOR assignment BAR impl_condition BAR impl_binop LCB line RCB",
-    "FOR assignment BAR impl_condition BAR impl_binop LCB lines RCB",
-    types={"FOR assignment BAR impl_condition BAR impl_binop LCB RCB": True},
+    "FOR assignment COM impl_condition COM impl_binop LCB RCB",
+    "FOR assignment COM impl_condition COM impl_binop LCB line RCB",
+    "FOR assignment COM impl_condition COM impl_binop LCB lines RCB",
+    types={"FOR assignment COM impl_condition COM impl_binop LCB RCB": True},
 )
 def for_loop(
     ts: Union[
@@ -139,9 +139,9 @@ def for_loop(
     no_body: Union[Literal[True], Literal[None]],
 ) -> ForLoop:
     if no_body:
-        return ForLoop(ts[3], ts[2], ts[5], CodeBlock([]))
+        return ForLoop(ts[3], ts[1], ts[5], CodeBlock([]))
 
-    return ForLoop(ts[3], ts[2], ts[5], ts[6])
+    return ForLoop(ts[3], ts[1], ts[5], ts[6])
 
 
 ###########################
@@ -203,7 +203,7 @@ def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     unless_starts=["NUM", "ID", "f_call", "STR"],
 )
 def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
-    return ImplicitCondition(ts[0], tsRCB)
+    return ImplicitCondition(ts[0], ts[1])
 
 
 ###########################
@@ -213,7 +213,7 @@ def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
 
 @par.rule("OP OP NUM", "OP OP ID", "OP OP f_call", unless_ends=["LPAR"])
 def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
-    return "IMPLBINOP"
+    return ImplicitBinop(ts[0], ts[2])
 
 
 ###########################
@@ -526,7 +526,7 @@ def condition(ts: DefaultProduction):
 )
 def if_statement(ts: DefaultProduction, type_: int):
     if type_ == 1:
-        return IfStatement(ts[1], ts[2])
+        return IfStatement(ts[1], ts[3])
 
     elif type_ == 2:
         return IfStatement(ts[1], CodeBlock([]))
@@ -536,26 +536,23 @@ def if_statement(ts: DefaultProduction, type_: int):
 
 
 @par.rule(
-    "IF condition line EIF",
-    "IF condition lines EIF",
-    "IF condition lines EIF",
-    "IF condition EIF",
+    "IF condition LCB line RCB EIF",
+    "IF condition LCB lines RCB EIF",
+    "IF condition LCB lines RCB EIF",
+    "IF condition LCB EIF RCB",
     types={
-        "IF condition line EIF": 1,
-        "IF condition lines EIF": 1,
-        "IF condition EIF": 2,
+        "IF condition LCB line RCB EIF": 1,
+        "IF condition LCB lines RCB EIF": 1,
+        "IF condition LCB EIF RCB": 2,
     },
 )
 def if_chain_start(ts: DefaultProduction, type_: int):
     chain = IfChain()
 
     if type_ == 1:
-        return chain.add_node(IfStatement(ts[1], ts[2]))
+        return chain.add_node(IfStatement(ts[1], ts[3]))
 
     elif type_ == 2:
-        return chain.add_node(IfStatement(ts[1], CodeBlock([])))
-
-    elif type_ == 4:
         return chain.add_node(IfStatement(ts[1], CodeBlock([])))
 
 
@@ -628,7 +625,7 @@ def while_stmt(ts: DefaultProduction, no_body: bool = True):
     if no_body:
         return WhileStatement(ts[1], CodeBlock([]))
 
-    return WhileStatement(condition=ts[1], body=ts[2])
+    return WhileStatement(condition=ts[1], body=ts[3])
 
 
 ###########################

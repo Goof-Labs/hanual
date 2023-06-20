@@ -23,7 +23,7 @@ class StrongFieldList(BaseNode):
         return self
 
     @property
-    def field(self) -> List[T]:
+    def fields(self) -> List[T]:
         return self._fields
 
     def compile(self) -> None:
@@ -47,6 +47,9 @@ class StrongFieldList(BaseNode):
             consts.extend(field)
 
         return consts
+
+    def find_priority(self):
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

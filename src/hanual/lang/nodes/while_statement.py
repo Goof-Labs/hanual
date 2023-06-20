@@ -1,8 +1,10 @@
 from __future__ import annotations
-from hanual.compile.constant import Constant
 
+from hanual.compile.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from typing import Any, Dict, TYPE_CHECKING
+from hanual.compile.instruction import *
+from hanual.compile.label import Label
 
 if TYPE_CHECKING:
     from hanual.runtime.runtime import RuntimeEnvironment
@@ -25,7 +27,16 @@ class WhileStatement(BaseNode):
         return self._body
 
     def compile(self) -> None:
-        raise NotImplementedError
+        instructions = []
+
+        while_start = Label("WHILE", mangle=True)
+
+        instructions.append(while_start)
+        instructions.extend(self._while.compile())
+        instructions.extend(self.body.compile())
+        instructions.append(JIT(while_start))
+
+        return instructions
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
@@ -35,6 +46,9 @@ class WhileStatement(BaseNode):
 
     def get_names(self) -> list[str]:
         return [*self._while.get_names(), *self._body.get_names()]
+
+    def find_priority(self) -> list[BaseNode]:
+        return self._body.find_priority()
 
     def as_dict(self) -> Dict[str, Any]:
         return {

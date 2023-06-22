@@ -87,14 +87,14 @@ class BinOpNode(BaseNode, ABC):
 
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "NUM"):
-                consts.append(self._left.value)
+                consts.append(Constant(self._left.value))
 
         else:
             consts.extend(self._left.get_constants())
 
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                consts.append(self._right.value)
+                consts.append(Constant(self._right.value))
 
         else:
             consts.extend(self._right.get_constants())

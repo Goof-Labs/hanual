@@ -60,7 +60,7 @@ class StructDefinition(BaseNode):
 
         for field in self._fields.fields:
             if isinstance(field, Token):
-                consts.append(field.value)
+                consts.append(Constant(field.value))
 
             else:
                 consts.extend(field.get_constants())

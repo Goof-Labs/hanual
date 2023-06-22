@@ -24,7 +24,7 @@ class ReturnStatement(BaseNode, ABC):
     def get_constants(self) -> list[Constant]:
         if isinstance(self._value, Token):
             if self._value.type in ("STR", "INT"):
-                return [self._value.value]
+                return [Constant(self._value.value)]
 
         else:
             return self._value.get_constants()

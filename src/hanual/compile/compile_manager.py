@@ -44,7 +44,15 @@ class CompileManager:
         self._names = self._tree.get_names()
 
     def collect_constants(self):
-        self._const = self._tree.get_constants()
+        self._const = []
+        consts = []
+
+        for const in self._tree.get_constants():
+            if const.value in consts:
+                continue
+
+            consts.append(const.value)
+            self._const.append(const)
 
     def compile_tree(self):
         self._instructions = self._tree.compile()

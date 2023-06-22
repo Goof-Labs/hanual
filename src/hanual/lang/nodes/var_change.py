@@ -55,7 +55,7 @@ class VarChange(BaseNode):
 
         if isinstance(self._value, Token):
             if self._value.type in ("STR", "NUM"):
-                consts.append(self._value.value)
+                consts.append(Constant(self._value.value))
 
         else:
             consts.extend(self._value.get_constants())

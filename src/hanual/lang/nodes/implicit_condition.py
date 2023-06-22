@@ -35,12 +35,12 @@ class ImplicitCondition(BaseNode):
     def get_constants(self) -> list[Constant]:
         if isinstance(self._val, Token):
             if self._val.type in ("STR", "NUM"):
-                return [self._val.value]
+                return [Constant(self._val.value)]
 
     def get_names(self) -> list[str]:
         if isinstance(self._val, Token):
             if self._val.type == "ID":
-                return [self._val.value]
+                return [Constant(self._val.value)]
 
         return []
 

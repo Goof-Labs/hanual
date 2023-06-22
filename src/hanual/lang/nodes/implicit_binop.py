@@ -72,7 +72,7 @@ class ImplicitBinop(BaseNode):
     def get_constants(self) -> list[Constant]:
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                return [self._right.value]
+                return [Constant(self._right.value)]
 
         else:
             return self._right.get_constants()

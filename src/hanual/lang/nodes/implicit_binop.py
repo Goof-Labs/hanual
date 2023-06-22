@@ -1,8 +1,10 @@
 from __future__ import annotations
 from hanual.compile.constant import Constant
 
-from hanual.lang.nodes.base_node import BaseNode
 from typing import Any, Dict, Union, TYPE_CHECKING
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.compile.instruction import *
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 
@@ -25,13 +27,44 @@ class ImplicitBinop(BaseNode):
     def right(self) -> Union[Token, FunctionCall]:
         return self._right
 
-    def compile(self):
-        return super().compile()
+    def compile(self, name: str):
+        instructions = []
+
+        reg_1 = new_reg()
+        reg_2 = new_reg()
+
+        # LEFT SIDE
+        instructions.append(MOV[reg_2, name])
+
+        # RIGHT SIDE
+        if isinstance(self._right, Token):
+            if self._right.type in ("STR", "NUM"):
+                instructions.append(MOV[reg_2, self._right.value])
+
+            elif self._right.type == "ID":
+                instructions.append(MOV[reg_2, self._right.value])
+
+            else:
+                raise NotImplementedError
+
+        else:
+            instructions.extend(self._right.compile())
+            instructions.append(MOV[reg_2, "AC"])
+
+        instructions.append(EXC[self._op.value, reg_1, reg_2])
+
+        return instructions
+
+    def execute(self):
+        raise NotImplementedError
 
     def get_names(self) -> list[str]:
         if isinstance(self._right, Token):
             if self._right.type == "ID":
                 return [self._right.value]
+
+            else:
+                return []
 
         else:
             return self._right.get_names()
@@ -43,6 +76,9 @@ class ImplicitBinop(BaseNode):
 
         else:
             return self._right.get_constants()
+
+    def find_priority(self):
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

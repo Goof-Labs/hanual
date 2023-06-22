@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+
+from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, Union, TYPE_CHECKING
 from hanual.compile.constant import Constant
-
-from hanual.lang.errors import Error
-from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
+from hanual.lang.errors import Error
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -26,8 +27,10 @@ class ImplicitCondition(BaseNode):
     def op(self) -> Token:
         return self._op
 
-    def compile(self):
-        return super().compile()
+    def compile(self, name: str):
+        # These conditions are implicit and require the context from the parent node to
+        # guess what it should compare against
+        return []
 
     def get_constants(self) -> list[Constant]:
         if isinstance(self._val, Token):
@@ -38,6 +41,11 @@ class ImplicitCondition(BaseNode):
         if isinstance(self._val, Token):
             if self._val.type == "ID":
                 return [self._val.value]
+
+        return []
+
+    def find_priority(self):
+        return []
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

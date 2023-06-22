@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 
-from hanual.lang.nodes.base_node import BaseNode
 from typing import TYPE_CHECKING, Any, Dict, Union
+from .implicit_condition import ImplicitCondition
+from hanual.lang.nodes.base_node import BaseNode
+from .implicit_binop import ImplicitBinop
+from hanual.compile.instruction import *
+from hanual.compile.label import Label
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.runtime.runtime import RuntimeEnvironment
-    from .implicit_conditions import ImplicitCondition
     from hanual.compile.constant import Constant
     from hanual.runtime.status import ExecStatus
-    from .implicit_binop import ImplicitBinop
     from .assignment import AssignmentNode
     from hanual.lang.errors import Error
     from hanual.lang.lexer import Token
@@ -49,7 +51,51 @@ class ForLoop(BaseNode):
         return self._body
 
     def compile(self):
-        return super().compile()
+        """
+        For loops follow the format:
+        initialize, keep going while, increment
+        So I can reperesent a loop as
+
+        INIT-CODE
+        LABEL_1
+        CONDITION
+        JUMP_IF_FALSE LABEL_END
+        INCREMENTER
+
+        ...
+        ...
+
+        JUMP LABEL_1
+        LABEL_END
+        """
+        instructions = []
+
+        start_lbl = Label("FOR_START", mangle=True)
+        end_lbl = Label("FOR_END", mangle=True)
+
+        instructions.extend(self._init.compile())
+        instructions.append(start_lbl)
+
+        # Condition part
+        if isinstance(self._while, ImplicitCondition):
+            instructions.extend(self._while.compile(self._init.target.value))
+
+        else:
+            instructions.extend(self._while.compile())
+
+        instructions.append(JIF(end_lbl))
+
+        if isinstance(self._action, ImplicitBinop):
+            instructions.extend(self._action.compile(self._init.target.value))
+
+        else:
+            instructions.extend(self._action.compile())
+
+        instructions.extend(self._body.compile())
+
+        instructions.append(JMP(start_lbl))
+
+        return instructions
 
     def get_names(self) -> list[str]:
         names = []
@@ -70,6 +116,9 @@ class ForLoop(BaseNode):
         consts.extend(self._body.get_constants())
 
         return consts
+
+    def find_priority(self):
+        return []
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

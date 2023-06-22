@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Union, TYPE_CHECKING
+from hanual.compile.instruction import *
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 

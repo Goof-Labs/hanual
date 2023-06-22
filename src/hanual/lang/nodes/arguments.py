@@ -4,6 +4,7 @@ from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
 from hanual.compile.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
+from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
     from hanual.runtime import RuntimeEnvironment, ExecStatus
@@ -43,6 +44,7 @@ class Arguments(BaseNode):
         return self._children
 
     def compile(self) -> None:
+        return [UPK(self._children)]
         raise NotImplementedError
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
@@ -65,7 +67,7 @@ class Arguments(BaseNode):
         # function definitions can't have constants as arguments
         # like does this make any sense
         # def spam(1, 2, 3, 4): ...
-        if self._function_def:
+        if self.function_def:
             return []
 
         lst = []
@@ -79,6 +81,9 @@ class Arguments(BaseNode):
                 lst.extend(child.get_constants())
 
         return lst
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return {

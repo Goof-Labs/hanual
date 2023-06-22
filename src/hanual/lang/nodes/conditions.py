@@ -1,16 +1,18 @@
 from __future__ import annotations
-from hanual.compile.constant import Constant
+from hanual.lang.nodes.base_node import BaseNode
 
 from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, TYPE_CHECKING, Union
+from hanual.compile.constant import Constant
 from hanual.runtime.status import ExecStatus
+from hanual.compile.instruction import *
+from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
     from hanual.runtime import RuntimeEnvironment, ExecStatus
     from hanual.lang.errors import Error
-    from hanual.lang.lexer import Token
 
 
 class Condition(BaseNode, ABC):
@@ -34,7 +36,39 @@ class Condition(BaseNode, ABC):
         return self._right
 
     def compile(self) -> None:
-        raise NotImplementedError
+        instructions = []
+        # LEFT SIDE
+
+        reg_l = new_reg()
+        reg_r = new_reg()
+
+        if isinstance(self._left, Token):
+            if self._left.type in ("STR", "INT"):
+                instructions.append(MOV[reg_l, self._left.value])
+
+            elif self._left.type == "ID":
+                instructions.append(CPY[reg_l, self._left.value])
+
+        else:
+            instructions.extend(self._left.compile())
+            instructions.append(MOV[reg_l, "AC"])
+
+        # RIGHT SIDE
+        if isinstance(self._right, Token):
+            if self._right.type in ("STR", "INT"):
+                instructions.append(MOV[reg_r, self._right.value])
+
+            elif self._right.type == "ID":
+                instructions.append(CPY[reg_r, self._right.value])
+
+        else:
+            instructions.extend(self._right.compile())
+            instructions.append(MOV[reg_r, "AC"])
+
+        instructions.append(EXC[self._op.value, reg_l, reg_r])
+        instructions.append(CMP[None])
+
+        return instructions
 
     def get_constants(self) -> list[Constant]:
         consts = []
@@ -60,14 +94,14 @@ class Condition(BaseNode, ABC):
 
         if isinstance(self._left, Token):
             if self._left.type == "ID":
-                names.append(self._left.type)
+                names.append(self._left.value)
 
         else:
             names.extend(self._left.get_names())
 
         if isinstance(self._right, Token):
             if self._right.type == "ID":
-                names.append(self._right.type)
+                names.append(self._right.value)
 
         else:
             names.extend(self._right.get_names())
@@ -76,6 +110,9 @@ class Condition(BaseNode, ABC):
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def as_dict(self) -> Dict[str, Any]:
         return {

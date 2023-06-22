@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import List, Union, TypeVar, Any, TYPE_CHECKING
 
 from hanual.compile.constant import Constant
+from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 from abc import ABC
 
@@ -42,12 +43,12 @@ class CodeBlock(BaseNode, ABC):
                 return sts
 
     def compile(self) -> Any:
-        frg = Fragment()
+        instructions = []
 
         for child in self.children:
-            frg.add_frag(child.compile())
+            instructions.extend(child.compile())
 
-        return frg
+        return instructions
 
     def get_constants(self) -> list[Constant]:
         lst = []
@@ -64,6 +65,14 @@ class CodeBlock(BaseNode, ABC):
             lst.extend(node.get_names())
 
         return lst
+
+    def find_priority(self) -> list[BaseNode]:
+        priority = []
+
+        for child in self._children:
+            priority.extend(child.find_priority())
+
+        return priority
 
     @property
     def children(self):

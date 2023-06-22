@@ -2,6 +2,7 @@ from __future__ import annotations
 
 
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
+from hanual.compile.compile_manager import CompileManager
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
@@ -38,6 +39,7 @@ main = HanualMainClass()
 
 # rte = RuntimeEnvironment()
 
+
 res = main.run(
     """
 let x = 0
@@ -56,6 +58,9 @@ while x > 10 {
 struct x {
     s: i32
 }
+
+for let n = 0, >10, ++1 {
+}
 """
 )
 
@@ -64,7 +69,16 @@ struct x {
 print(dump_tree(res, depth=12))
 
 
-print(dump_tree(res[0][1].compile()))
+# print(dump_tree(res[0][1].compile()))
+
+cm = CompileManager(res[0][1])
+
+cm.collect_constants()
+cm.collect_names()
+cm.compile_tree()
+
+print(dump_tree(cm))
+
 # res.execute(rte)
 # res[0][1].compile(ir)
 # print(dump_tree(ir, depth=12))

@@ -18,7 +18,7 @@ class HanualLexer(Lexer):
         ("DO", kw("do")),
         ("FOR", kw("for")),
         ("LET", kw("let")),
-        #("END", kw("end")),
+        # ("END", kw("end")),
         ("NEW", kw("new")),
         ("USE", kw("use")),
         ("ITR", kw("iter")),

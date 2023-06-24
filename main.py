@@ -2,12 +2,12 @@ from __future__ import annotations
 
 
 from hanual.lang.preprocess.preprocesser import PrePeoccesser
+from hanual.optim.optimizer_handeler import OptimizerHandeler
 from hanual.compile.compile_manager import CompileManager
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
 from hanual.lang.nodes.block import CodeBlock
-from hanual.runtime import RuntimeEnvironment
 from pprint import PrettyPrinter
 
 
@@ -31,45 +31,17 @@ class HanualMainClass:
 
 main = HanualMainClass()
 
-# f = open(r"src/stdlib/buffer_lib.hnl")
-
-# res = main.run(f.read())
-
-# f.close()
-
-# rte = RuntimeEnvironment()
-
 
 res = main.run(
     """
-let x = 0
-
-fn test() {
-}
-
-if x == 3 {
-    print(69)
-}
-
-while x > 10 {
-    x = x + 1
-}
-
-struct x {
-    s: i32
-}
-
-for let n = 0, >10, ++1 {
+fn main() {
+    println("Hello world")
 }
 """
 )
 
-# pp.pprint(res.instructions)
-# pp.pprint(res.deps)
 print(dump_tree(res, depth=12))
 
-
-# print(dump_tree(res[0][1].compile()))
 
 cm = CompileManager(res[0][1])
 
@@ -79,10 +51,6 @@ cm.compile_tree()
 
 print(dump_tree(cm))
 
-# res.execute(rte)
-# res[0][1].compile(ir)
-# print(dump_tree(ir, depth=12))
+op = OptimizerHandeler()
 
-
-# print(dump_tree(res, depth=25))
-# pp.pprint(res.as_dict())
+print(dump_tree(op.proof_read(cm)))

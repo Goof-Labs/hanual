@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 
+from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, TYPE_CHECKING, Union
 from hanual.compile.constant import Constant
-from hanual.lang.nodes.base_node import BaseNode
-
-from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.runtime.status import ExecStatus
+from hanual.compile.instruction import *
+from hanual.compile.label import Label
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
 from .dot_chain import DotChain
@@ -32,7 +32,21 @@ class FunctionCall(BaseNode):
         return self._args
 
     def compile(self) -> None:
-        raise NotImplementedError
+        instructions = []
+
+        ret_lbl = Label("RETURL-LBL", mangle=True)
+        fnc_reg = new_reg()
+
+        instructions.extend(self._args.compile())
+
+        instructions.append(MOV["O", ret_lbl])
+        instructions.append(MOV[fnc_reg, self._name.value])
+        instructions.append(MOV["F", fnc_reg])
+        instructions.append(CALL[None])
+
+        instructions.append(ret_lbl)
+
+        return instructions
 
     def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
         return super().execute(rte)

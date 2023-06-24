@@ -669,12 +669,12 @@ def function_definition(ts: DefaultProduction, has_end: bool):
     if has_end is False:
         return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
 
-    if not isinstance(ts[1], CodeBlock):
+    if not isinstance(ts[2], CodeBlock):
         return FunctionDefinition(
-            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[1])
+            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[2])
         )
 
-    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
+    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[2])
 
 
 # WITH CONTEXT

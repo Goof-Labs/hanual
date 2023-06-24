@@ -71,7 +71,26 @@ class MOV(BaseInstruction):
 
 
 class CALL(BaseInstruction):
-    ...
+    def __init__(self) -> None:
+        ...
+
+    @property
+    def load_next4(self) -> bool:
+        return False
+
+    @property
+    def load_next8(self) -> bool:
+        return False
+
+    @property
+    def operang(self) -> bool:
+        return []
+
+    def serialize(self):
+        return super().serialize()
+
+    def __str__(self) -> str:
+        return "CAL[]"
 
 
 class JMP(BaseInstruction):
@@ -321,6 +340,7 @@ def new_reg():
 
 # for windcard imports
 __all__ = [
+    "BaseInstruction",
     "new_reg",
     "EXC",
     "UPK",

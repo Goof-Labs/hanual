@@ -1,14 +1,13 @@
 from __future__ import annotations
 
+from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, TYPE_CHECKING, Dict, Union
 from hanual.compile.constant import Constant
+from hanual.runtime.status import ExecStatus
+from hanual.compile.instruction import *
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
-from hanual.compile.instruction import *
 from abc import ABC
 
 

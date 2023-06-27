@@ -10,21 +10,6 @@ class BaseInstruction(ABC):
     def serialize(self):
         raise NotImplementedError
 
-    @property
-    @abstractmethod
-    def load_next4(self) -> bool:
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def load_next8(self) -> bool:
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def operang(self) -> bool:
-        raise NotImplementedError
-
     @abstractmethod
     def __str__(self) -> str:
         raise NotImplementedError
@@ -51,20 +36,33 @@ class MOV(BaseInstruction):
         self.val = val
         self.to = to
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return f"{self.val} {self.to}"
-
     def serialize(self):
-        return super().serialize()
+        if isinstance(self.val, int):
+            if isinstance(self.to, int):
+                # addr <- addr
+                ...
+
+            elif isinstance(self.to, str):
+                # reg <- addr
+                ...
+
+            else:
+                raise Exception
+
+        elif isinstance(self.to, int):
+            if isinstance(self.val, int):
+                # addr <- addr
+                ...
+
+            elif isinstance(self.val, str):
+                # reg <- reg
+                ...
+
+            else:
+                raise Exception
+
+        else:
+            raise Exception
 
     def __str__(self) -> str:
         return f"MOV[{self.to=} {self.val=}]"
@@ -73,18 +71,6 @@ class MOV(BaseInstruction):
 class CALL(BaseInstruction):
     def __init__(self) -> None:
         ...
-
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return False
-
-    @property
-    def operang(self) -> bool:
-        return []
 
     def serialize(self):
         return super().serialize()
@@ -101,18 +87,6 @@ class JMP(BaseInstruction):
     def target(self):
         return self._target
 
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return self.target
-
     def serialize(self):
         return super().serialize()
 
@@ -127,18 +101,6 @@ class JIT(BaseInstruction):
     @property
     def target(self):
         return self._target
-
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return self.target
 
     def serialize(self):
         return super().serialize()
@@ -155,18 +117,6 @@ class JIF(BaseInstruction):
     def target(self):
         return self._target
 
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return self.target
-
     def serialize(self):
         return super().serialize()
 
@@ -177,18 +127,6 @@ class JIF(BaseInstruction):
 class CMP(BaseInstruction):
     def __init__(self):
         ...
-
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return False
-
-    @property
-    def operang(self):
-        return ""
 
     def serialize(self):
         raise NotImplementedError
@@ -210,18 +148,6 @@ class CPY(BaseInstruction):
     def to(self):
         return self._to
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return True
-
-    @property
-    def operang(self):
-        return f"{self._to, self._val}"
-
     def serialize(self):
         raise NotImplementedError
 
@@ -237,20 +163,8 @@ class RET(BaseInstruction):
     def value(self):
         return self._value
 
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
     def serialize(self):
         raise NotImplementedError
-
-    @property
-    def operang(self):
-        return self._value
 
     def serialize(self):
         raise NotImplementedError
@@ -267,20 +181,8 @@ class UPK(BaseInstruction):
     def names(self) -> list[str | Token]:
         return self._names
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return False
-
     def serialize(self):
-        raise NotImplementedError
-
-    @property
-    def operang(self):
-        return self._names
+        return (0b0100_1001).to_bytes(length=1, byteorder="big")
 
     def __str__(self):
         val = StringIO()
@@ -315,20 +217,8 @@ class EXC(BaseInstruction):
     def right(self):
         return self._right
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return True
-
     def serialize(self):
         raise NotImplementedError
-
-    @property
-    def operang(self):
-        return self._names
 
     def __str__(self):
         return f"EXC[{self._op} {self._left} {self._rigth}]"

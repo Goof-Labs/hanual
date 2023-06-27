@@ -9,8 +9,7 @@ from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
-    from hanual.runtime.status import ExecStatus
+    ...
 
 T = TypeVar("T", BaseNode, Token)
 
@@ -57,8 +56,8 @@ class AssignmentNode(BaseNode, Generic[T]):
     def get_names(self) -> list[str]:
         return [self._target.value]
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:
         return []

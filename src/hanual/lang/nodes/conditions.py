@@ -1,17 +1,13 @@
 from __future__ import annotations
-from hanual.lang.nodes.base_node import BaseNode
 
-from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, TYPE_CHECKING, Union
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
 from hanual.compile.instruction import *
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.runtime import RuntimeEnvironment, ExecStatus
     from hanual.lang.errors import Error
 
 
@@ -108,8 +104,8 @@ class Condition(BaseNode, ABC):
 
         return names
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:
         return []

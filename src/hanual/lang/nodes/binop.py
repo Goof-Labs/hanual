@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, TYPE_CHECKING, Dict, Union
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
 from hanual.compile.instruction import *
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
@@ -78,8 +76,8 @@ class BinOpNode(BaseNode, ABC):
         instructions.append(EXC[self._op.value, reg_1, reg_2])
         return instructions
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         consts = []

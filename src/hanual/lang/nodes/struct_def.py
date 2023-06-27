@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, Any, Dict, Union
 from hanual.compile.constant import Constant
 
 from hanual.lang.errors import Error
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
+
+
 from .strong_field_list import StrongFieldList
 from .strong_field import StrongField
 from hanual.lang.lexer import Token
@@ -44,8 +44,8 @@ class StructDefinition(BaseNode):
         # The struct info is treated as an array (under the hood)
         return []
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_names(self) -> list[Constant]:
         names = []

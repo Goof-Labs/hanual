@@ -20,7 +20,8 @@ class OptimizerHandeler:
             self._optimizers = optimizers
 
     def proof_read(self, code: CompileManager):
-        for optim in self._optimizers:
-            optim.make_pass(code)
+        for _ in range(5):
+            for optim in self._optimizers:
+                code = optim.make_pass(code)
 
         return code

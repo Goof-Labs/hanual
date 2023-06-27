@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 
-from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, TYPE_CHECKING, Union
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
+
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.lang.errors import Error
@@ -48,8 +47,8 @@ class FunctionCall(BaseNode):
 
         return instructions
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         return self._args.get_constants()

@@ -2,8 +2,8 @@ from __future__ import annotations
 from hanual.lang.errors import Error
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
+
+
 from typing import TYPE_CHECKING, Any, Dict
 from .base_node import BaseNode
 
@@ -29,8 +29,8 @@ class ShoutNode(BaseNode):
     def get_names(self) -> list[str]:
         return []
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

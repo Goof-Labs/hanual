@@ -8,7 +8,9 @@ from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
 from hanual.lang.nodes.block import CodeBlock
+from hanual.serialize import DumpFile
 from pprint import PrettyPrinter
+from hashlib import sha256
 
 
 pp = PrettyPrinter()
@@ -32,13 +34,12 @@ class HanualMainClass:
 main = HanualMainClass()
 
 
-res = main.run(
-    """
+src = """
 fn main() {
     println("Hello world")
 }
 """
-)
+res = main.run(src)
 
 print(dump_tree(res, depth=12))
 
@@ -53,4 +54,15 @@ print(dump_tree(cm))
 
 op = OptimizerHandeler()
 
-print(dump_tree(op.proof_read(cm)))
+code = op.proof_read(cm)
+print(dump_tree(code))
+
+df = DumpFile()
+
+df.dump_head(0, 0, 0, sha256(src.encode("utf-8")), append=True)
+df.dump_deps(["toy.fr"])
+df.dump_func_head({"main": 0})
+df.dump_constants(code.consts)
+df.dump_instructions(code.instructions)
+
+print(dump_tree(df))

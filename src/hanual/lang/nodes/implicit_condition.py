@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 
-from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, Dict, Union, TYPE_CHECKING
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
@@ -47,8 +45,8 @@ class ImplicitCondition(BaseNode):
     def find_priority(self):
         return []
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

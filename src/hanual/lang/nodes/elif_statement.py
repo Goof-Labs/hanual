@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, Optional
-
-from hanual.lang.errors import Error
-from hanual.runtime.runtime import RuntimeEnvironment
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
+from hanual.lang.errors import Error
+
 
 from .base_node import BaseNode
 
@@ -46,8 +44,8 @@ class ElifStatement(BaseNode):
 
         return names
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

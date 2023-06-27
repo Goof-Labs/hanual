@@ -67,6 +67,8 @@ class RegChoiceOptimizer(BaseOptimizer):
             if isinstance(instr.val, list):
                 instr.val = regs.find_reg(instr.val[0], idx)
 
+        return cm
+
     def make_first_pass(self, instructions):
         """
         This will loop backwards over the instruction so we can record the last time an instruction is used.

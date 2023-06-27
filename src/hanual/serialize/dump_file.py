@@ -2,6 +2,7 @@ from __future__ import annotations
 
 
 from typing import List, Dict, TYPE_CHECKING
+from hanual.compile.label import Label
 from base64 import b64encode
 from io import BytesIO
 
@@ -84,8 +85,13 @@ class DumpFile:
     ):
         data = BytesIO()
 
-        for i in instructions:
-            data.write(i.serialize())
+        for idx, instr in enumerate(instructions):
+            if isinstance(instr, Label):
+                # lables surve as jump points and don't need to be added to the
+                pass
+
+            else:
+                data.write(instr.serialize())
 
         if append:
             self._bytes.write(data.getvalue())

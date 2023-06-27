@@ -4,8 +4,6 @@ from abc import ABC
 
 from typing import List, Any, Dict, Union, TYPE_CHECKING
 from hanual.compile.constant import Constant
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
 from hanual.lang.errors import Error
 from typing_extensions import Self
 from .base_node import BaseNode
@@ -37,8 +35,8 @@ class NamespaceAccessor(BaseNode, ABC):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         return []

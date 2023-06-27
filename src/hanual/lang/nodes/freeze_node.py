@@ -6,8 +6,8 @@ from typing import Dict, TypeVar, Any, TYPE_CHECKING
 from hanual.compile.constant import Constant
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
+
+
 from .base_node import BaseNode
 
 
@@ -27,8 +27,8 @@ class FreezeNode(BaseNode, ABC):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         return []

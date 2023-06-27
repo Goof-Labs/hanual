@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING, Dict
 
-from hanual.runtime.runtime import RuntimeEnvironment
+
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
+
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.lang.errors import Error
@@ -67,8 +67,8 @@ class IfStatement(BaseNode, ABC):
 
         return names
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:
         return self._block.find_priority()

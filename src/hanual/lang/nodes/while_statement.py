@@ -7,8 +7,6 @@ from hanual.compile.instruction import *
 from hanual.compile.label import Label
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
-    from hanual.runtime.status import ExecStatus, Error
     from hanual.lang.nodes.conditions import Condition
     from hanual.lang.nodes.block import CodeBlock
 
@@ -38,8 +36,8 @@ class WhileStatement(BaseNode):
 
         return instructions
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         return [*self._while.get_constants(), *self._body.get_constants()]

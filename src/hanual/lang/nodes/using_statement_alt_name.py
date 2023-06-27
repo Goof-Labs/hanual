@@ -10,10 +10,9 @@ from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
     from .namespace_acessor import NamespaceAccessor
     from hanual.compile.constant import Constant
-    from hanual.runtime.status import ExecStatus
+
     from hanual.lang.errors import Error
     from hanual.lang.lexer import Token
 
@@ -40,8 +39,8 @@ class UsingStatementWithAltName(BaseNode):
     def get_names(self) -> list[str]:
         return [self._name.value]
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def as_dict(self) -> Dict[str, Any]:
         return super().as_dict()

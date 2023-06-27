@@ -2,7 +2,6 @@ from __future__ import annotations
 from hanual.compile.constant import Constant
 
 
-from hanual.runtime import RuntimeEnvironment, ExecStatus
 from typing import Any, Dict, Union, List, TYPE_CHECKING
 from hanual.lang.errors import Error
 from .base_node import BaseNode
@@ -10,14 +9,13 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .elif_statement import ElifStatement
-    from .else_statement import ElseStatement
     from .if_statement import IfStatement
     from typing_extensions import Self
 
 
 class IfChain(BaseNode):
     def __init__(self: BaseNode) -> None:
-        self._statements: List[Union[IfStatement, ElifStatement, ElseStatement]] = []
+        self._statements: List[Union[IfStatement, ElifStatement]] = []
 
     def add_node(self, node: Union[IfStatement, ElifStatement]) -> Self:
         self._statements.append(node)
@@ -46,7 +44,7 @@ class IfChain(BaseNode):
 
         return names
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+    def execute(self):
         for statement in self._statements:
             err, res = sts = statement.execute(rte)
 

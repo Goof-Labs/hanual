@@ -22,9 +22,9 @@ because I definitely do.
 import std/os
 import system/io
 
-# Define countLines
-let f = readFile("text.txt")
+#Read the bytecode
+let f = readFile("main.chnl")
 try: 
   echo f
 except CatchableError:
-  raise "The main file does not exist, touch the main.chnl file if you are on unix based systems. Thanks bye :]"
+  echo "The main file does not exist, touch the main.chnl file if you are on unix based systems. Thanks bye :]"

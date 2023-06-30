@@ -1,6 +1,7 @@
+from hanual.compile.label import Label
+from hanual.lang.lexer import Token
 from abc import ABC, abstractmethod
 from typing import TypeVar
-from hanual.lang.lexer import Token
 from io import StringIO
 from random import randbytes
 
@@ -8,6 +9,10 @@ from random import randbytes
 class BaseInstruction(ABC):
     @abstractmethod
     def serialize(self):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def update(self):
         raise NotImplementedError
 
     @abstractmethod
@@ -49,7 +54,7 @@ class MOV(BaseInstruction):
             else:
                 raise Exception
 
-        elif isinstance(self.to, int):
+        elif isinstance(self.to, str):
             if isinstance(self.val, int):
                 # addr <- addr
                 ...
@@ -58,11 +63,18 @@ class MOV(BaseInstruction):
                 # reg <- reg
                 ...
 
+            elif isinstance(self.val, Label):
+                return (0b0100_0000).to_bytes()+b""
+
             else:
                 raise Exception
 
         else:
             raise Exception
+
+    def update(self, idx: int):
+        if isinstance(self.val, Label):
+            self.val.idx = idx
 
     def __str__(self) -> str:
         return f"MOV[{self.to=} {self.val=}]"
@@ -74,6 +86,9 @@ class CALL(BaseInstruction):
 
     def serialize(self):
         return super().serialize()
+
+    def update(self):
+        ...
 
     def __str__(self) -> str:
         return "CAL[]"
@@ -166,8 +181,8 @@ class RET(BaseInstruction):
     def serialize(self):
         raise NotImplementedError
 
-    def serialize(self):
-        raise NotImplementedError
+    def update(self):
+        ...
 
     def __str__(self):
         return f"RET[{self._value}]"
@@ -180,6 +195,9 @@ class UPK(BaseInstruction):
     @property
     def names(self) -> list[str | Token]:
         return self._names
+
+    def update(self):
+        ...
 
     def serialize(self):
         return (0b0100_1001).to_bytes(length=1, byteorder="big")

@@ -11,6 +11,8 @@ class Registers(StrEnum):
     E: str = "E"
     F: str = "F"
     O: str = "O"
+    S: str = "O"
+
 
 class RegisterID(IntEnum):
     A: int = 1

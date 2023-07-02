@@ -6,7 +6,7 @@ from typing import TypeVar, Union, List
 from hanual.compile.label import Label
 from abc import ABC, abstractmethod
 
-I = TypeVar("I", EXC, UPK, RET, CPY, MOV, CMP, JIF, JIT, CALL, JMP)
+I = TypeVar("I", EXC, UPK, RET, CPY, CMP, JIF, JIT, CALL, JMP)
 
 
 class BaseOptimizer(ABC):

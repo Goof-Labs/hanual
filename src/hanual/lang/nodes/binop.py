@@ -46,10 +46,10 @@ class BinOpNode(BaseNode, ABC):
         # LEFT SIDE
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_1, self._left.value])
+                instructions.append(MOV[reg_1, Constant(self._left.value)])
 
             elif self._left.type == "ID":
-                instructions.append(MOV[reg_2, self._left.value])
+                instructions.append(MOV[reg_2, Constant(self._left.value)])
 
             else:
                 raise NotImplementedError
@@ -61,10 +61,10 @@ class BinOpNode(BaseNode, ABC):
         # RIGHT SIDE
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_2, self._right.value])
+                instructions.append(MOV[reg_2, Constant(self._right.value)])
 
             elif self._right.type == "ID":
-                instructions.append(MOV[reg_2, self._right.value])
+                instructions.append(MOV[reg_2, Constant(self._right.value)])
 
             else:
                 raise NotImplementedError

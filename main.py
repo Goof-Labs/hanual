@@ -60,9 +60,10 @@ print(dump_tree(code))
 df = DumpFile()
 
 df.dump_head(0, 0, 0, sha256(src.encode("utf-8")), append=True)
-df.dump_deps(["toy.fr"])
-df.dump_func_head({"main": 0})
-df.dump_constants(code.consts)
-df.dump_instructions(code.instructions)
+df.dump_deps(["toy.fr"], append=True)
+df.dump_func_head({"main": 0}, append=True)
+df.dump_constants(code.consts, append=True)
+df.dump_instructions(cm, append=True)
 
-print(dump_tree(df))
+with open("bin\\hworld.chnl", "wb") as f:
+    f.write(df.bytes)

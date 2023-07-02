@@ -1,16 +1,19 @@
 from hanual.compile.label import Label
 from hanual.lang.lexer import Token
 from abc import ABC, abstractmethod
-from typing import TypeVar
-from io import StringIO
+from .registers import Registers
 from random import randbytes
+from typing import TypeVar
+from .flags import Flags
+from io import StringIO
+from .refs import Ref
 
 
 class BaseInstruction(ABC):
     @abstractmethod
     def serialize(self):
         raise NotImplementedError
-    
+
     @abstractmethod
     def update(self):
         raise NotImplementedError
@@ -41,51 +44,113 @@ class MOV(BaseInstruction):
         self.val = val
         self.to = to
 
-    def serialize(self):
-        if isinstance(self.val, int):
-            if isinstance(self.to, int):
-                # addr <- addr
-                ...
-
-            elif isinstance(self.to, str):
-                # reg <- addr
-                ...
-
-            else:
-                raise Exception
-
-        elif isinstance(self.to, str):
-            if isinstance(self.val, int):
-                # addr <- addr
-                ...
-
-            elif isinstance(self.val, str):
-                # reg <- reg
-                ...
-
-            elif isinstance(self.val, Label):
-                return (0b0100_0000).to_bytes()+b""
-
-            else:
-                raise Exception
-
-        else:
-            raise Exception
-
     def update(self, idx: int):
         if isinstance(self.val, Label):
             self.val.idx = idx
 
     def __str__(self) -> str:
-        return f"MOV[{self.to=} {self.val=}]"
+        return f"{type(self).__name__}[{self.to=} {self.val=}]"
+
+
+# move a value from the constant pool into a register
+class MOV_RC(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1100_0000).to_bytes()
+            + ("ABCDEFO".index(self.to)).to_bytes(length=1)
+            + self.val.to_bytes(byteborder=15)
+        )
+
+
+# move a value from one register to another
+class MOV_RR(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b0100_0000).to_bytes()
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+        )
+
+
+# move a reference to a register
+class MOV_RF(MOV):
+    def serialize(self, names, **kwargs):
+        return (
+            MOV_RI[Registers.F, Flags.MOV_REF].serialize(names=names, **kwargs)
+            + (0b0100_0000).to_bytes()
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+            + names.index(self.val.ref).to_bytes(length=2)
+        )
+
+
+# move an intager to a register
+class MOV_RI(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1100_0000).to_bytes()
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+            + self.val.to_bytes(length=14)
+        )
+
+
+# move a heap value into another
+class MOV_HH(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1100_0000).to_bytes()
+            + self.to.to_bytes(byteborder=8)
+            + self.val.to.to_bytes(length=8)
+        )
+
+
+# move a heap value into a register
+class MOV_HR(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1100_0000).to_bytes()
+            + self.val.to.to_bytes(length=14)
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+        )
+
+
+# move a heap value into a register
+class MOV_HF(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
+            (0b0100_0000).to_bytes() + self.to.to_bytes(length=14),
+            +(self.val).to_bytes(length=2),
+        )
+
+
+# move a heap value into a register
+class MOV_HI(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
+            (0b0100_0000).to_bytes()
+            + (self.to).to_bytes(length=8)
+            + (self.val).to_bytes(length=8),
+        )
+
+
+# move a heap value into a register
+class MOV_HC(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
+            (0b0100_0000).to_bytes()
+            + (self.to).to_bytes(length=8)
+            + (self.val).to_bytes(length=8),
+        )
 
 
 class CALL(BaseInstruction):
     def __init__(self) -> None:
         ...
 
-    def serialize(self):
-        return super().serialize()
+    def serialize(self, **kwargs):
+        return (0b1000_0001).to_bytes()
 
     def update(self):
         ...
@@ -178,8 +243,8 @@ class RET(BaseInstruction):
     def value(self):
         return self._value
 
-    def serialize(self):
-        raise NotImplementedError
+    def serialize(self, **kwargs):
+        return (0b0010_0111).to_bytes()
 
     def update(self):
         ...
@@ -199,8 +264,8 @@ class UPK(BaseInstruction):
     def update(self):
         ...
 
-    def serialize(self):
-        return (0b0100_1001).to_bytes(length=1, byteorder="big")
+    def serialize(self, **kwargs):
+        return (0b0100_1001).to_bytes(length=1)
 
     def __str__(self):
         val = StringIO()
@@ -242,22 +307,23 @@ class EXC(BaseInstruction):
         return f"EXC[{self._op} {self._left} {self._rigth}]"
 
 
+class LDC(BaseInstruction):
+    def __init__(self, value: int) -> None:
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    def serialize(self):
+        return (0b1000_1001).to_bytes() + self._value.to_bytes(length=8)
+
+    def update(self):
+        return super().update()
+
+    def __str__(self) -> str:
+        return f"LDC[{self._value}]"
+
+
 def new_reg():
     return ["REG_" + randbytes(64).hex()]
-
-
-# for windcard imports
-__all__ = [
-    "BaseInstruction",
-    "new_reg",
-    "EXC",
-    "UPK",
-    "RET",
-    "CPY",
-    "MOV",
-    "CMP",
-    "JIF",
-    "JIT",
-    "CALL",
-    "JMP",
-]

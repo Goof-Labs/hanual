@@ -7,6 +7,7 @@ from base64 import b64encode
 from io import BytesIO
 
 if TYPE_CHECKING:
+    from hanual.compile.compile_manager import CompileManager
     from hanual.compile.constant import Constant
     from hanual.compile.instruction import *
     from hashlib import _Hash
@@ -81,19 +82,26 @@ class DumpFile:
         return fn_table.getvalue()
 
     def dump_instructions(
-        self, instructions: List[BaseInstruction], append: bool = False
+        self,
+        cm: CompileManager,
+        append: bool = False,
     ):
         data = BytesIO()
 
-        for idx, instr in enumerate(instructions):
+        for idx, instr in enumerate(cm.instructions):
             if isinstance(instr, Label):
                 # lables surve as jump points and don't need to be added to the
                 pass
 
             else:
-                data.write(instr.serialize())
+                print(instr)
+                data.write(instr.serialize(consts=cm.consts, names=cm.names))
 
         if append:
             self._bytes.write(data.getvalue())
 
         return data.getvalue()
+
+    @property
+    def bytes(self):
+        return self._bytes.getvalue()

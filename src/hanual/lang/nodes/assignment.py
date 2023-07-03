@@ -43,7 +43,7 @@ class AssignmentNode(BaseNode, Generic[T]):
                 raise NotImplementedError
 
         else:
-            return [*self._value.compile(), CPY[self._target.value, "RES"]]
+            return [*self._value.compile(), CPY[self._target.value, Registers.R]]
 
     def get_constants(self) -> list[Constant]:
         # if we want to set the value to a literal then we add it as a constant

@@ -71,7 +71,7 @@ class DumpFile:
         for name, start in funcs.items():
             fn_table.write(name.encode("utf-8"))
             fn_table.write(b"\x00")
-            fn_table.write(start.to_bytes(length=4))
+            fn_table.write(start.to_bytes(length=4, byteorder="big"))
             fn_table.write(b"\x00")
 
         fn_table.write(b"\x00")

@@ -65,10 +65,24 @@ class MOV_RC(MOV):
 # move a value from one register to another
 class MOV_RR(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
+        to = val = None
+
+        if isinstance(self.to, str):
+            to = self.val
+        
+        else:
+            to = self.to.value
+        
+        if isinstance(self.val, str):
+            val = self.val
+
+        else:
+            val = self.val.value
+
         return (
-            (0b0100_0000).to_bytes()
-            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
-            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+            (0b0100_0000).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(to)).to_bytes(length=2, byteorder="big")
+            + ("ABCDEFO".index(val)).to_bytes(length=2, byteorder="big")
         )
 
 
@@ -77,9 +91,9 @@ class MOV_RF(MOV):
     def serialize(self, names, **kwargs):
         return (
             MOV_RI[Registers.F, Flags.MOV_REF].serialize(names=names, **kwargs)
-            + (0b0100_0000).to_bytes()
-            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
-            + names.index(self.val.ref).to_bytes(length=2)
+            + (0b0100_0000).to_bytes(length=2, byteorder="big")
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2, byteorder="big")
+            + names.index(self.val.ref).to_bytes(length=2, byteorder="big")
         )
 
 
@@ -87,9 +101,9 @@ class MOV_RF(MOV):
 class MOV_RI(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            (0b1100_0000).to_bytes()
-            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
-            + self.val.to_bytes(length=14)
+            (0b1100_0000).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to.value)).to_bytes(length=2, byteorder="big")
+            + self.val.to_bytes(length=14, byteorder="big")
         )
 
 
@@ -150,7 +164,7 @@ class CALL(BaseInstruction):
         ...
 
     def serialize(self, **kwargs):
-        return (0b1000_0001).to_bytes()
+        return (0b1000_0001).to_bytes(length=1, byteorder="big")
 
     def update(self):
         ...
@@ -244,7 +258,7 @@ class RET(BaseInstruction):
         return self._value
 
     def serialize(self, **kwargs):
-        return (0b0010_0111).to_bytes()
+        return (0b0010_0111).to_bytes(length=1, byteorder="big")
 
     def update(self):
         ...
@@ -265,7 +279,7 @@ class UPK(BaseInstruction):
         ...
 
     def serialize(self, **kwargs):
-        return (0b0100_1001).to_bytes(length=1)
+        return (0b0100_1001).to_bytes(length=1, byteorder="big")
 
     def __str__(self):
         val = StringIO()

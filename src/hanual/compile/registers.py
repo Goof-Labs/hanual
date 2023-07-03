@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from enum import StrEnum, IntEnum
+from enum import Enum
 
 
-class Registers(StrEnum):
+class Registers(Enum):
     A: str = "A"
     B: str = "B"
     C: str = "C"
@@ -12,9 +12,10 @@ class Registers(StrEnum):
     F: str = "F"
     O: str = "O"
     S: str = "O"
+    R: str = "R"
 
 
-class RegisterID(IntEnum):
+class RegisterID(Enum):
     A: int = 1
     B: int = 2
     C: int = 3

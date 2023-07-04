@@ -69,6 +69,3 @@ class StructDefinition(BaseNode):
 
     def find_priority(self) -> list[BaseNode]:
         return [self]
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()

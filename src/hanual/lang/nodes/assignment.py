@@ -61,12 +61,3 @@ class AssignmentNode(BaseNode, Generic[T]):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "type": type(self).__name__,
-            "name": self._target,
-            "value": self._value.as_dict()
-            if hasattr(self._value, "as_dict")
-            else self._value,
-        }

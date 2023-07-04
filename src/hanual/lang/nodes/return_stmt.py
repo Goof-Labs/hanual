@@ -5,6 +5,7 @@ from hanual.lang.builtin_lexer import Token
 from typing import Dict, Any, TYPE_CHECKING
 
 from hanual.lang.errors import Error
+from hanual.lang.nodes.base_node import BaseNode
 
 
 from .base_node import BaseNode
@@ -37,8 +38,8 @@ class ReturnStatement(BaseNode, ABC):
         else:
             return self._value.get_names()
 
+    def find_priority(self) -> list[BaseNode]:
+        return []
+
     def execute(self):
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {"value": self._value}

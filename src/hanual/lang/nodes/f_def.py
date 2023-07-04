@@ -69,12 +69,3 @@ class FunctionDefinition(BaseNode):
 
     def find_priority(self) -> list[BaseNode]:
         return [self]
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "args": self._arguments.as_dict(),
-            "name": self._name,
-            "inner": self._inner.as_dict()
-            if hasattr(self._inner, "as_dict")
-            else self._inner,
-        }

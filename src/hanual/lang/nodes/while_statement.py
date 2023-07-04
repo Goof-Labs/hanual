@@ -47,13 +47,3 @@ class WhileStatement(BaseNode):
 
     def find_priority(self) -> list[BaseNode]:
         return self._body.find_priority()
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "condition": self._while.as_dict()
-            if hasattr(self._while, "as_dict")
-            else self._while,
-            "inner": self._body.as_dict()
-            if hasattr(self._body, "as_dict")
-            else self._body,
-        }

@@ -54,6 +54,3 @@ class IfChain(BaseNode):
     @property
     def statements(self) -> List[Union[IfStatement, ElifStatement, ElseStatement]]:
         return self._statements
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()

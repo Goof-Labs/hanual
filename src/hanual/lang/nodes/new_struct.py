@@ -32,6 +32,3 @@ class NewStruct(BaseNode):
 
     def execute(self):
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()

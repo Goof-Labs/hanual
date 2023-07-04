@@ -62,6 +62,3 @@ class FunctionCall(BaseNode):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {"args": self._args.as_dict(), "name": self._name}

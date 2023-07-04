@@ -47,6 +47,3 @@ class UsingStatement(BaseNode, ABC):
                 return ExecStatus(None, self)
 
         return ExecStatus(HNLFileNotFound(), self)
-
-    def as_dict(self):
-        super().as_dict()

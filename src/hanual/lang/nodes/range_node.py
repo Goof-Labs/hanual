@@ -20,9 +20,3 @@ class RangeNode(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "from": self._from,
-            "to": self._to,
-        }

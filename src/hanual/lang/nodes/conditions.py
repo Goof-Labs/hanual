@@ -109,10 +109,3 @@ class Condition(BaseNode, ABC):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "op": self._op,
-            "left": self._left,
-            "right": self._right,
-        }

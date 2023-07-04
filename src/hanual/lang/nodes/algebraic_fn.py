@@ -16,8 +16,5 @@ class AlgebraicFunc(BaseNode):
         self._name = name
         self._expr = expr
 
-    def as_dict(self) -> Dict[str, Any]:
-        return {"name": self._name, "expr": self.get_repr(self._expr)}
-
     def compile(self, global_state) -> Any:
         raise NotImplementedError

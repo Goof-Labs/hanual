@@ -52,17 +52,6 @@ class BaseNode(ABC):
     def find_priority(self) -> list[BaseNode]:
         raise NotImplementedError
 
-    @abstractmethod
-    def as_dict(self) -> Dict[str, Any]:
-        """
-        Instead of having very awkward __str__ methods that
-        are impossible to refactor, at least mine where. We
-        have an `as_dict` method that will recursively return
-        the ast as a dict. This lets us pprint it more
-        efficiently.
-        """
-        raise NotImplementedError
-
     @staticmethod
     def get_repr(o: T) -> Union[Dict, Token]:
         # Just a convenience function that will call as_dict if it exists

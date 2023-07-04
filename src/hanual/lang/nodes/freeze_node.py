@@ -36,9 +36,6 @@ class FreezeNode(BaseNode, ABC):
     def get_names(self) -> list[str]:
         return [self._var.value]
 
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()
-
     @property
     def target(self):
         return self._var

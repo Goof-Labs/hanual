@@ -16,6 +16,3 @@ class AnonArgs(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return self._args.as_dict()

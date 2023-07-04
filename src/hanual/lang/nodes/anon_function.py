@@ -26,6 +26,3 @@ class AnonymousFunction(BaseNode, ABC):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {"args": self._args, "innter": self._inner}

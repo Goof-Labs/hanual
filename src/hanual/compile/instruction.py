@@ -69,10 +69,10 @@ class MOV_RR(MOV):
 
         if isinstance(self.to, str):
             to = self.val
-        
+
         else:
             to = self.to.value
-        
+
         if isinstance(self.val, str):
             val = self.val
 

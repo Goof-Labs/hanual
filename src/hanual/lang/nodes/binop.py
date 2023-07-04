@@ -113,10 +113,3 @@ class BinOpNode(BaseNode, ABC):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "op": self._op,
-            "left": self.get_repr(self._left),
-            "right": self.get_repr(self._right),
-        }

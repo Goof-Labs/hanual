@@ -83,11 +83,3 @@ class Arguments(BaseNode):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "type": type(self).__name__,
-            "values": [
-                c.as_dict() if hasattr(c, "as_dict") else c for c in self.children
-            ],
-        }

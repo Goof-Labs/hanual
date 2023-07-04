@@ -72,6 +72,3 @@ class IfStatement(BaseNode, ABC):
 
     def find_priority(self) -> list[BaseNode]:
         return self._block.find_priority()
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()

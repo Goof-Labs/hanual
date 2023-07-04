@@ -76,6 +76,3 @@ class CodeBlock(BaseNode, ABC):
     @property
     def children(self):
         return self._children
-
-    def as_dict(self) -> List[Any]:
-        return [c.as_dict() if hasattr(c, "as_dict") else c for c in self.children]

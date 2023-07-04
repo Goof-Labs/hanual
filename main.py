@@ -34,9 +34,20 @@ class HanualMainClass:
 main = HanualMainClass()
 
 
-src = """
+src = r"""
+
+struct list {
+    elements: collection
+}
+
+
 fn main() {
     println("Hello world")
+}
+
+fn french_toast() {
+    let toast = true
+    return toast
 }
 """
 res = main.run(src)
@@ -65,5 +76,5 @@ df.dump_func_head({"main": 0}, append=True)
 df.dump_constants(code.consts, append=True)
 df.dump_instructions(cm, append=True)
 
-with open("bin\\hworld.chnl", "wb") as f:
+with open("bin/hworld.chnl", "wb") as f:
     f.write(df.bytes)

@@ -19,12 +19,5 @@ class AlgebraicExpression(BaseNode):
         self._left = left
         self._right = right
 
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "op": self._op,
-            "left": self.get_repr(self._left),
-            "right": self.get_repr(self._right),
-        }
-
     def compile(self) -> None:
         raise NotImplementedError

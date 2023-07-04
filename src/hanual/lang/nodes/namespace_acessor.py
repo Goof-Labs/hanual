@@ -43,6 +43,3 @@ class NamespaceAccessor(BaseNode, ABC):
 
     def get_names(self) -> list[str]:
         return [self._path[-1].value]
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {"lib-path": self._path}

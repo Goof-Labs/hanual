@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, TYPE_CHECKING, Union
-from hanual.compile.constant import Constant
-
 from hanual.compile.registers import Registers
+from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
 from hanual.compile.refs import Ref
 from hanual.lang.lexer import Token

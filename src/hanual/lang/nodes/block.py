@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from typing import List, Union, TypeVar, Any, TYPE_CHECKING
-
-from hanual.compile.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.compile.constant import Constant
 from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.lang.errors import Error
+    ...
 
 T = TypeVar("T")
 
@@ -36,7 +35,7 @@ class CodeBlock(BaseNode, ABC):
     def execute(self):
         for child in self._children:
             # If we have an error then we raise it, otherwise I just discard the return value and keep going
-            err, _ = sts = child.execute(rte)
+            err, _ = sts = child.execute()
 
             if err:
                 return sts

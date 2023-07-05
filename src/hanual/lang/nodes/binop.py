@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, Dict, Union
+from hanual.compile.registers import Registers
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from hanual.lang.errors import Error
+from typing import TYPE_CHECKING, Union
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
@@ -56,7 +56,7 @@ class BinOpNode(BaseNode, ABC):
 
         else:
             instructions.extend(self._left.compile())
-            instructions.append(MOV[reg_1, "AC"])
+            instructions.append(MOV[reg_1, Registers.R])
 
         # RIGHT SIDE
         if isinstance(self._right, Token):
@@ -71,7 +71,7 @@ class BinOpNode(BaseNode, ABC):
 
         else:
             instructions.extend(self._right.compile())
-            instructions.append(MOV[reg_2, "AC"])
+            instructions.append(MOV[reg_2, Registers.R])
 
         instructions.append(EXC[self._op.value, reg_1, reg_2])
         return instructions

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 
-from typing import TYPE_CHECKING, Any, Dict, Union
 from .implicit_condition import ImplicitCondition
 from hanual.lang.nodes.base_node import BaseNode
 from .implicit_binop import ImplicitBinop
 from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
 from .base_node import BaseNode
 
@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from hanual.compile.constant import Constant
 
     from .assignment import AssignmentNode
-    from hanual.lang.errors import Error
     from hanual.lang.lexer import Token
     from .conditions import Condition
     from .block import CodeBlock

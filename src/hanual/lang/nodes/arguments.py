@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
-from hanual.compile.constant import Constant
+from typing import TypeVar, Union, List, TYPE_CHECKING
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.compile.constant import Constant
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
-    from hanual.lang.errors import Error
-
+    ...
 
 T = TypeVar("T")
 

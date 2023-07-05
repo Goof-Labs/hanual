@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, TypeVar, TYPE_CHECKING
+from hanual.compile.registers import Registers
 from hanual.compile.constant import Constant
-
+from typing import TypeVar, TYPE_CHECKING
 from hanual.compile.instruction import *
-from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
@@ -43,7 +42,7 @@ class VarChange(BaseNode):
 
         else:
             instructions.extend(self._value.compile())
-            instructions.append(MOV[self._name.value, "AC"])
+            instructions.append(MOV[self._name.value, Registers.AC])
 
         return instructions
 

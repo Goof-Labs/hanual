@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from hanual.optim.optimizer_status import OptimizerStatus
-from .base_optimiszer import BaseOptimizer, I
 from typing import List, Union, Dict, TYPE_CHECKING
+from .base_optimiszer import BaseOptimizer, I
 from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
@@ -67,12 +67,14 @@ class RegChoiceOptimizer(BaseOptimizer):
             if isinstance(instr.val, list):
                 instr.val = regs.find_reg(instr.val[0], idx)
 
+        return cm
+
     def make_first_pass(self, instructions):
         """
         This will loop backwards over the instruction so we can record the last time an instruction is used.
         """
         for idx, instruction in reversed(list(enumerate(instructions))):
-            if not isinstance(instruction, MOV):
+            if not issubclass(instruction.__class__, MOV):
                 continue
 
             if isinstance(instruction.to, list):

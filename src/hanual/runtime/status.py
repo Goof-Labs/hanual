@@ -1,25 +1,39 @@
-from __future__ import annotations
-
-from typing import TypeVar, Generic, TYPE_CHECKING, Union
-from hanual.lang.errors import Error
+from typing import Generic, TypeVar, Optional
 
 
-E = TypeVar("E", bound=Error)
+# make IntEnum one way or another
+try:
+    from enum import IntEnum
+
+except ImportError:
+    from enum import Enum
+
+    class IntEnum(int, Enum):
+        ...
+
+
+S = TypeVar("S")
 R = TypeVar("R")
 
 
-class ExecStatus(Generic[E, R]):
-    def __init__(self, error: E, result: R) -> None:
-        self._error: Union[E, None] = error
-        self._res: Union[R, None] = result
+class Status(Generic[S, R]):
+    def __init__(self, stat: S, res: R, code: Optional[int] = None) -> None:
+        self._status = stat
+        self._code = code
+        self._res = res
 
     @property
-    def error(self) -> E:
-        return self._error
+    def status(self) -> S:
+        return self._status
 
     @property
-    def result(self) -> R:
+    def resut(self) -> R:
         return self._res
 
-    def __iter__(self):
-        return iter((self._error, self._res))
+    @property
+    def code(self) -> int:
+        return self._code
+
+
+class StatusCodes(IntEnum):
+    NAME_NOT_FOUND: int = 0

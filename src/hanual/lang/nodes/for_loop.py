@@ -10,9 +10,8 @@ from hanual.compile.label import Label
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
     from hanual.compile.constant import Constant
-    from hanual.runtime.status import ExecStatus
+
     from .assignment import AssignmentNode
     from hanual.lang.errors import Error
     from hanual.lang.lexer import Token
@@ -120,8 +119,5 @@ class ForLoop(BaseNode):
     def find_priority(self):
         return []
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()
+    def execute(self):
+        raise NotImplementedError

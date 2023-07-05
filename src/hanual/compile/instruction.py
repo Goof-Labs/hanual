@@ -1,8 +1,12 @@
-from abc import ABC, abstractmethod
-from typing import TypeVar
+from hanual.compile.label import Label
 from hanual.lang.lexer import Token
-from io import StringIO
+from abc import ABC, abstractmethod
+from .registers import Registers
 from random import randbytes
+from typing import TypeVar
+from .flags import Flags
+from io import StringIO
+from .refs import Ref
 
 
 class BaseInstruction(ABC):
@@ -10,19 +14,8 @@ class BaseInstruction(ABC):
     def serialize(self):
         raise NotImplementedError
 
-    @property
     @abstractmethod
-    def load_next4(self) -> bool:
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def load_next8(self) -> bool:
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def operang(self) -> bool:
+    def update(self):
         raise NotImplementedError
 
     @abstractmethod
@@ -51,43 +44,151 @@ class MOV(BaseInstruction):
         self.val = val
         self.to = to
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return f"{self.val} {self.to}"
-
-    def serialize(self):
-        return super().serialize()
+    def update(self, idx: int):
+        if isinstance(self.val, Label):
+            self.val.idx = idx
 
     def __str__(self) -> str:
-        return f"MOV[{self.to=} {self.val=}]"
+        return f"{type(self).__name__}[{self.to=} {self.val=}]"
+
+
+"""
+The following is the data for all move instructions
++--------+----------+------------+-----------+------------+------------+
+|  NAME  |    TO    |   ORIGIN   |  ID (BIN) | LOAD-ARG-1 | LOAD-ARG-2 |
++--------+----------+------------+-----------+------------+------------+
+| MOV_RC | register | const pool | 1110_0000 | 1 byte     | 15 bytes   |
+| MOV_RR | register | register   | 1110_0001 | 1 byte     | 1 byte     |
+| MOV_RF | register | reference  | 1110_0010 | 1 byte     | 7 bytes    |
+| MOV_RI | register | [arg-2]    | 1110_0011 | 1 byte     | 15 bytes   |
+| MOV_HH | heap     | heap       | 1110_0100 | 8 bytes    | 8 bytes    |
+| MOV_HR | heap     | register   | 1110_0101 | 15 bytes   | 1 byte     |
+| MOV_HF | heap     | reference  | 1110_0110 | 8 bytes    | 8 bytes    |
+| MOV_HI | heap     | [arg-2]    | 1110_0111 | 8 bytes    | 8 bytes    |
+| MOV_HC | heap     | constant   | 1110_1000 | 8 bytes    | 8 bytes    |
++--------+----------+------------+-----------+------------+------------+
+
+::NOTES::
+=========
+
+NULL
+
+"""
+
+
+# move a value from the constant pool into a register
+class MOV_RC(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1110_0000).to_bytes()
+            + ("ABCDEFO".index(self.to)).to_bytes(length=1)
+            + self.val.to_bytes(byteborder=15)
+        )
+
+
+# move a value from one register to another
+class MOV_RR(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        to = val = None
+
+        if isinstance(self.to, str):
+            to = self.val
+
+        else:
+            to = self.to.value
+
+        if isinstance(self.val, str):
+            val = self.val
+
+        else:
+            val = self.val.value
+
+        return (
+            (0b1110_0001).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(to)).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(val)).to_bytes(length=1, byteorder="big")
+        )
+
+
+# move a reference to a register
+class MOV_RF(MOV):
+    def serialize(self, names, **kwargs):
+        return (
+            (0b1110_0010).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
+            + names.index(self.val.ref).to_bytes(length=7, byteorder="big")
+        )
+
+
+# move an intager to a register
+class MOV_RI(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1110_0011).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to.value)).to_bytes(length=1, byteorder="big")
+            + self.val.to_bytes(length=12, byteorder="big")
+        )
+
+
+# move a heap value into another
+class MOV_HH(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1110_0100).to_bytes()
+            + self.to.to_bytes(byteborder=8)
+            + self.val.to.to_bytes(length=8)
+        )
+
+
+# move a register into the heap
+class MOV_HR(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1110_0101).to_bytes()
+            + self.val.to.to_bytes(length=14)
+            + ("ABCDEFO".index(self.to)).to_bytes(length=2)
+        )
+
+
+# move a reference into the heap
+class MOV_HF(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1110_0110).to_bytes() + self.to.to_bytes(length=14),
+            +(self.val).to_bytes(length=2),
+        )
+
+
+# move an int into heap
+class MOV_HI(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
+            (0b1110_0111).to_bytes()
+            + (self.to).to_bytes(length=8)
+            + (self.val).to_bytes(length=8),
+        )
+
+
+# move a constant into heap
+class MOV_HC(MOV):
+    def serialize(self, consts: list, names: list[str], **kwargs):
+        return (
+            (0b1110_1000).to_bytes()
+            + (self.to).to_bytes(length=8)
+            + (self.val).to_bytes(length=8),
+        )
 
 
 class CALL(BaseInstruction):
     def __init__(self) -> None:
         ...
 
-    @property
-    def load_next4(self) -> bool:
-        return False
+    def serialize(self, **kwargs):
+        return (0b1000_0001).to_bytes(length=1, byteorder="big")
 
-    @property
-    def load_next8(self) -> bool:
-        return False
-
-    @property
-    def operang(self) -> bool:
-        return []
-
-    def serialize(self):
-        return super().serialize()
+    def update(self):
+        ...
 
     def __str__(self) -> str:
         return "CAL[]"
@@ -100,18 +201,6 @@ class JMP(BaseInstruction):
     @property
     def target(self):
         return self._target
-
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return self.target
 
     def serialize(self):
         return super().serialize()
@@ -128,18 +217,6 @@ class JIT(BaseInstruction):
     def target(self):
         return self._target
 
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return self.target
-
     def serialize(self):
         return super().serialize()
 
@@ -155,18 +232,6 @@ class JIF(BaseInstruction):
     def target(self):
         return self._target
 
-    @property
-    def load_next4(self):
-        return False
-
-    @property
-    def load_next8(self):
-        return True
-
-    @property
-    def operang(self) -> bool:
-        return self.target
-
     def serialize(self):
         return super().serialize()
 
@@ -177,18 +242,6 @@ class JIF(BaseInstruction):
 class CMP(BaseInstruction):
     def __init__(self):
         ...
-
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return False
-
-    @property
-    def operang(self):
-        return ""
 
     def serialize(self):
         raise NotImplementedError
@@ -210,18 +263,6 @@ class CPY(BaseInstruction):
     def to(self):
         return self._to
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return True
-
-    @property
-    def operang(self):
-        return f"{self._to, self._val}"
-
     def serialize(self):
         raise NotImplementedError
 
@@ -237,23 +278,11 @@ class RET(BaseInstruction):
     def value(self):
         return self._value
 
-    @property
-    def load_next4(self):
-        return False
+    def serialize(self, **kwargs):
+        return (0b0010_0111).to_bytes(length=1, byteorder="big")
 
-    @property
-    def load_next8(self):
-        return True
-
-    def serialize(self):
-        raise NotImplementedError
-
-    @property
-    def operang(self):
-        return self._value
-
-    def serialize(self):
-        raise NotImplementedError
+    def update(self):
+        ...
 
     def __str__(self):
         return f"RET[{self._value}]"
@@ -267,20 +296,11 @@ class UPK(BaseInstruction):
     def names(self) -> list[str | Token]:
         return self._names
 
-    @property
-    def load_next4(self) -> bool:
-        return False
+    def update(self):
+        ...
 
-    @property
-    def load_next8(self) -> bool:
-        return False
-
-    def serialize(self):
-        raise NotImplementedError
-
-    @property
-    def operang(self):
-        return self._names
+    def serialize(self, **kwargs):
+        return (0b0100_1001).to_bytes(length=1, byteorder="big")
 
     def __str__(self):
         val = StringIO()
@@ -315,41 +335,30 @@ class EXC(BaseInstruction):
     def right(self):
         return self._right
 
-    @property
-    def load_next4(self) -> bool:
-        return False
-
-    @property
-    def load_next8(self) -> bool:
-        return True
-
     def serialize(self):
         raise NotImplementedError
-
-    @property
-    def operang(self):
-        return self._names
 
     def __str__(self):
         return f"EXC[{self._op} {self._left} {self._rigth}]"
 
 
+class LDC(BaseInstruction):
+    def __init__(self, value: int) -> None:
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    def serialize(self):
+        return (0b1000_1001).to_bytes() + self._value.to_bytes(length=8)
+
+    def update(self):
+        return super().update()
+
+    def __str__(self) -> str:
+        return f"LDC[{self._value}]"
+
+
 def new_reg():
     return ["REG_" + randbytes(64).hex()]
-
-
-# for windcard imports
-__all__ = [
-    "BaseInstruction",
-    "new_reg",
-    "EXC",
-    "UPK",
-    "RET",
-    "CPY",
-    "MOV",
-    "CMP",
-    "JIF",
-    "JIT",
-    "CALL",
-    "JMP",
-]

@@ -4,8 +4,6 @@ from __future__ import annotations
 from typing import Any, Dict, Union, List, TYPE_CHECKING
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -35,8 +33,5 @@ class DotChain(BaseNode):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()
+    def execute(self):
+        raise NotImplementedError

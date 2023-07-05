@@ -3,7 +3,7 @@ from hanual.compile.constant import Constant
 
 
 from hanual.lang.errors import Error, HNLFileNotFound
-from hanual.runtime.status import ExecStatus
+
 from typing import TYPE_CHECKING, Any, Union
 from .base_node import BaseNode
 from os import environ
@@ -11,7 +11,6 @@ from abc import ABC
 import pathlib
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
     from .namespace_acessor import NamespaceAccessor
 
 
@@ -39,7 +38,7 @@ class UsingStatement(BaseNode, ABC):
     def get_names(self) -> list[str]:
         return []
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+    def execute(self):
         for path in environ["path"].split(";"):
             if pth := pathlib.Path(path + self._nsa.full_path + ".hnl").is_file():
                 rte.add_search_path(pth)
@@ -48,6 +47,3 @@ class UsingStatement(BaseNode, ABC):
                 return ExecStatus(None, self)
 
         return ExecStatus(HNLFileNotFound(), self)
-
-    def as_dict(self):
-        super().as_dict()

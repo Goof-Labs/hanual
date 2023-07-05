@@ -3,14 +3,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, TypeVar, TYPE_CHECKING
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
+
 from hanual.compile.instruction import *
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
+    pass
 
 T = TypeVar("T", bound=BaseNode)
 
@@ -47,8 +47,8 @@ class VarChange(BaseNode):
 
         return instructions
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         consts = []
@@ -73,6 +73,3 @@ class VarChange(BaseNode):
     def find_priority(self) -> list[BaseNode]:
         # TODO take blocks or lambda functions into account
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()

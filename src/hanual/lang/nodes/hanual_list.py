@@ -18,6 +18,3 @@ class HanualList(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return super().as_dict()

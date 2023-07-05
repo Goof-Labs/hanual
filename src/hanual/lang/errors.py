@@ -35,7 +35,7 @@ class Error:
         print()
         print(f"{Fore.YELLOW}{'-'*50}")
         print(f"|{str(line).zfill(5)}> {Fore.YELLOW}{code}")
-        print(f"^".rjust(col + 8))
+        print("^".rjust(col + 8))
         print(f"{Fore.YELLOW}{'-'*50}")
         print()
 

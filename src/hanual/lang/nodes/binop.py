@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from hanual.runtime.runtime import RuntimeEnvironment
 from typing import Any, TYPE_CHECKING, Dict, Union
 from hanual.compile.constant import Constant
-from hanual.runtime.status import ExecStatus
 from hanual.compile.instruction import *
 from hanual.lang.errors import Error
 from hanual.lang.lexer import Token
@@ -48,10 +46,10 @@ class BinOpNode(BaseNode, ABC):
         # LEFT SIDE
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_1, self._left.value])
+                instructions.append(MOV[reg_1, Constant(self._left.value)])
 
             elif self._left.type == "ID":
-                instructions.append(MOV[reg_2, self._left.value])
+                instructions.append(MOV[reg_2, Constant(self._left.value)])
 
             else:
                 raise NotImplementedError
@@ -63,10 +61,10 @@ class BinOpNode(BaseNode, ABC):
         # RIGHT SIDE
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_2, self._right.value])
+                instructions.append(MOV[reg_2, Constant(self._right.value)])
 
             elif self._right.type == "ID":
-                instructions.append(MOV[reg_2, self._right.value])
+                instructions.append(MOV[reg_2, Constant(self._right.value)])
 
             else:
                 raise NotImplementedError
@@ -78,8 +76,8 @@ class BinOpNode(BaseNode, ABC):
         instructions.append(EXC[self._op.value, reg_1, reg_2])
         return instructions
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         consts = []
@@ -115,10 +113,3 @@ class BinOpNode(BaseNode, ABC):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "op": self._op,
-            "left": self.get_repr(self._left),
-            "right": self.get_repr(self._right),
-        }

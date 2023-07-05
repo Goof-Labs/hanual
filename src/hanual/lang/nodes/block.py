@@ -8,7 +8,6 @@ from .base_node import BaseNode
 from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.runtime import RuntimeEnvironment, ExecStatus
     from hanual.lang.errors import Error
 
 T = TypeVar("T")
@@ -34,7 +33,7 @@ class CodeBlock(BaseNode, ABC):
 
         return self
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
+    def execute(self):
         for child in self._children:
             # If we have an error then we raise it, otherwise I just discard the return value and keep going
             err, _ = sts = child.execute(rte)
@@ -77,6 +76,3 @@ class CodeBlock(BaseNode, ABC):
     @property
     def children(self):
         return self._children
-
-    def as_dict(self) -> List[Any]:
-        return [c.as_dict() if hasattr(c, "as_dict") else c for c in self.children]

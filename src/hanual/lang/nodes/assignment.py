@@ -9,8 +9,7 @@ from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.runtime.runtime import RuntimeEnvironment
-    from hanual.runtime.status import ExecStatus
+    ...
 
 T = TypeVar("T", BaseNode, Token)
 
@@ -44,7 +43,7 @@ class AssignmentNode(BaseNode, Generic[T]):
                 raise NotImplementedError
 
         else:
-            return [*self._value.compile(), CPY[self._target.value, "RES"]]
+            return [*self._value.compile(), CPY[self._target.value, Registers.R]]
 
     def get_constants(self) -> list[Constant]:
         # if we want to set the value to a literal then we add it as a constant
@@ -57,17 +56,8 @@ class AssignmentNode(BaseNode, Generic[T]):
     def get_names(self) -> list[str]:
         return [self._target.value]
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "type": type(self).__name__,
-            "name": self._target,
-            "value": self._value.as_dict()
-            if hasattr(self._value, "as_dict")
-            else self._value,
-        }

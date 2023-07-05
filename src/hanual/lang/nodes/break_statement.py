@@ -15,6 +15,3 @@ class BreakStatement(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {"type": "break", "ctx": self._cx}

@@ -5,8 +5,8 @@ from typing import Any, Dict, TYPE_CHECKING
 from hanual.compile.constant import Constant
 from hanual.lang.errors import Error
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.runtime.runtime import RuntimeEnvironment
-from hanual.runtime.status import ExecStatus
+
+
 from hanual.compile.label import Label
 from hanual.compile.instruction import RET
 from .base_node import BaseNode
@@ -64,17 +64,8 @@ class FunctionDefinition(BaseNode):
     def get_constants(self) -> list[Constant]:
         return self._inner.get_constants()
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:
         return [self]
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "args": self._arguments.as_dict(),
-            "name": self._name,
-            "inner": self._inner.as_dict()
-            if hasattr(self._inner, "as_dict")
-            else self._inner,
-        }

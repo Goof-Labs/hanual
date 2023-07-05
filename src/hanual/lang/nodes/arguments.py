@@ -7,7 +7,6 @@ from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
-    from hanual.runtime import RuntimeEnvironment, ExecStatus
     from hanual.lang.errors import Error
 
 
@@ -47,8 +46,8 @@ class Arguments(BaseNode):
         return [UPK(self._children)]
         raise NotImplementedError
 
-    def execute(self, rte: RuntimeEnvironment) -> ExecStatus[Error, Any]:
-        return super().execute(rte)
+    def execute(self):
+        raise NotImplementedError
 
     def get_names(self) -> list[str]:
         names = []
@@ -84,11 +83,3 @@ class Arguments(BaseNode):
 
     def find_priority(self) -> list[BaseNode]:
         return []
-
-    def as_dict(self) -> Dict[str, Any]:
-        return {
-            "type": type(self).__name__,
-            "values": [
-                c.as_dict() if hasattr(c, "as_dict") else c for c in self.children
-            ],
-        }

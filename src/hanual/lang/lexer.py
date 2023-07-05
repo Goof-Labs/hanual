@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import NamedTuple, Union, TypeVar, Tuple, Generator
+from typing_extensions import LiteralString
 from .errors import HNLIligalCharacterError
 import re
 

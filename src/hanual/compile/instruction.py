@@ -52,11 +52,35 @@ class MOV(BaseInstruction):
         return f"{type(self).__name__}[{self.to=} {self.val=}]"
 
 
+"""
+The following is the data for all move instructions
++--------+----------+------------+-----------+------------+------------+
+|  NAME  |    TO    |   ORIGIN   |  ID (BIN) | LOAD-ARG-1 | LOAD-ARG-2 |
++--------+----------+------------+-----------+------------+------------+
+| MOV_RC | register | const pool | 1110_0000 | 1 byte     | 15 bytes   |
+| MOV_RR | register | register   | 1110_0001 | 1 byte     | 1 byte     |
+| MOV_RF | register | reference  | 1110_0010 | 1 byte     | 7 bytes    |
+| MOV_RI | register | [arg-2]    | 1110_0011 | 1 byte     | 15 bytes   |
+| MOV_HH | heap     | heap       | 1110_0100 | 8 bytes    | 8 bytes    |
+| MOV_HR | heap     | register   | 1110_0101 | 15 bytes   | 1 byte     |
+| MOV_HF | heap     | reference  | 1110_0110 | 8 bytes    | 8 bytes    |
+| MOV_HI | heap     | [arg-2]    | 1110_0111 | 8 bytes    | 8 bytes    |
+| MOV_HC | heap     | constant   | 1110_1000 | 8 bytes    | 8 bytes    |
++--------+----------+------------+-----------+------------+------------+
+
+::NOTES::
+=========
+
+NULL
+
+"""
+
+
 # move a value from the constant pool into a register
 class MOV_RC(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            (0b1100_0000).to_bytes()
+            (0b1110_0000).to_bytes()
             + ("ABCDEFO".index(self.to)).to_bytes(length=1)
             + self.val.to_bytes(byteborder=15)
         )
@@ -80,9 +104,9 @@ class MOV_RR(MOV):
             val = self.val.value
 
         return (
-            (0b0100_0000).to_bytes(length=1, byteorder="big")
-            + ("ABCDEFO".index(to)).to_bytes(length=2, byteorder="big")
-            + ("ABCDEFO".index(val)).to_bytes(length=2, byteorder="big")
+            (0b1110_0001).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(to)).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(val)).to_bytes(length=1, byteorder="big")
         )
 
 
@@ -90,10 +114,9 @@ class MOV_RR(MOV):
 class MOV_RF(MOV):
     def serialize(self, names, **kwargs):
         return (
-            MOV_RI[Registers.F, Flags.MOV_REF].serialize(names=names, **kwargs)
-            + (0b0100_0000).to_bytes(length=2, byteorder="big")
-            + ("ABCDEFO".index(self.to)).to_bytes(length=2, byteorder="big")
-            + names.index(self.val.ref).to_bytes(length=2, byteorder="big")
+            (0b1110_0010).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
+            + names.index(self.val.ref).to_bytes(length=7, byteorder="big")
         )
 
 
@@ -101,9 +124,9 @@ class MOV_RF(MOV):
 class MOV_RI(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            (0b1100_0000).to_bytes(length=1, byteorder="big")
-            + ("ABCDEFO".index(self.to.value)).to_bytes(length=2, byteorder="big")
-            + self.val.to_bytes(length=14, byteorder="big")
+            (0b1110_0011).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to.value)).to_bytes(length=1, byteorder="big")
+            + self.val.to_bytes(length=12, byteorder="big")
         )
 
 
@@ -111,49 +134,47 @@ class MOV_RI(MOV):
 class MOV_HH(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            (0b1100_0000).to_bytes()
+            (0b1110_0100).to_bytes()
             + self.to.to_bytes(byteborder=8)
             + self.val.to.to_bytes(length=8)
         )
 
 
-# move a heap value into a register
+# move a register into the heap
 class MOV_HR(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            (0b1100_0000).to_bytes()
+            (0b1110_0101).to_bytes()
             + self.val.to.to_bytes(length=14)
             + ("ABCDEFO".index(self.to)).to_bytes(length=2)
         )
 
 
-# move a heap value into a register
+# move a reference into the heap
 class MOV_HF(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
-            (0b0100_0000).to_bytes() + self.to.to_bytes(length=14),
+            (0b1110_0110).to_bytes() + self.to.to_bytes(length=14),
             +(self.val).to_bytes(length=2),
         )
 
 
-# move a heap value into a register
+# move an int into heap
 class MOV_HI(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
             MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
-            (0b0100_0000).to_bytes()
+            (0b1110_0111).to_bytes()
             + (self.to).to_bytes(length=8)
             + (self.val).to_bytes(length=8),
         )
 
 
-# move a heap value into a register
+# move a constant into heap
 class MOV_HC(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-            MOV_RI[Registers.F, Flags.MOV_REF].serialize(),
-            (0b0100_0000).to_bytes()
+            (0b1110_1000).to_bytes()
             + (self.to).to_bytes(length=8)
             + (self.val).to_bytes(length=8),
         )

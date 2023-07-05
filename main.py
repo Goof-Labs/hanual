@@ -35,20 +35,7 @@ main = HanualMainClass()
 
 
 src = r"""
-
-struct list {
-    elements: collection
-}
-
-
-fn main() {
-    println("Hello world")
-}
-
-fn french_toast() {
-    let toast = true
-    return toast
-}
+print("Hello world")
 """
 res = main.run(src)
 

@@ -35,7 +35,15 @@ main = HanualMainClass()
 
 
 src = r"""
-print("Hello world")
+struct cheese {
+    name: str
+    rating: int
+}
+
+fn main() {
+    println("Hello world")
+    let banana = new cheese()
+}
 """
 res = main.run(src)
 

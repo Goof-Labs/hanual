@@ -1,16 +1,16 @@
-MIT License
+# HANUAL LICENSE
 
-Copyright (c) 2023 Topscientist
+(C) Copyright 2023 Goof Labs Co.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Defintions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The following words or phrases are used throughout the license, they may be in uppercase, lowercase or a mix of both.
+
+"Us", "Our", "We", "Hanual", "Goof Labs" refers to Goof Labs Co.
+
+"The software", "Software", "Hanual" refers to the hanual programming language.
+
+## Warranty Notice:
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,3 +19,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Disclaimer of Liability:
+
+Hanual, Goof Labs Co. or otherwise software distributed by Goof Labs is/are not responsible for any damage, loss or otherwise harm caused by the use of our programming language or software.
+
+Goof Labs Co. is also not responsible for the use of our language/software or how our language/software is used and the outcomes of such use.
+
+## The Rules:
+
+1. We wish to maintain the officialness of our projects.
+2. For any forks or software the coppies large portions of our software, working links must be visible to provide credit for the project.
+3. You may not do anyhting that can (or may) misslead users about the intentions and actions of the software or Goof Labs Co.
+4. You may not use the terms "Official Hanual ...", "Hanual Official..." or otherwise words or phrases containg "Hanual" to misslead users that any software (Other than that created by Goof Labs Co.) is official.
+5. You may not use the term "Hanual" or "Goof Labs" without our consent.

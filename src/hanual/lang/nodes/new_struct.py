@@ -1,8 +1,11 @@
 from __future__ import annotations
+from hanual.compile.constant import Constant
 
 
 from hanual.lang.lexer import Token
 from typing import TYPE_CHECKING
+
+from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 
 
@@ -26,6 +29,15 @@ class NewStruct(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
+
+    def get_constants(self) -> list[Constant]:
+        return self._args.get_constants()
+
+    def get_names(self) -> list[str]:
+        return [self._name.value, *self._args.get_names()]
 
     def execute(self):
         raise NotImplementedError

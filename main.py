@@ -35,16 +35,11 @@ main = HanualMainClass()
 
 
 src = r"""
-struct cheese {
-    name: str
-    rating: int
-}
-
 fn main() {
     println("Hello world")
-    let banana = new cheese()
 }
 """
+
 res = main.run(src)
 
 print(dump_tree(res, depth=12))

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 
 from typing import Optional, TYPE_CHECKING
-from typing_extensions import Self
 from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
+    from typing_extensions import Self
 
 
 class RangeNode(BaseNode):

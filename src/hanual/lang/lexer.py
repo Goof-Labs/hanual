@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import NamedTuple, Union, TypeVar, Tuple, Generator
-from typing_extensions import LiteralString
+from typing import NamedTuple, Union, TypeVar, Tuple, Generator, TYPE_CHECKING
 import re
 
+if TYPE_CHECKING:
+    from typing_extensions import LiteralString
 
 T = TypeVar("T")
 

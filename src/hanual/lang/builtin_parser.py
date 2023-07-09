@@ -403,6 +403,7 @@ def algebraic_fn(ts):
     "LET ID EQ f_call",
     "LET ID EQ STR",
     "LET ID EQ new_struct",
+    "LET ID EQ h_list",
     unless_ends=["DOT"],
 )
 def assignment(ts: DefaultProduction):

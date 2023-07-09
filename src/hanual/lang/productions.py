@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import TypeVar, List, Optional, Any, Generic, Union
-from typing_extensions import Self
+from typing import TypeVar, Optional, Generic, Union, List, Any, TYPE_CHECKING
 from sys import version_info
 from abc import ABC
 
-T = TypeVar("T")
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
+T = TypeVar("T")
 A = TypeVar("A")
 B = TypeVar("B")
 C = TypeVar("C")

@@ -81,9 +81,9 @@ NULL
 class MOV_RC(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-                (0b1110_0000).to_bytes(length=1, byteorder="big")
-                + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
-                + self.val.to_bytes(length=15, byteorder="big")
+            (0b1110_0000).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
+            + self.val.to_bytes(length=15, byteorder="big")
         )
 
 
@@ -103,9 +103,9 @@ class MOV_RR(MOV):
             val = self.val.value
 
         return (
-                (0b1110_0001).to_bytes(length=1, byteorder="big")
-                + ("ABCDEFO".index(to)).to_bytes(length=1, byteorder="big")
-                + ("ABCDEFO".index(val)).to_bytes(length=1, byteorder="big")
+            (0b1110_0001).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(to)).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(val)).to_bytes(length=1, byteorder="big")
         )
 
 
@@ -113,9 +113,9 @@ class MOV_RR(MOV):
 class MOV_RF(MOV):
     def serialize(self, names, **kwargs):
         return (
-                (0b1110_0010).to_bytes(length=1, byteorder="big")
-                + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
-                + names.index(self.val.ref).to_bytes(length=7, byteorder="big")
+            (0b1110_0010).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
+            + names.index(self.val.ref).to_bytes(length=7, byteorder="big")
         )
 
 
@@ -123,9 +123,11 @@ class MOV_RF(MOV):
 class MOV_RI(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-                (0b1110_0011).to_bytes(length=1, byteorder="big")
-                + ("ABCDEFO".index(self.get_val(self.to))).to_bytes(length=1, byteorder="big")
-                + self.val.to_bytes(length=12, byteorder="big")
+            (0b1110_0011).to_bytes(length=1, byteorder="big")
+            + ("ABCDEFO".index(self.get_val(self.to))).to_bytes(
+                length=1, byteorder="big"
+            )
+            + self.val.to_bytes(length=12, byteorder="big")
         )
 
 
@@ -133,9 +135,9 @@ class MOV_RI(MOV):
 class MOV_HH(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-                (0b1110_0100).to_bytes(length=1, byteorder="big")
-                + self.to.value.to_bytes(byteborder=8)
-                + self.val.value.to_bytes(length=8)
+            (0b1110_0100).to_bytes(length=1, byteorder="big")
+            + self.to.value.to_bytes(byteborder=8)
+            + self.val.value.to_bytes(length=8)
         )
 
 
@@ -143,9 +145,9 @@ class MOV_HH(MOV):
 class MOV_HR(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         return (
-                (0b1110_0101).to_bytes(length=1, byteorder="big")
-                + self.val.to.to_bytes(length=14, byteorder="big")
-                + ("ABCDEFO".index(self.to.value)).to_bytes(length=2, byteorder="big")
+            (0b1110_0101).to_bytes(length=1, byteorder="big")
+            + self.val.to.to_bytes(length=14, byteorder="big")
+            + ("ABCDEFO".index(self.to.value)).to_bytes(length=2, byteorder="big")
         )
 
 
@@ -155,7 +157,7 @@ class MOV_HF(MOV):
         return (
             (0b1110_0110).to_bytes(length=1, byteorder="big")
             + self.to.value.to_bytes(length=14, byteorder="big"),
-            + self.val.value.to_bytes(length=2, byteorder="big"),
+            +self.val.value.to_bytes(length=2, byteorder="big"),
         )
 
 
@@ -350,7 +352,9 @@ class LDC(BaseInstruction):
         return self._value
 
     def serialize(self):
-        return (0b1000_1001).to_bytes(length=1, byteorder="big") + self._value.to_bytes(length=8, byteorder="big")
+        return (0b1000_1001).to_bytes(length=1, byteorder="big") + self._value.to_bytes(
+            length=8, byteorder="big"
+        )
 
     def update(self):
         return super().update()
@@ -361,3 +365,7 @@ class LDC(BaseInstruction):
 
 def new_reg():
     return ["REG_" + randbytes(64).hex()]
+
+
+def new_heap():
+    return ("HEAP_" + randbytes(64).hex(),)

@@ -25,10 +25,11 @@ from .range_node import RangeNode
 from .var_change import VarChange
 from .new_struct import NewStruct
 from .shout_node import ShoutNode
-from .iter_loop import IterLoop
+from .s_getattr import SGetattr
 from .arguments import Arguments
 from .dot_chain import DotChain
 from .base_node import BaseNode
+from .iter_loop import IterLoop
 from .anon_args import AnonArgs
 from .if_chain import IfChain
 from .for_loop import ForLoop

@@ -9,6 +9,7 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .arguments import Arguments
+from .arguments import Arguments
 
 
 class HanualList(BaseNode):
@@ -31,7 +32,7 @@ class HanualList(BaseNode):
     def compile(self) -> None:
         data = []
 
-        for e in self._elements:
+        for e in self._elements.children:
             if issubclass(type(e), Constant):
                 data.append(MOV_HC[new_heap(), e])
 

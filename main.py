@@ -37,6 +37,12 @@ main = HanualMainClass()
 src = r"""
 fn main() {
     println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
 }
 """
 

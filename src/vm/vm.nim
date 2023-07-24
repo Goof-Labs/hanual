@@ -33,7 +33,6 @@ let R = "" # This register holds the return value of a called function
 # Attempt to read the main file
 try:
   let f = readFile("main.chnl")
-  readBytes(f, 20)
-  
+  readBytes(f, 8)
 except CatchableError:
   echo "[VM ERROR]: The main file does not exist, touch the main.chnl file if you are on unix based systems. Thanks bye :]"

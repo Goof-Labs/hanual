@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from random import randbytes
 from typing import Union
 from io import StringIO
+from .refs import Ref
 
 
 class BaseInstruction(ABC):
@@ -91,7 +92,7 @@ class MOV_RC(MOV):
 class MOV_RR(MOV):
     def serialize(self, consts: list, names: list[str], **kwargs):
         if isinstance(self.to, str):
-            to = self.val
+            to = self.to
 
         else:
             to = self.to.value

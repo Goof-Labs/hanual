@@ -37,8 +37,7 @@ class FunctionCall(BaseNode):
         instructions.extend(self._args.compile())
 
         instructions.append(MOV_RI[Registers.O.value, ret_lbl.index])
-        instructions.append(MOV_RF[fnc_reg, Ref[self._name.value]])
-        instructions.append(MOV_RR[Registers.F.value, fnc_reg])
+        instructions.append(MOV_RF[Registers.F.value, Ref[self._name.value]])
         instructions.append(CALL[None])
 
         instructions.append(ret_lbl)

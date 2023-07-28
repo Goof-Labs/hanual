@@ -1,9 +1,10 @@
 from __future__ import annotations
-from hanual.compile.constant import Constant
 
-from typing import Any, Dict, Union, TYPE_CHECKING
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.compile.registers import Registers
+from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
+from typing import Union, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
@@ -49,7 +50,7 @@ class ImplicitBinop(BaseNode):
 
         else:
             instructions.extend(self._right.compile())
-            instructions.append(MOV[reg_2, "AC"])
+            instructions.append(MOV[reg_2, Registers.R])
 
         instructions.append(EXC[self._op.value, reg_1, reg_2])
 

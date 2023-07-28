@@ -35,8 +35,17 @@ main = HanualMainClass()
 
 
 src = r"""
-print("Hello world")
+fn main() {
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+    println("Hello world")
+}
 """
+
 res = main.run(src)
 
 print(dump_tree(res, depth=12))

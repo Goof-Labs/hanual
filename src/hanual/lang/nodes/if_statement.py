@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, Dict
-
-
 from hanual.compile.constant import Constant
-
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
-from hanual.lang.errors import Error
+from typing import TYPE_CHECKING
 from .base_node import BaseNode
 from .block import CodeBlock
 from abc import ABC
 
 
 if TYPE_CHECKING:
-    from hanual.runtime import RuntimeEnvironment, ExecStatus
-    from hanual.lang.errors import Error
     from .conditions import Condition
     from .block import CodeBlock
 

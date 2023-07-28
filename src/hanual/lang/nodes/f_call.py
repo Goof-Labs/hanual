@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, TYPE_CHECKING, Union
-from hanual.compile.constant import Constant
-
 from hanual.compile.registers import Registers
+from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
 from hanual.compile.refs import Ref
 from hanual.lang.lexer import Token
@@ -37,9 +36,8 @@ class FunctionCall(BaseNode):
 
         instructions.extend(self._args.compile())
 
-        instructions.append(MOV_RI[Registers.O, ret_lbl.index])
-        instructions.append(MOV_RF[fnc_reg, Ref[self._name.value]])
-        instructions.append(MOV_RR[Registers.F, fnc_reg])
+        instructions.append(MOV_RI[Registers.O.value, ret_lbl.index])
+        instructions.append(MOV_RF[Registers.F.value, Ref[self._name.value]])
         instructions.append(CALL[None])
 
         instructions.append(ret_lbl)

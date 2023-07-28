@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from typing import Any, Dict, TYPE_CHECKING, Union
+from hanual.compile.registers import Registers
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from abc import ABC
 
+
 if TYPE_CHECKING:
-    from hanual.lang.errors import Error
+    ...
 
 
 class Condition(BaseNode, ABC):
@@ -47,7 +49,7 @@ class Condition(BaseNode, ABC):
 
         else:
             instructions.extend(self._left.compile())
-            instructions.append(MOV[reg_l, "AC"])
+            instructions.append(MOV[reg_l, Registers.AC])
 
         # RIGHT SIDE
         if isinstance(self._right, Token):
@@ -59,7 +61,7 @@ class Condition(BaseNode, ABC):
 
         else:
             instructions.extend(self._right.compile())
-            instructions.append(MOV[reg_r, "AC"])
+            instructions.append(MOV[reg_r, Registers.AC])
 
         instructions.append(EXC[self._op.value, reg_l, reg_r])
         instructions.append(CMP[None])

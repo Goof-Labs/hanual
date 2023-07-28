@@ -1,14 +1,14 @@
 from __future__ import annotations
+
+
+from typing import Union, List, TYPE_CHECKING
 from hanual.compile.constant import Constant
-
-
-from typing import Any, Dict, Union, List, TYPE_CHECKING
-from hanual.lang.errors import Error
 from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
     from .elif_statement import ElifStatement
+    from .else_statement import ElseStatement
     from .if_statement import IfStatement
     from typing_extensions import Self
 
@@ -46,7 +46,7 @@ class IfChain(BaseNode):
 
     def execute(self):
         for statement in self._statements:
-            err, res = sts = statement.execute(rte)
+            err, res = sts = statement.execute()
 
             if err:
                 return sts

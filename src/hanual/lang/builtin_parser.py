@@ -32,6 +32,7 @@ from hanual.lang.nodes import (
     ShoutNode,
     DotChain,
     AnonArgs,
+    SGetattr,
     IfChain,
     ForLoop,
 )
@@ -99,6 +100,16 @@ def struct_def(
 @par.rule("LSB args RSB")
 def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
     return HanualList(ts[1])
+
+
+@par.rule("LSB ID RSB", "LSB NUM RSB")
+def h_list(ts: DefaultProduction[Token, Token, Token]) -> HanualList:
+    return HanualList(Arguments(ts[1]))
+
+
+@par.rule("ID h_list")
+def s_getattr(ts: DefaultProduction[Token, HanualList]):
+    return SGetattr(ts[0], ts[1])
 
 
 ###########################
@@ -248,6 +259,7 @@ def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
     "COM ID",
     "COM STR",
     "COM args",
+    "COM s_getattr",
     "COM args_",
 )
 def args_(ts: DefaultProduction[Token, any]):
@@ -261,6 +273,7 @@ def args_(ts: DefaultProduction[Token, any]):
     "STR args_",
     "NUM args_",
     "args args_",
+    "s_getattr args_",
 )
 def args(ts: DefaultProduction[any, Arguments]):
     return ts[1].add_child(ts[0])
@@ -287,6 +300,7 @@ def par_args(ts):
     "ID LPAR STR RPAR",
     "ID LPAR NUM RPAR",
     "ID LPAR f_call RPAR",
+    "ID LPAR s_getattr RPAR",
     "ID LPAR RPAR",
     "ID par_args",
     types={"ID LPAR RPAR": 1, "ID par_args": 2},
@@ -403,6 +417,7 @@ def algebraic_fn(ts):
     "LET ID EQ f_call",
     "LET ID EQ STR",
     "LET ID EQ new_struct",
+    "LET ID EQ h_list",
     unless_ends=["DOT"],
 )
 def assignment(ts: DefaultProduction):

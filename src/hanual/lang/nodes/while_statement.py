@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from hanual.compile.constant import Constant
-from hanual.lang.nodes.base_node import BaseNode
-from typing import Any, Dict, TYPE_CHECKING
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
+from typing import TYPE_CHECKING
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.conditions import Condition

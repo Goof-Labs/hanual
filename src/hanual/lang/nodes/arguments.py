@@ -1,21 +1,18 @@
 from __future__ import annotations
 
-from typing import TypeVar, Union, List, Any, Dict, TYPE_CHECKING
-from hanual.compile.constant import Constant
+from typing import TypeVar, Union, List, TYPE_CHECKING
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.compile.constant import Constant
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
-    from hanual.lang.errors import Error
-
+    ...
 
 T = TypeVar("T")
 
 
 class Arguments(BaseNode):
-    __slots__ = "_children", "_function_def"
-
     def __init__(self, children: Union[List[T], T]) -> None:
         self._children: List[Token, BaseNode] = []
         self.function_def = False
@@ -44,7 +41,6 @@ class Arguments(BaseNode):
 
     def compile(self) -> None:
         return [UPK(self._children)]
-        raise NotImplementedError
 
     def execute(self):
         raise NotImplementedError
@@ -57,7 +53,7 @@ class Arguments(BaseNode):
                 if child.type == "ID":
                     names.append(child)
 
-            elif not self._function_def:
+            elif not self.function_def:
                 names.extend(child.get_names())
 
         return names

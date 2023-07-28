@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import NamedTuple, Union, TypeVar, Tuple, Generator
-from typing_extensions import LiteralString
-from .errors import HNLIligalCharacterError
+from typing import NamedTuple, Union, TypeVar, Tuple, Generator, TYPE_CHECKING
 import re
 
+if TYPE_CHECKING:
+    from typing_extensions import LiteralString
 
 T = TypeVar("T")
 
@@ -41,6 +41,19 @@ class Lexer:
             else:
                 self._rules.append((rule[0], rule[1][0]))
 
+    def find_line_num(self, lines: list[str], token: re.Match):
+        start, end = token.span()
+
+        # remainder
+        rem = start
+
+        for line_num, line in enumerate(lines):
+            if len(line) > rem:
+                return line_num, line
+
+            else:
+                rem -= len(line)
+
     def tokenize(self, stream: str) -> Generator[Token, None, None]:
         lines = stream.split("\n")
         tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
@@ -50,11 +63,13 @@ class Lexer:
 
         for pat in re.finditer(tok_reg, stream):
             kind = pat.lastgroup
-            valu = pat.group()
+            value = pat.group()
             col = pat.start() - line_start
 
+            # print(self.find_line_num(lines, pat))
+
             for n, v in self._kwrds:
-                if v == valu:
+                if v == value:
                     kind = n
 
             if kind == "NEWLINE":
@@ -66,18 +81,12 @@ class Lexer:
                 continue
 
             elif kind == "MISMATCH":
-                HNLIligalCharacterError().be_raised(
-                    sample_code=lines[line_no - 1],
-                    line=line_no,
-                    col=col,
-                    explain=f"{valu!r} was unexpected at this time",
-                    stage="LEXING",
-                )
+                raise Exception
 
             if hasattr(self, f"t_{kind}"):
                 yield getattr(self, f"t_{kind}")(
-                    kind, valu, line_no, col, lines[line_no - 1]
+                    kind, value, line_no, col, lines[line_no - 1]
                 )
                 continue
 
-            yield Token(kind, valu, line_no, col, lines[line_no - 1])
+            yield Token(kind, value, line_no, col, lines[line_no - 1])

@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 
-from typing import Any, Dict, Union, List, TYPE_CHECKING
-from hanual.lang.errors import Error
+from typing import Union, List, TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    ...
+    from typing_extensions import Self
 
 
 class DotChain(BaseNode):

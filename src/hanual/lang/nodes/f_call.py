@@ -32,7 +32,6 @@ class FunctionCall(BaseNode):
         instructions = []
 
         ret_lbl = Label("RETURL-LBL", mangle=True)
-        fnc_reg = new_reg()
 
         instructions.extend(self._args.compile())
 

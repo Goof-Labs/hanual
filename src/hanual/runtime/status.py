@@ -2,14 +2,7 @@ from typing import Generic, TypeVar, Optional
 
 
 # make IntEnum one way or another
-try:
-    from enum import IntEnum
-
-except ImportError:
-    from enum import Enum
-
-    class IntEnum(int, Enum):
-        ...
+from enum import IntEnum
 
 
 S = TypeVar("S")
@@ -33,7 +26,3 @@ class Status(Generic[S, R]):
     @property
     def code(self) -> int:
         return self._code
-
-
-class StatusCodes(IntEnum):
-    NAME_NOT_FOUND: int = 0

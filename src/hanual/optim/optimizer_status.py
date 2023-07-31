@@ -7,6 +7,6 @@ T = TypeVar("T")
 @dataclass
 class OptimizerStatus(Generic[T]):
     message: str | None
-    error: ...  # type of error as class
+    error: str  # type of error as class
     done: bool
     code: T

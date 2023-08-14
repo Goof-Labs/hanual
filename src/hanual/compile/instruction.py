@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 from hanual.compile.label import Label
 from hanual.lang.lexer import Token
 from abc import ABC, abstractmethod
+from typing import Union, Any
 from random import randbytes
-from typing import Union
 from io import StringIO
-from .refs import Ref
 
 
 class BaseInstruction(ABC):
@@ -17,7 +18,7 @@ class BaseInstruction(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def get_val(obj: Union[str, any]):
+    def get_val(obj: Union[str, Any]):
         if isinstance(obj, str):
             return obj
 

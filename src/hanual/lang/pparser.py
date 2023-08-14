@@ -186,21 +186,28 @@ class PParser:
                 pattern_lst = pattern.split(" ")
 
                 # compare the stack from top to bottom so we need to reverse
-                stk_coppy = deepcopy(stack)
+                stk_coppy = stack.copy()
                 stk_coppy.reverse()
                 pattern_lst.reverse()
 
+                debth = pattern.count(" ")
+
                 # would not zip up nicely
-                if len(pattern_lst) > len(stk_coppy):
+                if debth > len(stack):
                     continue
 
-                # compare
-                broke_out = False
+                # the following two lines are an optimized version of the old for loop
+                broke_out = (
+                    not list(map(lambda x: x[0], stk_coppy[: debth + 1])) == pattern_lst
+                )
 
-                for debth, (left, right) in enumerate(zip(stk_coppy, pattern_lst)):
-                    if left[0] != right:
-                        broke_out = True
-                        break
+                # old method
+                # =============================
+                # for debth, (left, right) in enumerate(zip(stk_coppy, pattern_lst)):
+                #    if left[0] != right:
+                #        broke_out = True
+                #        break
+                # =============================
 
                 # goto next if we broke out
                 if broke_out:
@@ -230,11 +237,10 @@ class PParser:
                         continue
 
                 # make normal
-                pattern_lst.reverse()
                 p_args.reverse()
 
                 # actually run it
-                res = proxy.call(p_args, pattern_lst)
+                res = proxy.call(p_args, pattern.split(" "))
                 stack.append((reducer, res))
 
                 # there has be a reduction aka change so set flag to true

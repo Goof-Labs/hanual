@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import NamedTuple, Union, TypeVar, Tuple, Generator, TYPE_CHECKING
+from hanual.errors.errors import raise_error
 import re
 
 if TYPE_CHECKING:
@@ -81,7 +82,12 @@ class Lexer:
                 continue
 
             elif kind == "MISMATCH":
-                raise Exception
+                raise_error(
+                    f"{str(line_no).zfill(5)} | {lines[line_no -1]}",
+                    f"unrecognised character '{value}'",
+                    "try removing that character",
+                )
+                exit()
 
             if hasattr(self, f"t_{kind}"):
                 yield getattr(self, f"t_{kind}")(

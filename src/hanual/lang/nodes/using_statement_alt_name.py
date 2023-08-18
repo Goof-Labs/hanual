@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 
 
 class UsingStatementWithAltName(BaseNode):
+    def find_priority(self) -> list[BaseNode]:
+        pass
+
     def __init__(self: BaseNode, path: NamespaceAccessor, name: Token) -> None:
         self._path: NamespaceAccessor = path
         self._name: Token = name

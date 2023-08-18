@@ -2,7 +2,6 @@ from __future__ import annotations
 
 
 from typing import List, Dict, TYPE_CHECKING
-from hanual.compile.label import Label
 from base64 import b64encode
 from io import BytesIO
 
@@ -10,7 +9,6 @@ if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
     from hanual.compile.constant import Constant
     from hanual.compile.instruction import *
-    from hashlib import _Hash
 
 
 class DumpFile:
@@ -22,12 +20,14 @@ class DumpFile:
         major: int,
         minor: int,
         micro: int,
-        hash: _Hash,
+        hash_: Any,
         append: bool = False,
     ):
+        assert hasattr(hash_, "hexdigest"), AttributeError(f"param: hash_ must have a hexdigest attr")
+
         head = BytesIO()
         head.write(b"LMAO")
-        head.write(b64encode(hash.hexdigest().encode("utf-8")))
+        head.write(b64encode(hash_.hexdigest().encode("utf-8")))
         head.write(major.to_bytes(length=1, byteorder="big"))
         head.write(minor.to_bytes(length=1, byteorder="big"))
         head.write(micro.to_bytes(length=1, byteorder="big"))

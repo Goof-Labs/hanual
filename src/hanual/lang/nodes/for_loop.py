@@ -2,7 +2,6 @@ from __future__ import annotations
 
 
 from .implicit_condition import ImplicitCondition
-from hanual.lang.nodes.base_node import BaseNode
 from .implicit_binop import ImplicitBinop
 from hanual.compile.instruction import *
 from typing import TYPE_CHECKING, Union
@@ -34,7 +33,7 @@ class ForLoop(BaseNode):
 
     @property
     def condition(self) -> Union[ImplicitCondition, Condition]:
-        return self.while_
+        return self._while
 
     @property
     def init(self) -> Union[Token, AssignmentNode]:

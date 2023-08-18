@@ -10,6 +10,9 @@ if TYPE_CHECKING:
 
 
 class ShoutNode(BaseNode):
+    def find_priority(self) -> list[BaseNode]:
+        pass
+
     def __init__(self: BaseNode, shout_token: Token) -> None:
         self._st = shout_token
 

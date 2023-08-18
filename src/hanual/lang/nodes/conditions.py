@@ -33,7 +33,7 @@ class Condition(BaseNode, ABC):
     def right(self):
         return self._right
 
-    def compile(self) -> None:
+    def compile(self):
         instructions = []
         # LEFT SIDE
 
@@ -42,26 +42,26 @@ class Condition(BaseNode, ABC):
 
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "INT"):
-                instructions.append(MOV[reg_l, self._left.value])
+                instructions.append(MOV_RC[reg_l, Constant(self._left.value)])
 
             elif self._left.type == "ID":
-                instructions.append(CPY[reg_l, self._left.value])
+                instructions.append(CPY[reg_l, Constant(self._left.value)])
 
         else:
             instructions.extend(self._left.compile())
-            instructions.append(MOV[reg_l, Registers.AC])
+            instructions.append(MOV_RR[reg_l, Registers.R])
 
         # RIGHT SIDE
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "INT"):
-                instructions.append(MOV[reg_r, self._right.value])
+                instructions.append(MOV_RC[reg_r, Constant(self._right.value)])
 
             elif self._right.type == "ID":
-                instructions.append(CPY[reg_r, self._right.value])
+                instructions.append(CPY[reg_r, Constant(self._right.value)])
 
         else:
             instructions.extend(self._right.compile())
-            instructions.append(MOV[reg_r, Registers.AC])
+            instructions.append(MOV_RR[reg_r, Registers.R])
 
         instructions.append(EXC[self._op.value, reg_l, reg_r])
         instructions.append(CMP[None])

@@ -57,7 +57,7 @@ class RegChoiceOptimizer(BaseOptimizer):
             self.make_first_pass(cm.instructions)
 
         for idx, instr in enumerate(cm.instructions):
-            if not isinstance(instr, MOV):
+            if not issubclass(instr, MOV):
                 continue
 
             # if to is a reg

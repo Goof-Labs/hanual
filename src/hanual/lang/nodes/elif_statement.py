@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import ABC
+
 from hanual.compile.constant import Constant
 from typing import TYPE_CHECKING
 from .base_node import BaseNode
@@ -9,7 +11,7 @@ if TYPE_CHECKING:
     from .block import CodeBlock
 
 
-class ElifStatement(BaseNode):
+class ElifStatement(BaseNode, ABC):
     def __init__(self: BaseNode, condition: Condition, block: CodeBlock) -> None:
         self._condition = condition
         self._block = block

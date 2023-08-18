@@ -10,6 +10,12 @@ if TYPE_CHECKING:
 
 
 class IterLoop(BaseNode):
+    def execute(self):
+        pass
+
+    def compile(self):
+        pass
+
     def __init__(
         self: BaseNode,
         name: Token,

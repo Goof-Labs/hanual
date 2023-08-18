@@ -28,7 +28,7 @@ class AssignmentNode(BaseNode, Generic[T]):
     def value(self) -> T:
         return self._value
 
-    def compile(self) -> None:
+    def compile(self):
         if isinstance(self._value, Token):
             if self._value.type == "ID":
                 # if we want to allocate one variable to another we make a coppy, this may change at optim time
@@ -36,7 +36,7 @@ class AssignmentNode(BaseNode, Generic[T]):
 
             elif self._value.type in ("STR", "NUM"):
                 # we move a constant into a register
-                return [MOV[self._target.value, self._value.value]]
+                return [MOV_RC[self._target.value, self._value.value]]
 
             else:
                 raise NotImplementedError

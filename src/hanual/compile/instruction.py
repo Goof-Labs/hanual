@@ -371,3 +371,30 @@ def new_reg():
 
 def new_heap():
     return ("HEAP_" + randbytes(64).hex(),)
+
+
+__all__ = [
+    "BaseInstruction",
+    "MOV_RC",
+    "MOV_RR",
+    "MOV_RF",
+    "MOV_RI",
+    "MOV_HH",
+    "MOV_HR",
+    "MOV_HF",
+    "MOV_HI",
+    "MOV_HC",
+    "MOV",
+    "CALL",
+    "JMP",
+    "JIT",
+    "JIF",
+    "CMP",
+    "CPY",
+    "RET",
+    "UPK",
+    "EXC",
+    "LDC",
+    "new_reg",
+    "new_heap",
+]

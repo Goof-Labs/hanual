@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 
 
 class IfChain(BaseNode):
+    def find_priority(self) -> list[BaseNode]:
+        pass
+
     def __init__(self: BaseNode) -> None:
         self._statements: List[Union[IfStatement, ElifStatement]] = []
 

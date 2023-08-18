@@ -8,6 +8,7 @@ from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
 from hanual.lang.nodes.block import CodeBlock
+from hanual.checkers.ast import verifiy
 from hanual.serialize import DumpFile
 from pprint import PrettyPrinter
 from hashlib import sha256
@@ -27,7 +28,8 @@ class HanualMainClass:
     def run(self, src: str) -> CodeBlock:
         whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
         whisper = self.lexer.tokenize(whisper)
-        whisper = self.parser.parse(whisper)  # [0][1]
+        whisper = self.parser.parse(whisper)
+        whisper = verifiy(whisper)
         return whisper
 
 
@@ -90,12 +92,12 @@ cm.collect_constants()
 cm.collect_names()
 cm.compile_tree()
 
-print(dump_tree(cm))
+# print(dump_tree(cm))
 
 op = OptimizerHandeler()
 
 code = op.proof_read(cm)
-print(dump_tree(code))
+# print(dump_tree(code))
 
 df = DumpFile()
 

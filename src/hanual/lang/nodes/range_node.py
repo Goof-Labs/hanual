@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-
+from abc import ABCMeta
 from typing import Optional, TYPE_CHECKING
 from .base_node import BaseNode
 
@@ -10,7 +10,10 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class RangeNode(BaseNode):
+class RangeNode(BaseNode, metaclass=ABCMeta):
+    def execute(self):
+        pass
+
     def __init__(
         self: Self,
         from_: Optional[Token] = None,

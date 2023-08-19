@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import TypeVar, Union, List, TYPE_CHECKING
-from hanual.lang.nodes.base_node import BaseNode
+from typing import TYPE_CHECKING, List, TypeVar, Union
+
 from hanual.compile.constant import Constant
-from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
+from hanual.lang.builtin_lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
 
 if TYPE_CHECKING:
     ...

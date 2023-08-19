@@ -4,6 +4,7 @@ from abc import ABC
 from typing import Union
 
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
 

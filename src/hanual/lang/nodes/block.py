@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import List, Union, TypeVar, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, List, TypeVar, Union
 
 from hanual.compile.constant import BaseConstant
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

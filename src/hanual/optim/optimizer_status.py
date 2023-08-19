@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Generic, TypeVar, Union
 from dataclasses import dataclass
+from typing import Generic, TypeVar, Union
 
 T = TypeVar("T")
 

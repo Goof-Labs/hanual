@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TypeVar, Optional, Generic, Union, List, Any, TYPE_CHECKING
-from sys import version_info
 from abc import ABC
+from sys import version_info
+from typing import TYPE_CHECKING, Any, Generic, List, Optional, TypeVar, Union
 
 if TYPE_CHECKING:
     from typing_extensions import Self

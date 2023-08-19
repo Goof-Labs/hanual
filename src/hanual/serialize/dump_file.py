@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-
-from typing import List, Dict, Any, TYPE_CHECKING
-from hanual.compile.label import Label
 from base64 import b64encode
 from io import BytesIO
+from typing import TYPE_CHECKING, Any, Dict, List
+
+from hanual.compile.label import Label
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager

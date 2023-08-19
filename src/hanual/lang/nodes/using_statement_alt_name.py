@@ -2,15 +2,15 @@
 # the following syntax `using std::test::name as std_test_name`
 from __future__ import annotations
 
-
 from typing import TYPE_CHECKING
+
 from .base_node import BaseNode
 
-
 if TYPE_CHECKING:
-    from .namespace_acessor import NamespaceAccessor
     from hanual.compile.constant import Constant
     from hanual.lang.lexer import Token
+
+    from .namespace_acessor import NamespaceAccessor
 
 
 class UsingStatementWithAltName(BaseNode):

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-
-from .strong_field_list import StrongFieldList
-from hanual.compile.constant import Constant
 from typing import TYPE_CHECKING, Union
-from .strong_field import StrongField
-from hanual.lang.lexer import Token
-from .base_node import BaseNode
 
+from hanual.compile.constant import Constant
+from hanual.lang.lexer import Token
+
+from .base_node import BaseNode
+from .strong_field import StrongField
+from .strong_field_list import StrongFieldList
 
 if TYPE_CHECKING:
     ...

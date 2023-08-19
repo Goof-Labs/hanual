@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
-from typing import TYPE_CHECKING
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.conditions import Condition
     from hanual.lang.nodes.block import CodeBlock
+    from hanual.lang.nodes.conditions import Condition
 
 
 class WhileStatement(BaseNode):

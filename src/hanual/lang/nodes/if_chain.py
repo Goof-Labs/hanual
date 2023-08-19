@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, List, Union
 
-from typing import Union, List, TYPE_CHECKING
 from hanual.compile.constant import Constant
+
 from .base_node import BaseNode
 
-
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from .elif_statement import ElifStatement
     from .else_statement import ElseStatement
     from .if_statement import IfStatement
-    from typing_extensions import Self
 
 
 class IfChain(BaseNode):

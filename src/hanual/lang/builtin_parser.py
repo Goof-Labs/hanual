@@ -1,46 +1,47 @@
 from __future__ import annotations
 
+from typing import Literal, Union
+
+from hanual.lang.builtin_lexer import Token
 from hanual.lang.nodes import (
-    UsingStatementWithAltName,
     AlgebraicExpression,
-    FunctionDefinition,
-    AnonymousFunction,
-    NamespaceAccessor,
-    ImplicitCondition,
-    StructDefinition,
-    StrongFieldList,
-    ReturnStatement,
-    UsingStatement,
-    AssignmentNode,
-    WhileStatement,
-    BreakStatement,
-    ImplicitBinop,
     AlgebraicFunc,
+    AnonArgs,
+    AnonymousFunction,
+    Arguments,
+    AssignmentNode,
+    BinOpNode,
+    BreakStatement,
+    CodeBlock,
+    Condition,
+    DotChain,
     ElifStatement,
     ElseStatement,
-    FunctionCall,
-    IfStatement,
-    StrongField,
-    FreezeNode,
-    HanualList,
-    BinOpNode,
-    Condition,
-    NewStruct,
-    CodeBlock,
-    Arguments,
-    RangeNode,
-    VarChange,
-    ShoutNode,
-    DotChain,
-    AnonArgs,
-    SGetattr,
-    IfChain,
     ForLoop,
+    FreezeNode,
+    FunctionCall,
+    FunctionDefinition,
+    HanualList,
+    IfChain,
+    IfStatement,
+    ImplicitBinop,
+    ImplicitCondition,
+    NamespaceAccessor,
+    NewStruct,
+    RangeNode,
+    ReturnStatement,
+    SGetattr,
+    ShoutNode,
+    StrongField,
+    StrongFieldList,
+    StructDefinition,
+    UsingStatement,
+    UsingStatementWithAltName,
+    VarChange,
+    WhileStatement,
 )
-from hanual.lang.productions import DefaultProduction
-from hanual.lang.builtin_lexer import Token
 from hanual.lang.pparser import PParser
-from typing import Union, Literal
+from hanual.lang.productions import DefaultProduction
 
 par = PParser()
 

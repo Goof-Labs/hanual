@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TypeVar, Union, NoReturn
-from hanual.lang.nodes import BaseNode
+from typing import NoReturn, TypeVar, Union
 
+from hanual.lang.nodes import BaseNode
 
 _N = TypeVar("_N", bound=BaseNode)
 

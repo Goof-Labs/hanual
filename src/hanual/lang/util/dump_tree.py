@@ -1,6 +1,5 @@
 import types
 
-
 # https://stackoverflow.com/questions/25568232/how-can-i-recursively-print-the-contents-of-a-variable-including-both-the-data
 # Thank you jozxyqk btw I did make this py311 compatible
 

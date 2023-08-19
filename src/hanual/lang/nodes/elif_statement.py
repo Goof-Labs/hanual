@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC
-
-from hanual.compile.constant import Constant
 from typing import TYPE_CHECKING
 
+from hanual.compile.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from .conditions import Condition
     from .block import CodeBlock
+    from .conditions import Condition
 
 
 class ElifStatement(BaseNode, ABC):

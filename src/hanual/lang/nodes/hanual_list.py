@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, List
 
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from typing import TYPE_CHECKING, List
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .arguments import Arguments
+
 from .arguments import Arguments
 
 

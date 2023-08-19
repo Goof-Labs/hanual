@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-
-from typing import List, Union, TYPE_CHECKING
-from hanual.compile.constant import Constant
-from .base_node import BaseNode
 from abc import ABC
+from typing import TYPE_CHECKING, List, Union
+
+from hanual.compile.constant import Constant
+
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.builtin_lexer import Token
     from typing_extensions import Self
+
+    from hanual.lang.builtin_lexer import Token
 
 
 class NamespaceAccessor(BaseNode, ABC):

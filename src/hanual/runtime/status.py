@@ -1,9 +1,6 @@
-from typing import Generic, TypeVar, Optional
-
-
 # make IntEnum one way or another
 from enum import IntEnum
-
+from typing import Generic, Optional, TypeVar
 
 S = TypeVar("S")
 R = TypeVar("R")

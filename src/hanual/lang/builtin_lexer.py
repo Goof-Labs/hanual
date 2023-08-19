@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-
-from .lexer import Lexer, rx, kw, Token
+from .lexer import Lexer, Token, kw, rx
 
 
 class HanualLexer(Lexer):

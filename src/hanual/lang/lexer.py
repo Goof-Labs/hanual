@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import NamedTuple, Union, TypeVar, Tuple, Generator, TYPE_CHECKING
-from hanual.errors.errors import raise_error
 import re
+from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union
+
+from hanual.errors.errors import raise_error
 
 if TYPE_CHECKING:
     from typing_extensions import LiteralString

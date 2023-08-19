@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from hanual.lang.lexer import Token
+
 from .anon_args import AnonArgs
 from .base_node import BaseNode
 from .block import CodeBlock
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.range_node import RangeNode
     from hanual.lang.nodes.binop import BinOpNode
+    from hanual.lang.nodes.range_node import RangeNode
 
 
 class AnonymousFunction(BaseNode, ABC):

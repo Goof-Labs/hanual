@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 from hanual.compile.instruction import RET
 from hanual.compile.label import Label
-from typing import TYPE_CHECKING
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.compile.constant import BaseConstant
     from hanual.lang.lexer import Token
+
     from .arguments import Arguments
     from .block import CodeBlock
 

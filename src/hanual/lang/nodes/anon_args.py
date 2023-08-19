@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from abc import ABC
 from typing import TYPE_CHECKING
+
 from .arguments import Arguments
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
     ...

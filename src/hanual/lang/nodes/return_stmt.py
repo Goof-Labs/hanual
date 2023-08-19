@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from abc import ABC
+from typing import TYPE_CHECKING
+
 from hanual.compile.constant import Constant
 from hanual.lang.builtin_lexer import Token
-from typing import TYPE_CHECKING
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
     ...

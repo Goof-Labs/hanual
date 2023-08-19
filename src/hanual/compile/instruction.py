@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Union, Any, Literal, Iterable
+from abc import ABC, abstractmethod
+from io import StringIO
+from random import randbytes
+from typing import Any, Iterable, Literal, Union
+
 from hanual.compile.label import Label
 from hanual.lang.lexer import Token
-from abc import ABC, abstractmethod
-from random import randbytes
-from io import StringIO
 
 
 class BaseInstruction(ABC):

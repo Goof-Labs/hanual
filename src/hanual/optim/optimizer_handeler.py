@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, List, Literal, Optional, TypeVar, Union
 
-from typing import TypeVar, Union, Literal, Optional, List, TYPE_CHECKING
 from hanual.compile.compile_manager import CompileManager
+
 from .optimizers import *
 
 O = TypeVar("O", bound=BaseOptimizer)

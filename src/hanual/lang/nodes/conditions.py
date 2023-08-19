@@ -7,6 +7,7 @@ from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
 from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

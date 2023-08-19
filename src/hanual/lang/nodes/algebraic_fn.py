@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from .algebraic_expr import AlgebraicExpression
-from typing import Any, TYPE_CHECKING
-from .base_node import BaseNode
 from abc import ABC
+from typing import TYPE_CHECKING, Any
+
+from .algebraic_expr import AlgebraicExpression
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     ...

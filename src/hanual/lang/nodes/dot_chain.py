@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from abc import ABCMeta
-from typing import Union, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Union
+
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

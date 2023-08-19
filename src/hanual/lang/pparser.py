@@ -1,21 +1,12 @@
 from __future__ import annotations
 
-from typing import (
-    List,
-    Dict,
-    Tuple,
-    Generator,
-    Any,
-    Optional,
-    TypeVar,
-    Type,
-)
-from .productions import DefaultProduction
-from copy import deepcopy
-from .proxy import Proxy
-from .lexer import Token
 import logging
+from copy import deepcopy
+from typing import Any, Dict, Generator, List, Optional, Tuple, Type, TypeVar
 
+from .lexer import Token
+from .productions import DefaultProduction
+from .proxy import Proxy
 
 T = TypeVar("T")
 

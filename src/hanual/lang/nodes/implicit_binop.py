@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from hanual.compile.registers import Registers
+from typing import TYPE_CHECKING, Union
+
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from typing import Union, TYPE_CHECKING
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
-from .base_node import BaseNode
 
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .f_call import FunctionCall

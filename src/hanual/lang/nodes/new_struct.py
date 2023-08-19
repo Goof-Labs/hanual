@@ -1,11 +1,8 @@
 from __future__ import annotations
+
+
 from hanual.compile.constant import Constant
-
-
-from hanual.lang.lexer import Token
 from typing import TYPE_CHECKING
-
-from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 
 
@@ -17,14 +14,14 @@ if TYPE_CHECKING:
 class NewStruct(BaseNode):
     def __init__(self: BaseNode, call: FunctionCall) -> None:
         self._args: Arguments = call.args
-        self._name: Token = call.name
+        self._name: str = call.name.value
 
     @property
-    def name(self) -> FunctionCall:
+    def name(self) -> str:
         return self._name
 
     @property
-    def args(self) -> FunctionCall:
+    def args(self) -> Arguments:
         return self._args
 
     def compile(self) -> None:
@@ -37,7 +34,7 @@ class NewStruct(BaseNode):
         return self._args.get_constants()
 
     def get_names(self) -> list[str]:
-        return [self._name.value, *self._args.get_names()]
+        return [self._name, *self._args.get_names()]
 
     def execute(self):
         raise NotImplementedError

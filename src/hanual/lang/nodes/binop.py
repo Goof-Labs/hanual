@@ -37,7 +37,7 @@ class BinOpNode(BaseNode, ABC):
         """The op property."""
         return self._op
 
-    def compile(self) -> None:
+    def compile(self):
         instructions = []
 
         reg_1 = new_reg()

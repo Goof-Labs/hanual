@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Dict, TYPE_CHECKING, Union
-from hanual.compile.registers import Registers
+from abc import ABC
+from typing import TYPE_CHECKING, Union
+
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
-from abc import ABC
-
 
 if TYPE_CHECKING:
-    ...
+    pass
 
 
 class Condition(BaseNode, ABC):

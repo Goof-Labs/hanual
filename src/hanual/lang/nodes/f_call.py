@@ -28,7 +28,7 @@ class FunctionCall(BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def compile(self) -> None:
+    def compile(self):
         instructions = []
 
         ret_lbl = Label("RETURL-LBL", mangle=True)
@@ -49,13 +49,9 @@ class FunctionCall(BaseNode):
     def get_constants(self) -> list[Constant]:
         return self._args.get_constants()
 
-    def get_names(self) -> list[str]:
-        lst = []
-
-        lst.append(self._name.value)
-        lst.extend(self._args.get_names())
-
-        return lst
+    def get_names(self):
+        yield self._name.value
+        yield from self._args.get_names()
 
     def find_priority(self) -> list[BaseNode]:
         return []

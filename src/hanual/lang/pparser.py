@@ -86,8 +86,8 @@ class PParser:
         *rules,
         prod: Optional[Type] = DefaultProduction,
         types: Optional[Dict[str, T]] = None,
-        unless_starts: Optional[str] = None,
-        unless_ends: Optional[str] = None,
+        unless_starts: Optional[List[str]] = None,
+        unless_ends: Optional[List[str]] = None,
     ):
         """
         This function is a decorator, so it can be used with the following syntax:

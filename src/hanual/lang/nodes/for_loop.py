@@ -10,7 +10,6 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.compile.constant import Constant
-
     from .assignment import AssignmentNode
     from hanual.lang.lexer import Token
     from .conditions import Condition
@@ -23,12 +22,12 @@ class ForLoop(BaseNode):
         self: BaseNode,
         condition: Union[ImplicitCondition, Condition],
         init: Union[Token, AssignmentNode],
-        action: ImplicitBinop,
+        action: Union[ImplicitBinop, ...],
         body: CodeBlock,
     ) -> None:
         self._while: Union[ImplicitCondition, Condition] = condition
         self._init: Union[Token, AssignmentNode] = init
-        self._action: ImplicitBinop = action
+        self._action: Union[ImplicitBinop, ...] = action
         self._body: CodeBlock = body
 
     @property
@@ -86,7 +85,11 @@ class ForLoop(BaseNode):
             instructions.extend(self._action.compile(self._init.target.value))
 
         else:
-            instructions.extend(self._action.compile())
+            if isinstance(self._action, ImplicitBinop):
+                instructions.extend(self._action.compile(name=self._init.target.value))
+
+            else:
+                raise NotImplementedError
 
         instructions.extend(self._body.compile())
 

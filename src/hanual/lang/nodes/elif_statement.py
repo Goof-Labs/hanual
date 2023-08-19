@@ -4,6 +4,8 @@ from abc import ABC
 
 from hanual.compile.constant import Constant
 from typing import TYPE_CHECKING
+
+from hanual.lang.nodes.base_node import BaseNode
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -26,6 +28,9 @@ class ElifStatement(BaseNode, ABC):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def get_constants(self) -> list[Constant]:
         consts = []

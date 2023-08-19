@@ -7,7 +7,6 @@ from hanual.compile.compile_manager import CompileManager
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.util.dump_tree import dump_tree
-from hanual.lang.nodes.block import CodeBlock
 from hanual.checkers.ast import verifiy
 from hanual.serialize import DumpFile
 from pprint import PrettyPrinter
@@ -17,71 +16,22 @@ from hashlib import sha256
 pp = PrettyPrinter()
 
 
-class HanualMainClass:
-    def __init__(self) -> None:
-        self.preproc = PrePeoccesser()
-        self.parser = get_parser()
-        self.lexer = HanualLexer()
-
-        # self.parser.toggle_debug_messages(True)
-
-    def run(self, src: str) -> CodeBlock:
-        whisper = self.preproc.process(src, starting_defs=["__testing_lang__"])
-        whisper = self.lexer.tokenize(whisper)
-        whisper = self.parser.parse(whisper)
-        whisper = verifiy(whisper)
-        return whisper
-
-
-main = HanualMainClass()
+preproc = PrePeoccesser()
+parser = get_parser()
+lexer = HanualLexer()
 
 
 src = r"""
 fn main() {
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
-    print("Hello world")
+    if i < 10 {}
+    elif i > 10 {}
 }
 """
+whisper = preproc.process(src, starting_defs=["__testing_lang__"])
+whisper = lexer.tokenize(whisper)
+whisper = parser.parse(whisper)
+res = verifiy(whisper)
 
-res = main.run(src)
 
 print(dump_tree(res, depth=12))
 
@@ -92,17 +42,16 @@ cm.collect_constants()
 cm.collect_names()
 cm.compile_tree()
 
-# print(dump_tree(cm))
 
 op = OptimizerHandeler()
 
 code = op.proof_read(cm)
-# print(dump_tree(code))
+print(dump_tree(code))
 
 df = DumpFile()
 
 df.dump_head(0, 0, 0, sha256(src.encode("utf-8")), append=True)
-df.dump_deps(["toy.fr"], append=True)
+df.dump_deps(["awsome.de"], append=True)
 df.dump_func_head({"main": 0}, append=True)
 df.dump_constants(code.consts, append=True)
 df.dump_instructions(cm, append=True)

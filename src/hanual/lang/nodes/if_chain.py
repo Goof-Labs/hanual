@@ -14,11 +14,8 @@ if TYPE_CHECKING:
 
 
 class IfChain(BaseNode):
-    def find_priority(self) -> list[BaseNode]:
-        pass
-
     def __init__(self: BaseNode) -> None:
-        self._statements: List[Union[IfStatement, ElifStatement]] = []
+        self._statements: List[Union[IfStatement, ElifStatement, ElseStatement]] = []
 
     def add_node(self, node: Union[IfStatement, ElifStatement]) -> Self:
         self._statements.append(node)
@@ -28,7 +25,7 @@ class IfChain(BaseNode):
         self._statements.append(node)
         return self
 
-    def compile(self, ir) -> None:
+    def compile(self) -> None:
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
@@ -53,6 +50,9 @@ class IfChain(BaseNode):
 
             if err:
                 return sts
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     @property
     def statements(self) -> List[Union[IfStatement, ElifStatement, ElseStatement]]:

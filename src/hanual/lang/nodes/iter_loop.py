@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from hanual.lang.nodes.base_node import BaseNode
 from typing import Union, TYPE_CHECKING
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 
-from typing import List, Dict, TYPE_CHECKING
+from typing import List, Dict, Any, TYPE_CHECKING
+from hanual.compile.label import Label
 from base64 import b64encode
 from io import BytesIO
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.compile.constant import Constant
-    from hanual.compile.instruction import *
+    from hanual.compile.constant import BaseConstant
 
 
 class DumpFile:
@@ -23,7 +23,9 @@ class DumpFile:
         hash_: Any,
         append: bool = False,
     ):
-        assert hasattr(hash_, "hexdigest"), AttributeError(f"param: hash_ must have a hexdigest attr")
+        assert hasattr(hash_, "hexdigest"), AttributeError(
+            f"param: hash_ must have a hexdigest attr"
+        )
 
         head = BytesIO()
         head.write(b"LMAO")
@@ -37,7 +39,9 @@ class DumpFile:
 
         return head.getvalue()
 
-    def dump_constants(self, constants: List[Constant], append: bool = False) -> bytes:
+    def dump_constants(
+        self, constants: List[BaseConstant], append: bool = False
+    ) -> bytes:
         data = BytesIO()
 
         for constant in constants:
@@ -91,10 +95,9 @@ class DumpFile:
         for idx, instr in enumerate(cm.instructions):
             if isinstance(instr, Label):
                 # lables surve as jump points and don't need to be added to the
-                pass
+                instr.index = idx
 
             else:
-                print(instr)
                 data.write(instr.serialize(consts=cm.consts, names=cm.names))
 
         if append:

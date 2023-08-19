@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from hanual.lang.nodes.base_node import BaseNode
 
@@ -12,7 +13,7 @@ class CompileManager:
         self._const = []
 
     def collect_names(self):
-        self._names = self._tree.get_names()
+        self._names = list(set(self._tree.get_names()))
 
     def collect_constants(self):
         self._const = []

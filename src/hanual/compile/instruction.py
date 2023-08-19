@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from typing import Union, Any, Literal, Iterable
 from hanual.compile.label import Label
 from hanual.lang.lexer import Token
 from abc import ABC, abstractmethod
-from typing import Union, Any
 from random import randbytes
 from io import StringIO
 
@@ -35,7 +35,9 @@ class BaseInstruction(ABC):
     # CLASSNAME[STUFF]
     # This makes it easier to distinguish class inits
     # vs instruction inits
-    def __class_getitem__(cls, to):
+    def __class_getitem__(
+        cls, to: Union[Literal[None], Iterable] = None
+    ) -> BaseInstruction:
         if to is None:
             return cls()
 
@@ -52,7 +54,7 @@ class MOV(BaseInstruction, ABC):
             self.val.index = idx
 
     def __str__(self) -> str:
-        return f"{type(self).__name__}[{self.to=} {self.val=}]"
+        return f"{type(self).__name__}[to={self.to} val={self.val}]"
 
 
 """
@@ -209,7 +211,7 @@ class JMP(BaseInstruction, ABC):
         return super().serialize()
 
     def __str__(self) -> str:
-        return f"JMP[{self.target=}]"
+        return f"JMP[target={self.target!r}]"
 
 
 class JIT(BaseInstruction, ABC):
@@ -224,7 +226,7 @@ class JIT(BaseInstruction, ABC):
         return super().serialize()
 
     def __str__(self) -> str:
-        return f"JIT[{self.target=}]"
+        return f"JIT[target={self.target!r}]"
 
 
 class JIF(BaseInstruction, ABC):
@@ -239,7 +241,7 @@ class JIF(BaseInstruction, ABC):
         return super().serialize()
 
     def __str__(self) -> str:
-        return f"JIF[{self.target=}]"
+        return f"JIF[target={self.target}]"
 
 
 class CMP(BaseInstruction, ABC):
@@ -269,6 +271,9 @@ class CPY(BaseInstruction, ABC):
     def serialize(self):
         raise NotImplementedError
 
+    def update(self, *args, **kwargs):
+        ...
+
     def __str__(self):
         return f"CPY[{self._to} {self._val}]"
 
@@ -292,7 +297,7 @@ class RET(BaseInstruction):
 
 
 class UPK(BaseInstruction):
-    def __init__(self, names: list[str | Token]):
+    def __init__(self, names: list[Union[str, Token]]):
         self._names = names
 
     @property
@@ -340,6 +345,9 @@ class EXC(BaseInstruction, ABC):
 
     def serialize(self):
         raise NotImplementedError
+
+    def update(self, *args, **kwargs):
+        ...
 
     def __str__(self):
         return f"EXC[{self._op} {self._left} {self._right}]"

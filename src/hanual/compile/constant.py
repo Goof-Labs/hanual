@@ -7,14 +7,17 @@ _V = TypeVar("_V")
 
 
 class Constant:
-    def __new__(cls, value: _V, default: Optional[_C] = None) -> \
-            StrConstant[str] | FloatConstant[float] | IntConstant[int] | Any:
+    def __new__(
+        cls, value: _V, default: Optional[_C] = None
+    ) -> StrConstant[str] | FloatConstant[float] | IntConstant[int] | Any:
         if default is not None:
             if callable(default):
                 return default(value)
 
             else:
-                raise Warning(f"{type(default).__name__} is not callable, falling back to generic constants")
+                raise Warning(
+                    f"{type(default).__name__} is not callable, falling back to generic constants"
+                )
 
         if isinstance(value, str):
             return StrConstant(value)
@@ -27,7 +30,8 @@ class Constant:
 
         else:
             raise AttributeError(
-                f"{value!r} was not of type str|float|int, if a warning was given make the default callable")
+                f"{value!r} was not of type str|float|int, if a warning was given make the default callable"
+            )
 
 
 class BaseConstant(ABC, Generic[_V]):
@@ -43,7 +47,7 @@ class BaseConstant(ABC, Generic[_V]):
         raise NotImplementedError
 
     def __repr__(self) -> str:
-        return f"{type(self).__name__}[{self.value=}]"
+        return f"{type(self).__name__}[value={self.value!r}]"
 
 
 _C = TypeVar("_C", bound=BaseConstant)
@@ -58,11 +62,11 @@ class FloatConstant(BaseConstant):
     def serialize(self) -> bytes:
         a, b = self._value.as_integer_ratio()
         return (
-                b"\x03"
-                + b"\x00"
-                + a.to_bytes(length=8, byteorder="big")
-                + b"\x00"
-                + b.to_bytes(length=8, byteorder="big")
+            b"\x03"
+            + b"\x00"
+            + a.to_bytes(length=8, byteorder="big")
+            + b"\x00"
+            + b.to_bytes(length=8, byteorder="big")
         )
 
 

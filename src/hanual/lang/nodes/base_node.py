@@ -5,7 +5,7 @@ from hanual.lang.builtin_lexer import Token
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
-    from hanual.compile.constant import Constant
+    from hanual.compile.constant import BaseConstant
 
 
 T = TypeVar("T")
@@ -22,7 +22,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self):
+    def compile(self, **kwargs):
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,
@@ -44,7 +44,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_constants(self) -> list[Constant]:
+    def get_constants(self) -> list[BaseConstant]:
         raise NotImplementedError
 
     @abstractmethod

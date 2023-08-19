@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from hanual.lang.nodes.base_node import BaseNode
 from hanual.compile.registers import Registers
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
@@ -10,7 +9,6 @@ from .base_node import BaseNode
 
 
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
     from .f_call import FunctionCall
 
 

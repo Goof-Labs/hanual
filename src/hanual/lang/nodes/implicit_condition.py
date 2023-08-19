@@ -7,7 +7,6 @@ from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
     from .f_call import FunctionCall
 
 

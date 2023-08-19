@@ -24,7 +24,7 @@ class WhileStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def compile(self) -> None:
+    def compile(self):
         instructions = []
 
         while_start = Label("WHILE", mangle=True)

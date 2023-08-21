@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
+
 from .checkers import *
 
 if TYPE_CHECKING:
@@ -12,9 +13,10 @@ _N = TypeVar("_N", bound=BaseNode)
 class ASTChecker:
     def __init__(self, ast: _N) -> None:
         """
-        Similar the the strictness of rust and other static languages hanual has a strict type checker
-        and ast checker. If it sees an antipatern that can be avoided it will flag it up. This includes
-        flagging up depricated symbols and recomending what to replace them with.
+        Similar the the strictness of rust and other static languages hanual
+        has a strict type checker and ast checker. If it sees an antipatern
+        that can be avoided it will flag it up. This includes flagging up
+        depricated symbols and recomending what to replace them with.
         """
 
         self._ast = ast

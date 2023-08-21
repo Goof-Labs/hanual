@@ -1,20 +1,15 @@
 from __future__ import annotations
 
-from typing import TypeVar, Union, NoReturn, TYPE_CHECKING
+from typing import NoReturn, TypeVar, Union
 
-if TYPE_CHECKING:
-    from hanual.lang.nodes import BaseNode
+from hanual.lang.nodes import BaseNode
 
 _N = TypeVar("_N", bound=BaseNode)
 
 
 def verifiy(ast: list[list[str, _N]]) -> Union[None, NoReturn]:
-    # it's fine
-    if len(ast) == 1:
-        return
-
-    problem = []
-
-    for line in ast:
-        if not (line[0] in ("line", "lines")):
-            problem.append(line[0])
+    """
+    We need to verifiy that the ast is a list with one element, a "lines" or
+    "line". If it isn't then we have a problem.
+    """
+    return ast

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic, TYPE_CHECKING
-from hanual.compile.registers import Registers
+from typing import TYPE_CHECKING, Generic, TypeVar
+
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -28,7 +30,7 @@ class AssignmentNode(BaseNode, Generic[T]):
     def value(self) -> T:
         return self._value
 
-    def compile(self) -> None:
+    def compile(self):
         if isinstance(self._value, Token):
             if self._value.type == "ID":
                 # if we want to allocate one variable to another we make a coppy, this may change at optim time
@@ -36,7 +38,7 @@ class AssignmentNode(BaseNode, Generic[T]):
 
             elif self._value.type in ("STR", "NUM"):
                 # we move a constant into a register
-                return [MOV[self._target.value, self._value.value]]
+                return [MOV_RC[self._target.value, self._value.value]]
 
             else:
                 raise NotImplementedError

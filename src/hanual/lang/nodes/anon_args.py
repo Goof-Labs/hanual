@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Dict, TYPE_CHECKING
+from abc import ABC
+from typing import TYPE_CHECKING
+
 from .arguments import Arguments
 from .base_node import BaseNode
 
@@ -8,7 +10,7 @@ if TYPE_CHECKING:
     ...
 
 
-class AnonArgs(BaseNode):
+class AnonArgs(BaseNode, ABC):
     __slots__ = ("_args",)
 
     def __init__(self: BaseNode, args: Arguments) -> None:

@@ -1,30 +1,31 @@
 from __future__ import annotations
 
-from typing import TypeVar, Union, List, TYPE_CHECKING
-from hanual.lang.nodes.base_node import BaseNode
+from typing import TYPE_CHECKING, List, TypeVar, Union
+
 from hanual.compile.constant import Constant
-from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
+from hanual.lang.builtin_lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
 
 if TYPE_CHECKING:
     ...
 
-T = TypeVar("T")
+T = TypeVar("T", Token, BaseNode)
 
 
 class Arguments(BaseNode):
-    def __init__(self, children: Union[List[T], T]) -> None:
-        self._children: List[Token, BaseNode] = []
+    def __init__(self, children: Union[T, List[T]]) -> None:
+        self._children: List[T] = []
         self.function_def = False
 
         if isinstance(children, Token):
-            self._children = [children]
+            self._children: List[T] = [children]
 
-        elif isinstance(children, (tuple, list)):  # is iterable
-            self._children = [*children]
+        elif issubclass(type(children), BaseNode):
+            self._children: List[T] = [children]
 
         else:  # This is just another node that we have chucked into a list
-            self._children = [children]
+            self._children: List[T] = list(children)
 
     def add_child(self, child):
         if isinstance(child, Arguments):
@@ -39,14 +40,14 @@ class Arguments(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
-    def compile(self) -> None:
+    def compile(self):
         return [UPK(self._children)]
 
     def execute(self):
         raise NotImplementedError
 
-    def get_names(self) -> list[str]:
-        names = []
+    def get_names(self) -> list[Token]:
+        names: List[Token] = []
 
         for child in self._children:
             if isinstance(child, Token):

@@ -1,45 +1,47 @@
 from __future__ import annotations
 
-from hanual.lang.nodes import (
-    UsingStatementWithAltName,
-    AlgebraicExpression,
-    FunctionDefinition,
-    AnonymousFunction,
-    NamespaceAccessor,
-    ImplicitCondition,
-    StructDefinition,
-    StrongFieldList,
-    ReturnStatement,
-    UsingStatement,
-    AssignmentNode,
-    WhileStatement,
-    BreakStatement,
-    ImplicitBinop,
-    AlgebraicFunc,
-    ElifStatement,
-    FunctionCall,
-    IfStatement,
-    StrongField,
-    FreezeNode,
-    HanualList,
-    BinOpNode,
-    Condition,
-    NewStruct,
-    CodeBlock,
-    Arguments,
-    RangeNode,
-    VarChange,
-    ShoutNode,
-    DotChain,
-    AnonArgs,
-    SGetattr,
-    IfChain,
-    ForLoop,
-)
-from hanual.lang.productions import DefaultProduction
+from typing import Literal, Union
+
 from hanual.lang.builtin_lexer import Token
+from hanual.lang.nodes import (
+    AlgebraicExpression,
+    AlgebraicFunc,
+    AnonArgs,
+    AnonymousFunction,
+    Arguments,
+    AssignmentNode,
+    BinOpNode,
+    BreakStatement,
+    CodeBlock,
+    Condition,
+    DotChain,
+    ElifStatement,
+    ElseStatement,
+    ForLoop,
+    FreezeNode,
+    FunctionCall,
+    FunctionDefinition,
+    HanualList,
+    IfChain,
+    IfStatement,
+    ImplicitBinop,
+    ImplicitCondition,
+    NamespaceAccessor,
+    NewStruct,
+    RangeNode,
+    ReturnStatement,
+    SGetattr,
+    ShoutNode,
+    StrongField,
+    StrongFieldList,
+    StructDefinition,
+    UsingStatement,
+    UsingStatementWithAltName,
+    VarChange,
+    WhileStatement,
+)
 from hanual.lang.pparser import PParser
-from typing import Union, Literal
+from hanual.lang.productions import DefaultProduction
 
 par = PParser()
 
@@ -89,7 +91,7 @@ def struct_def(
         Token,  # end token
     ]
 ) -> StructDefinition:
-    return StructDefinition(ts[0][1].value, ts[2])
+    return StructDefinition(ts[0][1], ts[2])
 
 
 ###########################
@@ -123,32 +125,7 @@ def s_getattr(ts: DefaultProduction[Token, HanualList]):
     "FOR assignment COM impl_condition COM impl_binop LCB lines RCB",
     types={"FOR assignment COM impl_condition COM impl_binop LCB RCB": True},
 )
-def for_loop(
-    ts: Union[
-        # for if the code block is non existant
-        DefaultProduction[
-            Token,
-            AssignmentNode,
-            Token,
-            ImplicitCondition,
-            Token,
-            ImplicitBinop,
-            Token,
-        ],
-        # if we have lines or a line of code
-        DefaultProduction[
-            Token,
-            AssignmentNode,
-            Token,
-            ImplicitCondition,
-            Token,
-            ImplicitBinop,
-            CodeBlock,
-            Token,
-        ],
-    ],
-    no_body: Union[Literal[True], Literal[None]],
-) -> ForLoop:
+def for_loop(ts, no_body: Union[Literal[True], Literal[None]]) -> ForLoop:
     if no_body:
         return ForLoop(ts[3], ts[1], ts[5], CodeBlock([]))
 
@@ -468,8 +445,8 @@ def freeze(ts: DefaultProduction):
 ###########################
 
 
-@par.rule("RET", unless_ends=["ID"])
-def ret(ts: DefaultProduction):
+@par.rule("RET", unless_ends=["ID", "NUM", "STR"])
+def ret(ts):
     return ReturnStatement(None)
 
 
@@ -555,10 +532,12 @@ def if_statement(ts: DefaultProduction, type_: int):
     "IF condition LCB lines RCB EIF",
     "IF condition LCB lines RCB EIF",
     "IF condition LCB EIF RCB",
+    "if_statement EIF",
     types={
         "IF condition LCB line RCB EIF": 1,
         "IF condition LCB lines RCB EIF": 1,
         "IF condition LCB EIF RCB": 2,
+        "if_statement EIF": 3,
     },
 )
 def if_chain_start(ts: DefaultProduction, type_: int):
@@ -570,39 +549,51 @@ def if_chain_start(ts: DefaultProduction, type_: int):
     elif type_ == 2:
         return chain.add_node(IfStatement(ts[1], CodeBlock([])))
 
+    elif type_ == 3:
+        return chain.add_node(ts[0])
+
 
 @par.rule(
-    "if_chain_start condition line EIF",
-    "if_chain_start condition lines EIF",
+    "if_chain_start condition LCB line RCB EIF",
+    "if_chain_start condition LCB lines RCB EIF",
+    "if_chain_start condition LCB RCB EIF",
+    types={"if_chain_start condition LCB RCB EIF": 2},
 )
-def condition_chain(ts: DefaultProduction[IfChain, Token, Condition, Token]) -> IfChain:
-    return ts[0].add_node(ElifStatement(ts[1], ts[2]))
+def condition_chain(
+    ts: DefaultProduction[IfChain, Condition, Token, CodeBlock, Token, Token],
+    type_: int,
+) -> IfChain:
+    if type_ == 2:
+        return ts[0].add_node(ElifStatement(ts[1], CodeBlock([])))
+
+    return ts[0].add_node(ElifStatement(ts[1], ts[3]))
 
 
 @par.rule(
-    "if_chain_start condition line ELS line END",
-    "if_chain_start condition lines ELS line END",
-    "if_chain_start condition line ELS lines END",
-    "if_chain_start condition lines ELS lines END",
+    "if_chain_start condition LCB line RCB ELS LCB line RCB",
+    "if_chain_start condition LCB lines RCB ELS LCB line RCB",
+    "if_chain_start condition LCB line RCB ELS LCB lines RCB",
+    "if_chain_start condition LCB lines RCB ELS LCB lines RCB",
 )
 def if_chain(
     ts: DefaultProduction[
         IfChain,  # original elif chain
-        Token,  # lpar
         Condition,  # condition
-        Token,  # RPAR
         CodeBlock,  # block
-        Token,  # ELSE
         CodeBlock,  # line(s)
-        Token,  # END
     ]
 ) -> IfChain:
-    return ts[0].add_node(ElifStatement(ts[1], ts[2])).add_else(ts[4])
+    return ts[0].add_node(ElifStatement(ts[1], ts[3])).add_else(ElseStatement(ts[7]))
 
 
 @par.rule(
-    "if_chain_start condition line END",
-    "if_chain_start condition lines END",
+    "if_chain_start condition LCB line RCB",
+    "if_chain_start condition LCB lines RCB",
+    "if_chain_start condition LCB RCB",
+    types={
+        "if_chain_start condition LCB lines RCB": 1,
+        "if_chain_start condition LCB RCB": 2,
+    },
 )
 def if_chain(
     ts: DefaultProduction[
@@ -612,14 +603,14 @@ def if_chain(
         Token,
         CodeBlock,
         Token,
-    ]
+    ],
+    type_: int,
 ) -> IfChain:
-    return ts[0]
+    if type_ == 1:
+        return ts[0].add_node(ElifStatement(ts[1], ts[3]))
 
-
-@par.rule("condition_chain END")
-def if_chain(ts: DefaultProduction[IfChain]) -> IfChain:
-    return ts
+    elif type_ == 2:
+        return ts[0].add_node(ElifStatement(ts[1], CodeBlock([])))
 
 
 ###########################
@@ -805,7 +796,7 @@ def h_range(ts: DefaultProduction):
     "shout",
     "using",
     "ret",
-    unless_ends=["RPAR", "COM", "BAR"],
+    unless_ends=["RPAR", "COM", "BAR", "EIF"],
 )
 def line(ts):
     return CodeBlock(ts[0])

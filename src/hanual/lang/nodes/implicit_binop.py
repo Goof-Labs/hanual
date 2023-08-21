@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.compile.registers import Registers
+from typing import TYPE_CHECKING, Union
+
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from typing import Union, TYPE_CHECKING
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
-
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
     from .f_call import FunctionCall
 
 
@@ -35,22 +34,22 @@ class ImplicitBinop(BaseNode):
         reg_2 = new_reg()
 
         # LEFT SIDE
-        instructions.append(MOV[reg_2, name])
+        instructions.append(MOV_RR[reg_2, name])
 
         # RIGHT SIDE
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_2, self._right.value])
+                instructions.append(MOV_RC[reg_2, Constant(self._right.value)])
 
             elif self._right.type == "ID":
-                instructions.append(MOV[reg_2, self._right.value])
+                instructions.append(MOV_RC[reg_2, Constant(self._right.value)])
 
             else:
                 raise NotImplementedError
 
         else:
             instructions.extend(self._right.compile())
-            instructions.append(MOV[reg_2, Registers.R])
+            instructions.append(MOV_RR[reg_2, Registers.R])
 
         instructions.append(EXC[self._op.value, reg_1, reg_2])
 

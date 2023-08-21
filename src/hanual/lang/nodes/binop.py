@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from hanual.compile.registers import Registers
+from abc import ABC
+from typing import TYPE_CHECKING, Union
+
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from typing import TYPE_CHECKING, Union
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
-from .base_node import BaseNode
-from abc import ABC
 
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     ...
@@ -37,7 +38,7 @@ class BinOpNode(BaseNode, ABC):
         """The op property."""
         return self._op
 
-    def compile(self) -> None:
+    def compile(self):
         instructions = []
 
         reg_1 = new_reg()
@@ -46,32 +47,32 @@ class BinOpNode(BaseNode, ABC):
         # LEFT SIDE
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_1, Constant(self._left.value)])
+                instructions.append(MOV_RC[reg_1, Constant(self._left.value)])
 
             elif self._left.type == "ID":
-                instructions.append(MOV[reg_2, Constant(self._left.value)])
+                instructions.append(MOV_RC[reg_2, Constant(self._left.value)])
 
             else:
                 raise NotImplementedError
 
         else:
             instructions.extend(self._left.compile())
-            instructions.append(MOV[reg_1, Registers.R])
+            instructions.append(MOV_RR[reg_1, Registers.R])
 
         # RIGHT SIDE
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                instructions.append(MOV[reg_2, Constant(self._right.value)])
+                instructions.append(MOV_RC[reg_2, Constant(self._right.value)])
 
             elif self._right.type == "ID":
-                instructions.append(MOV[reg_2, Constant(self._right.value)])
+                instructions.append(MOV_RC[reg_2, Constant(self._right.value)])
 
             else:
                 raise NotImplementedError
 
         else:
             instructions.extend(self._right.compile())
-            instructions.append(MOV[reg_2, Registers.R])
+            instructions.append(MOV_RR[reg_2, Registers.R])
 
         instructions.append(EXC[self._op.value, reg_1, reg_2])
         return instructions

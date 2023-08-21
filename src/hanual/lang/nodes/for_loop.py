@@ -1,21 +1,21 @@
 from __future__ import annotations
 
-
-from .implicit_condition import ImplicitCondition
-from hanual.lang.nodes.base_node import BaseNode
-from .implicit_binop import ImplicitBinop
-from hanual.compile.instruction import *
 from typing import TYPE_CHECKING, Union
+
+from hanual.compile.instruction import *
 from hanual.compile.label import Label
+
 from .base_node import BaseNode
+from .implicit_binop import ImplicitBinop
+from .implicit_condition import ImplicitCondition
 
 if TYPE_CHECKING:
     from hanual.compile.constant import Constant
+    from hanual.lang.lexer import Token
 
     from .assignment import AssignmentNode
-    from hanual.lang.lexer import Token
-    from .conditions import Condition
     from .block import CodeBlock
+    from .conditions import Condition
 
 
 # for let i=0, < 10, +110
@@ -34,7 +34,7 @@ class ForLoop(BaseNode):
 
     @property
     def condition(self) -> Union[ImplicitCondition, Condition]:
-        return self.while_
+        return self._while
 
     @property
     def init(self) -> Union[Token, AssignmentNode]:
@@ -87,7 +87,11 @@ class ForLoop(BaseNode):
             instructions.extend(self._action.compile(self._init.target.value))
 
         else:
-            instructions.extend(self._action.compile())
+            if isinstance(self._action, ImplicitBinop):
+                instructions.extend(self._action.compile(name=self._init.target.value))
+
+            else:
+                raise NotImplementedError
 
         instructions.extend(self._body.compile())
 

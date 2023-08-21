@@ -1,15 +1,19 @@
 from __future__ import annotations
 
-from hanual.compile.constant import Constant
+from abc import ABC
 from typing import TYPE_CHECKING
+
+from hanual.compile.constant import Constant
+from hanual.lang.nodes.base_node import BaseNode
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from .conditions import Condition
     from .block import CodeBlock
+    from .conditions import Condition
 
 
-class ElifStatement(BaseNode):
+class ElifStatement(BaseNode, ABC):
     def __init__(self: BaseNode, condition: Condition, block: CodeBlock) -> None:
         self._condition = condition
         self._block = block
@@ -24,6 +28,9 @@ class ElifStatement(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     def get_constants(self) -> list[Constant]:
         consts = []

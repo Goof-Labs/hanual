@@ -1,14 +1,15 @@
 from __future__ import annotations
-from hanual.compile.constant import Constant
 
-from hanual.lang.lexer import Token
-from hanual.lang.nodes.base_node import BaseNode
-from .hanual_list import HanualList
-from .f_call import FunctionCall
-from .base_node import BaseNode
-from .dot_chain import DotChain
 from typing import TypeVar
 
+from hanual.compile.constant import Constant
+from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
+
+from .base_node import BaseNode
+from .dot_chain import DotChain
+from .f_call import FunctionCall
+from .hanual_list import HanualList
 
 O = TypeVar("O", Token, DotChain, FunctionCall)
 P = TypeVar("P", HanualList, ...)

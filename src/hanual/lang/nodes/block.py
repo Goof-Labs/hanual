@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import List, Union, TypeVar, Any, TYPE_CHECKING
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.compile.constant import Constant
-from .base_node import BaseNode
 from abc import ABC
+from typing import TYPE_CHECKING, Any, List, TypeVar, Union
+
+from hanual.compile.constant import BaseConstant
+
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     ...
@@ -48,7 +49,7 @@ class CodeBlock(BaseNode, ABC):
 
         return instructions
 
-    def get_constants(self) -> list[Constant]:
+    def get_constants(self) -> list[BaseConstant]:
         lst = []
 
         for node in self._children:
@@ -56,7 +57,7 @@ class CodeBlock(BaseNode, ABC):
 
         return lst
 
-    def get_names(self) -> list[Constant]:
+    def get_names(self) -> list[str]:
         lst = []
 
         for node in self._children:

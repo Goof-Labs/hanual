@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from typing import Callable, Any, Dict, Type, Union, Sequence, Optional
+from typing import Any, Callable, Dict, Optional, Sequence, Type, Union
+
+from typing_extensions import Self
+
 from .productions import DefaultProduction, P
 
 """

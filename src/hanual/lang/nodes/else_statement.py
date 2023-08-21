@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.compile.constant import Constant
 from typing import TYPE_CHECKING
+
+from hanual.compile.constant import BaseConstant
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ class ElseStatement(BaseNode):
     def find_priority(self) -> list[BaseNode]:
         return self._body.find_priority()
 
-    def get_constants(self) -> list[Constant]:
+    def get_constants(self) -> list[BaseConstant]:
         return self._body.get_constants()
 
     def get_names(self) -> list[str]:

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-
-from .strong_field_list import StrongFieldList
-from hanual.compile.constant import Constant
 from typing import TYPE_CHECKING, Union
-from .strong_field import StrongField
-from hanual.lang.lexer import Token
-from .base_node import BaseNode
 
+from hanual.compile.constant import Constant
+from hanual.lang.lexer import Token
+
+from .base_node import BaseNode
+from .strong_field import StrongField
+from .strong_field_list import StrongFieldList
 
 if TYPE_CHECKING:
     ...
@@ -36,8 +36,8 @@ class StructDefinition(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self) -> None:
-        # Structs are data representation methords and need to be treated as such
+    def compile(self):
+        # Structs are data representation methods and need to be treated as such
         # The struct info is treated as an array (under the hood)
         return []
 
@@ -45,24 +45,16 @@ class StructDefinition(BaseNode):
         raise NotImplementedError
 
     def get_names(self) -> list[Constant]:
-        names = []
-
         for field in self._fields.fields:
-            names.extend(field.get_names())
-
-        return names
+            yield from field.get_names()
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
         for field in self._fields.fields:
             if isinstance(field, Token):
-                consts.append(Constant(field.value))
+                yield Constant(field.value)
 
             else:
-                consts.extend(field.get_constants())
-
-        return consts
+                yield from field.get_constants()
 
     def find_priority(self) -> list[BaseNode]:
         return [self]

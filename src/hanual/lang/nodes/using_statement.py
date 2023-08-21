@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import pathlib
+from abc import ABC
+from os import environ
+from typing import TYPE_CHECKING, Union
 
 from hanual.compile.constant import Constant
-from typing import TYPE_CHECKING, Union
+
 from .base_node import BaseNode
-from os import environ
-from abc import ABC
-import pathlib
 
 if TYPE_CHECKING:
     from .namespace_acessor import NamespaceAccessor

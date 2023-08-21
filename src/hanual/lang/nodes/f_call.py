@@ -1,15 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Union
 
-from hanual.compile.registers import Registers
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
 from hanual.compile.refs import Ref
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
-from .dot_chain import DotChain
+
 from .base_node import BaseNode
+from .dot_chain import DotChain
 
 if TYPE_CHECKING:
     from .arguments import Arguments
@@ -28,7 +29,7 @@ class FunctionCall(BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def compile(self) -> None:
+    def compile(self):
         instructions = []
 
         ret_lbl = Label("RETURL-LBL", mangle=True)
@@ -49,13 +50,9 @@ class FunctionCall(BaseNode):
     def get_constants(self) -> list[Constant]:
         return self._args.get_constants()
 
-    def get_names(self) -> list[str]:
-        lst = []
-
-        lst.append(self._name.value)
-        lst.extend(self._args.get_names())
-
-        return lst
+    def get_names(self):
+        yield self._name.value
+        yield from self._args.get_names()
 
     def find_priority(self) -> list[BaseNode]:
         return []

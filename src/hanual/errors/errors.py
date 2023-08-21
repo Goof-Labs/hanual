@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from colorama import init, Fore
+from colorama import Fore, init
 
 
 def raise_error(trace, error, hint):

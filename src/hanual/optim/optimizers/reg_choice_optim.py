@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from hanual.optim.optimizer_status import OptimizerStatus
-from typing import List, Union, Dict, TYPE_CHECKING
-from .base_optimiszer import BaseOptimizer, I
+from typing import TYPE_CHECKING, Dict, List, Union
+
 from hanual.compile.instruction import *
+from hanual.optim.optimizer_status import OptimizerStatus
+
+from .base_optimiszer import BaseOptimizer, I
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
@@ -57,7 +59,7 @@ class RegChoiceOptimizer(BaseOptimizer):
             self.make_first_pass(cm.instructions)
 
         for idx, instr in enumerate(cm.instructions):
-            if not isinstance(instr, MOV):
+            if not issubclass(type(instr), MOV):
                 continue
 
             # if to is a reg

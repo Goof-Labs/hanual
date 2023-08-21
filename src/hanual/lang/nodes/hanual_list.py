@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, List
 
-from hanual.compile.instruction import new_heap
 from hanual.compile.constant import Constant
 from hanual.compile.instruction import *
-from typing import TYPE_CHECKING, List
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .arguments import Arguments
+
 from .arguments import Arguments
 
 
@@ -26,7 +27,7 @@ class HanualList(BaseNode):
     def find_priority(self) -> list[BaseNode]:
         return self._elements.find_priority()
 
-    def get_names(self) -> list[str]:
+    def get_names(self):
         return self._elements.get_names()
 
     def compile(self) -> None:

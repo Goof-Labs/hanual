@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from hanual.optim.optimizer_status import OptimizerStatus
-from hanual.compile.instruction import *
-from typing import TypeVar, Union, List
-from hanual.compile.label import Label
 from abc import ABC, abstractmethod
+from typing import List, TypeVar, Union
+
+from hanual.compile.instruction import *
+from hanual.compile.label import Label
+from hanual.optim.optimizer_status import OptimizerStatus
 
 I = TypeVar("I", EXC, UPK, RET, CPY, CMP, JIF, JIT, CALL, JMP)
 

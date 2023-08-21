@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, TypeVar
 
-from hanual.compile.registers import Registers
 from hanual.compile.constant import Constant
-from typing import TypeVar, TYPE_CHECKING
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -32,7 +33,9 @@ class VarChange(BaseNode):
 
         if isinstance(self._value, Token):
             if self._vale.type in ("STR", "NUM"):
-                instructions.append(MOV[self._name.value, self._value.value])
+                instructions.append(
+                    MOV_RC[self._name.value, Constant(self._value.value)]
+                )
 
             elif self._value.type == "NME":
                 instructions.append(CPY[self._name.value, self._value.value])
@@ -42,7 +45,7 @@ class VarChange(BaseNode):
 
         else:
             instructions.extend(self._value.compile())
-            instructions.append(MOV[self._name.value, Registers.AC])
+            instructions.append(MOV_RR[self._name.value, Registers.R])
 
         return instructions
 

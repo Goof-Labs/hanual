@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, List
+from typing import TYPE_CHECKING, List, TypeVar
+
 from hanual.compile.constant import Constant
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

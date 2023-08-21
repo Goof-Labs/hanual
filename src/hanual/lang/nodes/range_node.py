@@ -1,16 +1,20 @@
 from __future__ import annotations
 
+from abc import ABCMeta
+from typing import TYPE_CHECKING, Optional
 
-from typing import Optional, TYPE_CHECKING
 from .base_node import BaseNode
 
-
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
     from typing_extensions import Self
 
+    from hanual.lang.lexer import Token
 
-class RangeNode(BaseNode):
+
+class RangeNode(BaseNode, metaclass=ABCMeta):
+    def execute(self):
+        pass
+
     def __init__(
         self: Self,
         from_: Optional[Token] = None,

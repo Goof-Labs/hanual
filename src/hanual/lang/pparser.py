@@ -1,21 +1,12 @@
 from __future__ import annotations
 
-from typing import (
-    List,
-    Dict,
-    Tuple,
-    Generator,
-    Any,
-    Optional,
-    TypeVar,
-    Type,
-)
-from .productions import DefaultProduction
-from copy import deepcopy
-from .proxy import Proxy
-from .lexer import Token
 import logging
+from copy import deepcopy
+from typing import Any, Dict, Generator, List, Optional, Tuple, Type, TypeVar
 
+from .lexer import Token
+from .productions import DefaultProduction
+from .proxy import Proxy
 
 T = TypeVar("T")
 
@@ -86,8 +77,8 @@ class PParser:
         *rules,
         prod: Optional[Type] = DefaultProduction,
         types: Optional[Dict[str, T]] = None,
-        unless_starts: Optional[str] = None,
-        unless_ends: Optional[str] = None,
+        unless_starts: Optional[List[str]] = None,
+        unless_ends: Optional[List[str]] = None,
     ):
         """
         This function is a decorator, so it can be used with the following syntax:

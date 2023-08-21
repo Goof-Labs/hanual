@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-
-from typing import List, Dict, TYPE_CHECKING
-from hanual.compile.label import Label
 from base64 import b64encode
 from io import BytesIO
+from typing import TYPE_CHECKING, Any, Dict, List
+
+from hanual.compile.label import Label
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.compile.constant import Constant
-    from hanual.compile.instruction import *
-    from hashlib import _Hash
+    from hanual.compile.constant import BaseConstant
 
 
 class DumpFile:
@@ -22,12 +20,16 @@ class DumpFile:
         major: int,
         minor: int,
         micro: int,
-        hash: _Hash,
+        hash_: Any,
         append: bool = False,
     ):
+        assert hasattr(hash_, "hexdigest"), AttributeError(
+            f"param: hash_ must have a hexdigest attr"
+        )
+
         head = BytesIO()
         head.write(b"LMAO")
-        head.write(b64encode(hash.hexdigest().encode("utf-8")))
+        head.write(b64encode(hash_.hexdigest().encode("utf-8")))
         head.write(major.to_bytes(length=1, byteorder="big"))
         head.write(minor.to_bytes(length=1, byteorder="big"))
         head.write(micro.to_bytes(length=1, byteorder="big"))
@@ -37,7 +39,9 @@ class DumpFile:
 
         return head.getvalue()
 
-    def dump_constants(self, constants: List[Constant], append: bool = False) -> bytes:
+    def dump_constants(
+        self, constants: List[BaseConstant], append: bool = False
+    ) -> bytes:
         data = BytesIO()
 
         for constant in constants:
@@ -91,10 +95,9 @@ class DumpFile:
         for idx, instr in enumerate(cm.instructions):
             if isinstance(instr, Label):
                 # lables surve as jump points and don't need to be added to the
-                pass
+                instr.index = idx
 
             else:
-                print(instr)
                 data.write(instr.serialize(consts=cm.consts, names=cm.names))
 
         if append:

@@ -2,11 +2,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-# from types import
-
 
 @dataclass(frozen=True)
 class CompilerOptions:
+    # required stuff
+    files: tuple[str] = ()
+    out: tuple[str] = ()
+
+    # injection
+    inject: tuple[str] = ()
+
     # remove useless stuff
     purge_functions: bool = False
     purge_imports: bool = True

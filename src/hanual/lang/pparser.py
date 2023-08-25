@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import logging
-from copy import deepcopy
 from typing import Any, Dict, Generator, List, Optional, Tuple, Type, TypeVar
-
-from .lexer import Token
 from .productions import DefaultProduction
+from hanual.api.hook import RuleHook
+from copy import deepcopy
+from .lexer import Token
 from .proxy import Proxy
+import logging
 
 T = TypeVar("T")
 
@@ -14,10 +14,10 @@ T = TypeVar("T")
 class PParser:
     """
     The PParser class is used to create a parser.
-    The class is initialised with no params. A
-    decorator syntax is then used to create new
-    rules for the parser. Finally, parser function
-    is called to parse the input.
+    The class is initialized with no params.
+    A decorator syntax is then
+    used to create new rules for the parser.
+    Finally, parser function is called to parse the input.
     """
 
     def __init__(self) -> None:
@@ -104,15 +104,15 @@ class PParser:
         >>>     elif case == 2: # other stuff for second case
         >>>     elif case == 3: # third case
 
-        The unless kwarg is a dict with two keys `start` and `end` this means that
+        The unless kwarg is a dict with two keys `start` and `end`, this means that
         if we find a pattern, but we want to skip over it if and only if the next
-        token is a specific value, or a token at the start of the pattern is preasent.
+        token is a specific value, or a token at the start of the pattern is present.
         Lets say we have a rule [B C] and we want it only to be formed if it is not
         prefixed with an A or the next token would be a D, so if we have the pattern
         [A B C] {next token D} this pattern would not be formed because the pattern is
         next to an A, also because the next token would be a D. Lets say we are making
         a function definition rule, but it conflicts with a function call rule. This is
-        because a function call sort of exists within the function definition e.g.
+        because a function call sort of exists within the function definition, e.g.
 
         FN NAME LPAR RPAR
         END
@@ -125,7 +125,7 @@ class PParser:
         >>>     return ...
 
         This rule will now evaluate [NAME LPAR RPAR] to a function call if and only
-        if the pattern is not prefixed with a FN, else it will skip this pattern
+        if the pattern is not prefixed with an FN, else it will skip this pattern
         and a different rule can take care of it.
         """
 
@@ -137,13 +137,23 @@ class PParser:
 
         return inner
 
+    def add_rule(self, rules, func, types, prod, unless_starts, unless_ends, name: Optional[str] = None):
+        for rule in rules:
+            prox = Proxy(func, types, prod, unless_starts, unless_ends)
+            self.rules[rule] = name or func.__name__, prox
+
+    def add_hooks(self, hooks: List[RuleHook]) -> None:
+        for hook in hooks:
+            for rule in hook.patterns:
+                self.rules[rule] = hook.name, hook.proxy
+
     def always(self: PParser):
         """
         This will always run on each reduction of the stack or after every check.
-        This is verry usefull when you want to change the tokens while the code is
-        represented as a partial tree or stream of rokens.
+        This is very useful when you want to change the tokens while the code is
+        represented as a partial tree or stream of tokens.
 
-        WARNING: this can really mess up the stack if you are not carefull so be carefull
+        WARNING: this can really mess up the stack if you are not careful so be carefull
         """
 
         def inner(func):
@@ -156,7 +166,6 @@ class PParser:
     ######################
 
     def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
-        change = True
         stack = []
 
         while True:

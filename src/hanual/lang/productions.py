@@ -140,10 +140,7 @@ class ProductionDict(_ProductionInterface):
         except KeyError as e:
             # only py311+
             if version_info.major >= 3 and version_info.minor >= 11:
-                e.add_note(
-                    "Could not get key '%s', did you mean one of: %s",
-                    (__key, ", ".join(self._dct.keys())),
-                )
+                e.add_note(f"Could not get key {__key!r}, did you mean one of: {', '.join(self._dct.keys())}")
 
             else:
                 print(

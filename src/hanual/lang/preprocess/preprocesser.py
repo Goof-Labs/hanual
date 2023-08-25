@@ -1,80 +1,103 @@
 from __future__ import annotations
 
+from typing import Dict, Iterable, Mapping, Optional, Set, Union, List
+from hanual.api.hook import PreProcessorHook
 from io import StringIO
-from typing import Dict, List, Optional, Set
 
 
-class PrePeoccesser:
+class Preprocessor:
     """
-    What is a preproccesser, so pre means before and proccess refers to the compiler, this means that
+    What is a preprocessor, so pre means before and processes refers to the compiler, this means that
     the code is put through this class before being lexed and tokenized. This lets us use some magic
-    that C and C++ users are farmiliar with. This means that we can conditionally include code. For
-    example, we may want to verifiy that the Hanual version is greater than some value this opens the
-    doors to lots of backwads compatability. All Preprocessers are, by default, prefixed with an `@`
-    but this behaviour can be altered with the config file.
-    NOTE all preprocessers are removed after processing so using a `"` is perfectely fine, it won't raise any syntax
-    errors
-    NOTE preprocessers can have their names changed, so `mcr` and be changed to `macro`
+    that C and C++ users are familiar with. This means that we can conditionally include code. For
+    example, we may want to verify that the Hanual version is greater than some value this opens the
+    doors to lots of backwards compatability. All Preprocessors are, by default, prefixed with an `@`
+    but this behavior can be altered with the config file.
 
-    The preprocessers are:
-    @def => For defining replaceables
-    @mcr => For creating macros
-    @if  => For conditional includes
+    The preprocessors are:
+    @def => For defining replaceable
+    @if => For conditional includes
     @end => Ending an if
-
-    + def
-    This creates a definition, this is just a name that can not be used in the code, the only point
-    of this is to check something.
-
-    + mcr
-    Macros are replaced at lexing time, these can replace a symbol with another. Let's say we want to
-    create a new keyword "contains", that takes a symbol on the left and right, we can create a macro
-    mcr "<L> contains <R>" "<R> in <L>", do note that the strings are important in this, we surround
-    tokens we want to replace in angel brackets <>
     """
 
-    def __init__(self) -> None:
-        self._definitions: Set[str] = set()
+    def __init__(
+            self,
+            pre_defs: Optional[Iterable[str]] = (),
+            prefix: Optional[str] = "@",
+            hooks: Optional[Iterable[PreProcessorHook]] = ()
+    ) -> None:
+        self._hooks: Iterable[PreProcessorHook] = hooks
+        self._definitions: Set[str] = set(pre_defs)
         self._ignore_code: bool = False
-        self._prefix: str = "@"
-        self._macros = []
+        self._prefix: str = prefix
 
     @property
-    def prefix(self: PrePeoccesser) -> str:
+    def prefix(self: Preprocessor) -> str:
         return self._prefix
 
     @prefix.setter
-    def prefix(self: PrePeoccesser, new: str) -> None:
+    def prefix(self: Preprocessor, prefix: str) -> None:
+        assert isinstance(prefix, str), ValueError(
+            f"Prefix must be of type str not {type(prefix).__name__!r}"
+        )
+        self._prefix = prefix
+
+    @prefix.setter
+    def prefix(self: Preprocessor, new: str) -> None:
         assert isinstance(new, str)
         self._prefix = new
 
-    def add_definition(self: PrePeoccesser, name: str) -> None:
-        assert isinstance(name, str)
+    def add_definition(self: Preprocessor, name: str) -> None:
+        assert isinstance(name, str), ValueError(
+            f"Name must be of type str not {type(name).__name__}"
+        )
 
         self._definitions.add(name)
 
+    def process_hooks(self, text: Union[str, List[str]]):
+        if isinstance(text, str):
+            text = text.split("\n")
+
+        for hook in self._hooks:
+            # same function
+            ignore = hook.props.get("skip", ())
+            lines = []
+
+            for line in text:
+                if line not in ignore:
+                    lines.append(line)
+
+            text = hook.scan_lines(lines)
+
+        return text
+
     def process(
-        self,
-        text: str,
-        prefix: Optional[str] = None,
-        starting_defs: Optional[List[str]] = None,
+            self,
+            text: str,
+            prefix: Optional[str] = None,
+            starting_defs: Optional[Iterable[str]] = None,
+            mappings: Optional[Mapping[str, str]] = None,
     ) -> str:
+        if mappings is None:
+            mappings = {}
+
         mappings: Dict[str, str] = {  # TODO: make this modifiable too
             "def": "def",
             "end": "end",
             "nif": "nif",
             "if": "if",
+            **mappings,
         }
 
-        if not prefix is None:
+        if prefix is not None:
             self.prefix = prefix
 
-        if not starting_defs is None:
+        if starting_defs is not None:
             [self._definitions.add(n) for n in starting_defs]
 
         out = StringIO()
 
-        for line in text.split("\n"):
+        for line in self.process_hooks(text):
             if line.startswith(self.prefix):
                 type_ = None
 
@@ -83,7 +106,7 @@ class PrePeoccesser:
                         type_ = pos
 
                 if type_ is None:
-                    raise ValueError(f"{line!r} is not a pre processer")
+                    raise ValueError(f"{line!r} is not a pre processor")
 
                 # get class function
                 getattr(self, f"get_{mappings[type_]}")(line)

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import re
-from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union
-
+from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union, Iterable
 from hanual.errors.errors import raise_error
+import re
+
 
 if TYPE_CHECKING:
+    from hanual.api.hook import TokenHook
     from typing_extensions import LiteralString
 
 T = TypeVar("T")
@@ -28,20 +29,37 @@ class Token(NamedTuple):
 
 
 class Lexer:
-    __slots__ = "rules", "_rules", "_kwrds"
+    __slots__ = "last", "rules", "_rules", "_kwrds", "_hooks"
 
     def __init__(self):
         self._rules = []
         self._kwrds = []
-        self._update_rules()
+        self._hooks: dict[str, TokenHook] = {}
+        self.update_rules()
 
-    def _update_rules(self, rules=None):
+    def update_rules(self, rules=None):
         for rule in self.rules if not rules else rules:
             if rule[1][1] == "kw":
                 self._kwrds.append((rule[0], rule[1][0]))
 
-            else:
+            elif rule[1][1] == "rx":
                 self._rules.append((rule[0], rule[1][0]))
+
+            else:
+                raise ValueError(f"{rule[1][1]!r} is not recognised as a regex or keyword")
+
+    def add_hooks(self, hooks: Iterable[TokenHook]):
+        for hook in hooks:
+            self._hooks[hook.name] = hook
+
+            if hook.type == "kw":
+                self._kwrds.append((hook.name, hook.regex))
+
+            elif hook.type == "rx":
+                self._rules.append((hook.name, hook.regex))
+
+            else:
+                raise ValueError(f"{hook.type!r} is not recognised as a regex or keyword")
 
     def find_line_num(self, lines: list[str], token: re.Match):
         start, end = token.span()
@@ -58,7 +76,7 @@ class Lexer:
 
     def tokenize(self, stream: str) -> Generator[Token, None, None]:
         lines = stream.split("\n")
-        tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
+        tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules + self.last)
 
         line_no = 1
         line_start = 0
@@ -90,10 +108,14 @@ class Lexer:
                 )
                 exit()
 
-            if hasattr(self, f"t_{kind}"):
-                yield getattr(self, f"t_{kind}")(
-                    kind, value, line_no, col, lines[line_no - 1]
-                )
+            hook = self._hooks.get(kind, None)
+
+            if hook:
+                yield hook.gen_token(kind, value, line_no, col, lines[line_no - 1])
+                continue
+
+            elif hasattr(self, f"t_{kind}"):
+                yield getattr(self, f"t_{kind}")(kind, value, line_no, col, lines[line_no - 1])
                 continue
 
             yield Token(kind, value, line_no, col, lines[line_no - 1])

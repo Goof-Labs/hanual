@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from hanual.compile.options import CompilerOptions
-from typing_extensions import Self
+import os
 from sys import argv
-import re
+from configparser import ConfigParser, ExtendedInterpolation
+from typing_extensions import Self
+
+from hanual.compile.options import CompilerOptions
 
 
 class HanualCli:
@@ -11,19 +13,39 @@ class HanualCli:
 
     def __init__(self: Self) -> None:
         self.kwargs = {}
+        self.parse_config()
         self.parse_argv()
 
     def parse_argv(self: Self):
-        command = " ".join(argv)
+        loose = []
 
-        arg_fmt = re.compile(r"--[a-zA-Z_,]*=[a-zA-Z0-9.]*")
-        for arg in arg_fmt.findall(command):
-            name, val = arg.removeprefix("--").split("=", 1)
-            self.kwargs[name] = val
+        for arg in argv:
+            if "=" in arg:
+                name, val = arg.split("=", 1)
+                self.kwargs[name] = tuple(val.split(",")) if "," in val else val
+
+            else:
+                loose.append(arg)
+
+        self.kwargs["loose_args"] = loose
+
+    def parse_config(self: Self):
+        if not os.path.exists("project.toml"):
+            return
+
+        conf_parser = ConfigParser(interpolation=ExtendedInterpolation())
+
+        with open("project.toml", "r") as f:
+            self.kwargs = {**self.kwargs, **conf_parser.read_file(f)}
 
     @property
     def options(self: Self) -> CompilerOptions:
-        return CompilerOptions(**self.kwargs)
+        return CompilerOptions(**{k: v for k, v in self.kwargs.items() if k in CompilerOptions.__dict__.keys()})
 
 
-HanualCli()
+def main():
+    print(HanualCli().options)
+
+
+if __name__ == "__main__":
+    main()

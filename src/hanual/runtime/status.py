@@ -1,5 +1,5 @@
-# make IntEnum one way or another
-from enum import IntEnum
+from __future__ import  annotations
+
 from typing import Generic, Optional, TypeVar
 
 S = TypeVar("S")

@@ -8,7 +8,7 @@ from hanual.compile.label import Label
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.compile.constant import BaseConstant
+    from hanual.compile.constants.constant import BaseConstant
 
 
 class DumpFile:
@@ -98,7 +98,7 @@ class DumpFile:
                 instr.index = idx
 
             else:
-                data.write(instr.serialize(consts=cm.consts, names=cm.names))
+                data.write(instr.serialize(consts=cm.consts, names=cm.names, cm=cm))
 
         if append:
             self._bytes.write(data.getvalue())

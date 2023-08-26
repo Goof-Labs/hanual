@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, TypeVar
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 
 from .base_node import BaseNode
 
@@ -14,6 +14,8 @@ T = TypeVar("T", bound=BaseNode)
 
 
 class StrongFieldList(BaseNode):
+    __slots__ = "_fields",
+
     def __init__(self: BaseNode) -> None:
         self._fields: List[T] = []
 
@@ -42,7 +44,7 @@ class StrongFieldList(BaseNode):
     def get_constants(self) -> list[Constant]:
         consts = []
 
-        for field in self._field:
+        for field in self._fields:
             consts.extend(field)
 
         return consts

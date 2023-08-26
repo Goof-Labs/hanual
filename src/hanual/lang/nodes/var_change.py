@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 from hanual.compile.instruction import *
 from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
@@ -16,6 +16,8 @@ T = TypeVar("T", bound=BaseNode)
 
 
 class VarChange(BaseNode):
+    __slots__ = "_name", "_value",
+
     def __init__(self: BaseNode, name: Token, value) -> None:
         self._name: Token = name
         self._value: T = value
@@ -32,7 +34,7 @@ class VarChange(BaseNode):
         instructions = []
 
         if isinstance(self._value, Token):
-            if self._vale.type in ("STR", "NUM"):
+            if self._value.type in ("STR", "NUM"):
                 instructions.append(
                     MOV_RC[self._name.value, Constant(self._value.value)]
                 )
@@ -65,12 +67,10 @@ class VarChange(BaseNode):
         return consts
 
     def get_names(self) -> list[str]:
-        names = []
-
-        names.append(self._name.value)
-        names.extend(self._value.get_names())
-
-        return names
+        return [
+            self._name.value,
+            *self._value.get_names()
+        ]
 
     def find_priority(self) -> list[BaseNode]:
         # TODO take blocks or lambda functions into account

@@ -45,6 +45,7 @@ from hanual.lang.productions import DefaultProduction
 
 par = PParser()
 
+
 ###########################
 # STRUCTS
 ###########################
@@ -62,7 +63,7 @@ def strong_field(ts: DefaultProduction[Token, Token, Token]) -> StrongField:
     unless_ends=["COL"],
 )
 def struct_header(
-    ts: DefaultProduction[Token, Token]
+        ts: DefaultProduction[Token, Token]
 ) -> DefaultProduction[Token, Token]:
     # This header exists to provide the `struct NAME` part of the
     # struct, we want to not do this if the following character is
@@ -78,18 +79,18 @@ def strong_fields(ts: DefaultProduction[StrongField, StrongField]) -> StrongFiel
 
 @par.rule("strong_fields strong_field")
 def strong_fields(
-    ts: DefaultProduction[StrongFieldList, StrongField]
+        ts: DefaultProduction[StrongFieldList, StrongField]
 ) -> StrongFieldList:
     return ts[0].add_field(ts[1])
 
 
 @par.rule("struct_header LCB strong_field RCB", "struct_header LCB strong_fields RCB")
 def struct_def(
-    ts: DefaultProduction[
-        DefaultProduction[Token, Token],  # struct header
-        Union[StrongField, StrongFieldList],  # struct fields
-        Token,  # end token
-    ]
+        ts: DefaultProduction[
+            DefaultProduction[Token, Token],  # struct header
+            Union[StrongField, StrongFieldList],  # struct fields
+            Token,  # end token
+        ]
 ) -> StructDefinition:
     return StructDefinition(ts[0][1], ts[2])
 
@@ -446,7 +447,7 @@ def freeze(ts: DefaultProduction):
 
 
 @par.rule("RET", unless_ends=["ID", "NUM", "STR"])
-def ret(ts):
+def ret(ts: DefaultProduction):
     return ReturnStatement(None)
 
 
@@ -559,10 +560,7 @@ def if_chain_start(ts: DefaultProduction, type_: int):
     "if_chain_start condition LCB RCB EIF",
     types={"if_chain_start condition LCB RCB EIF": 2},
 )
-def condition_chain(
-    ts: DefaultProduction[IfChain, Condition, Token, CodeBlock, Token, Token],
-    type_: int,
-) -> IfChain:
+def condition_chain(ts: DefaultProduction, type_: int) -> IfChain:
     if type_ == 2:
         return ts[0].add_node(ElifStatement(ts[1], CodeBlock([])))
 
@@ -576,12 +574,12 @@ def condition_chain(
     "if_chain_start condition LCB lines RCB ELS LCB lines RCB",
 )
 def if_chain(
-    ts: DefaultProduction[
-        IfChain,  # original elif chain
-        Condition,  # condition
-        CodeBlock,  # block
-        CodeBlock,  # line(s)
-    ]
+        ts: DefaultProduction[
+            IfChain,  # original elif chain
+            Condition,  # condition
+            CodeBlock,  # block
+            CodeBlock,  # line(s)
+        ]
 ) -> IfChain:
     return ts[0].add_node(ElifStatement(ts[1], ts[3])).add_else(ElseStatement(ts[7]))
 
@@ -595,17 +593,7 @@ def if_chain(
         "if_chain_start condition LCB RCB": 2,
     },
 )
-def if_chain(
-    ts: DefaultProduction[
-        IfChain,
-        Token,
-        Condition,
-        Token,
-        CodeBlock,
-        Token,
-    ],
-    type_: int,
-) -> IfChain:
+def if_chain(ts: DefaultProduction, type_: int, ) -> IfChain:
     if type_ == 1:
         return ts[0].add_node(ElifStatement(ts[1], ts[3]))
 
@@ -737,7 +725,7 @@ def using(ts: DefaultProduction[Token, Token]) -> UsingStatement:
     "args do lines end",
 )
 def anon_function(
-    ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
+        ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
 ) -> AnonymousFunction:
     return AnonymousFunction(args=ts[0], inner=ts[2])
 
@@ -757,9 +745,9 @@ def anon_function(
     "anon_func_args do lines h_range end",
 )
 def anon_function(
-    ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
+        ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]
 ) -> AnonymousFunction:
-    return AnonymousFunction(args=ts[0], inner=ts[2], retrn=ts[3])
+    return AnonymousFunction(args=ts[0], inner=ts[2], ret=ts[3])
 
 
 ###########################

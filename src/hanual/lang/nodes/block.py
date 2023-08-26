@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from abc import ABC
 from typing import TYPE_CHECKING, Any, List, TypeVar, Union
-
-from hanual.compile.constant import BaseConstant
-
 from .base_node import BaseNode
+from abc import ABC
 
 if TYPE_CHECKING:
-    ...
+    from hanual.compile.constants.constant import BaseConstant
+    from hanual.compile.compile_manager import CompileManager
 
 T = TypeVar("T")
 
@@ -41,11 +39,11 @@ class CodeBlock(BaseNode, ABC):
             if err:
                 return sts
 
-    def compile(self) -> Any:
+    def compile(self, cm: CompileManager) -> Any:
         instructions = []
 
         for child in self.children:
-            instructions.extend(child.compile())
+            instructions.extend(child.compile(cm=cm))
 
         return instructions
 

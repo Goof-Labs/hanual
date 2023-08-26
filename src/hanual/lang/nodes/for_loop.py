@@ -10,7 +10,7 @@ from .implicit_binop import ImplicitBinop
 from .implicit_condition import ImplicitCondition
 
 if TYPE_CHECKING:
-    from hanual.compile.constant import Constant
+    from hanual.compile.constants.constant import Constant
     from hanual.lang.lexer import Token
 
     from .assignment import AssignmentNode

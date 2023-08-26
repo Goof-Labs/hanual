@@ -1,4 +1,4 @@
-from hanual.api.hook import PreProcessorHook, props
+from hanual.api.hooks import PreProcessorHook, props
 from typing import List, Generator
 
 

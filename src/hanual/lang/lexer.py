@@ -6,8 +6,8 @@ import re
 
 
 if TYPE_CHECKING:
-    from hanual.api.hook import TokenHook
     from typing_extensions import LiteralString
+    from hanual.api.hooks import TokenHook
 
 T = TypeVar("T")
 

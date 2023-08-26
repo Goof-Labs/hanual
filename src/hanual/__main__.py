@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import logging
+
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.builtin_parser import get_parser
-from lang.preprocess import Preprocessor
-from api.load_hooks import HookLoader
-from tools.cli import HanualCli
-import logging
+from hanual.lang.util.dump_tree import dump_tree
+
+from .api.load_hooks import HookLoader
+from .lang.preprocess import Preprocessor
+from .tools.cli import HanualCli
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -48,3 +51,5 @@ tokens = lexer.tokenize(text)
 parser = get_parser()
 
 parser.add_hooks(hl.rules)
+
+print(dump_tree(parser.parse(tokens)))

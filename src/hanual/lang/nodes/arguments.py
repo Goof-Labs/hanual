@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, TypeVar, Union
-
-from hanual.compile.constant import Constant
-from hanual.compile.instruction import *
-from hanual.lang.builtin_lexer import Token
+from hanual.compile.constants.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.builtin_lexer import Token
+from hanual.compile.instruction import *
 
 if TYPE_CHECKING:
-    ...
+    from hanual.compile.compile_manager import CompileManager
 
 T = TypeVar("T", Token, BaseNode)
 
@@ -40,7 +39,7 @@ class Arguments(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
-    def compile(self):
+    def compile(self, cm: CompileManager):
         return [UPK(self._children)]
 
     def execute(self):

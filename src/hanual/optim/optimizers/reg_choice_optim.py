@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Union
-
+from .base_optimiszer import BaseOptimizer
 from hanual.compile.instruction import *
-from hanual.optim.optimizer_status import OptimizerStatus
-
-from .base_optimiszer import BaseOptimizer, I
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.compile.label import Label
 
 
 class _RegsManager:
@@ -19,7 +15,7 @@ class _RegsManager:
         self._regs_ali = {k: "" for k in "ABCDE"}
 
     @property
-    def alius(self):
+    def alias(self):
         return self._regs_ali
 
     def find_free(self, reg_name: str, instr_idx: int, _tried: bool = False):
@@ -36,7 +32,7 @@ class _RegsManager:
 
         return self.find_free(reg_name, instr_idx, _tried=True)
 
-    def find_reg(self, target: str, instr_idx: int, _tried: bool = False):
+    def find_reg(self, target: str, _tried: bool = False):
         for reg_name, val in self._regs_ali.items():
             if val == target:
                 return reg_name

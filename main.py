@@ -28,7 +28,7 @@ fn main() {
     println("Hello world")
 }
 """
-whisper = preproc.process(open("test.hnl").read(), starting_defs=["__testing_lang__"])
+whisper = preproc.process(open("test/test.hnl").read(), starting_defs=["__testing_lang__"])
 whisper = lexer.tokenize(whisper)
 whisper = parser.parse(whisper)
 res = verifiy(whisper)
@@ -63,3 +63,5 @@ df.dump_instructions(cm, append=True)
 end = time.perf_counter()
 
 print(end - start)
+
+print(dump_tree(cm))

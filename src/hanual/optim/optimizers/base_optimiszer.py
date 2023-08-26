@@ -7,7 +7,7 @@ from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.optim.optimizer_status import OptimizerStatus
 
-I = TypeVar("I", EXC, UPK, RET, CPY, CMP, JIF, JIT, CALL, JMP)
+_I = TypeVar("_I", EXC, UPK, RET, CPY, CMP, JIF, JIT, CALL, JMP)
 
 
 class BaseOptimizer(ABC):
@@ -18,8 +18,8 @@ class BaseOptimizer(ABC):
     @abstractmethod
     def make_pass(
         self,
-        instructions: List[Union[I, Label]],
-    ) -> OptimizerStatus[List[Union[I, Label]]]:
+        instructions: List[Union[_I, Label]],
+    ) -> OptimizerStatus[List[Union[_I, Label]]]:
         raise NotImplementedError
 
     @property

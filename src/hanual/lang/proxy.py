@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Optional, Iterable, Type, Union, TYPE_CH
 from .productions import DefaultProduction, P
 
 if TYPE_CHECKING:
-    from hanual.api.hook import RuleHook
+    from hanual.api.hooks import RuleHook
     from typing_extensions import Self
 
 """

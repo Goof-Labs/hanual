@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from abc import ABC
+from hanual.compile.constants.constant import Constant
 from typing import TYPE_CHECKING
-
-from hanual.compile.constant import Constant
-from hanual.lang.nodes.base_node import BaseNode
-
 from .base_node import BaseNode
+from abc import ABC
 
 if TYPE_CHECKING:
     from .block import CodeBlock
@@ -40,7 +37,7 @@ class ElifStatement(BaseNode, ABC):
 
         return consts
 
-    def get_names(self) -> list[Constant]:
+    def get_names(self) -> list[str]:
         names = []
 
         names.extend(self._condition.get_names())

@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from hanual.compile.instruction import RET
 from hanual.compile.label import Label
+from typing import TYPE_CHECKING
 
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.compile.constant import BaseConstant
+    from hanual.compile.constants.constant import BaseConstant
+    from hanual.compile.compile_manager import CompileManager
     from hanual.lang.lexer import Token
-
     from .arguments import Arguments
     from .block import CodeBlock
 
@@ -42,11 +41,11 @@ class FunctionDefinition(BaseNode):
     def inner(self) -> CodeBlock:
         return self._inner
 
-    def compile(self):
+    def compile(self, cm: CompileManager):
         return [
             Label(self._name.value),  # jump to point
-            *self._arguments.compile(),  # put arguments into namespace
-            *self._inner.compile(),  # compile block
+            *self._arguments.compile(cm),  # put arguments into namespace
+            *self._inner.compile(cm),  # compile block
             RET(None),  # return
         ]
 

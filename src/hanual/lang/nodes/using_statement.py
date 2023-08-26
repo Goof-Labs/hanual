@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import pathlib
 from abc import ABC
-from os import environ
 from typing import TYPE_CHECKING, Union
 
-from hanual.compile.constant import Constant
-
+from hanual.compile.constants.constant import Constant
 from .base_node import BaseNode
 
 if TYPE_CHECKING:

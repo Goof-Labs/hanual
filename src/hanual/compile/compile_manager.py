@@ -26,7 +26,7 @@ class CompileManager:
             self._const.append(const)
 
     def compile_tree(self):
-        self._instructions = self._tree.compile()
+        self._instructions = self._tree.compile(cm=self)
 
     @property
     def instructions(self):

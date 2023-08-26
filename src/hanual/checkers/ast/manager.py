@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from .checkers import *
-
 if TYPE_CHECKING:
     from hanual.lang.nodes import BaseNode
 

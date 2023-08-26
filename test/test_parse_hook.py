@@ -1,4 +1,4 @@
-from hanual.api.hook import RuleHook, new_rule
+from hanual.api.hooks import RuleHook, new_rule
 
 
 @new_rule("BNG NUM", name="line")

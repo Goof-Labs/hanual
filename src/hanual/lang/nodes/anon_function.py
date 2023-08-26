@@ -21,10 +21,11 @@ class AnonymousFunction(BaseNode, ABC):
         self: BaseNode,
         args: AnonArgs,
         inner: CodeBlock,
-        retrn: Optional[Union[Token, BinOpNode, RangeNode]] = None,
+        ret: Optional[Union[Token, BinOpNode, RangeNode]] = None,
     ) -> None:
         self._inner = inner
         self._args = args
+        self._return = ret
 
     def compile(self) -> None:
         raise NotImplementedError

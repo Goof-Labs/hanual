@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.compile.constant import Constant
+    from hanual.compile.constants.constant import Constant
     from hanual.lang.lexer import Token
 
     from .namespace_acessor import NamespaceAccessor

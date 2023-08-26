@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Dict, Iterable, Mapping, Optional, Set, Union, List
-from hanual.api.hook import PreProcessorHook
+from hanual.api.hooks import PreProcessorHook
 from io import StringIO
 
 

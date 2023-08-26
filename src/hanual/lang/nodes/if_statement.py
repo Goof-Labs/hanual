@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
 

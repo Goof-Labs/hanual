@@ -15,7 +15,7 @@ def new_preprocessor(skip: Optional[List[LiteralString]]) -> Callable[[PreProces
 
 class PreProcessorHook(GenericHook, ABC):
     @abstractmethod
-    def scan_lines(self, lines: List[str]) -> Generator[str, None, None]:
+    def scan_lines(self, lines: Generator[str, None, None]) -> Generator[str, None, None]:
         """
         This method is called once if `scan_line` has not been implemented. This
         generator yields what the code aught to be. This is much more pythonic compared

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union, Iterable
-from hanual.errors.errors import raise_error
+from hanual.lang.errors.errors import raise_error
 import re
 
 
 if TYPE_CHECKING:
-    from hanual.api.hook import TokenHook
     from typing_extensions import LiteralString
+    from hanual.api.hooks import TokenHook
 
 T = TypeVar("T")
 
@@ -61,48 +61,28 @@ class Lexer:
             else:
                 raise ValueError(f"{hook.type!r} is not recognised as a regex or keyword")
 
-    def find_line_num(self, lines: list[str], token: re.Match):
-        start, end = token.span()
-
-        # remainder
-        rem = start
-
-        for line_num, line in enumerate(lines):
-            if len(line) > rem:
-                return line_num, line
-
-            else:
-                rem -= len(line)
-
-    def tokenize(self, stream: str) -> Generator[Token, None, None]:
-        lines = stream.split("\n")
+    def tokenize(self, stream: Generator[str, None, None]) -> Generator[Token, None, None]:
         tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules + self.last)
 
-        line_no = 1
-        line_start = 0
+        for line_no, line in enumerate(stream):
+            yield from self._tokenize_str(tok_reg, line, line_no)
 
-        for pat in re.finditer(tok_reg, stream):
+    def _tokenize_str(self, tok_reg: str, text: str, line_no: int):
+        for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
             value = pat.group()
-            col = pat.start() - line_start
-
-            # print(self.find_line_num(lines, pat))
+            col = pat.start()
 
             for n, v in self._kwrds:
                 if v == value:
                     kind = n
 
-            if kind == "NEWLINE":
-                line_start = pat.end()
-                line_no += 1
-                continue
-
-            elif kind == "SKIP":
+            if kind == "SKIP":
                 continue
 
             elif kind == "MISMATCH":
                 raise_error(
-                    f"{str(line_no).zfill(5)} | {lines[line_no -1]}",
+                    f"{str(line_no).zfill(5)} | {text}",
                     f"unrecognised character '{value}'",
                     "try removing that character",
                 )
@@ -111,11 +91,11 @@ class Lexer:
             hook = self._hooks.get(kind, None)
 
             if hook:
-                yield hook.gen_token(kind, value, line_no, col, lines[line_no - 1])
+                yield hook.gen_token(kind, value, line_no, col, text)
                 continue
 
             elif hasattr(self, f"t_{kind}"):
-                yield getattr(self, f"t_{kind}")(kind, value, line_no, col, lines[line_no - 1])
+                yield getattr(self, f"t_{kind.lower()}")(kind, value, line_no, col, text)
                 continue
 
-            yield Token(kind, value, line_no, col, lines[line_no - 1])
+            yield Token(kind, value, line_no, col, text)

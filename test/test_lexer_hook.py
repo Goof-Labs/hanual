@@ -1,4 +1,4 @@
-from hanual.api.hook import TokenHook, new_token
+from hanual.api.hooks import TokenHook, new_token
 from hanual.lang.lexer import rx
 
 

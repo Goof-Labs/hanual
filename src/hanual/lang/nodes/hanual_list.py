@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 from hanual.compile.instruction import *
 
 from .base_node import BaseNode
@@ -14,7 +14,7 @@ from .arguments import Arguments
 
 
 class HanualList(BaseNode):
-    def __init__(self: BaseNode, args: Arguments) -> None:
+    def __init__(self, args: Arguments) -> None:
         self._elements = args
 
     @property

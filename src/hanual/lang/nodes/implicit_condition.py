@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Union
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 from hanual.lang.lexer import Token
 
 from .base_node import BaseNode

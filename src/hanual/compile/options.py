@@ -20,3 +20,6 @@ class CompilerOptions:
     precomp_math: bool = True
     precomp_concat: bool = True
     precomp_funcs: bool = False
+
+    # misc
+    loose_args: tuple[str] = ()

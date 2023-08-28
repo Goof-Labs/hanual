@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 
 from .base_node import BaseNode
 
@@ -10,11 +10,13 @@ if TYPE_CHECKING:
     from hanual.lang.lexer import Token
 
 
-# typevar to represent a type in the language
+# type var to represent a type in the language
 T = TypeVar("T")
 
 
 class StrongField(BaseNode):
+    __slots__ = "_name", "_type",
+
     def __init__(self: BaseNode, name: Token, type_: T) -> None:
         self._name: Token = name
         self._type: T = type_

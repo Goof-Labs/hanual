@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Dict, Iterable, Mapping, Optional, Set, Union, List
-from hanual.api.hook import PreProcessorHook
-from io import StringIO
+from typing import Dict, Generator, Mapping, Optional, Union, List
+from hanual.api.hooks import PreProcessorHook
 
 
 class Preprocessor:
@@ -22,14 +21,15 @@ class Preprocessor:
 
     def __init__(
             self,
-            pre_defs: Optional[Iterable[str]] = (),
+            pre_defs: Optional[List[str]] = (),
             prefix: Optional[str] = "@",
-            hooks: Optional[Iterable[PreProcessorHook]] = ()
+            hooks: Optional[List[PreProcessorHook]] = ()
     ) -> None:
-        self._hooks: Iterable[PreProcessorHook] = hooks
-        self._definitions: Set[str] = set(pre_defs)
+        self._hooks: List[PreProcessorHook] = hooks or ()
+        self._definitions: list[str] = pre_defs or ()
+        self._prefix: str = prefix or "@"
+
         self._ignore_code: bool = False
-        self._prefix: str = prefix
 
     @property
     def prefix(self: Preprocessor) -> str:
@@ -52,7 +52,15 @@ class Preprocessor:
             f"Name must be of type str not {type(name).__name__}"
         )
 
-        self._definitions.add(name)
+        self._definitions.append(name)
+
+    @staticmethod
+    def _skip_lines(text: list[str], ignore: list[str]) -> Generator[str, None, None]:
+        for line in text:
+            if line in ignore:
+                continue
+
+            yield line
 
     def process_hooks(self, text: Union[str, List[str]]):
         if isinstance(text, str):
@@ -61,23 +69,21 @@ class Preprocessor:
         for hook in self._hooks:
             # same function
             ignore = hook.props.get("skip", ())
-            lines = []
 
-            for line in text:
-                if line not in ignore:
-                    lines.append(line)
-
-            text = hook.scan_lines(lines)
+            text = hook.scan_lines(self._skip_lines(text, ignore))
 
         return text
+
+    def add_hook(self, hook: PreProcessorHook) -> None:
+        self._hooks.append(hook)
 
     def process(
             self,
             text: str,
             prefix: Optional[str] = None,
-            starting_defs: Optional[Iterable[str]] = None,
+            starting_defs: Optional[List[str]] = None,
             mappings: Optional[Mapping[str, str]] = None,
-    ) -> str:
+    ) -> Generator[str, None, None]:
         if mappings is None:
             mappings = {}
 
@@ -93,34 +99,30 @@ class Preprocessor:
             self.prefix = prefix
 
         if starting_defs is not None:
-            [self._definitions.add(n) for n in starting_defs]
+            self._definitions.extend(starting_defs)
 
-        out = StringIO()
-
+        # run our own preprocessors
         for line in self.process_hooks(text):
+            # each preprocessor starts with a prefix
             if line.startswith(self.prefix):
-                type_ = None
 
-                for pos in mappings.keys():
-                    if line.startswith(self.prefix + pos):
-                        type_ = pos
+                # check all pre procs both possible aliases and run a corresponding function
+                for orig, alias in mappings.items():
+                    if line.startswith((self.prefix + orig, self.prefix + alias)):
+                        getattr(self, f"get_{orig}")(line)
+                        break
 
-                if type_ is None:
+                else:
                     raise ValueError(f"{line!r} is not a pre processor")
 
-                # get class function
-                getattr(self, f"get_{mappings[type_]}")(line)
-
             elif not self._ignore_code:
-                out.write(line + "\n")
-
-        return out.getvalue()
+                yield line + "\n"
 
     def get_def(self, line: str) -> None:
         # TODO use lexer
         name: str = line.split(" ")[1]  # Get the definition name
 
-        self._definitions.add(name)
+        self._definitions.append(name)
 
     def get_end(self, line: str) -> None:
         # We will just reset it

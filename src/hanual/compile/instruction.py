@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from typing import Any, Iterable, Literal, Union, Type
 from abc import ABC, abstractmethod
-from io import StringIO
 from random import randbytes
-from typing import Any, Iterable, Literal, Union
+from io import StringIO
 
 from hanual.compile.label import Label
 from hanual.lang.lexer import Token
@@ -37,7 +37,7 @@ class BaseInstruction(ABC):
     # This makes it easier to distinguish class inits
     # vs instruction inits
     def __class_getitem__(
-        cls, to: Union[Literal[None], Iterable] = None
+        cls: Type, to: Union[Literal[None], Iterable] = None
     ) -> BaseInstruction:
         if to is None:
             return cls()
@@ -120,7 +120,7 @@ class MOV_RF(MOV):
         return (
             (0b1110_0010).to_bytes(length=1, byteorder="big")
             + ("ABCDEFO".index(self.to)).to_bytes(length=1, byteorder="big")
-            + names.index(self.val.ref).to_bytes(length=7, byteorder="big")
+            + self.val.compile(cm=kwargs["cm"]).to_bytes(length=7, byteorder="big")
         )
 
 

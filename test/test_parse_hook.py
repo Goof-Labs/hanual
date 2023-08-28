@@ -1,4 +1,4 @@
-from hanual.api.hook import RuleHook, new_rule
+from hanual.api.hooks import RuleHook, new_rule
 
 
 @new_rule("BNG NUM", name="line")
@@ -9,6 +9,7 @@ class UseLessRule(RuleHook):
 
     def __call__(self, ts):
         return self.create_rule(ts)
+
 
 def get_hooks():
     return [UseLessRule()]

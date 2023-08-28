@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from hanual.compile.constant import BaseConstant
+from hanual.compile.constants.constant import BaseConstant
 
 from .base_node import BaseNode
 
@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 
 class ElseStatement(BaseNode):
+    __slots__ = "_body",
+
     def __init__(self: BaseNode, body: CodeBlock) -> None:
         self._body = body
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 from hanual.compile.compile_manager import CompileManager
-from optimizers import *
+from .optimizers import *
 
 
 class OptimizerHandler:

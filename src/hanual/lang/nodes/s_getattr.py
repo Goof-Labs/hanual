@@ -2,23 +2,21 @@ from __future__ import annotations
 
 from typing import TypeVar
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 from hanual.lang.lexer import Token
-from hanual.lang.nodes.base_node import BaseNode
-
-from .base_node import BaseNode
-from .dot_chain import DotChain
-from .f_call import FunctionCall
 from .hanual_list import HanualList
+from .f_call import FunctionCall
+from .dot_chain import DotChain
+from .base_node import BaseNode
 
-O = TypeVar("O", Token, DotChain, FunctionCall)
+_O = TypeVar("_O", Token, DotChain, FunctionCall)
 P = TypeVar("P", HanualList, ...)
 
 
 class SGetattr(BaseNode):
-    def __init__(self: BaseNode, obj: O, part: P) -> None:
+    def __init__(self: BaseNode, obj: _O, part: P) -> None:
         self._prt: P = part
-        self._obj: O = obj
+        self._obj: _O = obj
 
     def execute(self):
         return super().execute()

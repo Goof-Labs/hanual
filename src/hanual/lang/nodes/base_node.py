@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Dict, Tuple, TypeVar, Union
 from hanual.lang.builtin_lexer import Token
 
 if TYPE_CHECKING:
-    from hanual.compile.constant import BaseConstant
+    from hanual.compile.constants.constant import BaseConstant
 
 
 T = TypeVar("T")
@@ -33,11 +33,6 @@ class BaseNode(ABC):
 
     @abstractmethod
     def execute(self):
-        """
-        A method that takes in the runtime and will
-        evaluate the expression. e.g BioOp("+", 1, 2)
-        should return 3.
-        """
         raise NotImplementedError
 
     @abstractmethod

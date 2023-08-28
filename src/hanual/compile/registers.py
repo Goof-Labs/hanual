@@ -13,13 +13,3 @@ class Registers(Enum):
     O: str = "O"
     S: str = "O"
     R: str = "R"
-
-
-class RegisterID(Enum):
-    A: int = 1
-    B: int = 2
-    C: int = 3
-    D: int = 4
-    E: int = 5
-    F: int = 6
-    O: int = 7

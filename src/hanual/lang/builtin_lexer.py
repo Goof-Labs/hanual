@@ -53,14 +53,12 @@ class HanualLexer(Lexer):
 
     last = [
         # special cases
-        ("NEWLINE", rx(r"\n")),
         ("SKIP", rx(r"[ \t]+|//.*|/\*[^*]*\*+(?:[^/*][^*]*\*+)*/")),
         ("MISMATCH", rx(r".")),
     ]
 
-    def t_NUM(
-        self, kind: str, value: str, line_no: int, col: int, origin_line: str
-    ) -> Token:
+    @staticmethod
+    def t_num(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
         return Token(
             kind,
             float(value) if "." in value else int(value),

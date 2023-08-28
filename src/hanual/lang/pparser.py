@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Generator, List, Optional, Tuple, Type, TypeVar
 from .productions import DefaultProduction
-from hanual.api.hook import RuleHook
+from hanual.api.hooks import RuleHook
 from copy import deepcopy
 from .lexer import Token
 from .proxy import Proxy
@@ -83,7 +83,7 @@ class PParser:
         """
         This function is a decorator, so it can be used with the following syntax:
 
-        >>> parser = PParser()
+        >>> Parser = PParser()
         >>> ...
         >>> @parser.rule("rule_1", "rule_2")
         >>> def my_rule(*token_stream):
@@ -243,7 +243,7 @@ class PParser:
                 res = proxy.call(p_args, pattern.split(" "))
                 stack.append((reducer, res))
 
-                # there has be a reduction aka change so set flag to true
+                # there has been a reduction aka change so set a flag to true
                 change = True
 
             if (next_token is None) and (change is False):

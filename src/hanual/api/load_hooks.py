@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanual.api.hook import PreProcessorHook, TokenHook, RuleHook
+from hanual.api.hooks import PreProcessorHook, TokenHook, RuleHook
 from typing import List, Tuple, TypeVar
 import importlib.util
 import logging

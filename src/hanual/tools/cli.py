@@ -29,14 +29,27 @@ class HanualCli:
 
         self.kwargs["loose_args"] = loose
 
-    def parse_config(self: Self):
-        if not os.path.exists("project.toml"):
-            return
+    def parse_config(self: Self) -> Self:
+        cfg = self.kwargs.get("cfg", None)
+
+        # no configuration passed
+        if not cfg:
+            return self
+
+        # check if cfg exists
+        if not os.path.exists(cfg):
+            raise Exception(f"{cfg!r} does not exist")
 
         conf_parser = ConfigParser(interpolation=ExtendedInterpolation())
+        conf_parser.read(cfg)
 
-        with open("project.toml", "r") as f:
-            self.kwargs = {**self.kwargs, **conf_parser.read_file(f)}
+        for k, v in conf_parser["cli-options"].items():
+            if "," in v:
+                v = v.split(",")
+
+            self.kwargs[k] = v
+
+        return self
 
     @property
     def options(self: Self) -> CompilerOptions:

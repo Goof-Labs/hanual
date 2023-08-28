@@ -1,22 +1,23 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
-
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
+from hanual.compile.registers import Registers
 from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
 from hanual.compile.refs import Ref
-from hanual.compile.registers import Registers
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
 from .dot_chain import DotChain
 
 if TYPE_CHECKING:
+    from hanual.compile.compile_manager import CompileManager
     from .arguments import Arguments
 
 
 class FunctionCall(BaseNode):
+    __slots__ = "_name", "_args",
+
     def __init__(self: BaseNode, name: Token, arguments: Arguments) -> None:
         self._name: Union[Token, DotChain] = name
         self._args: Arguments = arguments
@@ -29,15 +30,15 @@ class FunctionCall(BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def compile(self):
+    def compile(self, cm: CompileManager):
         instructions = []
 
-        ret_lbl = Label("RETURL-LBL", mangle=True)
+        ret_lbl = Label("RETURN-LBL", mangle=True)
 
-        instructions.extend(self._args.compile())
+        instructions.extend(self._args.compile(cm=cm))
 
         instructions.append(MOV_RI[Registers.O.value, ret_lbl.index])
-        instructions.append(MOV_RF[Registers.F.value, Ref[self._name.value]])
+        instructions.append(MOV_RF[Registers.F.value, Ref[self._name.value, cm]])
         instructions.append(CALL[None])
 
         instructions.append(ret_lbl)

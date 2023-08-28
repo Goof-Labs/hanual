@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from abc import ABCMeta
 from typing import TYPE_CHECKING, List, Union
-
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
+from abc import ABC
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class DotChain(BaseNode, metaclass=ABCMeta):
+class DotChain(BaseNode, ABC):
+    __slots__ = "_chain",
+
     def __init__(self: BaseNode) -> None:
         self._chain: List[Token] = []
 

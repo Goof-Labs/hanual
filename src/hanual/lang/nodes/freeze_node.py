@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING, TypeVar
 
-from hanual.compile.constant import Constant
+from hanual.compile.constants.constant import Constant
 from hanual.lang.lexer import Token
 
 from .base_node import BaseNode

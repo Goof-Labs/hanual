@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union, Iterable
-from hanual.errors.errors import raise_error
+from hanual.lang.errors.errors import raise_error
 import re
 
 

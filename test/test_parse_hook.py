@@ -10,5 +10,6 @@ class UseLessRule(RuleHook):
     def __call__(self, ts):
         return self.create_rule(ts)
 
+
 def get_hooks():
     return [UseLessRule()]

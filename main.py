@@ -4,14 +4,13 @@ import time
 from hashlib import sha256
 from pprint import PrettyPrinter
 
-from hanual.checkers.ast import verifiy
 from hanual.compile.compile_manager import CompileManager
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.preprocess.preprocesser import Preprocessor
 from hanual.lang.util.dump_tree import dump_tree
-from hanual.optim.optimizer_handeler import OptimizerHandler
-from hanual.serialize import DumpFile
+from hanual.compile.optim.optimizer_handeler import OptimizerHandler
+from hanual.compile.serialize import DumpFile
 
 start = time.perf_counter()
 
@@ -31,13 +30,12 @@ fn main() {
 whisper = preproc.process(open("test/test.hnl").read(), starting_defs=["__testing_lang__"])
 whisper = lexer.tokenize(whisper)
 whisper = parser.parse(whisper)
-res = verifiy(whisper)
 
 
 # print(dump_tree(res, depth=12))
 
 
-cm = CompileManager(res[0][1])
+cm = CompileManager(whisper[0][1])
 
 cm.collect_constants()
 cm.collect_names()

@@ -243,7 +243,7 @@ class PParser:
                 res = proxy.call(p_args, pattern.split(" "))
                 stack.append((reducer, res))
 
-                # there has be a reduction aka change so set flag to true
+                # there has been a reduction aka change so set a flag to true
                 change = True
 
             if (next_token is None) and (change is False):

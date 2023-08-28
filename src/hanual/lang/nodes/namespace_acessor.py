@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 class NamespaceAccessor(BaseNode, ABC):
+    __slots__ = "_path",
+
     def __init__(self: BaseNode, first: Token) -> None:
         self._path: List[Token] = [first]
 
@@ -24,6 +26,9 @@ class NamespaceAccessor(BaseNode, ABC):
         else:
             self._path.append(child)
         return self
+
+    def find_priority(self) -> list[BaseNode]:
+        return []
 
     @property
     def full_path(self) -> str:

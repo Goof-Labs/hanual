@@ -42,8 +42,12 @@ class FunctionDefinition(BaseNode):
         return self._inner
 
     def compile(self, cm: CompileManager):
+        jp = Label(self._name.value)
+
+        cm.add_function(self.name.value, jp)
+
         return [
-            Label(self._name.value),  # jump to point
+            jp,  # jump to point
             *self._arguments.compile(cm),  # put arguments into namespace
             *self._inner.compile(cm),  # compile block
             RET(None),  # return

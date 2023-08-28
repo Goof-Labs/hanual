@@ -22,11 +22,11 @@ class Preprocessor:
 
     def __init__(
             self,
-            pre_defs: Optional[Iterable[str]] = (),
+            pre_defs: Optional[List[str]] = (),
             prefix: Optional[str] = "@",
-            hooks: Optional[Iterable[PreProcessorHook]] = ()
+            hooks: Optional[List[PreProcessorHook]] = ()
     ) -> None:
-        self._hooks: Iterable[PreProcessorHook] = hooks
+        self._hooks: List[PreProcessorHook] = hooks
         self._definitions: Set[str] = set(pre_defs)
         self._ignore_code: bool = False
         self._prefix: str = prefix
@@ -71,11 +71,14 @@ class Preprocessor:
 
         return text
 
+    def add_hook(self, hook: PreProcessorHook) -> None:
+        self._hooks.append(hook)
+
     def process(
             self,
             text: str,
             prefix: Optional[str] = None,
-            starting_defs: Optional[Iterable[str]] = None,
+            starting_defs: Optional[List[str]] = None,
             mappings: Optional[Mapping[str, str]] = None,
     ) -> str:
         if mappings is None:

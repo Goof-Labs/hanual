@@ -27,7 +27,7 @@ def hl_compile(*,
                ) -> None:
     # set default arguments and stuff
     if options is None:
-        options = HanualCli().options
+        options = HanualCli().parse_config().options
 
     if hook_loader is None:
         hook_loader = HookLoader()
@@ -67,9 +67,7 @@ def hl_compile(*,
     if not options.files:
         raise Exception("No files specified")
 
-    file = options.files[0] if isinstance(options.files, tuple) else options.files
-
-    with open(file, "r") as f:
+    with open(options.files[0], "r") as f:
         text = preproc.process(text=f.read(),
                                prefix=prefix,
                                starting_defs=starting_definitions,
@@ -95,7 +93,8 @@ def hl_compile(*,
 
     # optimizations
     op = OptimizerHandler()
-    code = op.proof_read(cm.instructions)
+
+    op.proof_read(cm)
 
     df = DumpFile()
-    df.dump_file(cm, code, (0, 0, 0), text)
+    df.dump_file(cm, (0, 0, 0), text)

@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
-
+from hanual.compile.compile_manager import CompileManager
 from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
 from hanual.compile.registers import Registers
+from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .f_call import FunctionCall
 
 
-class ImplicitBinop(BaseNode):
+class ImplicitBinOp(BaseNode):
     def __init__(self: BaseNode, op: Token, right: Union[Token, FunctionCall]) -> None:
         # The left side is implied
         self._right = right
@@ -27,7 +26,7 @@ class ImplicitBinop(BaseNode):
     def right(self) -> Union[Token, FunctionCall]:
         return self._right
 
-    def compile(self, name: str):
+    def compile(self, cm: CompileManager, name: str):
         instructions = []
 
         reg_1 = new_reg()
@@ -48,7 +47,7 @@ class ImplicitBinop(BaseNode):
                 raise NotImplementedError
 
         else:
-            instructions.extend(self._right.compile())
+            instructions.extend(self._right.compile(cm))
             instructions.append(MOV_RR[reg_2, Registers.R])
 
         instructions.append(EXC[self._op.value, reg_1, reg_2])

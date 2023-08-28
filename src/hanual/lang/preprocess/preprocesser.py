@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Generator, Mapping, Optional, Set, Union, List
+from typing import Dict, Generator, Mapping, Optional, Union, List
 from hanual.api.hooks import PreProcessorHook
 
 
@@ -25,10 +25,11 @@ class Preprocessor:
             prefix: Optional[str] = "@",
             hooks: Optional[List[PreProcessorHook]] = ()
     ) -> None:
-        self._hooks: List[PreProcessorHook] = hooks
-        self._definitions: Set[str] = set(pre_defs)
+        self._hooks: List[PreProcessorHook] = hooks or ()
+        self._definitions: list[str] = pre_defs or ()
+        self._prefix: str = prefix or "@"
+
         self._ignore_code: bool = False
-        self._prefix: str = prefix
 
     @property
     def prefix(self: Preprocessor) -> str:
@@ -51,7 +52,7 @@ class Preprocessor:
             f"Name must be of type str not {type(name).__name__}"
         )
 
-        self._definitions.add(name)
+        self._definitions.append(name)
 
     @staticmethod
     def _skip_lines(text: list[str], ignore: list[str]) -> Generator[str, None, None]:
@@ -98,7 +99,7 @@ class Preprocessor:
             self.prefix = prefix
 
         if starting_defs is not None:
-            [self._definitions.add(n) for n in starting_defs]
+            self._definitions.extend(starting_defs)
 
         # run our own preprocessors
         for line in self.process_hooks(text):
@@ -121,7 +122,7 @@ class Preprocessor:
         # TODO use lexer
         name: str = line.split(" ")[1]  # Get the definition name
 
-        self._definitions.add(name)
+        self._definitions.append(name)
 
     def get_end(self, line: str) -> None:
         # We will just reset it

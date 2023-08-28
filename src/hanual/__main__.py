@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import logging
 
-from .compile.h_compile import hl_compile
-from api.load_hooks import HookLoader
-from tools.cli import HanualCli
+from hanual.compile.h_compile import hl_compile
+from hanual.api.load_hooks import HookLoader
+from hanual.tools.cli import HanualCli
 
 logging.basicConfig(level=logging.DEBUG)
 

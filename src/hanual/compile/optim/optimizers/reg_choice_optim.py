@@ -25,7 +25,7 @@ class _RegsManager:
                 self._regs_use[name] = True
                 return name
 
-        if _tried:  # stop recursing infinately
+        if _tried:  # stop recurring infinitely
             return None
 
         self._gc_regs(instr_idx)
@@ -45,14 +45,12 @@ class _RegsManager:
 
 class RegChoiceOptimizer(BaseOptimizer):
     def __init__(self) -> None:
-        self._appierences = {}
-        self._first = False
+        self._apprentices = {}
 
     def make_pass(self, cm: CompileManager):
         regs = _RegsManager()
 
-        if not self._first:
-            self.make_first_pass(cm.instructions)
+        self.make_first_pass(cm.instructions)
 
         for idx, instr in enumerate(cm.instructions):
             if not issubclass(type(instr), MOV):
@@ -69,17 +67,17 @@ class RegChoiceOptimizer(BaseOptimizer):
 
     def make_first_pass(self, instructions):
         """
-        This will loop backwards over the instruction so we can record the last time an instruction is used.
+        This will loop backwards over the instruction, so we can record the last time an instruction is used.
         """
         for idx, instruction in reversed(list(enumerate(instructions))):
             if not issubclass(instruction.__class__, MOV):
                 continue
 
             if isinstance(instruction.to, list):
-                self._appierences[instruction.to[0]] = idx
+                self._apprentices[instruction.to[0]] = idx
 
             if isinstance(instruction.val, list):
-                self._appierences[instruction.val[0]] = idx
+                self._apprentices[instruction.val[0]] = idx
 
     @property
     def done(self) -> bool:

@@ -21,7 +21,7 @@ from .freeze_node import FreezeNode
 from .hanual_list import HanualList
 from .if_chain import IfChain
 from .if_statement import IfStatement
-from .implicit_binop import ImplicitBinop
+from .implicit_binop import ImplicitBinOp
 from .implicit_condition import ImplicitCondition
 from .iter_loop import IterLoop
 from .namespace_acessor import NamespaceAccessor

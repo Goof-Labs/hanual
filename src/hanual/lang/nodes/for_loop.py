@@ -1,21 +1,19 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
-
-from hanual.compile.instruction import *
-from hanual.compile.label import Label
-
-from .base_node import BaseNode
-from .implicit_binop import ImplicitBinop
 from .implicit_condition import ImplicitCondition
+from .implicit_binop import ImplicitBinOp
+from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
+from hanual.compile.label import Label
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
+    from hanual.compile.compile_manager import CompileManager
     from hanual.compile.constants.constant import Constant
-    from hanual.lang.lexer import Token
-
     from .assignment import AssignmentNode
-    from .block import CodeBlock
+    from hanual.lang.lexer import Token
     from .conditions import Condition
+    from .block import CodeBlock
 
 
 # for let i=0, < 10, +110
@@ -24,12 +22,12 @@ class ForLoop(BaseNode):
         self: BaseNode,
         condition: Union[ImplicitCondition, Condition],
         init: Union[Token, AssignmentNode],
-        action: ImplicitBinop,
+        action: ImplicitBinOp,
         body: CodeBlock,
     ) -> None:
         self._while: Union[ImplicitCondition, Condition] = condition
         self._init: Union[Token, AssignmentNode] = init
-        self._action: ImplicitBinop = action
+        self._action: ImplicitBinOp = action
         self._body: CodeBlock = body
 
     @property
@@ -41,14 +39,14 @@ class ForLoop(BaseNode):
         return self._init
 
     @property
-    def action(self) -> ImplicitBinop:
+    def action(self) -> ImplicitBinOp:
         return self._action
 
     @property
     def body(self) -> CodeBlock:
         return self._body
 
-    def compile(self):
+    def compile(self, cm: CompileManager):
         """
         For loops follow the format:
         initialize, keep going while, increment
@@ -83,17 +81,17 @@ class ForLoop(BaseNode):
 
         instructions.append(JIF(end_lbl))
 
-        if isinstance(self._action, ImplicitBinop):
-            instructions.extend(self._action.compile(self._init.target.value))
+        if isinstance(self._action, ImplicitBinOp):
+            instructions.extend(self._action.compile(name=self._init.target.value, cm=cm))
 
         else:
-            if isinstance(self._action, ImplicitBinop):
-                instructions.extend(self._action.compile(name=self._init.target.value))
+            if isinstance(self._action, ImplicitBinOp):
+                instructions.extend(self._action.compile(name=self._init.target.value, cm=cm))
 
             else:
                 raise NotImplementedError
 
-        instructions.extend(self._body.compile())
+        instructions.extend(self._body.compile(cm))
 
         instructions.append(JMP(start_lbl))
 

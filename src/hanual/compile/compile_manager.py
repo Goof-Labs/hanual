@@ -67,12 +67,16 @@ class CompileManager:
         self._file_deps.append(name)
 
     @property
-    def fn_table(self):
-        return self._fn_table
-
-    @property
     def instructions(self):
         return self._instructions
+
+    @instructions.setter
+    def instructions(self, val: List):
+        self._instructions = val
+
+    @property
+    def fn_table(self):
+        return self._fn_table
 
     @property
     def names(self):

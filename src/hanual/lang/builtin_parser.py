@@ -24,7 +24,7 @@ from hanual.lang.nodes import (
     HanualList,
     IfChain,
     IfStatement,
-    ImplicitBinop,
+    ImplicitBinOp,
     ImplicitCondition,
     NamespaceAccessor,
     NewStruct,
@@ -180,7 +180,7 @@ def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
 
 
 ###########################
-# IMPLICIT CONDITIONDS
+# IMPLICIT CONDITIONS
 ###########################
 
 
@@ -202,7 +202,7 @@ def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
 
 @par.rule("OP OP NUM", "OP OP ID", "OP OP f_call", unless_ends=["LPAR"])
 def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
-    return ImplicitBinop(ts[0], ts[2])
+    return ImplicitBinOp(ts[0], ts[2])
 
 
 ###########################

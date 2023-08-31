@@ -45,7 +45,7 @@ class IfChain(BaseNode):
 
         return names
 
-    def execute(self):
+    def execute(self, env):
         for statement in self._statements:
             err, res = sts = statement.execute()
 

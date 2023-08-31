@@ -51,7 +51,7 @@ class VarChange(BaseNode):
 
         return instructions
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:

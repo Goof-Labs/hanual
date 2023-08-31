@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from hanual.compile.compile_manager import CompileManager
-from hanual.compile.constants.constant import Constant
+from hanual.exec.result import Result
 from typing import TYPE_CHECKING
 from .base_node import BaseNode
 from abc import ABC
 
 
 if TYPE_CHECKING:
+    from hanual.compile.compile_manager import CompileManager
+    from hanual.compile.constants.constant import Constant
     from .namespace_acessor import NamespaceAccessor
+    from hanual.exec.scope import Scope
 
 
 class UsingStatement(BaseNode, ABC):
@@ -34,5 +36,6 @@ class UsingStatement(BaseNode, ABC):
     def find_priority(self) -> list[BaseNode]:
         return []
 
-    def execute(self):
-        ...
+    def execute(self, scope: Scope) -> Result[None, None]:
+        # TODO
+        return Result().success(None)

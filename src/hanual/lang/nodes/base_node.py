@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict, Tuple, TypeVar, Union
-
 from hanual.lang.builtin_lexer import Token
+from hanual.exec.scope import Scope
+from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     from hanual.compile.constants.constant import BaseConstant
+    from hanual.exec.result import Result
 
 
 T = TypeVar("T")
@@ -17,7 +18,7 @@ class BaseNode(ABC):
     @abstractmethod
     def __init__(self: BaseNode, *nodes: Tuple[T]) -> None:
         """
-        This method should take n amount of arguments,
+        This method should take n number of arguments,
         these are either more nodes, or raw tokens.
         """
         raise NotImplementedError
@@ -32,7 +33,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def execute(self):
+    def execute(self, scope: Scope) -> Result:
         raise NotImplementedError
 
     @abstractmethod

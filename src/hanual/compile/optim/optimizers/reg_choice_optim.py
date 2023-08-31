@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 class _RegsManager:
     def __init__(self) -> None:
         self._regs_use = {k: False for k in "ABCDE"}
-        self._regs_exp = {k: False for k in "ABCDE"}
         self._regs_ali = {k: "" for k in "ABCDE"}
 
     @property

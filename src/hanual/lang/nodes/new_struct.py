@@ -36,5 +36,5 @@ class NewStruct(BaseNode):
     def get_names(self) -> list[str]:
         return [self._name, *self._args.get_names()]
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError

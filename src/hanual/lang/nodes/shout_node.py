@@ -24,5 +24,5 @@ class ShoutNode(BaseNode):
     def get_names(self) -> list[str]:
         return []
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError

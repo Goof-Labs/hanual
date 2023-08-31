@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import time
 from hashlib import sha256
-from pprint import PrettyPrinter
 
 from hanual.compile.compile_manager import CompileManager
 from hanual.lang.builtin_lexer import HanualLexer
@@ -14,7 +13,6 @@ from hanual.compile.serialize import DumpFile
 
 start = time.perf_counter()
 
-pp = PrettyPrinter()
 
 
 preproc = Preprocessor()

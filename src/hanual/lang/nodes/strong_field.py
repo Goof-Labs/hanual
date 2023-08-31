@@ -32,7 +32,7 @@ class StrongField(BaseNode):
     def compile(self) -> None:
         return super().compile()
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:

@@ -37,5 +37,5 @@ class HanualList(BaseNode):
             if issubclass(type(e), Constant):
                 data.append(MOV_HC[new_heap(), e])
 
-    def execute(self):
-        return super().execute()
+    def execute(self, env):
+        raise NotImplementedError

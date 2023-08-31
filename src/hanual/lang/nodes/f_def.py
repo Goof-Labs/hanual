@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from hanual.compile.instruction import RET
 from hanual.compile.label import Label
-from typing import TYPE_CHECKING
-
+from hanual.exec.result import Result
+from typing import TYPE_CHECKING, Any
 from .base_node import BaseNode
+
 
 if TYPE_CHECKING:
     from hanual.compile.constants.constant import BaseConstant
     from hanual.compile.compile_manager import CompileManager
+    from hanual.exec.scope import Scope
     from hanual.lang.lexer import Token
     from .arguments import Arguments
     from .block import CodeBlock
@@ -63,8 +65,16 @@ class FunctionDefinition(BaseNode):
     def get_constants(self) -> list[BaseConstant]:
         return self._inner.get_constants()
 
-    def execute(self):
-        raise NotImplementedError
+    def execute(self, scope: Scope) -> Result:
+        scope.set(self._name.value, self.execute_body)
+        return Result().success(None)
+
+    def execute_body(self, scope: Scope) -> Result[Any, Any]:
+        res = Result()
+
+        res.inherit_from(self._inner.execute(scope=scope))
+
+        return res
 
     def find_priority(self) -> list[BaseNode]:
         return [self]

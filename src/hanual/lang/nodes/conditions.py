@@ -107,7 +107,7 @@ class Condition(BaseNode, ABC):
 
         return names
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:

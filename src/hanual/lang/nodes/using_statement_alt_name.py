@@ -38,5 +38,5 @@ class UsingStatementWithAltName(BaseNode):
     def get_names(self) -> list[str]:
         return [self._name.value]
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError

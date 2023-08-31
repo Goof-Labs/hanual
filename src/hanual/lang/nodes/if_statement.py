@@ -56,7 +56,7 @@ class IfStatement(BaseNode, ABC):
     def get_names(self):
         return [*self._condition.get_names(), *self._block.get_names()]
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:

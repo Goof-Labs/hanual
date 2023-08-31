@@ -30,7 +30,7 @@ class StrongFieldList(BaseNode):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_names(self) -> list[str]:

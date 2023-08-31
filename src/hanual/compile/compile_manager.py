@@ -16,13 +16,12 @@ class ItemData:
 
 
 class CompileManager:
-    __slots__ = "_tree", "_instructions", "_collected", "_items", "_file_deps", "_fn_table",
+    __slots__ = "_tree", "_instructions", "_items", "_file_deps", "_fn_table",
 
     def __init__(self, tree) -> None:
         self._items = ItemData(None, None)
         self._tree: BaseNode = tree
         self._instructions = []
-        self._collected = []
         self._file_deps = []
         self._fn_table = {}
 

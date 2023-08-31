@@ -18,8 +18,8 @@ class SGetattr(BaseNode):
         self._prt: P = part
         self._obj: _O = obj
 
-    def execute(self):
-        return super().execute()
+    def execute(self, env):
+        raise NotImplementedError
 
     def compile(self):
         return super().compile()

@@ -41,7 +41,7 @@ class StructDefinition(BaseNode):
         # The struct info is treated as an array (under the hood)
         return []
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_names(self) -> list[Constant]:

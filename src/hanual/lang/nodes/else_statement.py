@@ -20,8 +20,8 @@ class ElseStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def execute(self):
-        return super().execute()
+    def execute(self, env):
+        raise NotImplementedError
 
     def compile(self):
         return self._body.compile()

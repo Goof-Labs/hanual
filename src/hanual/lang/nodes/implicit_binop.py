@@ -54,7 +54,7 @@ class ImplicitBinOp(BaseNode):
 
         return instructions
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_names(self) -> list[str]:

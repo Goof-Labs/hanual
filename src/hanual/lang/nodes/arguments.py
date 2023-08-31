@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, TypeVar, Union
+from typing import TYPE_CHECKING, List, TypeVar, Union, Optional
 from hanual.compile.constants.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
+from hanual.exec.result import Result
+from .f_def import FunctionDefinition
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
 
-T = TypeVar("T", Token, BaseNode)
+T = TypeVar("T")
 
 
 class Arguments(BaseNode):
@@ -42,8 +44,11 @@ class Arguments(BaseNode):
     def compile(self, cm: CompileManager):
         return [UPK(self._children)]
 
-    def execute(self):
-        raise NotImplementedError
+    def execute(self, scope, initiator: Optional[str] = None):
+        # TODO: errors
+        func: Union[FunctionDefinition, None] = scope.get(initiator, None)
+        args = {k: v.value for k, v in zip(func.arguments.children, self._children)}
+        return Result().success(args)
 
     def get_names(self) -> list[Token]:
         names: List[Token] = []

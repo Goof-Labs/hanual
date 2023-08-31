@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, List, TypeVar, Union, Optional
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from .base_node import BaseNode
 from abc import ABC
 
@@ -31,13 +33,17 @@ class CodeBlock(BaseNode, ABC):
 
         return self
 
-    def execute(self):
+    def execute(self, scope: Scope) -> Result:
+        res = Result()
+
         for child in self._children:
             # If we have an error then we raise it, otherwise I just discard the return value and keep going
-            err, _ = sts = child.execute()
+            res.inherit_from(child.execute(scope=scope))
 
-            if err:
-                return sts
+            if res.error:
+                return res
+
+        return res
 
     def compile(self, cm: CompileManager) -> Any:
         instructions = []

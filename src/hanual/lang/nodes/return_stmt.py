@@ -38,5 +38,5 @@ class ReturnStatement(BaseNode, ABC):
     def find_priority(self) -> list[BaseNode]:
         return []
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError

@@ -24,7 +24,7 @@ class FreezeNode(BaseNode, ABC):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:

@@ -44,5 +44,5 @@ class ImplicitCondition(BaseNode):
     def find_priority(self):
         return []
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError

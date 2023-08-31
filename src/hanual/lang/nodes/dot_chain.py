@@ -34,5 +34,5 @@ class DotChain(BaseNode, ABC):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError

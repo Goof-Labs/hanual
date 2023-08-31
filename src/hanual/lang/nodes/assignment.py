@@ -57,7 +57,7 @@ class AssignmentNode(BaseNode, Generic[T]):
     def get_names(self) -> list[str]:
         return [self._target.value]
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def find_priority(self) -> list[BaseNode]:

@@ -29,10 +29,6 @@ class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
     def __init__(self: Self, ts: List[T]) -> None:
         self.ts: List[T] = ts
 
-    @property
-    def raw(self: Self) -> List[T]:
-        return self.ts
-
     def __repr__(self: Self) -> str:
         return str(self.ts)
 

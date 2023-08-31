@@ -77,7 +77,7 @@ class BinOpNode(BaseNode, ABC):
         instructions.append(EXC[self._op.value, reg_1, reg_2])
         return instructions
 
-    def execute(self):
+    def execute(self, env):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:

@@ -73,12 +73,12 @@ class PParser:
             logging.critical("undefined tokens: %s", undef_tokens)
 
     def rule(
-        self: PParser,
-        *rules,
-        prod: Optional[Type] = DefaultProduction,
-        types: Optional[Dict[str, T]] = None,
-        unless_starts: Optional[List[str]] = None,
-        unless_ends: Optional[List[str]] = None,
+            self: PParser,
+            *rules,
+            prod: Optional[Type] = DefaultProduction,
+            types: Optional[Dict[str, T]] = None,
+            unless_starts: Optional[List[str]] = None,
+            unless_ends: Optional[List[str]] = None,
     ):
         """
         This function is a decorator, so it can be used with the following syntax:
@@ -165,7 +165,7 @@ class PParser:
     # PARSING THE TOKENS #
     ######################
 
-    def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Any]:
+    def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Tuple[str, Any]]:
         stack = []
 
         while True:
@@ -230,7 +230,7 @@ class PParser:
                 for _ in range(debth + 1):
                     p_args.append(stack.pop()[1])
 
-                if stack and proxy.unless_start and not copy is None:
+                if stack and proxy.unless_start and copy is not None:
                     if stack[-1][0] in proxy.unless_start:
                         # revert changes
                         stack = copy

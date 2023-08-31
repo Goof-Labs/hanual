@@ -18,8 +18,9 @@ class RangeNode(BaseNode, ABC):
         self._from = from_
         self._to = to_
 
-    def execute(self):
-        pass
+    def execute(self, env):
+        raise NotImplementedError
+
 
     def compile(self) -> None:
         raise NotImplementedError

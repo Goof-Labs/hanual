@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Union, Any, Generator, Tuple, TYPE_CHECKING, List, LiteralString
+from typing import Callable, Union, Any, Generator, TYPE_CHECKING, List, LiteralString
 from hanual.lang.nodes import Arguments
-from functools import wraps
 
 
 if TYPE_CHECKING:

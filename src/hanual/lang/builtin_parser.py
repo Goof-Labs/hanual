@@ -25,6 +25,7 @@ from hanual.lang.nodes import (
     IfChain,
     IfStatement,
     ImplicitBinOp,
+    Parameters,
     ImplicitCondition,
     NamespaceAccessor,
     NewStruct,
@@ -638,9 +639,8 @@ def shout(ts: DefaultProduction[Token]) -> ShoutNode:
 
 
 @par.rule("FN f_call")
-def function_marker(ts: DefaultProduction):
+def function_marker(ts: DefaultProduction[FunctionCall]):
     # If the args is part of a function definition it should behave differently from when it is not
-    ts[1].function_def = True
     return ts[1]
 
 
@@ -659,16 +659,16 @@ def function_marker(ts: DefaultProduction):
     },
     unless_ends=["AS"],
 )
-def function_definition(ts: DefaultProduction, has_end: bool):
+def function_definition(ts: DefaultProduction[FunctionCall, Token, CodeBlock, Token], has_end: bool):
     if has_end is False:
-        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
+        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock([]))
 
     if not isinstance(ts[2], CodeBlock):
         return FunctionDefinition(
-            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[2])
+            name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock(ts[2])
         )
 
-    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[2])
+    return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=ts[2])
 
 
 # WITH CONTEXT

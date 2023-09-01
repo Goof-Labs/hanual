@@ -47,6 +47,8 @@ class Arguments(BaseNode):
     def execute(self, scope, initiator: Optional[str] = None):
         # TODO: errors
         func: Union[FunctionDefinition, None] = scope.get(initiator, None)
+        print("I:", initiator)
+        print("S:", scope._env)
         args = {k: v.value for k, v in zip(func.arguments.children, self._children)}
         return Result().success(args)
 

@@ -56,4 +56,10 @@ class ElifStatement(BaseNode, ABC):
             return res
 
         if should_run:
-            return self.block.execute(Scope(parent=scope))
+            inner_scope = Scope(parent=scope)
+            _, err = res.inherit_from(self.block.execute(inner_scope))
+
+            if err:
+                return res
+
+            return res.success(should_run)

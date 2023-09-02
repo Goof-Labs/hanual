@@ -56,13 +56,13 @@ class IfChain(BaseNode):
             if err:
                 return res
 
+            # if a statement was run, just return it
+            if ran:
+                return res
+
             # if the statement is an "else", we want to execute it regardless.
             if isinstance(statement, ElseStatement):
                 return statement.execute(scope)
-
-            # if a statement was run, just return it
-            elif ran:
-                return res
 
         # the entire chain was run and none of them where true
         return res.success(None)

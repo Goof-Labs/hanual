@@ -13,5 +13,7 @@ fn main() {
         println("a == b")
     } elif a != b {
         println("a != b")
+    } else {
+        println("impossible")
     }
 }

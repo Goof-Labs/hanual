@@ -1,20 +1,8 @@
 from __future__ import annotations
 
-from hanual.lang.nodes import CodeBlock, Arguments
-from .result import Result
+from .hl_builtin.io_builtin import IOBuiltinLibrary
+from hanual.lang.nodes import CodeBlock
 from .scope import Scope
-
-
-class HLPrint:
-    @property
-    def arguments(self):
-        rgs = Arguments(["x"])
-        rgs.function_def = True
-        return rgs
-
-    def __call__(self, scope):
-        print(scope.get("x"))
-        return Result().success(None)
 
 
 class Interpreter:
@@ -25,6 +13,7 @@ class Interpreter:
         with Scope(parent=None, name="global") as scope:
             self._tree.execute(scope=scope)
 
-            scope.set("println", HLPrint())
+            for func in IOBuiltinLibrary().get_builtins():
+                scope.set(func.name, func)
 
             scope.get("main", None)(scope=scope)

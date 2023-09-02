@@ -1,5 +1,13 @@
 use std::io
 
+struct person {
+    name: str
+    iq: int
+}
+
 fn main() {
-    println("Hello world")
+    let a = 1
+    let b = "s"
+
+    println(b)
 }

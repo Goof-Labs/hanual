@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, TypeVar, Generic, Optional, Any
 
-_H = TypeVar("_H")
+_H = TypeVar("_H", Any, Any)
 
 
 class Scope(Generic[_H]):
@@ -20,6 +20,14 @@ class Scope(Generic[_H]):
     def extend(self, other: Dict[str, _H]):
         for k, v in other.items():
             self._env[k] = v
+
+    # return the dict of the local scope
+    def locals(self) -> Dict[str, _H]:
+        return self._env
+
+    @property
+    def parent(self) -> Scope:
+        return self._parent
 
     def __str__(self) -> str:
         return f"Scope<{self._name}>\n{self._parent}"

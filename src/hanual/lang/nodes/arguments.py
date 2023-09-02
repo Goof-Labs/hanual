@@ -5,11 +5,12 @@ from hanual.compile.constants.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
+from hanual.exec.wrappers import hl_wrap
 from hanual.exec.result import Result
-from .f_def import FunctionDefinition
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
+    from .f_def import FunctionDefinition
 
 T = TypeVar("T")
 
@@ -47,7 +48,7 @@ class Arguments(BaseNode):
     def execute(self, scope, initiator: Optional[str] = None):
         # TODO: errors
         func: Union[FunctionDefinition, None] = scope.get(initiator, None)
-        args = {k: v.value for k, v in zip(func.arguments.children, self._children)}
+        args = {k: hl_wrap(scope=scope, value=v) for k, v in zip(func.arguments.children, self._children)}
         return Result().success(args)
 
     def get_names(self) -> list[Token]:

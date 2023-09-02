@@ -1,30 +1,26 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, TypeVar
-
 from hanual.compile.constants.constant import Constant
-
+from typing import TYPE_CHECKING, List
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
+    from .strong_field import StrongField
     from typing_extensions import Self
-
-
-T = TypeVar("T", bound=BaseNode)
 
 
 class StrongFieldList(BaseNode):
     __slots__ = "_fields",
 
-    def __init__(self: BaseNode) -> None:
-        self._fields: List[T] = []
+    def __init__(self) -> None:
+        self._fields: List[StrongField] = []
 
-    def add_field(self, field: T) -> Self:
+    def add_field(self, field: StrongField) -> Self:
         self._fields.append(field)
         return self
 
     @property
-    def fields(self) -> List[T]:
+    def fields(self) -> List[StrongField]:
         return self._fields
 
     def compile(self) -> None:
@@ -45,7 +41,7 @@ class StrongFieldList(BaseNode):
         consts = []
 
         for field in self._fields:
-            consts.extend(field)
+            consts.extend(field.get_constants())
 
         return consts
 

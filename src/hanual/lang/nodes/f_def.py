@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
     from hanual.exec.scope import Scope
     from hanual.lang.lexer import Token
-    from .arguments import Arguments
+    from .parameters import Parameters
     from .block import CodeBlock
 
 
@@ -22,11 +22,9 @@ class FunctionDefinition(BaseNode):
     def __init__(
         self: FunctionDefinition,
         name: Token,
-        args: Arguments,
+        args: Parameters,
         inner: CodeBlock,
     ) -> None:
-        args.function_def = True
-
         self._name: Token = name
         self._arguments = args
         self._inner = inner
@@ -36,7 +34,7 @@ class FunctionDefinition(BaseNode):
         return self._name
 
     @property
-    def arguments(self) -> Arguments:
+    def arguments(self) -> Parameters:
         return self._arguments
 
     @property

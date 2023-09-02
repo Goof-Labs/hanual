@@ -6,8 +6,12 @@ struct person {
 }
 
 fn main() {
-    let a = 1
-    let b = "s"
+    let a = 12
+    let b = 1
 
-    println(b)
+    if a == b {
+        println("a == b")
+    } elif a != b {
+        println("a != b")
+    }
 }

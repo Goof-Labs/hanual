@@ -554,6 +554,8 @@ def if_chain_start(ts: DefaultProduction, type_: int):
     elif type_ == 3:
         return chain.add_node(ts[0])
 
+    raise Exception
+
 
 @par.rule(
     "if_chain_start condition LCB line RCB EIF",
@@ -592,6 +594,7 @@ def if_chain(
     types={
         "if_chain_start condition LCB lines RCB": 1,
         "if_chain_start condition LCB RCB": 2,
+        "if_chain_start condition LCB line RCB": 3,
     },
 )
 def if_chain(ts: DefaultProduction, type_: int, ) -> IfChain:
@@ -601,6 +604,10 @@ def if_chain(ts: DefaultProduction, type_: int, ) -> IfChain:
     elif type_ == 2:
         return ts[0].add_node(ElifStatement(ts[1], CodeBlock([])))
 
+    elif type_ == 3:
+        return ts[0].add_node(ElifStatement(ts[1], ts[3]))
+
+    raise Exception
 
 ###########################
 # WHILE LOOPS

@@ -16,6 +16,9 @@ class LiteralWrapper(BaseValue, Generic[_T], ABC):
     def __init__(self, value: _T) -> None:
         self._value = value
 
+    def __eq__(self, other: LiteralWrapper):
+        return self._value == other._value
+
     @property
     def value(self) -> _T:
         return self._value

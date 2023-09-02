@@ -1,21 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Union
-
 from hanual.compile.constants.constant import Constant
-
+from typing import TYPE_CHECKING, List, Union
+from .else_statement import ElseStatement
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-
     from .elif_statement import ElifStatement
-    from .else_statement import ElseStatement
     from .if_statement import IfStatement
 
 
 class IfChain(BaseNode):
-    def __init__(self: BaseNode) -> None:
+    __slots__ = "_statements",
+
+    def __init__(self) -> None:
         self._statements: List[Union[IfStatement, ElifStatement, ElseStatement]] = []
 
     def add_node(self, node: Union[IfStatement, ElifStatement]) -> Self:
@@ -45,12 +46,26 @@ class IfChain(BaseNode):
 
         return names
 
-    def execute(self, env):
+    def execute(self, scope: Scope):
+        res = Result()
+
         for statement in self._statements:
-            err, res = sts = statement.execute()
+            # check if one of the conditions was true, if so we just return the result
+            ran, err = res.inherit_from(statement.execute(scope=scope))
 
             if err:
-                return sts
+                return res
+
+            # if the statement is an "else", we want to execute it regardless.
+            if isinstance(statement, ElseStatement):
+                return statement.execute(scope)
+
+            # if a statement was run, just return it
+            elif ran:
+                return res
+
+        # the entire chain was run and none of them where true
+        return res.success(None)
 
     def find_priority(self) -> list[BaseNode]:
         return []

@@ -1,17 +1,19 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Union
 
+from hanual.exec.wrappers import LiteralWrapper, hl_wrap
 from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
 from hanual.compile.registers import Registers
+from typing import TYPE_CHECKING, Union, Any
+from hanual.compile.instruction import *
+from hanual.exec.result import Result
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
+from abc import ABC
+
 
 if TYPE_CHECKING:
-    pass
+    from hanual.exec.scope import Scope
 
 
 class Condition(BaseNode, ABC):
@@ -107,8 +109,56 @@ class Condition(BaseNode, ABC):
 
         return names
 
-    def execute(self, env):
-        raise NotImplementedError
+    def execute(self, scope: Scope) -> Result[Any, LiteralWrapper[bool]]:
+        res = Result()
+
+        # get left and right
+        left, error = res.inherit_from(self._get_value(scope, self._left))
+
+        if error:
+            return res
+
+        right, error = res.inherit_from(self._get_value(scope, self._right))
+
+        if error:
+            return res
+
+        if self._op.value == "==":
+            return res.success(left == right)
+
+        elif self._op.value == "!=":
+            return res.success(left != right)
+
+        elif self._op.value == ">":
+            return res.success(left > right)
+
+        elif self._op.value == "<":
+            return res.success(left < right)
+
+        elif self._op.value == ">=":
+            return res.success(left >= right)
+
+        elif self._op.value == "<=":
+            return res.success(left <= right)
+
+        elif self._op.value == "===":
+            return res.success(
+                (left == right) and
+                (isinstance(left, type(right)))
+            )
+
+        else:
+            raise NotImplementedError(f"{self._op!r} not accounted for")
+
+    @staticmethod
+    def _get_value(scope: Scope, value: Any) -> Result:
+
+        if isinstance(value, Token):
+            res = hl_wrap(scope, value)
+            return Result().success(res)
+
+        else:
+            return value.execute(scope)
 
     def find_priority(self) -> list[BaseNode]:
         return []

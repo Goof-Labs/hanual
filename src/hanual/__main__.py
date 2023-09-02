@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import logging
-
 from hanual.lang.util.build_ast import create_ast
 from hanual.compile.h_compile import hl_compile
 from hanual.exec.interpreter import Interpreter
 from hanual.tools.cli import HanualCli
+import logging
 
 logging.basicConfig(level=logging.DEBUG)
 

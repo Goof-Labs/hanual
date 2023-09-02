@@ -58,7 +58,7 @@ class HanualLexer(Lexer):
     ]
 
     @staticmethod
-    def t_num(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+    def t_NUM(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
         return Token(
             kind,
             float(value) if "." in value else int(value),

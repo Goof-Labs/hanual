@@ -1,13 +1,23 @@
 use std::io
 
-struct person {
+struct Person {
     name: str
     iq: int
 }
 
 fn main() {
-    let a = 1
-    let b = "s"
+    let a = 12
+    let b = 1
 
-    println(b)
+    if a == b {
+        println("a == b")
+    } elif a != b {
+        println("a != b")
+    } else {
+        println("impossible")
+    }
+
+    let thing = new Person();
+    println(thing)
+    println(1 + 1)
 }

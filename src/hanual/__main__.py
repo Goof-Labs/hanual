@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
-
 from hanual.lang.util.build_ast import create_ast
+from hanual.lang.util.dump_tree import dump_tree
 from hanual.compile.h_compile import hl_compile
 from hanual.exec.interpreter import Interpreter
 from hanual.tools.cli import HanualCli
+import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -19,6 +19,7 @@ elif "pack" in options.loose_args:
 
 elif "run" in options.loose_args:
     ast, _ = create_ast()
+    # print(dump_tree(ast))
     it = Interpreter(ast)
     it.run()
 

@@ -24,6 +24,7 @@ class Result(Generic[_R, _E]):
 
     def inherit_from(self, other: Result) -> Self:
         self._err = other.error
+        self._res = other.response
         return self
 
     @property

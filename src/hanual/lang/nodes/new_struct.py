@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from hanual.compile.constants.constant import Constant
-
+from typing import TYPE_CHECKING, Union
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
+    from hanual.exec.wrappers.hl_struct import HlStruct
+    from hanual.lang.lexer import Token
     from .arguments import Arguments
     from .f_call import FunctionCall
 
@@ -14,10 +16,10 @@ if TYPE_CHECKING:
 class NewStruct(BaseNode):
     def __init__(self: BaseNode, call: FunctionCall) -> None:
         self._args: Arguments = call.args
-        self._name: str = call.name.value
+        self._name: Token = call.name
 
     @property
-    def name(self) -> str:
+    def name(self) -> Token:
         return self._name
 
     @property
@@ -36,5 +38,12 @@ class NewStruct(BaseNode):
     def get_names(self) -> list[str]:
         return [self._name, *self._args.get_names()]
 
-    def execute(self, env):
-        raise NotImplementedError
+    def execute(self, scope: Scope) -> Result:
+        res = Result()
+
+        struct: Union[HlStruct, None] = scope.get(self._name.value, None)
+
+        if struct is None:
+            return res.fail(f"{self._name.value!r} was not found in scope")
+
+        return res.success(struct.make_instance(name=struct.name, fields=struct.fields))

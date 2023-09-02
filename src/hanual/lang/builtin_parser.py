@@ -554,35 +554,17 @@ def if_chain_start(ts: DefaultProduction, type_: int):
     elif type_ == 3:
         return chain.add_node(ts[0])
 
-
-@par.rule(
-    "if_chain_start condition LCB line RCB EIF",
-    "if_chain_start condition LCB lines RCB EIF",
-    "if_chain_start condition LCB RCB EIF",
-    types={"if_chain_start condition LCB RCB EIF": 2},
-)
-def condition_chain(ts: DefaultProduction, type_: int) -> IfChain:
-    if type_ == 2:
-        return ts[0].add_node(ElifStatement(ts[1], CodeBlock([])))
-
-    return ts[0].add_node(ElifStatement(ts[1], ts[3]))
+    raise Exception
 
 
 @par.rule(
-    "if_chain_start condition LCB line RCB ELS LCB line RCB",
-    "if_chain_start condition LCB lines RCB ELS LCB line RCB",
-    "if_chain_start condition LCB line RCB ELS LCB lines RCB",
-    "if_chain_start condition LCB lines RCB ELS LCB lines RCB",
+    "if_chain_start ELS LCB line RCB",
+    "if_chain_start ELS LCB lines RCB",
+    "if_chain ELS LCB line RCB",
+    "if_chain ELS LCB lines RCB",
 )
-def if_chain(
-        ts: DefaultProduction[
-            IfChain,  # original elif chain
-            Condition,  # condition
-            CodeBlock,  # block
-            CodeBlock,  # line(s)
-        ]
-) -> IfChain:
-    return ts[0].add_node(ElifStatement(ts[1], ts[3])).add_else(ElseStatement(ts[7]))
+def if_chain(ts: DefaultProduction) -> IfChain:
+    return ts[0].add_else(ElseStatement(ts[3]))
 
 
 @par.rule(
@@ -592,6 +574,7 @@ def if_chain(
     types={
         "if_chain_start condition LCB lines RCB": 1,
         "if_chain_start condition LCB RCB": 2,
+        "if_chain_start condition LCB line RCB": 3,
     },
 )
 def if_chain(ts: DefaultProduction, type_: int, ) -> IfChain:
@@ -601,6 +584,10 @@ def if_chain(ts: DefaultProduction, type_: int, ) -> IfChain:
     elif type_ == 2:
         return ts[0].add_node(ElifStatement(ts[1], CodeBlock([])))
 
+    elif type_ == 3:
+        return ts[0].add_node(ElifStatement(ts[1], ts[3]))
+
+    raise Exception
 
 ###########################
 # WHILE LOOPS
@@ -784,7 +771,7 @@ def h_range(ts: DefaultProduction):
     "shout",
     "using",
     "ret",
-    unless_ends=["RPAR", "COM", "BAR", "EIF"],
+    unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS"],
 )
 def line(ts):
     return CodeBlock(ts[0])

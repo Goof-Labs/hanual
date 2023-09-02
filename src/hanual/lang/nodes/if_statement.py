@@ -6,12 +6,13 @@ from typing import TYPE_CHECKING
 from hanual.compile.constants.constant import Constant
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
-
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from .block import CodeBlock
     from .conditions import Condition
+    from .block import CodeBlock
 
 
 class IfStatement(BaseNode, ABC):
@@ -56,8 +57,25 @@ class IfStatement(BaseNode, ABC):
     def get_names(self):
         return [*self._condition.get_names(), *self._block.get_names()]
 
-    def execute(self, env):
-        raise NotImplementedError
+    def execute(self, scope: Scope) -> Result:
+        res = Result()
+
+        val, err = res.inherit_from(self.condition.execute(scope=scope))
+
+        if err:
+            return res
+
+        # if the expression evaluates to true
+        if val:
+            rs = Scope(parent=scope)
+            res.inherit_from(self.block.execute(scope=rs))
+
+        # if there was an error in the block, return it
+        if res.error:
+            return res
+
+        # return if the block was run, aka if the condition was true
+        return res.success(val)
 
     def find_priority(self) -> list[BaseNode]:
         return self._block.find_priority()

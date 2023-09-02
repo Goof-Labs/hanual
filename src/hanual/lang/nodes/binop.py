@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Union
 
 from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
 from hanual.compile.registers import Registers
+from hanual.exec.wrappers.wrap import hl_wrap
+from typing import TYPE_CHECKING, Union, Any
+from hanual.compile.instruction import *
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
+from abc import ABC
 
 if TYPE_CHECKING:
     ...
@@ -25,17 +27,14 @@ class BinOpNode(BaseNode, ABC):
 
     @property
     def left(self):
-        """The left property."""
         return self._left
 
     @property
     def right(self):
-        """The right property."""
         return self._right
 
     @property
     def op(self):
-        """The op property."""
         return self._op
 
     def compile(self):
@@ -77,8 +76,51 @@ class BinOpNode(BaseNode, ABC):
         instructions.append(EXC[self._op.value, reg_1, reg_2])
         return instructions
 
-    def execute(self, env):
-        raise NotImplementedError
+    @staticmethod
+    def _get_val(val: Any, scope: Scope) -> Result:
+        if isinstance(val, Token):
+            return hl_wrap(value=val, scope=scope)
+
+        else:
+            res = Result()
+
+            val, err = res.inherit_from(val.execute(scope=scope))
+
+            if err:
+                return res
+
+            return hl_wrap(scope=scope, value=val)
+
+    def execute(self, scope: Scope) -> Result:
+        res = Result()
+
+        left = res.inherit_from(self._get_val(self._left, scope=scope)).response.value
+
+        if res.error:
+            return res
+
+        right = res.inherit_from(self._get_val(self._right, scope=scope)).response.value
+
+        if res.error:
+            return res
+
+        if self._op.value == "+":
+            return res.success(left + right)
+
+        elif self._op.value == "-":
+            return res.success(left - right)
+
+        elif self._op.value == "/":
+            if right == 0:
+                return res.fail("div by 0")
+
+            return res.success(left / right)
+
+        elif self._op.value == "*":
+            return res.success(left * right)
+
+        else:
+            raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
         consts = []

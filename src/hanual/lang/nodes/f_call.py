@@ -50,7 +50,7 @@ class FunctionCall(BaseNode):
     def execute(self, scope: Scope) -> Result:
         res = Result()
 
-        f_scope = Scope(parent=None, name=self._name.value)
+        f_scope = Scope(parent=scope, name=self._name.value)
 
         # get the arguments from the parent scope and give them a new alias, then check for errors and return if so
 

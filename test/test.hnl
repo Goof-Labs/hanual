@@ -1,5 +1,10 @@
 use std::io
 
+struct person {
+    name: str
+    iq: int
+}
+
 fn main() {
-    println("Hello kai")
+    println(person)
 }

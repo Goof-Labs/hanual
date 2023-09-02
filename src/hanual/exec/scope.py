@@ -25,6 +25,10 @@ class Scope(Generic[_H]):
     def locals(self) -> Dict[str, _H]:
         return self._env
 
+    @property
+    def parent(self) -> Scope:
+        return self._parent
+
     def __str__(self) -> str:
         return f"Scope<{self._name}>\n{self._parent}"
 

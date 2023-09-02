@@ -26,7 +26,7 @@ class HlWrapperFunction:
         return self.args
 
     def __call__(self, scope: Scope):
-        return self.func(scope, scope.locals())
+        return self.func(scope.parent, scope.locals())
 
 
 def hl_builtin(f_args: LiteralString, name: LiteralString = ""):

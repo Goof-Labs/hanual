@@ -78,7 +78,7 @@ class AssignmentNode(BaseNode, Generic[T]):
 
         if isinstance(value, Token):
             if value.type == "NUM":
-                return res.success(LiteralWrapper(value.value))
+                return res.success(LiteralWrapper(float(value.value)))
 
             elif value.type == "STR":
                 return res.success(LiteralWrapper(value.value))
@@ -95,7 +95,7 @@ class AssignmentNode(BaseNode, Generic[T]):
                 raise NotImplementedError(f"token {value!r} is not recognised")
 
         else:
-            return res.inherit_from(self.value.execute(scope))
+            return res.inherit_from(self.value.execute(scope=scope))
 
     def find_priority(self) -> list[BaseNode]:
         return []

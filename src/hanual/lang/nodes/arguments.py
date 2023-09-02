@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, TypeVar, Union, Optional
+from typing import TYPE_CHECKING, List, TypeVar, Union, Optional, Generator
 from hanual.compile.constants.constant import Constant
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
@@ -11,8 +11,9 @@ from hanual.exec.result import Result
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
     from .f_def import FunctionDefinition
+    from hanual.exec.scope import Scope
 
-T = TypeVar("T")
+T = TypeVar("T", Token, BaseNode)
 
 
 class Arguments(BaseNode):
@@ -45,10 +46,41 @@ class Arguments(BaseNode):
     def compile(self, cm: CompileManager):
         return [UPK(self._children)]
 
+    def _gen_args(self, names, scope: Scope) -> Generator[Result, None, None]:
+        res = Result()
+
+        for name, value in zip(names, self._children):
+            # token
+            if isinstance(value, Token):
+                val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
+
+                if err:
+                    yield res.fail((name, err))
+
+                yield res.success((name, val))
+
+            # can be executed
+            else:
+                # value = the bin op node, val = what was returned
+                val, err = res.inherit_from(value.execute(scope=scope))
+
+                if err:
+                    yield res.fail((name, err))
+
+                val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
+
+                yield res.success((name, val))
+
     def execute(self, scope, initiator: Optional[str] = None):
-        # TODO: errors
         func: Union[FunctionDefinition, None] = scope.get(initiator, None)
-        args = {k: hl_wrap(scope=scope, value=v) for k, v in zip(func.arguments.children, self._children)}
+
+        args = {}
+        for resp in self._gen_args(names=func.arguments.children, scope=scope):
+            if resp.error:
+                return Result().fail(resp.error)
+
+            args[resp.response[0]] = resp.response[1]
+
         return Result().success(args)
 
     def get_names(self) -> list[Token]:

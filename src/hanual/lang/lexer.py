@@ -67,7 +67,7 @@ class Lexer:
         for line_no, line in enumerate(stream):
             yield from self._tokenize_str(tok_reg, line, line_no)
 
-    def _tokenize_str(self, tok_reg: str, text: str, line_no: int):
+    def _tokenize_str(self, tok_reg: str, text: str, line_no: int) -> Generator[Token, None, None]:
         for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
             value = pat.group()
@@ -95,7 +95,7 @@ class Lexer:
                 continue
 
             elif hasattr(self, f"t_{kind}"):
-                yield getattr(self, f"t_{kind.lower()}")(kind, value, line_no, col, text)
+                yield getattr(self, f"t_{kind}")(kind, value, line_no, col, text)
                 continue
 
             yield Token(kind, value, line_no, col, text)

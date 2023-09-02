@@ -1,6 +1,6 @@
 use std::io
 
-struct person {
+struct Person {
     name: str
     iq: int
 }
@@ -16,4 +16,8 @@ fn main() {
     } else {
         println("impossible")
     }
+
+    let thing = new Person();
+    println(thing)
+    println(1 + 1)
 }

@@ -6,5 +6,8 @@ struct person {
 }
 
 fn main() {
-    println(person)
+    let a = 1
+    let b = "s"
+
+    println(b)
 }

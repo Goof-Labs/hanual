@@ -20,4 +20,8 @@ fn main() {
     let thing = new Person();
     println(thing)
     println(1 + 1)
+
+    for let i=0, <10, ++1 {
+        println(i)
+    }
 }

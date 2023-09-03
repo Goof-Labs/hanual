@@ -131,7 +131,7 @@ def for_loop(ts, no_body: Union[Literal[True], Literal[None]]) -> ForLoop:
     if no_body:
         return ForLoop(ts[3], ts[1], ts[5], CodeBlock([]))
 
-    return ForLoop(ts[3], ts[1], ts[5], ts[6])
+    return ForLoop(ts[3], ts[1], ts[5], ts[7])
 
 
 ###########################

@@ -22,11 +22,12 @@ class Arguments(BaseNode):
         self.function_def = False
 
         if isinstance(children, Token):
-            if children.type == "ID":
-                self._children: List[T] = [children.value]
+            # if children.type == "ID":
+            #     self._children: List[T] = [children.value]
 
-            else:
-                self._children: List[T] = [children]
+            # else:
+            #     self._children: List[T] = [children]
+            self._children: List[T] = [children]
 
         elif issubclass(type(children), BaseNode):
             self._children: List[T] = [children]
@@ -56,10 +57,10 @@ class Arguments(BaseNode):
         for name, value in zip(names, self._children):
             # token
             if isinstance(value, Token):
-                val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
+                val, err = res.inherit_from(hl_wrap(scope=scope, value=value.value))
 
                 if err:
-                    yield res.fail((name, err))
+                    yield res.fail(err)
 
                 yield res.success((name, val))
 
@@ -69,7 +70,7 @@ class Arguments(BaseNode):
                 val, err = res.inherit_from(value.execute(scope=scope))
 
                 if err:
-                    yield res.fail((name, err))
+                    yield res.fail(err)
 
                 val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
 
@@ -92,12 +93,12 @@ class Arguments(BaseNode):
             if resp.error:
                 return res.fail(resp.error)
 
-            val, err = res.inherit_from(hl_wrap(scope=scope, value=resp.response[1]))
+            val, err = res.inherit_from(resp)
 
             if err:
                 return res
 
-            args[resp.response[0]] = val
+            args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = val[1]
 
         return res.success(args)
 

@@ -8,6 +8,7 @@ from hanual.exec.result import Result
 from hanual.lang.lexer import Token
 from .f_call import FunctionCall
 from .base_node import BaseNode
+from hanual.lang.errors import ErrorType, HanualError, Frame, TraceBack
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
@@ -54,7 +55,14 @@ class ImplicitCondition(BaseNode):
         val = scope.get(name, None)
 
         if val is None:
-            return Result().fail(f"could not resolve reference to {name!r}")
+            return Result().fail(HanualError(
+                    pos=(self._op.line, self._op.colm, self._op.colm+len(self._op.value)),
+                    line=self._op.line_val,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Couldn't resolve reference to {self._op.value!r}",
+                    tb=TraceBack().add_frame(Frame("implicit condition")),
+                    tip="Did you make a typo?"
+                ))
 
         # get right side
         if isinstance(self._val, FunctionCall):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.lang.errors import HanualError, TraceBack, ErrorType, Frame
 from hanual.compile.constants.constant import Constant
 from typing import TYPE_CHECKING, Union, Callable
 from hanual.compile.registers import Registers
@@ -67,7 +68,14 @@ class FunctionCall(BaseNode):
 
         func: Union[Callable] = scope.get(self._name.value, None)
         if not func:
-            return res.fail(f"{self._name.value!r} was not found")
+            return res.fail(HanualError(
+                    pos=(self._name.line, self._name.colm, self._name.colm+len(self._name.value)),
+                    line=self._name.line_val,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Couldn't resolve reference to {self._name.value!r}",
+                    tb=TraceBack().add_frame(Frame("function call")),
+                    tip="Did you make a typo?"
+                ))
 
         res.inherit_from(func(scope=f_scope))
 

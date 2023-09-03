@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union, Iterable
-from hanual.lang.errors.errors import raise_error
+from hanual.lang.errors import ErrorType, HanualError, TraceBack, Frame
 import re
 
 
@@ -62,7 +62,10 @@ class Lexer:
                 raise ValueError(f"{hook.type!r} is not recognised as a regex or keyword")
 
     def tokenize(self, stream: Generator[str, None, None]) -> Generator[Token, None, None]:
-        tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules + self.last)
+        # TODO allow rules to ble cleared
+        self.update_rules(self.last)
+
+        tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
 
         for line_no, line in enumerate(stream):
             yield from self._tokenize_str(tok_reg, line, line_no)
@@ -80,12 +83,15 @@ class Lexer:
             if kind == "SKIP":
                 continue
 
-            elif kind == "MISMATCH":
-                raise_error(
-                    f"{str(line_no).zfill(5)} | {text}",
-                    f"unrecognised character '{value}'",
-                    "try removing that character",
-                )
+            if kind == "MISMATCH":
+                print(HanualError(
+                    pos=(line_no, col, len(value)+col),
+                    line=text,
+                    name=ErrorType.illegal_character,
+                    reason=f"{value!r} is not recognised as a symbol or valid character",
+                    tb=TraceBack().add_frame(Frame("Lexing")),
+                    tip=f"try removing that character"
+                ).as_string())
                 exit()
 
             hook = self._hooks.get(kind, None)

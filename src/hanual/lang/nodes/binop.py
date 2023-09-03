@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 
+from hanual.lang.errors import HanualError, ErrorType, TraceBack, Frame
 from hanual.compile.constants.constant import Constant
 from hanual.exec.wrappers import LiteralWrapper
 from hanual.compile.registers import Registers
@@ -117,7 +118,14 @@ class BinOpNode(BaseNode, ABC):
 
         elif self._op.value == "/":
             if right == 0:
-                return res.fail("div by 0")
+                return res.fail(HanualError(
+                    pos=(self._op.line, self._op.colm, self._op.colm+1),
+                    line=self._op.line_val,
+                    name=ErrorType.division_by_zero,
+                    reason=f"Can't divide by zero",
+                    tb=TraceBack().add_frame(Frame("binary operation")),
+                    tip=f"Try validating {self._right.value!r}",
+                ))
 
             return res.success(LiteralWrapper(left / right))
 

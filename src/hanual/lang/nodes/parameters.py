@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, TypeVar, Union, Optional
 from hanual.compile.constants.constant import Constant
+from hanual.lang.nodes.arguments import Arguments
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
@@ -19,7 +20,10 @@ class Parameters(BaseNode):
         self._children: List[T] = []
 
         if isinstance(children, Token):
-            self._children: List[T] = [children]
+            self._children: List[T] = [children.value]
+
+        elif isinstance(children, (Parameters, Arguments)):
+            self._children = children.children
 
         elif issubclass(type(children), BaseNode):
             self._children: List[T] = [children]

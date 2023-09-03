@@ -2,6 +2,7 @@ from __future__ import annotations
 
 
 from hanual.compile.constants.constant import Constant
+from hanual.exec.wrappers import LiteralWrapper
 from hanual.compile.registers import Registers
 from hanual.exec.wrappers.wrap import hl_wrap
 from typing import TYPE_CHECKING, Union, Any
@@ -91,33 +92,37 @@ class BinOpNode(BaseNode, ABC):
 
             return hl_wrap(scope=scope, value=val)
 
-    def execute(self, scope: Scope) -> Result:
+    def execute(self, scope: Scope) -> Result[LiteralWrapper[float], str]:
         res = Result()
 
-        left = res.inherit_from(self._get_val(self._left, scope=scope)).response.value
+        left = res.inherit_from(self._get_val(self._left, scope=scope))
 
         if res.error:
             return res
 
-        right = res.inherit_from(self._get_val(self._right, scope=scope)).response.value
+        left = left.response.value
+
+        right = res.inherit_from(self._get_val(self._right, scope=scope))
 
         if res.error:
             return res
+
+        right = right.response.value
 
         if self._op.value == "+":
-            return res.success(left + right)
+            return res.success(LiteralWrapper(left + right))
 
         elif self._op.value == "-":
-            return res.success(left - right)
+            return res.success(LiteralWrapper(left - right))
 
         elif self._op.value == "/":
             if right == 0:
                 return res.fail("div by 0")
 
-            return res.success(left / right)
+            return res.success(LiteralWrapper(left / right))
 
         elif self._op.value == "*":
-            return res.success(left * right)
+            return res.success(LiteralWrapper(left * right))
 
         else:
             raise NotImplementedError

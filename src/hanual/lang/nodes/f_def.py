@@ -1,16 +1,16 @@
 from __future__ import annotations
 
+from hanual.exec.hl_builtin.base_builtin import HlWrapperFunction
+from typing import TYPE_CHECKING, Any, Dict
 from hanual.compile.instruction import RET
 from hanual.compile.label import Label
 from hanual.exec.result import Result
-from typing import TYPE_CHECKING, Any
+from hanual.exec.scope import Scope
 from .base_node import BaseNode
-
 
 if TYPE_CHECKING:
     from hanual.compile.constants.constant import BaseConstant
     from hanual.compile.compile_manager import CompileManager
-    from hanual.exec.scope import Scope
     from hanual.lang.lexer import Token
     from .parameters import Parameters
     from .block import CodeBlock
@@ -64,13 +64,17 @@ class FunctionDefinition(BaseNode):
         return self._inner.get_constants()
 
     def execute(self, scope: Scope) -> Result:
-        scope.set(self._name.value, self.execute_body)
+        func_wrapper = HlWrapperFunction(self._name.value, self._arguments, self.execute_body)
+        print(func_wrapper.name, func_wrapper.arguments.children)
+        scope.set(self._name.value, func_wrapper)
         return Result().success(None)
 
-    def execute_body(self, scope: Scope) -> Result[Any, Any]:
+    def execute_body(self, scope: Scope, args: Dict[str, Any]) -> Result[Any, Any]:
         res = Result()
 
-        res.inherit_from(self._inner.execute(scope=scope))
+        f_scope = Scope(parent=scope, name=self._name.value)
+        f_scope.extend(args)
+        res.inherit_from(self._inner.execute(scope=f_scope))
 
         return res
 

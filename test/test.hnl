@@ -5,23 +5,10 @@ struct Person {
     iq: int
 }
 
+fn increment(a) {
+    return a + 1
+}
+
 fn main() {
-    let a = 12
-    let b = 1
-
-    if a == b {
-        println("a == b")
-    } elif a != b {
-        println("a != b")
-    } else {
-        println("impossible")
-    }
-
-    let thing = new Person();
-    println(thing)
-    println(1 + 1)
-
-    for let i=0, <10, ++1 {
-        println(i)
-    }
+    println(increment(1))
 }

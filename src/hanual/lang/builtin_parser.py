@@ -60,7 +60,7 @@ def strong_field(ts: DefaultProduction[Token, Token, Token]) -> StrongField:
 @par.rule(
     "SCT ID",
     "SCT ID COL ID",
-    "SCT ID COL args",
+    "SCT ID COL params",
     unless_ends=["COL"],
 )
 def struct_header(
@@ -101,7 +101,7 @@ def struct_def(
 ###########################
 
 
-@par.rule("LSB args RSB")
+@par.rule("LSB params RSB")
 def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
     return HanualList(ts[1])
 
@@ -237,7 +237,7 @@ def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
     "COM f_call",
     "COM ID",
     "COM STR",
-    "COM args",
+    "COM params",
     "COM s_getattr",
     "COM args_",
 )
@@ -251,7 +251,7 @@ def args_(ts: DefaultProduction[Token, any]):
     "f_call args_",
     "STR args_",
     "NUM args_",
-    "args args_",
+    "params args_",
     "s_getattr args_",
 )
 def args(ts: DefaultProduction[any, Arguments]):
@@ -263,7 +263,7 @@ def args_(ts: DefaultProduction[Arguments, Arguments]) -> Arguments:
     return ts[0].add_child(ts[1])
 
 
-@par.rule("LPAR args RPAR")
+@par.rule("LPAR params RPAR")
 def par_args(ts):
     return ts[1]
 
@@ -289,7 +289,7 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
-        return FunctionCall(name=ts[0], arguments=ts[1])
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[1]))
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -312,7 +312,7 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
-        return FunctionCall(name=ts[0], arguments=ts[1])
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[1]))
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -336,8 +336,8 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
-        # automatic args
-        return FunctionCall(name=ts[0], arguments=ts[1])
+        # automatic params
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[1]))
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -627,7 +627,7 @@ def shout(ts: DefaultProduction[Token]) -> ShoutNode:
 
 @par.rule("FN f_call")
 def function_marker(ts: DefaultProduction[FunctionCall]):
-    # If the args is part of a function definition it should behave differently from when it is not
+    # If the params is part of a function definition it should behave differently from when it is not
     return ts[1]
 
 
@@ -651,9 +651,7 @@ def function_definition(ts: DefaultProduction[FunctionCall, Token, CodeBlock, To
         return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock([]))
 
     if not isinstance(ts[2], CodeBlock):
-        return FunctionDefinition(
-            name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock(ts[2])
-        )
+        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock(ts[2]))
 
     return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=ts[2])
 
@@ -669,14 +667,12 @@ def function_definition(ts: DefaultProduction[FunctionCall, Token, CodeBlock, To
 )
 def function_definition(ts: DefaultProduction, has_end: bool):
     if has_end is False:
-        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
+        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].params), inner=CodeBlock([]))
 
     if not isinstance(ts[1], CodeBlock):
-        return FunctionDefinition(
-            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[1])
-        )
+        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].params), inner=CodeBlock(ts[1]))
 
-    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
+    return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].params), inner=ts[1])
 
 
 ###########################
@@ -708,8 +704,8 @@ def using(ts: DefaultProduction[Token, Token]) -> UsingStatement:
 
 
 @par.rule(
-    "args do line end",
-    "args do lines end",
+    "params do line end",
+    "params do lines end",
 )
 def anon_function(
         ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]

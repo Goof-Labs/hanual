@@ -35,5 +35,5 @@ class Result(Generic[_R, _E]):
     def error(self) -> _E:
         return self._err
 
-    def __iter__(self) -> Iterator[Any]:
+    def __iter__(self) -> Iterator[_R, _E]:
         return iter((self._res, self._err))

@@ -19,7 +19,7 @@ elif "pack" in options.loose_args:
 
 elif "run" in options.loose_args:
     ast, _ = create_ast()
-    # print(dump_tree(ast))
+    # print(dump_tree(ast, depth=10))
     it = Interpreter(ast)
     it.run()
 

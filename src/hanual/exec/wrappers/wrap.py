@@ -15,6 +15,10 @@ def hl_wrap(scope: Scope, value: _T):
     # TOKENS
     res = Result()
 
+    # nothing needs to be changed
+    if isinstance(value, LiteralWrapper):
+        return res.success(value)
+
     if isinstance(value, Token):
         if value.type == "ID":
             val = scope.get(value.value, None)

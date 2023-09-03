@@ -118,10 +118,14 @@ class Condition(BaseNode, ABC):
         if error:
             return res
 
+        left = left.value
+
         right, error = res.inherit_from(self._get_value(scope, self._right))
 
         if error:
             return res
+
+        right = right.value
 
         if self._op.value == "==":
             return res.success(left == right)
@@ -154,8 +158,7 @@ class Condition(BaseNode, ABC):
     def _get_value(scope: Scope, value: Any) -> Result:
 
         if isinstance(value, Token):
-            res = hl_wrap(scope, value)
-            return Result().success(res)
+            return hl_wrap(scope, value)
 
         else:
             return value.execute(scope)

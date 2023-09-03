@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .f_def import FunctionDefinition
     from hanual.exec.scope import Scope
 
-T = TypeVar("T", Token, BaseNode)
+T = TypeVar("T")
 
 
 class Arguments(BaseNode):
@@ -22,7 +22,11 @@ class Arguments(BaseNode):
         self.function_def = False
 
         if isinstance(children, Token):
-            self._children: List[T] = [children]
+            if children.type == "ID":
+                self._children: List[T] = [children.value]
+
+            else:
+                self._children: List[T] = [children]
 
         elif issubclass(type(children), BaseNode):
             self._children: List[T] = [children]
@@ -72,16 +76,30 @@ class Arguments(BaseNode):
                 yield res.success((name, val))
 
     def execute(self, scope, initiator: Optional[str] = None):
+        res = Result()
+
+        if initiator is None:
+            raise Exception(f"can't run without initiator")
+
         func: Union[FunctionDefinition, None] = scope.get(initiator, None)
 
+        if func is None:
+            raise Exception(f"can't find func {initiator!r}")
+
         args = {}
+
         for resp in self._gen_args(names=func.arguments.children, scope=scope):
             if resp.error:
-                return Result().fail(resp.error)
+                return res.fail(resp.error)
 
-            args[resp.response[0]] = resp.response[1]
+            val, err = res.inherit_from(hl_wrap(scope=scope, value=resp.response[1]))
 
-        return Result().success(args)
+            if err:
+                return res
+
+            args[resp.response[0]] = val
+
+        return res.success(args)
 
     def get_names(self) -> list[Token]:
         names: List[Token] = []

@@ -131,7 +131,7 @@ def for_loop(ts, no_body: Union[Literal[True], Literal[None]]) -> ForLoop:
     if no_body:
         return ForLoop(ts[3], ts[1], ts[5], CodeBlock([]))
 
-    return ForLoop(ts[3], ts[1], ts[5], ts[6])
+    return ForLoop(ts[3], ts[1], ts[5], ts[7])
 
 
 ###########################
@@ -289,7 +289,7 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
-        return FunctionCall(name=ts[0], arguments=ts[1])
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[1]))
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -312,7 +312,7 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
-        return FunctionCall(name=ts[0], arguments=ts[1])
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[1]))
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -336,8 +336,8 @@ def f_call(ts: DefaultProduction[Token, Token, any, Token], mode: int):
         return FunctionCall(name=ts[0], arguments=Arguments([]))
 
     if mode == 2:
-        # automatic args
-        return FunctionCall(name=ts[0], arguments=ts[1])
+        # automatic params
+        return FunctionCall(name=ts[0], arguments=Arguments(ts[1]))
 
     if isinstance(ts[2], Token):
         return FunctionCall(name=ts[0], arguments=Arguments(ts[2]))
@@ -627,7 +627,7 @@ def shout(ts: DefaultProduction[Token]) -> ShoutNode:
 
 @par.rule("FN f_call")
 def function_marker(ts: DefaultProduction[FunctionCall]):
-    # If the args is part of a function definition it should behave differently from when it is not
+    # If the params is part of a function definition it should behave differently from when it is not
     return ts[1]
 
 
@@ -651,32 +651,9 @@ def function_definition(ts: DefaultProduction[FunctionCall, Token, CodeBlock, To
         return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock([]))
 
     if not isinstance(ts[2], CodeBlock):
-        return FunctionDefinition(
-            name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock(ts[2])
-        )
+        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock(ts[2]))
 
     return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=ts[2])
-
-
-# WITH CONTEXT
-@par.rule(
-    "function_marker AS CTX LCB RCB CTX",
-    "function_marker AS CTX LCB line RCB CTX",
-    "function_marker AS CTX LCB lines RCB CTX",
-    types={
-        "function_marker AS CTX LCB RCB CTX": False,
-    },
-)
-def function_definition(ts: DefaultProduction, has_end: bool):
-    if has_end is False:
-        return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=CodeBlock([]))
-
-    if not isinstance(ts[1], CodeBlock):
-        return FunctionDefinition(
-            name=ts[0].name, args=ts[0].args, inner=CodeBlock(ts[1])
-        )
-
-    return FunctionDefinition(name=ts[0].name, args=ts[0].args, inner=ts[1])
 
 
 ###########################

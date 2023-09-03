@@ -2,18 +2,24 @@ from __future__ import annotations
 
 from hanual.compile.compile_manager import CompileManager
 from hanual.compile.constants.constant import Constant
+from typing import TYPE_CHECKING, Union, Optional
+from hanual.exec.wrappers import LiteralWrapper
 from hanual.compile.registers import Registers
 from hanual.compile.instruction import *
-from typing import TYPE_CHECKING, Union
+from hanual.exec.result import Result
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
 
+
 if TYPE_CHECKING:
+    from hanual.exec.scope import Scope
     from .f_call import FunctionCall
 
 
 class ImplicitBinOp(BaseNode):
-    def __init__(self: BaseNode, op: Token, right: Union[Token, FunctionCall]) -> None:
+    __slots__ = "_right", "_op",
+
+    def __init__(self, op: Token, right: Union[Token, FunctionCall]) -> None:
         # The left side is implied
         self._right = right
         self._op = op
@@ -54,8 +60,55 @@ class ImplicitBinOp(BaseNode):
 
         return instructions
 
-    def execute(self, env):
-        raise NotImplementedError
+    def execute(self, scope: Scope, name: Optional[str] = None) -> Result:
+        res = Result()
+
+        # get name
+        if name is None:
+            raise Exception(f"param 'name' was not passed")
+
+        val = scope.get(name, None)
+
+        if val is None:
+            return res.fail(f"reference to {name!r} could not be resolved")
+
+        if not isinstance(val, (float, int)):
+            val = val.value
+
+        # other
+
+        if isinstance(self._right, Token):
+            if self._right.type == "ID":
+                other = scope.get(self._right.value, None)
+
+            elif self._right.type == "STR":
+                other = self._right.value
+
+            elif self._right.type == "NUM":
+                other = self._right.value
+
+            else:
+                raise Exception(f"{self._right!r} not accounted for")
+
+        else:
+            other, err = res.inherit_from(self._right.execute(scope=scope))
+
+            if err:
+                return res
+
+            other = other.value
+
+        if other is None:
+            return res.fail(f"reference to {self._right.value!r} could not be resolved")
+
+        # math
+        if self._op.value == "+":
+            scope.set(name, LiteralWrapper(val+other))
+
+            return Result().success(None)
+
+        else:
+            raise Exception(f"{self._op.value!r} not accounted for")
 
     def get_names(self) -> list[str]:
         if isinstance(self._right, Token):

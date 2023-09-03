@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
-
 from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
 from hanual.compile.registers import Registers
+from typing import TYPE_CHECKING, TypeVar
+from hanual.compile.instruction import *
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -51,8 +51,20 @@ class VarChange(BaseNode):
 
         return instructions
 
-    def execute(self, env):
-        raise NotImplementedError
+    def execute(self, scope: Scope) -> Result:
+        res: Result = Result()
+
+        if not scope.get(self._name.value, None):
+            return res.fail(f"couldn't resolve reference to {self._name.value!r}")
+
+        val, err = res.inherit_from(self._value.execute(scope))
+
+        if err:
+            return res
+
+        scope.set(self._name.value, val)
+
+        return res.success(None)
 
     def get_constants(self) -> list[Constant]:
         consts = []

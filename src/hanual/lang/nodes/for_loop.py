@@ -5,6 +5,8 @@ from .implicit_binop import ImplicitBinOp
 from hanual.compile.instruction import *
 from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -120,5 +122,41 @@ class ForLoop(BaseNode):
     def find_priority(self):
         return []
 
-    def execute(self, env):
-        raise NotImplementedError
+    def _condition(self, scope: Scope, name: str):
+        if isinstance(self._while, ImplicitCondition):
+            return self._while.execute(scope=scope, name=name)
+
+        return self._while.execute(scope=scope)
+
+    def execute(self, scope: Scope) -> Result:
+        res = Result()
+
+        for_scope = Scope(parent=scope)
+
+        self._init.execute(scope=for_scope)
+        name: str = self._init.target.value
+
+        # run the loops while the condition is false
+        while True:
+            should_break, err = res.inherit_from(self._condition(scope=for_scope, name=name))
+
+            if not should_break:
+                break
+
+            if isinstance(self._action, ImplicitBinOp):
+                res.inherit_from(self._action.execute(scope=for_scope, name=name))
+
+            else:
+                res.inherit_from(self.action.execute(scope=for_scope))
+
+            # check if action raised an error
+            if res.error:
+                return res
+
+            # run the body of the "for" loop
+            _, err = res.inherit_from(self._body.execute(scope=for_scope))
+
+            if err:
+                return res
+
+        return res.success(None)

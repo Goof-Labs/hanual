@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
 
 from hanual.compile.constants.constant import Constant
 from hanual.lang.builtin_lexer import Token
-
+from hanual.exec.wrappers import hl_wrap
+from hanual.exec.result import Result
+from hanual.exec.scope import Scope
+from typing import TYPE_CHECKING
 from .base_node import BaseNode
+from abc import ABC
+
 
 if TYPE_CHECKING:
     ...
@@ -38,5 +41,11 @@ class ReturnStatement(BaseNode, ABC):
     def find_priority(self) -> list[BaseNode]:
         return []
 
-    def execute(self, env):
-        raise NotImplementedError
+    def execute(self, scope: Scope) -> Result:
+        res = Result()
+
+        if isinstance(self._value, Token):
+            return hl_wrap(scope=scope, value=self._value)
+
+        res.inherit_from(self._value.execute(scope=scope))
+        return res

@@ -16,4 +16,5 @@ class Interpreter:
             for func in IOBuiltinLibrary().get_builtins():
                 scope.set(func.name, func)
 
-            scope.get("main", None)(scope=scope)
+            _, err = scope.get("main", None)(scope=scope)
+            print(err)

@@ -60,7 +60,7 @@ def strong_field(ts: DefaultProduction[Token, Token, Token]) -> StrongField:
 @par.rule(
     "SCT ID",
     "SCT ID COL ID",
-    "SCT ID COL params",
+    "SCT ID COL args",
     unless_ends=["COL"],
 )
 def struct_header(
@@ -101,7 +101,7 @@ def struct_def(
 ###########################
 
 
-@par.rule("LSB params RSB")
+@par.rule("LSB args RSB")
 def h_list(ts: DefaultProduction[Token, Arguments, Token]) -> HanualList:
     return HanualList(ts[1])
 
@@ -237,7 +237,7 @@ def namespace_accessor(ts: DefaultProduction[Token, NamespaceAccessor]):
     "COM f_call",
     "COM ID",
     "COM STR",
-    "COM params",
+    "COM args",
     "COM s_getattr",
     "COM args_",
 )
@@ -251,7 +251,7 @@ def args_(ts: DefaultProduction[Token, any]):
     "f_call args_",
     "STR args_",
     "NUM args_",
-    "params args_",
+    "args args_",
     "s_getattr args_",
 )
 def args(ts: DefaultProduction[any, Arguments]):
@@ -263,7 +263,7 @@ def args_(ts: DefaultProduction[Arguments, Arguments]) -> Arguments:
     return ts[0].add_child(ts[1])
 
 
-@par.rule("LPAR params RPAR")
+@par.rule("LPAR args RPAR")
 def par_args(ts):
     return ts[1]
 
@@ -656,25 +656,6 @@ def function_definition(ts: DefaultProduction[FunctionCall, Token, CodeBlock, To
     return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=ts[2])
 
 
-# WITH CONTEXT
-@par.rule(
-    "function_marker AS CTX LCB RCB CTX",
-    "function_marker AS CTX LCB line RCB CTX",
-    "function_marker AS CTX LCB lines RCB CTX",
-    types={
-        "function_marker AS CTX LCB RCB CTX": False,
-    },
-)
-def function_definition(ts: DefaultProduction, has_end: bool):
-    if has_end is False:
-        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].params), inner=CodeBlock([]))
-
-    if not isinstance(ts[1], CodeBlock):
-        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].params), inner=CodeBlock(ts[1]))
-
-    return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].params), inner=ts[1])
-
-
 ###########################
 # USE STATEMENT
 ###########################
@@ -704,8 +685,8 @@ def using(ts: DefaultProduction[Token, Token]) -> UsingStatement:
 
 
 @par.rule(
-    "params do line end",
-    "params do lines end",
+    "args do line end",
+    "args do lines end",
 )
 def anon_function(
         ts: DefaultProduction[AnonArgs, Token, CodeBlock, Token]

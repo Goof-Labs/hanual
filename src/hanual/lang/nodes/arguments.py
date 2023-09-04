@@ -7,6 +7,7 @@ from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
 from hanual.exec.wrappers import hl_wrap
 from hanual.exec.result import Result
+from hanual.lang.errors import Frame
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
@@ -60,7 +61,7 @@ class Arguments(BaseNode):
                 val, err = res.inherit_from(hl_wrap(scope=scope, value=value.value))
 
                 if err:
-                    yield res.fail(err)
+                    yield res.fail(err.add_frame(Frame("arguments")))
 
                 yield res.success((name, val))
 
@@ -70,7 +71,7 @@ class Arguments(BaseNode):
                 val, err = res.inherit_from(value.execute(scope=scope))
 
                 if err:
-                    yield res.fail(err)
+                    yield res.fail(err.add_frame(Frame(name="arguments")))
 
                 val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
 
@@ -91,7 +92,7 @@ class Arguments(BaseNode):
 
         for resp in self._gen_args(names=func.arguments.children, scope=scope):
             if resp.error:
-                return res.fail(resp.error)
+                return res.fail(resp.error.add_frame(Frame("arguments")))
 
             val, err = res.inherit_from(resp)
 

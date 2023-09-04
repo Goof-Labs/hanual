@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING, Tuple
+from typing import Optional, TYPE_CHECKING, Tuple, Self
 from enum import StrEnum, auto
 from io import StringIO
 
 
 if TYPE_CHECKING:
-    from .trace_back import TraceBack
+    from .trace_back import TraceBack, Frame
 
 
 class ErrorType(StrEnum):
@@ -35,6 +35,10 @@ class HanualError:
         self._tip = tip
         self._pos = pos
         self._tb = tb
+
+    def add_frame(self, frame: Frame) -> Self:
+        self._tb.add_frame(frame)
+        return self
 
     def as_string(self) -> str:
         error = StringIO()

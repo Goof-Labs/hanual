@@ -160,25 +160,16 @@ def iwith_dot(ts: DefaultProduction[Token, DotChain]) -> DotChain:
 ###########################
 
 
-@par.rule("NUM OP NUM")
+@par.rule(
+    "NUM OP NUM",
+    "expr OP NUM",
+    "expr OP expr",
+    "expr OP ID",
+    "ID OP NUM",
+    "ID OP expr",
+    "ID OP ID")
 def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
-
-
-@par.rule("expr OP NUM")
-def expr(ts: DefaultProduction[BinOpNode, Token, Token]) -> BinOpNode:
-    return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
-
-
-@par.rule("ID OP NUM")
-def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
-    return BinOpNode(ts[1], ts[0], ts[2])
-
-
-@par.rule("ID OP ID")
-def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
-    return BinOpNode(ts[1], ts[0], ts[2])
-
 
 ###########################
 # IMPLICIT CONDITIONS
@@ -374,7 +365,6 @@ def new_struct(ts: DefaultProduction[Token, FunctionCall]) -> NewStruct:
     "algebraic_op OP expr",
     # expr
     "expr OP ADT",
-    "expr OP NUM",
     "expr OP algebraic_op",
 )
 def algebraic_op(ts: DefaultProduction):

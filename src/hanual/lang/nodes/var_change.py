@@ -54,7 +54,8 @@ class VarChange(BaseNode):
     def execute(self, scope: Scope) -> Result:
         res: Result = Result()
 
-        if not scope.get(self._name.value, None):
+        """
+        if scope.get(self._name.value, None) is None:
             return res.fail(HanualError(
                     pos=(self._name.line, self._name.colm, self._name.colm+len(self._name.value)),
                     line=self._name.line_val,
@@ -63,6 +64,7 @@ class VarChange(BaseNode):
                     tb=TraceBack().add_frame(Frame("new struct")),
                     tip="Did you make a typo?"
                 ))
+        """
         val, err = res.inherit_from(self._value.execute(scope))
 
         if err:

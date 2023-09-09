@@ -65,7 +65,6 @@ class FunctionDefinition(BaseNode):
 
     def execute(self, scope: Scope) -> Result:
         func_wrapper = HlWrapperFunction(self._name.value, self._arguments, self.execute_body)
-        print(func_wrapper.name, func_wrapper.arguments.children)
         scope.set(self._name.value, func_wrapper)
         return Result().success(None)
 

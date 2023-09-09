@@ -9,6 +9,7 @@ from hanual.compile.instruction import *
 from hanual.exec.result import Result
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
+from hanual.lang.errors import ErrorType, HanualError, Frame, TraceBack
 
 
 if TYPE_CHECKING:
@@ -70,7 +71,14 @@ class ImplicitBinOp(BaseNode):
         val = scope.get(name, None)
 
         if val is None:
-            return res.fail(f"reference to {name!r} could not be resolved")
+            return res.fail(HanualError(
+                    pos=(self._op.line, self._op.colm, self._op.colm+len(self._op.value)),
+                    line=self._op.line_val,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Couldn't resolve reference to {self._op.value!r}",
+                    tb=TraceBack().add_frame(Frame("implicit binary op")),
+                    tip="Did you make a typo?"
+                ))
 
         if not isinstance(val, (float, int)):
             val = val.value
@@ -99,7 +107,14 @@ class ImplicitBinOp(BaseNode):
             other = other.value
 
         if other is None:
-            return res.fail(f"reference to {self._right.value!r} could not be resolved")
+            return res.fail(HanualError(
+                    pos=(self._op.line, self._op.colm, self._op.colm+len(self._op.value)),
+                    line=self._op.line_val,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Couldn't resolve reference to {self._op.value!r}",
+                    tb=TraceBack().add_frame(Frame("implicit binop")),
+                    tip="Did you make a typo?"
+                ))
 
         # math
         if self._op.value == "+":

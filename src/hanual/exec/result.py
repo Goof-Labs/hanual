@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional, TypeVar, Any, Generic, Self, Iterator
+from typing import Optional, TypeVar, Generic, Self, Iterator
+from hanual.lang.errors import HanualError
 
-_R = TypeVar("_R", None, Any)
-_E = TypeVar("_E", None, Any)
+_E = TypeVar("_E", None, HanualError)
+_R = TypeVar("_R")
 
 
 # This records the result the execution of the AST, it stores the possible error and return value

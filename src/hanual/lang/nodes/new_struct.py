@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.lang.errors import HanualError, ErrorType, TraceBack, Frame
 from hanual.compile.constants.constant import Constant
 from typing import TYPE_CHECKING, Union
 from hanual.exec.result import Result
@@ -44,6 +45,13 @@ class NewStruct(BaseNode):
         struct: Union[HlStruct, None] = scope.get(self._name.value, None)
 
         if struct is None:
-            return res.fail(f"{self._name.value!r} was not found in scope")
+            return res.fail(HanualError(
+                pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
+                line=self._name.line_val,
+                name=ErrorType.unresolved_name,
+                reason=f"Couldn't resolve reference to {self._name.value!r}",
+                tb=TraceBack().add_frame(Frame("new struct")),
+                tip="Did you make a typo?"
+            ))
 
         return res.success(struct.make_instance(name=struct.name, fields=struct.fields))

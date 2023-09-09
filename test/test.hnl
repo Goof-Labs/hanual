@@ -5,10 +5,10 @@ struct Person {
     iq: int
 }
 
-fn increment(a) {
-    return a + 1
-}
-
 fn main() {
-    println(increment(1))
+    let x = new Person()
+    x.name = "jeff"
+
+    println(x.name)
+    // println(x.to_str())
 }

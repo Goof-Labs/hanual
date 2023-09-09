@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.lang.errors import ErrorType, HanualError, TraceBack
 from typing import TypeVar, TYPE_CHECKING
 from hanual.exec.result import Result
 from hanual.lang.lexer import Token
@@ -24,7 +25,14 @@ def hl_wrap(scope: Scope, value: _T):
             val = scope.get(value.value, None)
 
             if val is None:
-                return res.fail(f"{value.value!r} can not be resolved")
+                return res.fail(HanualError(
+                    pos=(value.line, value.colm, value.colm+len(value.value)),
+                    line=value.line_val,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Couldn't resolve reference to {value.value!r}",
+                    tb=TraceBack(),
+                    tip="Did you make a typo?"
+                ))
 
             return res.success(val)
 

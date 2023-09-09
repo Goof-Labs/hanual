@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 
+from hanual.lang.errors import HanualError, ErrorType, Frame, TraceBack
 from typing import TYPE_CHECKING, Generic, TypeVar, Any
 from hanual.compile.constants.constant import Constant
 from hanual.exec.wrappers import LiteralWrapper
@@ -9,7 +10,6 @@ from hanual.compile.instruction import *
 from hanual.exec.result import Result
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
-
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
@@ -87,7 +87,14 @@ class AssignmentNode(BaseNode, Generic[T]):
                 val = scope.get(value.value, None)
 
                 if val is None:
-                    return res.fail(f"name {value.value!r} could not be resolved")
+                    return res.fail(HanualError(
+                        pos=(value.line, value.colm, value.colm+len(value.value)),
+                        line=value.line_val,
+                        name=ErrorType.unresolved_name,
+                        reason=f"Reference to {value.value!r} could not be resolved",
+                        tb=TraceBack().add_frame(Frame("Assignment")),
+                        tip=f"Did you make a typo?",
+                    ))
 
                 return res.success(val)
 

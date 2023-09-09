@@ -10,5 +10,5 @@ from typing import Dict, Any, Union
 class IOBuiltinLibrary(BaseBuiltinLibrary):
     @hl_builtin("x", name="println")
     def hl_println(self, scope: Scope, args: Dict[str, Union[LiteralWrapper, Any]]) -> Result:
-        print(args["x"].as_string(scope))
+        print(args["x"].to_str(scope, args))
         return Result().success(None)

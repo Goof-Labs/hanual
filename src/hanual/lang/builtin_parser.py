@@ -141,8 +141,7 @@ def for_loop(ts, no_body: Union[Literal[True], Literal[None]]) -> ForLoop:
 
 @par.rule("DOT ID")
 def dot_id(ts: DefaultProduction[Token, Token]) -> DotChain:
-    dc = DotChain()
-    return dc.add_name(ts[1])
+    return DotChain().add_name(ts[1])
 
 
 @par.rule("iwith_dot dot_id")
@@ -160,25 +159,16 @@ def iwith_dot(ts: DefaultProduction[Token, DotChain]) -> DotChain:
 ###########################
 
 
-@par.rule("NUM OP NUM")
+@par.rule(
+    "NUM OP NUM",
+    "expr OP NUM",
+    "expr OP expr",
+    "expr OP ID",
+    "ID OP NUM",
+    "ID OP expr",
+    "ID OP ID")
 def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
-
-
-@par.rule("expr OP NUM")
-def expr(ts: DefaultProduction[BinOpNode, Token, Token]) -> BinOpNode:
-    return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
-
-
-@par.rule("ID OP NUM")
-def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
-    return BinOpNode(ts[1], ts[0], ts[2])
-
-
-@par.rule("ID OP ID")
-def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
-    return BinOpNode(ts[1], ts[0], ts[2])
-
 
 ###########################
 # IMPLICIT CONDITIONS
@@ -280,6 +270,7 @@ def par_args(ts):
     "ID LPAR NUM RPAR",
     "ID LPAR f_call RPAR",
     "ID LPAR s_getattr RPAR",
+    "ID LPAR iwith_dot RPAR",
     "ID LPAR RPAR",
     "ID par_args",
     types={"ID LPAR RPAR": 1, "ID par_args": 2},
@@ -374,7 +365,6 @@ def new_struct(ts: DefaultProduction[Token, FunctionCall]) -> NewStruct:
     "algebraic_op OP expr",
     # expr
     "expr OP ADT",
-    "expr OP NUM",
     "expr OP algebraic_op",
 )
 def algebraic_op(ts: DefaultProduction):
@@ -748,7 +738,7 @@ def h_range(ts: DefaultProduction):
     "shout",
     "using",
     "ret",
-    unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS"],
+    unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS", "DOT"],
 )
 def line(ts):
     return CodeBlock(ts[0])

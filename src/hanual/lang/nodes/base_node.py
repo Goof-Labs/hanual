@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, Tuple, TypeVar, Union
-from hanual.lang.builtin_lexer import Token
 from hanual.exec.scope import Scope
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     from hanual.compile.constants.constant import BaseConstant
+    from hanual.lang.builtin_lexer import Token
     from hanual.exec.result import Result
 
 

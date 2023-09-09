@@ -17,4 +17,6 @@ class Interpreter:
                 scope.set(func.name, func)
 
             _, err = scope.get("main", None)(scope=scope)
-            print(err)
+
+            if err:
+                print(err.as_string())

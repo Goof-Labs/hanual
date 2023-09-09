@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from hanual.lang.errors import HanualError, TraceBack, ErrorType, Frame
 from hanual.compile.constants.constant import Constant
-from typing import TYPE_CHECKING, Union, Callable
 from hanual.compile.registers import Registers
 from hanual.compile.instruction import *
+from typing import TYPE_CHECKING, Union
 from hanual.compile.label import Label
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
@@ -50,11 +51,35 @@ class FunctionCall(BaseNode):
     def execute(self, scope: Scope) -> Result:
         res = Result()
 
-        f_scope = Scope(parent=scope, name=self._name.value)
+        # create a scope for the function
+        if isinstance(self._name, Token):
+            f_scope = Scope(parent=scope, name=self._name.value)
+            func = scope.get(self._name.value, None)
 
-        # get the arguments from the parent scope and give them a new alias, then check for errors and return if so
+            # check for errors
+            if func is None:
+                return res.fail(HanualError(
+                    pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
+                    line=self._name.line_val,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Couldn't resolve reference to {self._name.value!r}",
+                    tb=TraceBack().add_frame(Frame("function call")),
+                    tip="Did you make a typo?"
+                ))
 
-        arg_res = self._args.execute(scope=scope, initiator=self._name.value)
+        elif isinstance(self._name, DotChain):
+            # get the last name in the chain because that is what the function name is
+            f_scope = Scope(parent=scope, name=self._name.chain[0].value)
+            func, err = res.inherit_from(self._name.execute(scope))
+
+            if func is None:
+                return res.fail(err.add_frame(Frame(name="function call")))
+
+        else:
+            raise Exception
+
+        # get the arguments from function just obtained
+        arg_res = self._args.execute(scope=scope, params=func.arguments)
         args, err = arg_res
         res.inherit_from(arg_res)
 
@@ -64,11 +89,6 @@ class FunctionCall(BaseNode):
         f_scope.extend(args)
 
         # run the body
-
-        func: Union[Callable] = scope.get(self._name.value, None)
-        if not func:
-            return res.fail(f"{self._name.value!r} was not found")
-
         res.inherit_from(func(scope=f_scope))
 
         return res

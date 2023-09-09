@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Generic, TYPE_CHECKING, TypeVar
+from typing import Generic, TYPE_CHECKING, TypeVar, Any
+from hanual.exec.result import Result
 from .base_value import BaseValue
 from abc import ABC
 
@@ -23,5 +24,11 @@ class LiteralWrapper(BaseValue, Generic[_T], ABC):
     def value(self) -> _T:
         return self._value
 
+    def get_attr(self, scope: Scope, attr: str) -> Result:
+        raise Exception
+
     def as_string(self, scope: Scope) -> str:
+        return str(self._value)
+
+    def to_str(self, scope: Scope, x: Any) -> LiteralWrapper:
         return str(self._value)

@@ -3,11 +3,10 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from .arguments import Arguments
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    ...
+    from .arguments import Arguments
 
 
 class AnonArgs(BaseNode, ABC):

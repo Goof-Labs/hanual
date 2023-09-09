@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.exec.wrappers import LiteralWrapper
 from .lexer import Lexer, Token, kw, rx
 
 
@@ -58,10 +59,20 @@ class HanualLexer(Lexer):
     ]
 
     @staticmethod
-    def t_NUM(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+    def t_compile_NUM(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
         return Token(
             kind,
             float(value) if "." in value else int(value),
+            line_no,
+            col,
+            origin_line,
+        )
+
+    @staticmethod
+    def t_exec_NUM(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+        return Token(
+            kind,
+            LiteralWrapper[float](float(value)),
             line_no,
             col,
             origin_line,

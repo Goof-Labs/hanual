@@ -7,9 +7,11 @@ from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
 from hanual.exec.wrappers import hl_wrap
 from hanual.exec.result import Result
+from hanual.lang.errors import Frame
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
+    from hanual.lang.nodes import Parameters
     from .f_def import FunctionDefinition
     from hanual.exec.scope import Scope
 
@@ -22,11 +24,12 @@ class Arguments(BaseNode):
         self.function_def = False
 
         if isinstance(children, Token):
-            if children.type == "ID":
-                self._children: List[T] = [children.value]
+            # if children.type == "ID":
+            #     self._children: List[T] = [children.value]
 
-            else:
-                self._children: List[T] = [children]
+            # else:
+            #     self._children: List[T] = [children]
+            self._children: List[T] = [children]
 
         elif issubclass(type(children), BaseNode):
             self._children: List[T] = [children]
@@ -59,45 +62,54 @@ class Arguments(BaseNode):
                 val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
 
                 if err:
-                    yield res.fail((name, err))
+                    yield res.fail(err.add_frame(Frame("arguments")))
 
                 yield res.success((name, val))
+                continue
 
             # can be executed
-            else:
-                # value = the bin op node, val = what was returned
-                val, err = res.inherit_from(value.execute(scope=scope))
+            # value = the bin op node, val = what was returned
+            val, err = res.inherit_from(value.execute(scope=scope))
 
-                if err:
-                    yield res.fail((name, err))
+            if err:
+                yield res.fail(err.add_frame(Frame(name="arguments")))
+                return
 
-                val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
+            val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
 
-                yield res.success((name, val))
+            yield res.success((name, val))
 
-    def execute(self, scope, initiator: Optional[str] = None):
+    def execute(self, scope, initiator: Optional[str] = None, params: Optional[Parameters] = None):
         res = Result()
 
-        if initiator is None:
-            raise Exception(f"can't run without initiator")
+        if initiator is None and params is None:
+            raise Exception(f"can't run without initiator or params")
 
-        func: Union[FunctionDefinition, None] = scope.get(initiator, None)
+        # if `initiator` param was supplied
+        if initiator:
+            func: Union[FunctionDefinition, None] = scope.get(initiator, None)
 
-        if func is None:
-            raise Exception(f"can't find func {initiator!r}")
+            if func is None:
+                raise Exception(f"can't find func {initiator!r}")
+
+            func_params = func.arguments.children
+
+        # `params`
+        else:
+            func_params = params.children
 
         args = {}
 
-        for resp in self._gen_args(names=func.arguments.children, scope=scope):
+        for resp in self._gen_args(names=func_params, scope=scope):
             if resp.error:
-                return res.fail(resp.error)
+                return res.fail(resp.error.add_frame(Frame("arguments")))
 
-            val, err = res.inherit_from(hl_wrap(scope=scope, value=resp.response[1]))
+            val, err = res.inherit_from(resp)
 
             if err:
                 return res
 
-            args[resp.response[0]] = val
+            args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = val[1]
 
         return res.success(args)
 

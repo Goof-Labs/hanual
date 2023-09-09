@@ -141,8 +141,7 @@ def for_loop(ts, no_body: Union[Literal[True], Literal[None]]) -> ForLoop:
 
 @par.rule("DOT ID")
 def dot_id(ts: DefaultProduction[Token, Token]) -> DotChain:
-    dc = DotChain()
-    return dc.add_name(ts[1])
+    return DotChain().add_name(ts[1])
 
 
 @par.rule("iwith_dot dot_id")
@@ -271,6 +270,7 @@ def par_args(ts):
     "ID LPAR NUM RPAR",
     "ID LPAR f_call RPAR",
     "ID LPAR s_getattr RPAR",
+    "ID LPAR iwith_dot RPAR",
     "ID LPAR RPAR",
     "ID par_args",
     types={"ID LPAR RPAR": 1, "ID par_args": 2},
@@ -738,7 +738,7 @@ def h_range(ts: DefaultProduction):
     "shout",
     "using",
     "ret",
-    unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS"],
+    unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS", "DOT"],
 )
 def line(ts):
     return CodeBlock(ts[0])

@@ -18,8 +18,7 @@ elif "pack" in options.loose_args:
     raise NotImplementedError
 
 elif "run" in options.loose_args:
-    ast, _ = create_ast()
-    print(dump_tree(ast, depth=10))
+    ast, text = create_ast(lexer_mode="exec")
     it = Interpreter(ast[0][1])
     it.run()
 

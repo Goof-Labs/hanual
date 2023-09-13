@@ -16,6 +16,7 @@ class ErrorType(StrEnum):
         first, *others = name.split('_')
         return ''.join([first.lower(), *map(str.title, others)])
 
+    cli_argument_unresolved: str = auto()
     non_initialized_value: str = auto()
     illegal_character: str = auto()
     division_by_zero: str = auto()

@@ -63,7 +63,7 @@ class Lexer:
 
     def tokenize(self,
                  stream: Generator[str, None, None],
-                 mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both") -> Generator[Token, None, None]:
+                 mode: Literal["exec"] | Literal["compile"]) -> Generator[Token, None, None]:
         # TODO allow rules to ble cleared
         self.update_rules(self.last)
 

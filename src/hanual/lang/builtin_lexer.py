@@ -77,3 +77,29 @@ class HanualLexer(Lexer):
             col,
             origin_line,
         )
+
+    @staticmethod
+    def t_exec_STR(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+        # remove last and first character of string, which are " or double quotes
+        value = value[1:]
+        value = value[:-1]
+        return Token(
+            kind,
+            LiteralWrapper[str](value),
+            line_no,
+            col,
+            origin_line,
+        )
+
+    @staticmethod
+    def t_compile_STR(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+        # remove last and first character of string, which are " or double quotes
+        value = value[1:]
+        value = value[:-1]
+        return Token(
+            kind,
+            value,
+            line_no,
+            col,
+            origin_line,
+        )

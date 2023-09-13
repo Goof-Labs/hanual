@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from typing import Optional, List, Mapping, Tuple, Generator
 from hanual.tools.cli import HanualCli, CompilerOptions
+from hanual.lang.errors import HanualError, ErrorType
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.preprocess import Preprocessor
 from hanual.api.load_hooks import HookLoader
+from hanual.lang.errors import TraceBack
 from hanual.lang.pparser import PParser
 from hanual.lang.nodes import CodeBlock
 from hanual.lang.lexer import Lexer
+from sys import argv
 
 
 def create_ast(*,
@@ -21,6 +24,8 @@ def create_ast(*,
                prefix: Optional[str] = None,
                starting_definitions: Optional[List[str]] = None,
                mappings: Optional[Mapping[str, str]] = None,
+               #  Lexer arguments
+               lexer_mode: Union[Literal["exec"], Literal["compile"], None] = None,
                ) -> Tuple[CodeBlock, Generator[str, None, None]]:
     # set default arguments and stuff
     if options is None:
@@ -59,10 +64,29 @@ def create_ast(*,
         lexer = HanualLexer()
         lexer.add_hooks(hook_loader.tokens)
 
+    # check optional arguments
+    if lexer_mode is None:
+        if "compile" in options.loose_args:
+            lexer_mode = "compile"
+
+        elif "run" in options.loose_args:
+            lexer_mode = "exec"
+
+        else:
+            raise Exception("couldn't infer lexer mode, try passing it as an argument")
+
     # preprocessing
 
     if not options.files:
-        raise Exception("No files specified")
+        print(HanualError(
+            pos=("SHELL", 0, 0),
+            line=" ".join(argv)+"\n",
+            name=ErrorType.cli_argument_unresolved,
+            tip="Try passing the argument like this: files=my_file.hnl",
+            reason="The `files` argument was not passed as a paramiter",
+            tb=TraceBack()
+        ).as_string())
+        exit(1)
 
     with open(options.files[0], "r") as f:
         text = preproc.process(text=f.read(),
@@ -74,7 +98,7 @@ def create_ast(*,
 
     lexer.add_hooks(hook_loader.tokens)
 
-    tokens = lexer.tokenize(text)
+    tokens = lexer.tokenize(text, mode=lexer_mode)
 
     # parsing
 

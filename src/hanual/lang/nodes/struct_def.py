@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from hanual.compile.constants.constant import Constant
 from .strong_field_list import StrongFieldList
-from hanual.exec.wrappers import HlStruct
 from typing import TYPE_CHECKING, Union
 from .strong_field import StrongField
 from hanual.exec.result import Result
@@ -47,6 +46,8 @@ class StructDefinition(BaseNode):
         return []
 
     def execute(self, scope: Scope) -> Result:
+        from hanual.exec.wrappers import HlStruct
+
         scope.set(self.name.value, HlStruct(self))
         return Result().success(None)
 

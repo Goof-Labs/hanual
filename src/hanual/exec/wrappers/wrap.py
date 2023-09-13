@@ -21,6 +21,9 @@ def hl_wrap(scope: Scope, value: _T):
         return res.success(value)
 
     if isinstance(value, Token):
+        if isinstance(value.value, LiteralWrapper):
+            return res.success(value.value)
+
         if value.type == "ID":
             val = scope.get(value.value, None)
 

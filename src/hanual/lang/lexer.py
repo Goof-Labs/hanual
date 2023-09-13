@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union, 
 from hanual.lang.errors import ErrorType, HanualError, TraceBack, Frame
 import re
 
-
 if TYPE_CHECKING:
-    from typing_extensions import LiteralString
+    from typing_extensions import LiteralString, Literal
+    from hanual.exec.wrappers import LiteralWrapper
     from hanual.api.hooks import TokenHook
 
 T = TypeVar("T")
@@ -22,7 +22,7 @@ def rx(reg: T) -> Tuple[T, LiteralString]:
 
 class Token(NamedTuple):
     type: str
-    value: Union[str, int, float]
+    value: Union[str, int, float, LiteralWrapper]
     line: int
     colm: int
     line_val: str  # The value of the line as a string the token has been extracted from
@@ -61,16 +61,23 @@ class Lexer:
             else:
                 raise ValueError(f"{hook.type!r} is not recognised as a regex or keyword")
 
-    def tokenize(self, stream: Generator[str, None, None]) -> Generator[Token, None, None]:
+    def tokenize(self,
+                 stream: Generator[str, None, None],
+                 mode: Literal["exec"] | Literal["compile"]) -> Generator[Token, None, None]:
         # TODO allow rules to ble cleared
         self.update_rules(self.last)
 
         tok_reg = "|".join("(?P<%s>%s)" % pair for pair in self._rules)
 
         for line_no, line in enumerate(stream):
-            yield from self._tokenize_str(tok_reg, line, line_no)
+            yield from self._tokenize_str(tok_reg, line, line_no, mode=mode)
 
-    def _tokenize_str(self, tok_reg: str, text: str, line_no: int) -> Generator[Token, None, None]:
+    def _tokenize_str(self,
+                      tok_reg: str,
+                      text: str,
+                      line_no: int,
+                      mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both"
+                      ) -> Generator[Token, None, None]:
         for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
             value = pat.group()
@@ -85,7 +92,7 @@ class Lexer:
 
             if kind == "MISMATCH":
                 print(HanualError(
-                    pos=(line_no, col, len(value)+col),
+                    pos=(line_no, col, len(value) + col),
                     line=text,
                     name=ErrorType.illegal_character,
                     reason=f"{value!r} is not recognised as a symbol or valid character",
@@ -100,8 +107,8 @@ class Lexer:
                 yield hook.gen_token(kind, value, line_no, col, text)
                 continue
 
-            elif hasattr(self, f"t_{kind}"):
-                yield getattr(self, f"t_{kind}")(kind, value, line_no, col, text)
+            elif hasattr(self, f"t_{mode}_{kind}"):
+                yield getattr(self, f"t_{mode}_{kind}")(kind, value, line_no, col, text)
                 continue
 
             yield Token(kind, value, line_no, col, text)

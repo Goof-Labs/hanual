@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-import os
-from sys import argv
 from configparser import ConfigParser, ExtendedInterpolation
-from typing_extensions import Self
-
 from hanual.compile.options import CompilerOptions
+from typing import TYPE_CHECKING
+from sys import argv
+import os
+
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 
 class HanualCli:

@@ -16,15 +16,19 @@ class ErrorType(StrEnum):
         first, *others = name.split('_')
         return ''.join([first.lower(), *map(str.title, others)])
 
+    cli_argument_unresolved: str = auto()
+    non_initialized_value: str = auto()
     illegal_character: str = auto()
     division_by_zero: str = auto()
     unresolved_name: str = auto()
+    attr_not_found: str = auto()
+    cant_set_attr: str = auto()
 
 
 class HanualError:
     def __init__(self,
-                 pos: Tuple[int, int, int],
-                 line: str,
+                 pos: Optional[Tuple[int, int, int]],
+                 line: Optional[str],
                  name: str,
                  reason: str,
                  tb: TraceBack,

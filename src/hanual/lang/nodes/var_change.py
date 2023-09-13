@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from hanual.lang.errors import HanualError, ErrorType, Frame, TraceBack
 from hanual.compile.constants.constant import Constant
+from hanual.lang.nodes.dot_chain import DotChain
 from hanual.compile.registers import Registers
 from typing import TYPE_CHECKING, TypeVar
 from hanual.compile.instruction import *
@@ -51,26 +52,75 @@ class VarChange(BaseNode):
 
         return instructions
 
+    def _get_value(self, scope: Scope) -> Result:
+        res = Result()
+
+        # is the name a token?
+        if isinstance(self._value, Token):
+            if self._value.type in ("STR", "NUM"):  # a literal
+                return res.success(self._value)
+
+            elif self._name.type == "ID":
+                val = scope.get(self._value.value, None)
+
+                if val is None:
+                    return res.fail(HanualError(
+                        pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
+                        line=self._name.line_val,
+                        name=ErrorType.unresolved_name,
+                        reason=f"Couldn't resolve reference to {self._name.value!r}",
+                        tb=TraceBack().add_frame(Frame("new struct")),
+                        tip="Did you make a typo?"
+                    ))
+
+                return res.success(val)
+
+            else:
+                raise Exception
+        # should be executable
+        val, err = res.inherit_from(self._value.execute(scope))
+
+        if err:
+            return res.fail(err.add_frame(Frame("var change")))
+
+        return res.success(val)
+
     def execute(self, scope: Scope) -> Result:
         res: Result = Result()
 
-        """
-        if scope.get(self._name.value, None) is None:
-            return res.fail(HanualError(
-                    pos=(self._name.line, self._name.colm, self._name.colm+len(self._name.value)),
+        # get the name
+        if isinstance(self._name, Token):
+            # the variable does not exist
+            if not scope.exists(self._name.value):
+                return res.fail(HanualError(
+                    pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
                     line=self._name.line_val,
                     name=ErrorType.unresolved_name,
                     reason=f"Couldn't resolve reference to {self._name.value!r}",
                     tb=TraceBack().add_frame(Frame("new struct")),
                     tip="Did you make a typo?"
                 ))
-        """
-        val, err = res.inherit_from(self._value.execute(scope))
+            # get the value
+            val, err = res.inherit_from(self._get_value(scope))
 
-        if err:
-            return res
+            if err:
+                return res.fail(err.add_frame("var change"))
 
-        scope.set(self._name.value, val)
+            scope.set(self._name.value, val)
+            return res.success(None)
+
+        elif isinstance(self._name, DotChain):
+            # dot chain
+
+            val, err = res.inherit_from(self._get_value(scope))
+
+            if err:
+                return res.fail(err.add_frame(Frame("var change")))
+
+            _, err = res.inherit_from(self._name.execute(scope, set_attr=val))
+
+            if err:
+                return res.fail(err.add_frame(Frame("var change")))
 
         return res.success(None)
 

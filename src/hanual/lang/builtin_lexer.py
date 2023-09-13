@@ -103,4 +103,3 @@ class HanualLexer(Lexer):
             col,
             origin_line,
         )
-

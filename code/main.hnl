@@ -1,3 +1,4 @@
 fn main() {
+	input("type some crap: ")
 	println("Hello world")
 }

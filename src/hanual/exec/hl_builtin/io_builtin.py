@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hanual.lang.errors import ErrorType, HanualError, TraceBack
 from .base_builtin import hl_builtin, BaseBuiltinLibrary
 from hanual.exec.wrappers import LiteralWrapper
 from hanual.exec.result import Result
@@ -9,6 +10,24 @@ from typing import Dict, Any, Union
 
 class IOBuiltinLibrary(BaseBuiltinLibrary):
     @hl_builtin("x", name="println")
-    def hl_println(self, scope: Scope, args: Dict[str, Union[LiteralWrapper, Any]]) -> Result:
+    def hl_println(self, scope: Scope, args: Dict[str, LiteralWrapper]) -> Result:
         print(args["x"].to_str(scope, args))
         return Result().success(None)
+
+    @hl_builtin("prompt", name="input")
+    def hl_input(self, scope: Scope, args: Dict[str, LiteralWrapper]) -> Result[LiteralWrapper[str], HanualError]:
+        res = Result()
+
+        try:
+            inp = input(args["prompt"].to_str(None, None))
+
+        except KeyboardInterrupt:
+            return res.fail(HanualError(
+                pos=(-1, 0, 0),
+                line="",
+                name=ErrorType.Keyboard_interupt,
+                reason="The user pressed ^C (Ctrl+C)",
+                tb=TraceBack()
+            ))
+
+        return res.success(LiteralWrapper[str](inp))

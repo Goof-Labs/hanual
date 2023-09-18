@@ -15,17 +15,17 @@ class IOBuiltinLibrary(BaseBuiltinLibrary):
         return Result().success(None)
 
     @hl_builtin("prompt", name="input")
-    def hl_input(self, scope: Scope, args: Dict[str, LiteralWrapper]) -> Result[LiteralWrapper[str], HanualError]:
+    def hl_input(self, scope: Scope, args: Dict[str, LiteralWrapper]):
         res = Result()
 
         try:
-            inp = input(args["prompt"].to_str(None, None))
+            inp = input(args["prompt"].to_str(scope, None))
 
         except KeyboardInterrupt:
-            return res.fail(HanualError(
+            return res.fail(err=HanualError(
                 pos=(-1, 0, 0),
                 line="",
-                name=ErrorType.Keyboard_interupt,
+                name=ErrorType.keyboard_interupt,
                 reason="The user pressed ^C (Ctrl+C)",
                 tb=TraceBack()
             ))

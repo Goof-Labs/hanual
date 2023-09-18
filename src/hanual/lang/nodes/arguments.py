@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, TypeVar, Union, Optional, Generator
 from hanual.compile.constants.constant import Constant
+from hanual.exec.wrappers.literal import LiteralWrapper
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
@@ -15,12 +16,13 @@ if TYPE_CHECKING:
     from .f_def import FunctionDefinition
     from hanual.exec.scope import Scope
 
-T = TypeVar("T")
+T = TypeVar("T", bound=BaseNode)
 
 
 class Arguments(BaseNode):
+    __slots__ = "function_def", "_children",
+
     def __init__(self, children: Union[T, List[T]]) -> None:
-        self._children: List[T] = []
         self.function_def = False
 
         if isinstance(children, Token):
@@ -35,7 +37,7 @@ class Arguments(BaseNode):
             self._children: List[T] = [children]
 
         else:  # This is just another node that we have chucked into a list
-            self._children: List[T] = list(children)
+            self._children: List[T] = list(*children)
 
     def add_child(self, child):
         if isinstance(child, Arguments):
@@ -47,7 +49,7 @@ class Arguments(BaseNode):
         return self
 
     @property
-    def children(self) -> List[T]:
+    def children(self) -> List:
         return self._children
 
     def compile(self, cm: CompileManager):
@@ -59,6 +61,19 @@ class Arguments(BaseNode):
         for name, value in zip(names, self._children):
             # token
             if isinstance(value, Token):
+                if value.type in ("STR", "NUM"):
+                    assert isinstance(value.value, LiteralWrapper), f"Expected a LiteralWrapper got {type(value.value).__name__!r} instead"
+                    # the value should already be a `LiteralWrapper`
+                    yield res.success(value)
+
+                else: # The token is an ID
+                    _, err = res.inherit_from(scope.get(str(value.value), None))
+
+                    if err:
+                        return err.add_frame(Frame("arguments")) 
+
+                    yield res
+
                 val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
 
                 if err:
@@ -95,7 +110,7 @@ class Arguments(BaseNode):
             func_params = func.arguments.children
 
         # `params`
-        else:
+        if params:
             func_params = params.children
 
         args = {}
@@ -109,6 +124,7 @@ class Arguments(BaseNode):
             if err:
                 return res
 
+            # set the arg equal to the value
             args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = val[1]
 
         return res.success(args)

@@ -1,0 +1,8 @@
+struct File {
+	name: str,
+	mode: str,
+	__file
+}
+
+fn fopen(fp, mode) {
+}

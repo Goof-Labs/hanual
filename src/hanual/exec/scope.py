@@ -13,7 +13,9 @@ _H = TypeVar("_H")
 
 
 class Scope(Generic[_H]):
-    def __init__(self, parent, name: Optional[str] = "BLANK", frame: Optional[Frame]=None):
+    def __init__(
+        self, parent, name: Optional[str] = "BLANK", frame: Optional[Frame] = None
+    ):
         if frame is None and name == "BLANK":
             raise Exception("Insufficient arguments")
 
@@ -25,27 +27,33 @@ class Scope(Generic[_H]):
 
             self._frame: Frame = frame
             self._name: str = frame.name
-            
+
         self._name: str = str(name)
 
     def exists(self, key: str) -> bool:
         return key in self._env
 
-    def get(self, key: str, default: Optional[Any] = None, res: Optional[bool] = False) -> Union[_H, Result]:
+    def get(
+        self, key: str, default: Optional[Any] = None, res: Optional[bool] = False
+    ) -> Union[_H, Result]:
         if res is False:
-            return self._env.get(key, default) or (self._parent.get(key, default=default) if self._parent else default)
+            return self._env.get(key, default) or (
+                self._parent.get(key, default=default) if self._parent else default
+            )
 
         val = self.get(key=key, default=None)
 
         if val is None:
-            return Result().fail(HanualError(
-                pos=None,
-                line=None,
-                name=ErrorType.unresolved_name,
-                reason=f"Reference to {key!r} could not be resolved",
-                tip="Did you make a typo?",
-                tb=TraceBack()
-            ))
+            return Result().fail(
+                HanualError(
+                    pos=None,
+                    line=None,
+                    name=ErrorType.unresolved_name,
+                    reason=f"Reference to {key!r} could not be resolved",
+                    tip="Did you make a typo?",
+                    tb=TraceBack(),
+                )
+            )
 
         return Result().success(val)
 

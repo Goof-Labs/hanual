@@ -6,7 +6,9 @@ from pickle import dump
 
 
 class Pack:
-    def __init__(self, name: str, *files: tuple[str], **metta_data: Dict[str, Any]) -> None:
+    def __init__(
+        self, name: str, *files: tuple[str], **metta_data: Dict[str, Any]
+    ) -> None:
         self._files: list[str] = list(*files)
         self._metta = metta_data
         self._name = name
@@ -30,7 +32,7 @@ class Pack:
         self._metta[name] = val
 
     def dump_pack(self, out_p: Optional[str] = None) -> None:
-        with ZipFile((out_p+"/"+self.name or self.name)+".pk", mode="w") as pack:
+        with ZipFile((out_p + "/" + self.name or self.name) + ".pk", mode="w") as pack:
             # TODO : parse all files to get the function header
             # coppy all files
             for file in self._files:

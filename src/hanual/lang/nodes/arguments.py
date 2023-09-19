@@ -20,7 +20,10 @@ T = TypeVar("T", bound=BaseNode)
 
 
 class Arguments(BaseNode):
-    __slots__ = "function_def", "_children",
+    __slots__ = (
+        "function_def",
+        "_children",
+    )
 
     def __init__(self, children: Union[T, List[T]]) -> None:
         self.function_def = False
@@ -62,27 +65,31 @@ class Arguments(BaseNode):
             # token
             if isinstance(value, Token):
                 if value.type in ("STR", "NUM"):
-                    assert isinstance(value.value, LiteralWrapper), f"Expected a LiteralWrapper got {type(value.value).__name__!r} instead"
+                    assert isinstance(
+                        value.value, LiteralWrapper
+                    ), f"Expected a LiteralWrapper got {type(value.value).__name__!r} instead"
                     # the value should already be a `LiteralWrapper`
                     yield res.success(value)
 
-                else: # The token is an ID
+                else:  # The token is an ID
                     val, err = res.inherit_from(scope.get(str(value.value), res=True))
 
                     if err:
-                        return err.add_frame(Frame("arguments")) 
+                        return err.add_frame(Frame("arguments"))
 
                     yield res.success((name, val))
 
-                #val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
+                # val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
 
-                #if err:
+                # if err:
                 #    yield res.fail(err.add_frame(Frame("arguments")))
 
                 if isinstance(value, LiteralWrapper):
                     yield res.success((name, value))
 
-                elif isinstance(value, Token) and isinstance(value.value, LiteralWrapper):
+                elif isinstance(value, Token) and isinstance(
+                    value.value, LiteralWrapper
+                ):
                     yield res.success((name, value.value))
 
                 elif isinstance(value, Token) and value.type == "ID":
@@ -90,12 +97,11 @@ class Arguments(BaseNode):
 
                     if err:
                         return err.add_frame(Frame("arguments"))
-                    
+
                     yield res.success((name, val))
 
                 else:
                     raise Exception(value)
-
                 continue
 
             # can be executed
@@ -113,7 +119,12 @@ class Arguments(BaseNode):
 
             yield res.success((name, val))
 
-    def execute(self, scope, initiator: Optional[str] = None, params: Optional[Parameters] = None):
+    def execute(
+        self,
+        scope,
+        initiator: Optional[str] = None,
+        params: Optional[Parameters] = None,
+    ):
         res = Result()
 
         if initiator is None and params is None:
@@ -144,8 +155,11 @@ class Arguments(BaseNode):
                 return res
 
             # set the arg equal to the value
-            args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = resp.response[1]
-
+            args[
+                resp.response[0]
+                if isinstance(resp.response[0], str)
+                else resp.response[0].value
+            ] = resp.response[1]
         return res.success(args)
 
     def get_names(self) -> list[Token]:

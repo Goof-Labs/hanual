@@ -21,7 +21,7 @@ class BaseNode(ABC):
     #    return super().__new__(cls)
 
     @abstractmethod
-    def __init__(self: BaseNode, *nodes: Tuple[T]) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """
         This method should take n number of arguments,
         these are either more nodes, or raw tokens.
@@ -62,6 +62,6 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def get_repr(o: T) -> Union[Dict, Token]:
+    def get_repr(o):
         # Just a convenience function that will call as_dict if it exists
         return o.as_dict() if hasattr(o, "as_dict") else o

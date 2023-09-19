@@ -19,7 +19,10 @@ if TYPE_CHECKING:
 
 
 class FunctionCall(BaseNode):
-    __slots__ = "_name", "_args",
+    __slots__ = (
+        "_name",
+        "_args",
+    )
 
     def __init__(self, name: Token, arguments: Arguments) -> None:
         self._name: Union[Token, DotChain] = name
@@ -58,14 +61,20 @@ class FunctionCall(BaseNode):
 
             # check for errors
             if func is None:
-                return res.fail(HanualError(
-                    pos=(self._name.line, self._name.colm, self._name.colm + len(str(self._name.value))),
-                    line=self._name.line_val,
-                    name=ErrorType.unresolved_name,
-                    reason=f"Couldn't resolve reference to {self._name.value!r}",
-                    tb=TraceBack().add_frame(Frame("function call")),
-                    tip="Did you make a typo?"
-                ))
+                return res.fail(
+                    HanualError(
+                        pos=(
+                            self._name.line,
+                            self._name.colm,
+                            self._name.colm + len(self._name.value),
+                        ),
+                        line=self._name.line_val,
+                        name=ErrorType.unresolved_name,
+                        reason=f"Couldn't resolve reference to {self._name.value!r}",
+                        tb=TraceBack().add_frame(Frame("function call")),
+                        tip="Did you make a typo?",
+                    )
+                )
 
         elif isinstance(self._name, DotChain):
             # get the last name in the chain because that is what the function name is

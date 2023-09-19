@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from parse.file_format import FileFormat
-from typing import List, TYPE_CHECKING
+from typing import Generator, List, TYPE_CHECKING, Dict, Any
 from dataclass import dataclass
 from io import BytesIO
 
 if TYPE_CHECKING:
     from hanual.jit.constant import Constant
+
 
 class CompileParser:
     def __init__(self):
@@ -19,27 +20,26 @@ class CompileParser:
         fn_header = self.read_fn_header(buffer)
         instructions = self.read_instructions(buffer)
 
-        return FileFormat(**header,
-                          file_deps=file_deps,
-                          fn_table=fn_header,
-                          instructions=instructions)
+        return FileFormat(
+            **header, file_deps=file_deps, fn_table=fn_header, instructions=instructions
+        )
 
-    def parse_header(self, buffer: BytesIO) -> None:
-        magic = buffer.read(4).decode() # b"LMAO"
-        src_hash = buffer.read(48).decode() # a base 64 sha256 hash of the source code
+    def parse_header(self, buffer: BytesIO) -> Dict[str, Any]:
+        magic = buffer.read(4).decode()  # b"LMAO"
+        src_hash = buffer.read(48).decode()  # a base 64 sha256 hash of the source code
         # read the version number
         major = int.from_bytes(buffer.read(1))
         minor = int.from_bytes(buffer.read(1))
         micro = int.from_bytes(buffer.read(1))
         return {
-                "magic": magic,
-                "hash": src_hash,
-                "major": major,
-                "minor": minor,
-                "micro": micro,
-            }
+            "magic": magic,
+            "hash": src_hash,
+            "major": major,
+            "minor": minor,
+            "micro": micro,
+        }
 
-    def parse_constant(self, buffer: BytesIO) -> List[Constant]:
+    def parse_constants(self, buffer: BytesIO) -> List[Constant]:
         constants: List[Constant] = []
         constant_bytes = BytesIO()
 
@@ -66,4 +66,3 @@ class CompileParser:
             constant_bytes.write(byte)
 
         return constants
-

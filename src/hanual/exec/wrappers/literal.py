@@ -17,6 +17,7 @@ class LiteralWrapper(BaseValue, Generic[_T], ABC):
     def __init__(self, value: _T) -> None:
         if isinstance(value, LiteralWrapper):
             raise Exception
+
         self._value = value
 
     def __eq__(self, other: LiteralWrapper):

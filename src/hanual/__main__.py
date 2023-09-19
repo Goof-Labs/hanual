@@ -19,7 +19,7 @@ elif "pack" in options.loose_args:
 
 elif "run" in options.loose_args:
     ast, text = create_ast(lexer_mode="exec")
-    it = Interpreter(ast[0][1])
+    it = Interpreter(ast)
     it.run()
 
 else:

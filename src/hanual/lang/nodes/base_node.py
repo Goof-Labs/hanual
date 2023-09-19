@@ -15,6 +15,11 @@ N = TypeVar("N", bound="BaseNode")
 
 
 class BaseNode(ABC):
+    #def __new__(cls, *args, **kwargs):
+    #    assert hasattr(cls, "_line"), "class needs to have attr _line"
+    #    assert hasattr(cls, "_line_no"), "class needs to have attr _line_no"
+    #    return super().__new__(cls)
+
     @abstractmethod
     def __init__(self: BaseNode, *nodes: Tuple[T]) -> None:
         """
@@ -31,6 +36,14 @@ class BaseNode(ABC):
         that corresponds to valid hanual bytecode.
         """
         raise NotImplementedError
+
+    @property
+    def line(self) -> str:
+        return self._line
+
+    @property
+    def line_no(self) -> int:
+        return self._line_no
 
     @abstractmethod
     def execute(self, scope: Scope) -> Result:

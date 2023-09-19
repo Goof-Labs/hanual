@@ -67,19 +67,35 @@ class Arguments(BaseNode):
                     yield res.success(value)
 
                 else: # The token is an ID
-                    _, err = res.inherit_from(scope.get(str(value.value), None))
+                    val, err = res.inherit_from(scope.get(str(value.value), res=True))
 
                     if err:
                         return err.add_frame(Frame("arguments")) 
 
-                    yield res
+                    yield res.success((name, val))
 
-                val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
+                #val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
 
-                if err:
-                    yield res.fail(err.add_frame(Frame("arguments")))
+                #if err:
+                #    yield res.fail(err.add_frame(Frame("arguments")))
 
-                yield res.success((name, val))
+                if isinstance(value, LiteralWrapper):
+                    yield res.success((name, value))
+
+                elif isinstance(value, Token) and isinstance(value.value, LiteralWrapper):
+                    yield res.success((name, value.value))
+
+                elif isinstance(value, Token) and value.type == "ID":
+                    val, err = scope.get(str(value.value), res=True)
+
+                    if err:
+                        return err.add_frame(Frame("arguments"))
+                    
+                    yield res.success((name, val))
+
+                else:
+                    raise Exception(value)
+
                 continue
 
             # can be executed
@@ -90,7 +106,10 @@ class Arguments(BaseNode):
                 yield res.fail(err.add_frame(Frame(name="arguments")))
                 return
 
-            val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
+            # val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
+
+            if not isinstance(val, LiteralWrapper):
+                raise Exception
 
             yield res.success((name, val))
 
@@ -125,7 +144,7 @@ class Arguments(BaseNode):
                 return res
 
             # set the arg equal to the value
-            args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = val[1]
+            args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = resp.response[1]
 
         return res.success(args)
 

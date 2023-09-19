@@ -1,22 +1,37 @@
 from __future__ import annotations
 
+from typing import Dict, TypeVar, Generic, Optional, Any, Union, TYPE_CHECKING, List
 from hanual.lang.errors import HanualError, ErrorType, TraceBack
-from typing import Dict, TypeVar, Generic, Optional, Any
 from hanual.exec.result import Result
+
+
+if TYPE_CHECKING:
+    from hanual.lang.errors.trace_back import Frame
+
 
 _H = TypeVar("_H")
 
 
 class Scope(Generic[_H]):
-    def __init__(self, parent, name: Optional[str] = "BLANK"):
+    def __init__(self, parent, name: Optional[str] = "BLANK", frame: Optional[Frame]=None):
+        if frame is None and name == "BLANK":
+            raise Exception("Insufficient arguments")
+
         self._parent: Scope = parent
         self._env: Dict[str, _H] = {}
-        self._name: str = name
+
+        if frame:
+            assert isinstance(frame, Frame)
+
+            self._frame: Frame = frame
+            self._name: str = frame.name
+            
+        self._name: str = str(name)
 
     def exists(self, key: str) -> bool:
         return key in self._env
 
-    def get(self, key: str, default: Optional[Any] = None, res: Optional[bool] = False) -> _H:
+    def get(self, key: str, default: Optional[Any] = None, res: Optional[bool] = False) -> Union[_H, Result]:
         if res is False:
             return self._env.get(key, default) or (self._parent.get(key, default=default) if self._parent else default)
 
@@ -41,9 +56,24 @@ class Scope(Generic[_H]):
         for k, v in other.items():
             self._env[k] = v
 
+    def create_tb(self) -> TraceBack:
+        tb = TraceBack()
+        tb.add_frames(self.get_frames())
+        return tb
+
     # return the dict of the local scope
     def locals(self) -> Dict[str, _H]:
         return self._env
+
+    @property
+    def frame(self) -> Frame:
+        return self._frame
+
+    def get_frames(self) -> List[Frame]:
+        if self._parent is None:
+            return [self.frame]
+
+        return [self.frame, *self.parent.get_frames()]
 
     @property
     def parent(self) -> Scope:

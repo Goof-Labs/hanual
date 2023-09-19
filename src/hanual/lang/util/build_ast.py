@@ -12,6 +12,7 @@ from hanual.lang.pparser import PParser
 from hanual.lang.nodes import CodeBlock
 from hanual.lang.lexer import Lexer
 from sys import argv
+from hanual.lang.util.dump_tree import dump_tree
 
 
 def create_ast(*,
@@ -104,5 +105,5 @@ def create_ast(*,
 
     parser.add_hooks(hook_loader.rules)
 
-    tree = parser.parse(tokens)#[0][1]
-    return tree, text
+    tree = parser.parse(tokens) #[0][1]
+    return tree[0][1], text

@@ -26,6 +26,7 @@ class ErrorType(StrEnum):
     unresolved_name = auto()
     attr_not_found = auto()
     cant_set_attr = auto()
+    value_error = auto()
 
 
 class HanualError:
@@ -35,8 +36,7 @@ class HanualError:
                  name: str,
                  reason: str,
                  tb: TraceBack,
-                 tip: Optional[str] = None,
-                 reset_next: Optional[bool] = False) -> None:
+                 tip: Optional[str] = None) -> None:
         self._reason = reason
         self._name = name
         self._line = line
@@ -44,35 +44,11 @@ class HanualError:
         self._pos = pos
         self._tb = tb
 
-        self._expect = reset_next is None # force the param to be a bool
-
-    @property
-    def expect(self) -> bool:
-        return self._expect
-
-    def add_detail(self,
-                   pos: Tuple[int, int, int],
-                   line: str,
-                   name: str,
-                   reason: str) -> None:
-        if self._expect is False: # don't expect this function to be called again so warn the caller
-            warn("The `add_detail` method was called twice, overwriting", stacklevel=2)
-
-        self._pos = pos
-        self._line = line
-        self._reason = reason
-
-        # we don't expect this function to be called again
-        self._expect = False
-
     def add_frame(self, frame: Frame) -> Self:
         self._tb.add_frame(frame)
         return self
 
     def as_string(self) -> str:
-        if self._expect: # wanted a more detailed traceback
-            raise Exception("Wanted a more detailed traceback")
-        
         error = StringIO()
 
         error.write(f"{self._name}:\n")

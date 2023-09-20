@@ -79,7 +79,7 @@ class BinOpNode(BaseNode, ABC):
         return instructions
 
     @staticmethod
-    def _get_val(val: Any, scope: Scope) -> Result:
+    def _get_val(val: Any, scope: Scope) -> Result[LiteralWrapper, Any]:
         res = Result()
 
         if isinstance(val, Token):
@@ -104,20 +104,31 @@ class BinOpNode(BaseNode, ABC):
     def execute(self, scope: Scope) -> Result[LiteralWrapper[float], str]:
         res = Result()
 
-        left = res.inherit_from(self._get_val(self._left, scope=scope))
+        # LEFT
+        left, err = res.inherit_from(self._get_val(self._left, scope=scope))
 
-        if res.error:
+        if err:
             return res
 
-        left = left.response.value
+        left = left.value
 
-        right = res.inherit_from(self._get_val(self._right, scope=scope))
+        # make sure left is a literal
+        if isinstance(left, LiteralWrapper):
+            left = left.value
 
-        if res.error:
+        # RIGHT
+        right, err = res.inherit_from(self._get_val(self._right, scope=scope))
+
+        if err:
             return res
 
-        right = right.response.value
+        right = right.value
 
+        # make sure right is a literal
+        if isinstance(right, LiteralWrapper):
+            right = right.value
+
+        # OPERATIONS
         if self._op.value == "+":
             return res.success(LiteralWrapper(left + right))
 

@@ -78,13 +78,13 @@ class AssignmentNode(BaseNode, Generic[T]):
 
         if isinstance(value, Token):
             if value.type == "NUM":
-                return res.success(LiteralWrapper(float(value.value)))
+                return res.success(value)
 
             elif value.type == "STR":
-                return res.success(LiteralWrapper(value.value))
+                return res.success(value)
 
             elif value.type == "ID":
-                val = scope.get(value.value, None)
+                val = scope.get(str(value.value), None)
 
                 if val is None:
                     return res.fail(HanualError(

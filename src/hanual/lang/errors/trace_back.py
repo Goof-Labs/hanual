@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class Frame:
-    def __init__(self, name: str, line_num: int, line: str):
+    def __init__(self, name: str, line_num: int=-1, line: str=""):
         self._line_num = line_num
         self._name = name
         self._line = line

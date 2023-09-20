@@ -25,6 +25,7 @@ from hanual.lang.nodes import (
     IfChain,
     IfStatement,
     ImplicitBinOp,
+    LoopLoop,
     Parameters,
     ImplicitCondition,
     NamespaceAccessor,
@@ -135,6 +136,24 @@ def for_loop(ts, no_body: Union[Literal[True], Literal[None]]) -> ForLoop:
 
 
 ###########################
+# LOOP LOOPS
+###########################
+
+@par.rule(
+    "LOOP LCB line RCB",
+    "LOOP LCB lines RCB",
+    "LOOP LCB RCB",
+    types={
+        "LOOP LCB RCB": True
+    }
+)
+def loop_loop(ts: DefaultProduction, no_inner: bool=False):
+    if no_inner:
+        return LoopLoop(CodeBlock([]))
+
+    return LoopLoop(ts[2])
+
+###########################
 # DOT NOTATION.YAY()
 ###########################
 
@@ -164,7 +183,7 @@ def iwith_dot(ts: DefaultProduction[Token, DotChain]) -> DotChain:
     "expr OP NUM",
     "expr OP expr",
     "expr OP ID",
-    "expr OP STR"
+    "expr OP STR",
     "ID OP NUM",
     "ID OP expr",
     "ID OP ID",
@@ -734,6 +753,7 @@ def h_range(ts: DefaultProduction):
     "assignment",
     "while_stmt",
     "break_stmt",
+    "loop_loop",
     "var_change",
     "struct_def",
     "for_loop",

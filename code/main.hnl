@@ -2,4 +2,10 @@ fn main() {
 	let inp = input("type some crap: ")
 	int(inp)
 	println("You typed "+inp)
+
+	let i = 0
+	loop {
+		println(i)
+		i = i + 1
+	}
 }

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from hanual.compile.constants.constant import Constant
+from hanual.lang.errors.trace_back import Frame
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
 from typing import TYPE_CHECKING
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class ElifStatement(BaseNode, ABC):
-    def __init__(self: BaseNode, condition: Condition, block: CodeBlock) -> None:
+    def __init__(self, condition: Condition, block: CodeBlock) -> None:
         self._condition = condition
         self._block = block
 
@@ -56,7 +57,7 @@ class ElifStatement(BaseNode, ABC):
             return res
 
         if should_run:
-            inner_scope = Scope(parent=scope)
+            inner_scope = Scope(parent=scope, frame=Frame(name="Elif statement", line=..., line_num=...))
             _, err = res.inherit_from(self.block.execute(inner_scope))
 
             if err:

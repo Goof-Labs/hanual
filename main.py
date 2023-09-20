@@ -26,7 +26,7 @@ fn main() {
 }
 """
 whisper = preproc.process(open("test/test.hnl").read(), starting_defs=["__testing_lang__"])
-whisper = lexer.tokenize(whisper)
+whisper = lexer.tokenize(whisper, mode="compile")
 whisper = parser.parse(whisper)
 
 
@@ -47,7 +47,7 @@ code = op.proof_read(cm)
 
 df = DumpFile()
 
-df.dump_head(0, 0, 0, sha256(src.encode("utf-8")), append=True)
+df.dump_head(0, 0, 0, sha256(src.encode("utf-8")).hexdigest(), append=True)
 df.dump_deps(["awsome.de"], append=True)
 df.dump_func_head({"main": 0}, append=True)
 df.dump_constants(code.consts, append=True)

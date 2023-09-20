@@ -5,6 +5,8 @@ from typing import TypeVar, TYPE_CHECKING
 from hanual.exec.result import Result
 from hanual.lang.lexer import Token
 from .literal import LiteralWrapper
+from hanual.lang.util.deprecated import deprecated
+
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
@@ -12,6 +14,7 @@ if TYPE_CHECKING:
 _T = TypeVar("_T")
 
 
+@deprecated
 def hl_wrap(scope: Scope, value: _T):
     # TOKENS
     res = Result()

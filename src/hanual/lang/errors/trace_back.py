@@ -1,8 +1,15 @@
 from __future__ import annotations
 
 
+from typing import TYPE_CHECKING, List
+
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
+
+
 class Frame:
-    def __init__(self, name: str, line_num: int = None, line: str = None):
+    def __init__(self, name: str, line_num: int, line: str):
         self._line_num = line_num
         self._name = name
         self._line = line
@@ -21,6 +28,10 @@ class TraceBack:
 
     def add_frame(self, frame: Frame):
         self._frames.append(frame)
+        return self
+
+    def add_frames(self, frames: List[Frame]) -> Self:
+        self._frames.extend(frames)
         return self
 
     @property

@@ -164,9 +164,14 @@ def iwith_dot(ts: DefaultProduction[Token, DotChain]) -> DotChain:
     "expr OP NUM",
     "expr OP expr",
     "expr OP ID",
+    "expr OP STR"
     "ID OP NUM",
     "ID OP expr",
-    "ID OP ID")
+    "ID OP ID",
+    "ID OP STR",
+    "STR OP STR",
+    "STR OP ID",
+    "STR OP expr")
 def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
     return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 

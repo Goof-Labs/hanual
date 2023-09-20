@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING, Tuple, Self
 from enum import StrEnum, auto
+from logging import warn
 from io import StringIO
 
 
@@ -16,19 +17,22 @@ class ErrorType(StrEnum):
         first, *others = name.split('_')
         return ''.join([first.lower(), *map(str.title, others)])
 
-    cli_argument_unresolved: str = auto()
-    non_initialized_value: str = auto()
-    illegal_character: str = auto()
-    division_by_zero: str = auto()
-    unresolved_name: str = auto()
-    attr_not_found: str = auto()
-    cant_set_attr: str = auto()
+    
+    cli_argument_unresolved = auto()
+    non_initialized_value = auto()
+    illegal_character = auto()
+    keyboard_interupt = auto()
+    division_by_zero = auto()
+    unresolved_name = auto()
+    attr_not_found = auto()
+    cant_set_attr = auto()
+    value_error = auto()
 
 
 class HanualError:
     def __init__(self,
-                 pos: Optional[Tuple[int, int, int]],
-                 line: Optional[str],
+                 pos: Tuple[int, int, int],
+                 line: str,
                  name: str,
                  reason: str,
                  tb: TraceBack,

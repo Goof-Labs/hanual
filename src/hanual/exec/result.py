@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Optional, TypeVar, Generic, Self, Iterator
+from typing import Optional, TypeVar, Generic, Self, Iterator, Tuple
 from hanual.lang.errors import HanualError
 
-_E = TypeVar("_E", None, HanualError)
+_E = TypeVar("_E")
 _R = TypeVar("_R")
 
 
@@ -12,8 +12,8 @@ class Result(Generic[_R, _E]):
     __slots__ = "_res", "_err"
 
     def __init__(self, error: Optional[_E] = None, res: Optional[_R] = None) -> None:
-        self._err: _E = error
-        self._res: _R = res
+        self._err: Optional[_E] = error
+        self._res: Optional[_R] = res
 
     def success(self, res: _R) -> Self:
         self._res = res
@@ -29,12 +29,12 @@ class Result(Generic[_R, _E]):
         return self
 
     @property
-    def response(self) -> _R:
+    def response(self) -> Optional[_R]:
         return self._res
 
     @property
-    def error(self) -> _E:
+    def error(self) -> Optional[_E]:
         return self._err
 
-    def __iter__(self) -> Iterator[_R, _E]:
+    def __iter__(self) -> Iterator:
         return iter((self._res, self._err))

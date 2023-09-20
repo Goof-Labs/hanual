@@ -80,18 +80,26 @@ class BinOpNode(BaseNode, ABC):
 
     @staticmethod
     def _get_val(val: Any, scope: Scope) -> Result:
+        res = Result()
+
         if isinstance(val, Token):
-            return hl_wrap(value=val, scope=scope)
+            if val.type in ("STR", "NUM"): # literal
+                return res.success(val.value)
+
+            elif val.type == "ID":
+                return res.inherit_from(scope.get(str(val.value), res=True))
+
+            else:
+                raise Exception
 
         else:
-            res = Result()
 
             val, err = res.inherit_from(val.execute(scope=scope))
 
             if err:
                 return res
 
-            return hl_wrap(scope=scope, value=val)
+            return res.success(LiteralWrapper(val))
 
     def execute(self, scope: Scope) -> Result[LiteralWrapper[float], str]:
         res = Result()

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, TypeVar, Union, Optional, Generator
 from hanual.compile.constants.constant import Constant
+from hanual.exec.wrappers.literal import LiteralWrapper
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
@@ -15,12 +16,16 @@ if TYPE_CHECKING:
     from .f_def import FunctionDefinition
     from hanual.exec.scope import Scope
 
-T = TypeVar("T")
+T = TypeVar("T", bound=BaseNode)
 
 
 class Arguments(BaseNode):
+    __slots__ = (
+        "function_def",
+        "_children",
+    )
+
     def __init__(self, children: Union[T, List[T]]) -> None:
-        self._children: List[T] = []
         self.function_def = False
 
         if isinstance(children, Token):
@@ -35,7 +40,7 @@ class Arguments(BaseNode):
             self._children: List[T] = [children]
 
         else:  # This is just another node that we have chucked into a list
-            self._children: List[T] = list(children)
+            self._children: List[T] = list(*children)
 
     def add_child(self, child):
         if isinstance(child, Arguments):
@@ -47,7 +52,7 @@ class Arguments(BaseNode):
         return self
 
     @property
-    def children(self) -> List[T]:
+    def children(self) -> List:
         return self._children
 
     def compile(self, cm: CompileManager):
@@ -59,12 +64,44 @@ class Arguments(BaseNode):
         for name, value in zip(names, self._children):
             # token
             if isinstance(value, Token):
-                val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
+                if value.type in ("STR", "NUM"):
+                    assert isinstance(
+                        value.value, LiteralWrapper
+                    ), f"Expected a LiteralWrapper got {type(value.value).__name__!r} instead"
+                    # the value should already be a `LiteralWrapper`
+                    yield res.success(value)
 
-                if err:
-                    yield res.fail(err.add_frame(Frame("arguments")))
+                else:  # The token is an ID
+                    val, err = res.inherit_from(scope.get(str(value.value), res=True))
 
-                yield res.success((name, val))
+                    if err:
+                        return err.add_frame(Frame("arguments"))
+
+                    yield res.success((name, val))
+
+                # val, err = res.inherit_from(hl_wrap(scope=scope, value=value))
+
+                # if err:
+                #    yield res.fail(err.add_frame(Frame("arguments")))
+
+                if isinstance(value, LiteralWrapper):
+                    yield res.success((name, value))
+
+                elif isinstance(value, Token) and isinstance(
+                    value.value, LiteralWrapper
+                ):
+                    yield res.success((name, value.value))
+
+                elif isinstance(value, Token) and value.type == "ID":
+                    val, err = scope.get(str(value.value), res=True)
+
+                    if err:
+                        return err.add_frame(Frame("arguments"))
+
+                    yield res.success((name, val))
+
+                else:
+                    raise Exception(value)
                 continue
 
             # can be executed
@@ -75,11 +112,19 @@ class Arguments(BaseNode):
                 yield res.fail(err.add_frame(Frame(name="arguments")))
                 return
 
-            val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
+            # val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
+
+            if not isinstance(val, LiteralWrapper):
+                raise Exception
 
             yield res.success((name, val))
 
-    def execute(self, scope, initiator: Optional[str] = None, params: Optional[Parameters] = None):
+    def execute(
+        self,
+        scope,
+        initiator: Optional[str] = None,
+        params: Optional[Parameters] = None,
+    ):
         res = Result()
 
         if initiator is None and params is None:
@@ -95,7 +140,7 @@ class Arguments(BaseNode):
             func_params = func.arguments.children
 
         # `params`
-        else:
+        if params:
             func_params = params.children
 
         args = {}
@@ -109,8 +154,12 @@ class Arguments(BaseNode):
             if err:
                 return res
 
-            args[resp.response[0] if isinstance(resp.response[0], str) else resp.response[0].value] = val[1]
-
+            # set the arg equal to the value
+            args[
+                resp.response[0]
+                if isinstance(resp.response[0], str)
+                else resp.response[0].value
+            ] = resp.response[1]
         return res.success(args)
 
     def get_names(self) -> list[Token]:

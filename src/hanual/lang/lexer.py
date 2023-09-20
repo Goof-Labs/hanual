@@ -46,7 +46,9 @@ class Lexer:
                 self._rules.append((rule[0], rule[1][0]))
 
             else:
-                raise ValueError(f"{rule[1][1]!r} is not recognised as a regex or keyword")
+                raise ValueError(
+                    f"{rule[1][1]!r} is not recognised as a regex or keyword"
+                )
 
     def add_hooks(self, hooks: Iterable[TokenHook]):
         for hook in hooks:
@@ -59,11 +61,15 @@ class Lexer:
                 self._rules.append((hook.name, hook.regex))
 
             else:
-                raise ValueError(f"{hook.type!r} is not recognised as a regex or keyword")
+                raise ValueError(
+                    f"{hook.type!r} is not recognised as a regex or keyword"
+                )
 
-    def tokenize(self,
-                 stream: Generator[str, None, None],
-                 mode: Literal["exec"] | Literal["compile"]) -> Generator[Token, None, None]:
+    def tokenize(
+        self,
+        stream: Generator[str, None, None],
+        mode: Literal["exec"] | Literal["compile"],
+    ) -> Generator[Token, None, None]:
         # TODO allow rules to ble cleared
         self.update_rules(self.last)
 
@@ -72,12 +78,13 @@ class Lexer:
         for line_no, line in enumerate(stream):
             yield from self._tokenize_str(tok_reg, line, line_no, mode=mode)
 
-    def _tokenize_str(self,
-                      tok_reg: str,
-                      text: str,
-                      line_no: int,
-                      mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both"
-                      ) -> Generator[Token, None, None]:
+    def _tokenize_str(
+        self,
+        tok_reg: str,
+        text: str,
+        line_no: int,
+        mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both",
+    ) -> Generator[Token, None, None]:
         for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
             value = pat.group()
@@ -91,14 +98,18 @@ class Lexer:
                 continue
 
             if kind == "MISMATCH":
-                print(HanualError(
-                    pos=(line_no, col, len(value) + col),
-                    line=text,
-                    name=ErrorType.illegal_character,
-                    reason=f"{value!r} is not recognised as a symbol or valid character",
-                    tb=TraceBack().add_frame(Frame("Lexing")),
-                    tip=f"try removing that character"
-                ).as_string())
+                print(
+                    HanualError(
+                        pos=(line_no, col, len(value) + col),
+                        line=text,
+                        name=ErrorType.illegal_character,
+                        reason=f"{value!r} is not recognised as a symbol or valid character",
+                        tb=TraceBack().add_frame(
+                            Frame("Lexing", line_num=line_no, line=text)
+                        ),
+                        tip=f"try removing that character",
+                    ).as_string()
+                )
                 exit()
 
             hook = self._hooks.get(kind, None)

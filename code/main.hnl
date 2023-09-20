@@ -1,3 +1,5 @@
 fn main() {
-	println("Hello world")
+	let inp = input("type some crap: ")
+	int(inp)
+	println("You typed "+inp)
 }

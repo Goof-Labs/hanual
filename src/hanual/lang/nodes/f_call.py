@@ -19,14 +19,17 @@ if TYPE_CHECKING:
 
 
 class FunctionCall(BaseNode):
-    __slots__ = "_name", "_args",
+    __slots__ = (
+        "_name",
+        "_args",
+    )
 
-    def __init__(self: BaseNode, name: Token, arguments: Arguments) -> None:
+    def __init__(self, name: Token, arguments: Arguments) -> None:
         self._name: Union[Token, DotChain] = name
         self._args: Arguments = arguments
 
     @property
-    def name(self) -> Token:
+    def name(self) -> Union[Token, DotChain]:
         return self._name
 
     @property
@@ -53,23 +56,29 @@ class FunctionCall(BaseNode):
 
         # create a scope for the function
         if isinstance(self._name, Token):
-            f_scope = Scope(parent=scope, name=self._name.value)
-            func = scope.get(self._name.value, None)
+            f_scope = Scope(parent=scope, name=str(self._name.value))
+            func = scope.get(str(self._name.value), None)
 
             # check for errors
             if func is None:
-                return res.fail(HanualError(
-                    pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
-                    line=self._name.line_val,
-                    name=ErrorType.unresolved_name,
-                    reason=f"Couldn't resolve reference to {self._name.value!r}",
-                    tb=TraceBack().add_frame(Frame("function call")),
-                    tip="Did you make a typo?"
-                ))
+                return res.fail(
+                    HanualError(
+                        pos=(
+                            self._name.line,
+                            self._name.colm,
+                            self._name.colm + len(self._name.value),
+                        ),
+                        line=self._name.line_val,
+                        name=ErrorType.unresolved_name,
+                        reason=f"Couldn't resolve reference to {self._name.value!r}",
+                        tb=TraceBack().add_frame(Frame("function call")),
+                        tip="Did you make a typo?",
+                    )
+                )
 
         elif isinstance(self._name, DotChain):
             # get the last name in the chain because that is what the function name is
-            f_scope = Scope(parent=scope, name=self._name.chain[0].value)
+            f_scope = Scope(parent=scope, name=str(self._name.chain[0].value))
             func, err = res.inherit_from(self._name.execute(scope))
 
             if func is None:
@@ -89,7 +98,7 @@ class FunctionCall(BaseNode):
         f_scope.extend(args)
 
         # run the body
-        res.inherit_from(func(scope=f_scope))
+        _, err = res.inherit_from(func(scope=f_scope))
 
         return res
 

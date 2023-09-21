@@ -9,6 +9,8 @@ if TYPE_CHECKING:
 
 
 class Frame:
+    __slots__ = "_line_num", "_name", "_line",
+
     def __init__(self, name: str, line_num: int=-1, line: str=""):
         self._line_num = line_num
         self._name = name
@@ -20,6 +22,10 @@ class Frame:
             return self._name
 
         return f"{self._name} {str(self._line_num).zfill(5)} | {self._line}"
+
+    @property
+    def name(self) -> str:
+        return self._name
 
 
 class TraceBack:

@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from typing import Dict, TypeVar, Generic, Optional, Any, Union, TYPE_CHECKING, List
 from hanual.lang.errors import HanualError, ErrorType, TraceBack
+from hanual.lang.errors.trace_back import Frame
 from hanual.exec.result import Result
+from logging import warn
 
 
 if TYPE_CHECKING:
-    from hanual.lang.errors.trace_back import Frame
+    ...
 
 
 _H = TypeVar("_H")
@@ -18,6 +20,9 @@ class Scope(Generic[_H]):
     ):
         if frame is None and name == "BLANK":
             raise Exception("Insufficient arguments")
+
+        if frame is None:
+            warn("Should implement frame", stack_info=True)
 
         self._parent: Scope = parent
         self._env: Dict[str, _H] = {}

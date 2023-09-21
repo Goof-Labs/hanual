@@ -56,7 +56,7 @@ class FunctionCall(BaseNode):
 
         # create a scope for the function
         if isinstance(self._name, Token):
-            f_scope = Scope(parent=scope, name=str(self._name.value))
+            f_scope = Scope(parent=scope, frame=Frame(name=str(self.name), line_num=self._name.line, line=self._name.line_val))
             func = scope.get(str(self._name.value), None)
 
             # check for errors

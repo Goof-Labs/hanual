@@ -31,8 +31,8 @@ class Pack:
     def add_metta(self, name: str, val: Any) -> None:
         self._metta[name] = val
 
-    def dump_pack(self, out_p: Optional[str] = None) -> None:
-        with ZipFile((out_p + "/" + self.name or self.name) + ".pk", mode="w") as pack:
+    def dump_pack(self, out_p: str) -> None:
+        with ZipFile((out_p + "/" + self.name or self.name) + ".hlib", mode="w") as pack:
             # TODO : parse all files to get the function header
             # coppy all files
             for file in self._files:

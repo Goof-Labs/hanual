@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from hanual.lang.errors.trace_back import Frame
+
 from .hl_builtin.func_builtin import FuncBuiltinLibrary
 from .hl_builtin.io_builtin import IOBuiltinLibrary
 from hanual.lang.nodes import CodeBlock
@@ -11,7 +13,7 @@ class Interpreter:
         self._tree: CodeBlock = tree
 
     def run(self):
-        with Scope(parent=None, name="global") as scope:
+        with Scope(parent=None, frame=Frame(name="GLOBAL")) as scope:
             self._tree.execute(scope=scope)
 
             for func in (*IOBuiltinLibrary().get_builtins(), *FuncBuiltinLibrary().get_builtins()):

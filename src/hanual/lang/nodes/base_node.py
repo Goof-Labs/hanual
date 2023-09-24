@@ -32,8 +32,8 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @property
-    def line(self) -> str:
-        return self._line
+    def lines(self) -> str:
+        return self._lines
 
     @property
     def line_no(self) -> int:

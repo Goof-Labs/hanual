@@ -21,17 +21,22 @@ if TYPE_CHECKING:
 
 
 class FunctionDefinition(BaseNode):
-    __slots__ = "_name", "_parameters", "_inner"
+    __slots__ = "_name", "_parameters", "_inner", "_lines", "_line_no",
 
     def __init__(
         self: FunctionDefinition,
         name: Token,
         params: Parameters,
         inner: CodeBlock,
+        lines: str,
+        line_no: int,
     ) -> None:
         self._name: Token = name
         self._parameters = params
         self._inner = inner
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def name(self) -> Token:

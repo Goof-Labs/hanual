@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Optional, Iterable, Type, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Type, Union, List
+
 from .productions import DefaultProduction, P
+from .util.line_range import LineRange
 
 if TYPE_CHECKING:
-    from hanual.api.hooks import RuleHook
     from typing_extensions import Self
+    from .pparser import _StackFrame
+
+    from hanual.api.hooks import RuleHook
 
 """
 This is a proxy class that wraps around a function, I
@@ -21,14 +25,16 @@ class Proxy:
     __slots__ = "_fn", "_types", "_prod", "_unless_b", "_unless_e"
 
     def __init__(
-            self: Self,
-            fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook],
-            types: Dict[str, Any],
-            prod: type[P] = None,
-            unless_start: Iterable[str] = (),
-            unless_end: Iterable[str] = (),
+        self: Self,
+        fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook],
+        types: Dict[str, Any],
+        prod: type[P] = None,
+        unless_start: Iterable[str] = (),
+        unless_end: Iterable[str] = (),
     ) -> None:
-        self._fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook] = fn
+        self._fn: Union[
+            Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook
+        ] = fn
         self._prod: Type[P] = prod or DefaultProduction
         self._types = types or {}
         self._unless_b = unless_start or tuple()
@@ -54,28 +60,41 @@ class Proxy:
     def fn(self) -> Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]]:
         return self._fn
 
-    def call(self: Proxy, args, pattern):
+    def call(self: Proxy, args: List[_StackFrame]):
+        ln_range = LineRange(-1, -1)
+        pattern = []
+        values = []
+        lines = ""
+
+        for frame in args:  # iterating over raw stack frames passed
+            pattern.append(frame.name)
+            values.append(frame.value)
+
+            # create a line range to say where code starts and ends
+            if ln_range.start == -1:
+                ln_range.start = frame.line_no
+
+            ln_range.end = frame.line_no
+
+            lines += frame.lines
+
         # don't want to pass a case
         if self._types != {}:
-            return self._fn(self.prod(args), self.types.get(" ".join(pattern), None))
+            return self._fn(self.prod(values, lines=lines, line_no=ln_range), pattern, lines=lines, line_no=ln_range)
 
-        return self._fn(self.prod(args))
+        return self._fn(self.prod(values, lines=lines, line_no=ln_range), lines=lines, line_no=ln_range)
 
 
 class HookProxy(Proxy):
-    def __init__(self,
-                 cls: Type[RuleHook], types: Dict[str, Any],
-                 prod: type[P] = None,
-                 unless_start: Iterable[str] = (),
-                 unless_end: Iterable[str] = ()) -> None:
+    def __init__(
+        self,
+        cls: Type[RuleHook],
+        types: Dict[str, Any],
+        prod: type[P] = None,
+        unless_start: Iterable[str] = (),
+        unless_end: Iterable[str] = (),
+    ) -> None:
         super().__init__(cls(), types, prod, unless_start, unless_end)
 
-    def call(self: Proxy, args, pattern):
-        # don't want to pass a case
-        assert hasattr(self._fn, "create_rule"),\
-            TypeError(f"Must be RuleHook to use HookProxy, got {type(self._fn).__name__!r}")
-
-        if self._types != {}:
-            return self._fn.create_rule(self.prod(args), self.types.get(" ".join(pattern), None))
-
-        return self._fn.create_rule(self.prod(args))
+    def call(self: Proxy, args):
+        raise NotImplementedError

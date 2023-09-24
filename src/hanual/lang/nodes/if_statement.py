@@ -17,9 +17,14 @@ if TYPE_CHECKING:
 
 
 class IfStatement(BaseNode, ABC):
-    def __init__(self: IfStatement, condition: Condition, block: CodeBlock) -> None:
+    __slots__ = "_condition", "_block", "_lines", "_line_no"
+
+    def __init__(self: IfStatement, condition: Condition, block: CodeBlock, lines: str, line_no: int) -> None:
         self._condition: Condition = condition
         self._block: CodeBlock = block
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def condition(self) -> Condition:

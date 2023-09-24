@@ -25,11 +25,16 @@ class FunctionCall(BaseNode):
     __slots__ = (
         "_name",
         "_args",
+        "_lines",
+        "_line_no",
     )
 
-    def __init__(self, name: Token, arguments: Arguments) -> None:
+    def __init__(self, name: Token, arguments: Arguments, lines: str, line_no: int) -> None:
         self._name: Union[Token, DotChain] = name
         self._args: Arguments = arguments
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def name(self) -> Union[Token, DotChain]:

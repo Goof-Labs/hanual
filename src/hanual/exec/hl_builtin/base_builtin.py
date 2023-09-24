@@ -15,10 +15,10 @@ class HlWrapperFunction:
 
         # params
         if isinstance(params, Parameters):
-            self.params = Parameters(params)
+            self.params = params
 
         else:
-            self.params = Parameters(params)
+            self.params = Parameters(params, line_no=-1, lines="")
 
         # hanual functions
         self.func = func

@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING
 
-from hanual.compile.constants import BaseConstant
 from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
 from hanual.exec.result import Result
+from hanual.lang.errors import Frame
 from hanual.exec.scope import Scope
-from hanual.exec.wrappers import LiteralWrapper
-from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
-from hanual.lang.lexer import Token
 
 from .base_node import BaseNode
 from .block import CodeBlock
@@ -20,10 +16,13 @@ if TYPE_CHECKING:
 
 
 class LoopLoop(BaseNode, ABC):
-    __slots__ = ("_inner",)
+    __slots__ = ("_inner", "_lines", "_line_no")
 
-    def __init__(self, inner: CodeBlock) -> None:
+    def __init__(self, inner: CodeBlock, lines: str, line_no: int) -> None:
         self._inner: CodeBlock = inner
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def inner(self) -> CodeBlock:

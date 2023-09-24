@@ -16,8 +16,13 @@ if TYPE_CHECKING:
 
 
 class ReturnStatement(BaseNode, ABC):
-    def __init__(self: BaseNode, value) -> None:
+    __slots__ = "_value", "_lines", "_line_no",
+
+    def __init__(self: BaseNode, value, lines: str, line_no: int) -> None:
         self._value = value
+
+        self._line_no = line_no
+        self._lines = lines
 
     def compile(self) -> None:
         raise NotImplementedError

@@ -22,11 +22,16 @@ class VarChange(BaseNode):
     __slots__ = (
         "_name",
         "_value",
+        "_lines",
+        "_line_no",
     )
 
-    def __init__(self: BaseNode, name: Token, value) -> None:
+    def __init__(self: BaseNode, name: Token, value, lines: str, line_no: int) -> None:
         self._name: Token = name
         self._value: T = value
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def name(self) -> Token:

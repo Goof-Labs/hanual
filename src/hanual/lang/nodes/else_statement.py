@@ -14,10 +14,13 @@ if TYPE_CHECKING:
 
 
 class ElseStatement(BaseNode):
-    __slots__ = ("_body",)
+    __slots__ = ("_body", "_lines", "_line_no",)
 
-    def __init__(self: BaseNode, body: CodeBlock) -> None:
+    def __init__(self: BaseNode, body: CodeBlock, lines: str, line_no: int) -> None:
         self._body = body
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def body(self) -> CodeBlock:

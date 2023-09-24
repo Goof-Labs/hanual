@@ -18,7 +18,9 @@ T = TypeVar("T")
 
 
 class Parameters(BaseNode):
-    def __init__(self, children: Union[T, List[T]]) -> None:
+    __slots__ = "_children", "_lines", "_line_no",
+
+    def __init__(self, children: Union[T, List[T]], lines: str, line_no: int) -> None:
         self._children: List[T] = []
 
         if isinstance(children, Token):
@@ -32,6 +34,9 @@ class Parameters(BaseNode):
 
         else:  # This is just another node that we have chucked into a list
             self._children: List[T] = list(children)
+
+        self._line_no = line_no
+        self._lines = lines
 
     def add_child(self, child):
         if isinstance(child, Parameters):

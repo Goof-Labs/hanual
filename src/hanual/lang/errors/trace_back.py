@@ -1,17 +1,19 @@
 from __future__ import annotations
 
-
 from typing import TYPE_CHECKING, List
-
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
 
 class Frame:
-    __slots__ = "_line_num", "_name", "_line",
+    __slots__ = (
+        "_line_num",
+        "_name",
+        "_line",
+    )
 
-    def __init__(self, name: str, line_num: int=-1, line: str=""):
+    def __init__(self, name: str, line_num: int = -1, line: str = ""):
         self._line_num = line_num
         self._name = name
         self._line = line

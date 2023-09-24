@@ -15,19 +15,26 @@ if TYPE_CHECKING:
 
 
 class StructDefinition(BaseNode):
+    __slots__ = "_fields", "_name", "_lines", "_line_no",
+
     def __init__(
         self: BaseNode,
         name: Token,
         fields: Union[StrongFieldList, StrongField],
+        lines: str,
+        line_no: int,
     ) -> None:
         # if [param:fields] is a StrongField, then we make one and add it to it
         if isinstance(fields, StrongField):
-            self._fields: StrongFieldList = StrongFieldList().add_field(fields)
+            self._fields: StrongFieldList = StrongFieldList(lines=lines, line_no=line_no).add_field(fields)
 
         else:
             self._fields: StrongFieldList = fields
 
         self._name = name
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def raw_fields(self) -> StrongFieldList:

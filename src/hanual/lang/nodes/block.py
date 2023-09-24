@@ -16,11 +16,14 @@ T = TypeVar("T")
 
 
 class CodeBlock(BaseNode, ABC):
-    __slots__ = ("_children",)
+    __slots__ = ("_children", "_line_no", "_lines")
 
-    def __init__(self, children: Union[List[T], T]) -> None:
+    def __init__(self, children: Union[List[T], T], lines: str, line_no: int) -> None:
         self._children: List[BaseNode] = []
         self.add_child(children)
+
+        self._line_no = line_no
+        self._lines = lines
 
     def add_child(self, child: CodeBlock):
         if isinstance(child, (list, tuple)):

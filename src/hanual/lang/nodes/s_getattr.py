@@ -15,9 +15,14 @@ P = TypeVar("P", HanualList, ...)
 
 
 class SGetattr(BaseNode):
-    def __init__(self: BaseNode, obj: _O, part: P) -> None:
+    __slots__ = "_prt", "_obj", "_lines", "_line_no",
+
+    def __init__(self: BaseNode, obj: _O, part: P, lines: str, line_no: int) -> None:
         self._prt: P = part
         self._obj: _O = obj
+
+        self._line_no = line_no
+        self._lines = lines
 
     def execute(self, env):
         raise NotImplementedError

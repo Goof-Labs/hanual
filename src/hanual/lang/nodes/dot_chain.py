@@ -16,10 +16,13 @@ if TYPE_CHECKING:
 
 
 class DotChain(BaseNode, ABC):
-    __slots__ = ("_chain",)
+    __slots__ = ("_chain", "_lines", "_line_no")
 
-    def __init__(self: BaseNode) -> None:
+    def __init__(self: BaseNode, lines: str, line_no: int) -> None:
         self._chain: List[Token] = []
+
+        self._lines = lines
+        self._line_no = line_no
 
     def add_name(self, name: Union[Token, DotChain]) -> Self:
         if isinstance(name, Token):

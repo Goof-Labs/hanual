@@ -17,9 +17,14 @@ if TYPE_CHECKING:
 
 
 class ImplicitCondition(BaseNode):
-    def __init__(self, op: Token, val: Union[Token, FunctionCall]) -> None:
+    __slots__ = "_val", "_op", "_lines", "_line_no",
+
+    def __init__(self, op: Token, val: Union[Token, FunctionCall], lines: str, line_no: int) -> None:
         self._val: Union[Token, FunctionCall] = val
         self._op: Token = op
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def value(self) -> Union[Token, FunctionCall]:

@@ -16,9 +16,14 @@ if TYPE_CHECKING:
 
 
 class WhileStatement(BaseNode):
-    def __init__(self: BaseNode, condition: Condition, body: CodeBlock) -> None:
+    __slots__ = "_while", "_body", "_lines", "_line_no",
+
+    def __init__(self: BaseNode, condition: Condition, body: CodeBlock, lines: str, line_no: int) -> None:
         self._while: Condition = condition
         self._body: CodeBlock = body
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def condition(self) -> Condition:

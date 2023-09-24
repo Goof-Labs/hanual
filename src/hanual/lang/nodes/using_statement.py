@@ -16,10 +16,13 @@ if TYPE_CHECKING:
 
 
 class UsingStatement(BaseNode, ABC):
-    __slots__ = ("_nsa",)
+    __slots__ = ("_nsa", "_lines", "_line_no")
 
-    def __init__(self: BaseNode, nsa: NamespaceAccessor) -> None:
+    def __init__(self: BaseNode, nsa: NamespaceAccessor, lines: str, line_no: int) -> None:
         self._nsa = nsa
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def path(self):

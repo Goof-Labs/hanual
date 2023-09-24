@@ -16,9 +16,14 @@ if TYPE_CHECKING:
 
 
 class ElifStatement(BaseNode, ABC):
-    def __init__(self, condition: Condition, block: CodeBlock) -> None:
+    __slots__ = "_condition", "_block", "_lines", "_line_no",
+
+    def __init__(self, condition: Condition, block: CodeBlock, lines: str, line_no: int) -> None:
         self._condition = condition
         self._block = block
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def condition(self) -> Condition:

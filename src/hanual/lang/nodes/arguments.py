@@ -22,19 +22,13 @@ T = TypeVar("T")
 
 class Arguments(BaseNode):
     __slots__ = (
-        "function_def",
         "_children",
+        "_lines",
+        "_line_no",
     )
 
-    def __init__(self, children: Union[T, List[T]]) -> None:
-        self.function_def = False
-
+    def __init__(self, children: Union[T, List[T]], lines: str, line_no: int) -> None:
         if isinstance(children, Token):
-            # if children.type == "ID":
-            #     self._children: List[T] = [children.value]
-
-            # else:
-            #     self._children: List[T] = [children]
             self._children: List[T] = [children]
 
         elif issubclass(type(children), BaseNode):
@@ -42,6 +36,9 @@ class Arguments(BaseNode):
 
         else:  # This is just another node that we have chucked into a list
             self._children: List[T] = list(*children)
+
+        self._line_no = line_no
+        self._lines = lines
 
     def add_child(self, child):
         if isinstance(child, Arguments):
@@ -177,18 +174,12 @@ class Arguments(BaseNode):
                 if child.type == "ID":
                     names.append(child)
 
-            elif not self.function_def:
-                names.extend(child.get_names())
-
         return names
 
     def get_constants(self) -> list[Constant]:
         # function definitions can't have constants as arguments
         # like does this make any sense
         # def spam(1, 2, 3, 4): ...
-        if self.function_def:
-            return []
-
         lst = []
 
         for child in self._children:

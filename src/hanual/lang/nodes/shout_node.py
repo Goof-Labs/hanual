@@ -10,8 +10,13 @@ if TYPE_CHECKING:
 
 
 class ShoutNode(BaseNode):
-    def __init__(self: BaseNode, shout_token: Token) -> None:
+    __slots__ = "_st", "_lines", "_line_no",
+
+    def __init__(self: BaseNode, shout_token: Token, lines: str, line_no: int) -> None:
         self._st = shout_token
+
+        self._line_no = line_no
+        self._lines = lines
 
     def compile(self):
         return super().compile()

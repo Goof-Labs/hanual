@@ -14,8 +14,13 @@ from .arguments import Arguments
 
 
 class HanualList(BaseNode):
-    def __init__(self, args: Arguments) -> None:
+    __slots__ = "_elements", "_lines", "_line_no"
+
+    def __init__(self, args: Arguments, lines: str, line_no: int) -> None:
         self._elements = args
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def elements(self) -> List:

@@ -18,9 +18,14 @@ if TYPE_CHECKING:
 
 
 class NewStruct(BaseNode):
-    def __init__(self: BaseNode, call: FunctionCall) -> None:
+    __slots__ = "_args", "_name", "_line_no", "_lines"
+
+    def __init__(self: BaseNode, call: FunctionCall, lines: str, line_no: int) -> None:
         self._args: Arguments = call.args
         self._name: Token = call.name
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def name(self) -> Token:

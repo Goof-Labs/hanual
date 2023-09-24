@@ -17,12 +17,15 @@ if TYPE_CHECKING:
 
 
 class Condition(BaseNode, ABC):
-    __slots__ = "_op", "_left", "_right"
+    __slots__ = "_op", "_left", "_right", "_lines", "_line_no"
 
-    def __init__(self: BaseNode, op: Token, left, right) -> None:
+    def __init__(self: BaseNode, op: Token, left, right, lines: str, line_no: int) -> None:
         self._right: Union[Token, BaseNode] = right
         self._left: Union[Token, BaseNode] = left
         self._op: Token = op
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def op(self):

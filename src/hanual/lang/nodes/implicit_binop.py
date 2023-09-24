@@ -23,12 +23,17 @@ class ImplicitBinOp(BaseNode):
     __slots__ = (
         "_right",
         "_op",
+        "_lines",
+        "_line_no"
     )
 
-    def __init__(self, op: Token, right: Union[Token, FunctionCall]) -> None:
+    def __init__(self, op: Token, right: Union[Token, FunctionCall], lines: str, line_no: int) -> None:
         # The left side is implied
         self._right = right
         self._op = op
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def op(self) -> Token:

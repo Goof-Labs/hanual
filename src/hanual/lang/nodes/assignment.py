@@ -18,11 +18,14 @@ T = TypeVar("T", BaseNode, Token)
 
 
 class AssignmentNode(BaseNode, Generic[T]):
-    __slots__ = ("_target", "_value")
+    __slots__ = ("_target", "_value", "_lines", "_line_no")
 
-    def __init__(self: BaseNode, target: Token, value: T) -> None:
+    def __init__(self: BaseNode, target: Token, value: T, lines: str, line_no: int) -> None:
         self._target: Token = target
         self._value: T = value
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def target(self) -> Token:

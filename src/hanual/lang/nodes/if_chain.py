@@ -17,10 +17,13 @@ if TYPE_CHECKING:
 
 
 class IfChain(BaseNode):
-    __slots__ = ("_statements",)
+    __slots__ = ("_statements", "_lines", "_line_no",)
 
-    def __init__(self) -> None:
+    def __init__(self, lines: str, line_no: int) -> None:
         self._statements: List[Union[IfStatement, ElifStatement, ElseStatement]] = []
+
+        self._line_no = line_no
+        self._lines = lines
 
     def add_node(self, node: Union[IfStatement, ElifStatement]) -> Self:
         self._statements.append(node)

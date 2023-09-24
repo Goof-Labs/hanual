@@ -23,17 +23,24 @@ if TYPE_CHECKING:
 
 # for let i=0, < 10, +110
 class ForLoop(BaseNode):
+    __slots__ = "_while", "_init", "_action", "_body", "_lines", "_line_no"
+
     def __init__(
         self: BaseNode,
         condition: Union[ImplicitCondition, Condition],
         init: Union[Token, AssignmentNode],
         action: ImplicitBinOp,
         body: CodeBlock,
+        lines: str,
+        line_no: int,
     ) -> None:
         self._while: Union[ImplicitCondition, Condition] = condition
         self._init: Union[Token, AssignmentNode] = init
         self._action: ImplicitBinOp = action
         self._body: CodeBlock = body
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def condition(self) -> Union[ImplicitCondition, Condition]:

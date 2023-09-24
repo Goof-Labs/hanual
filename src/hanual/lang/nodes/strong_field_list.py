@@ -13,10 +13,13 @@ if TYPE_CHECKING:
 
 
 class StrongFieldList(BaseNode):
-    __slots__ = ("_fields",)
+    __slots__ = ("_fields", "_lines", "_line_no")
 
-    def __init__(self) -> None:
+    def __init__(self, lines: str, line_no: int) -> None:
         self._fields: List[StrongField] = []
+
+        self._lines = lines
+        self._line_no = line_no
 
     def add_field(self, field: StrongField) -> Self:
         self._fields.append(field)

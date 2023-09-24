@@ -9,7 +9,6 @@ from hanual.compile.registers import Registers
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
 from hanual.exec.wrappers import LiteralWrapper
-from hanual.exec.wrappers.wrap import hl_wrap
 from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
 
@@ -20,13 +19,16 @@ if TYPE_CHECKING:
 
 
 class BinOpNode(BaseNode, ABC):
-    __slots__ = "_right", "_left", "_op"
+    __slots__ = "_right", "_left", "_op", "_lines", "_line_no"
 
-    def __init__(self, op: Token, left, right) -> None:
+    def __init__(self, op: Token, left, right, lines: str, line_no: int) -> None:
         self._right: Union[Token, BinOpNode] = right
         self._left: Union[Token, BinOpNode] = left
 
         self._op: Token = op
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def left(self):

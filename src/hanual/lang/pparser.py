@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Generator, List, Optional, Tuple, Type, TypeVar
+from typing import Any, Dict, Generator, List, Optional, Tuple, Type, NamedTuple, TypeVar, Generic
 from .productions import DefaultProduction
 from hanual.api.hooks import RuleHook
 from copy import deepcopy
@@ -8,7 +8,15 @@ from .lexer import Token
 from .proxy import Proxy
 import logging
 
-T = TypeVar("T")
+
+_T = TypeVar("_T")
+
+
+class _StackFrame(NamedTuple, Generic[_T]):
+    name: str
+    value: _T
+    lines: str
+    line_no: int
 
 
 class PParser:
@@ -76,14 +84,14 @@ class PParser:
             self: PParser,
             *rules,
             prod: Optional[Type] = DefaultProduction,
-            types: Optional[Dict[str, T]] = None,
+            types: Optional[Dict[str, Any]] = None,
             unless_starts: Optional[List[str]] = None,
             unless_ends: Optional[List[str]] = None,
     ):
         """
-        This function is a decorator, so it can be used with the following syntax:
+        This function is a decorator, so it can be used with the following syntax
 
-        >>> Parser = PParser()
+        >>> parser = PParser()
         >>> ...
         >>> @parser.rule("rule_1", "rule_2")
         >>> def my_rule(*token_stream):
@@ -165,8 +173,8 @@ class PParser:
     # PARSING THE TOKENS #
     ######################
 
-    def parse(self: PParser, stream: Generator[Token, None, None]) -> List[Tuple[str, Any]]:
-        stack = []
+    def parse(self: PParser, stream: Generator[Token, None, None]):
+        stack: List[_StackFrame] = []
 
         while True:
             # get next token, default is None
@@ -185,7 +193,7 @@ class PParser:
 
                 pattern_lst = pattern.split(" ")
 
-                # compare the stack from top to bottom so we need to reverse
+                # compare the stack from top to bottom, so we need to reverse
                 stk_coppy = stack.copy()
                 stk_coppy.reverse()
                 pattern_lst.reverse()
@@ -198,7 +206,7 @@ class PParser:
 
                 # the following two lines are an optimized version of the old for loop
                 broke_out = (
-                    not list(map(lambda x: x[0], stk_coppy[: debth + 1])) == pattern_lst
+                    not list(map(lambda x: x.name, stk_coppy[: debth + 1])) == pattern_lst
                 )
 
                 # old method
@@ -214,7 +222,7 @@ class PParser:
                     continue
 
                 # the contense of this function need to know the token but nothing else so this is ok
-                if not next_token is None:
+                if not (next_token is None):
                     # check if next is an unless
                     if next_token.type in proxy.unless_end:
                         continue
@@ -228,10 +236,10 @@ class PParser:
                     copy = deepcopy(stack)
 
                 for _ in range(debth + 1):
-                    p_args.append(stack.pop()[1])
+                    p_args.append(stack.pop())
 
                 if stack and proxy.unless_start and copy is not None:
-                    if stack[-1][0] in proxy.unless_start:
+                    if stack[-1].name in proxy.unless_start:
                         # revert changes
                         stack = copy
                         continue
@@ -240,8 +248,8 @@ class PParser:
                 p_args.reverse()
 
                 # actually run it
-                res = proxy.call(p_args, pattern.split(" "))
-                stack.append((reducer, res))
+                res = proxy.call(p_args)
+                stack.append(_StackFrame(name=reducer, value=res, lines=res.lines, line_no=res.line_no))
 
                 # there has been a reduction aka change so set a flag to true
                 change = True
@@ -250,6 +258,7 @@ class PParser:
                 break
 
             if not (next_token is None):
-                stack.append((next_token.type, next_token))
+                stack.append(_StackFrame(
+                    name=next_token.type, value=next_token, lines=next_token.line_val, line_no=next_token.line))
 
         return stack

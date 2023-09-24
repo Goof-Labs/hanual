@@ -6,20 +6,20 @@ from pathlib import Path
 
 
 class FunctionInfo(NamedTuple):
-	name: str
-	start: int
-	origin: str
+    name: str
+    start: int
+    origin: str
 
 
 class HanualLibrary:
-	__slots__ = "_path", "_functions",
-	
-	def __init__(self, path: Path) -> None:
-		self._path = path
-		self._functions: Dict[str, FunctionInfo] = {}
+    __slots__ = "_path", "_functions",
 
-	def lazy_load(self):
-		"""
+    def __init__(self, path: Path) -> None:
+        self._path = path
+        self._functions: Dict[str, FunctionInfo] = {}
+
+    def lazy_load(self):
+        """
 		Lazy loading should check if the path exists and figure out what the lib type is:
 		 - Stand alone
 		 - Source file
@@ -43,22 +43,21 @@ class HanualLibrary:
 		file is loaded and the header is parsed.
 		"""
 
+        if zipfile.is_zipfile(self._path.absolute()):
+            self._parse_zip()
 
-		if zipfile.is_zipfile(self._path.absolute()):
-			self._parse_zip()
+    def _parse_zip(self):
+        from pickle import load
 
-	def _parse_zip(self):
-		from pickle import load
-		
-		with zipfile.ZipFile(self._path.absolute(), mode="r") as pack:
-			with pack.open("~MASTER") as master:
-				data = load(master)
+        with zipfile.ZipFile(self._path.absolute(), mode="r") as pack:
+            with pack.open("~MASTER") as master:
+                data = load(master)
 
-				for path in data["files"]:
-					# path = str path to current file
+                for path in data["files"]:
+                    # path = str path to current file
 
-					for name, pos in self._get_funcs_from_bin(pack.read(path)):
-						self._functions[name] = FunctionInfo(name=name, start=pos, origin=path)
+                    for name, pos in self._get_funcs_from_bin(pack.read(path)):
+                        self._functions[name] = FunctionInfo(name=name, start=pos, origin=path)
 
-	def _get_funcs_from_bin(self, data: bytes) -> Dict[str, int]:
-		...
+    def _get_funcs_from_bin(self, data: bytes) -> Dict[str, int]:
+        ...

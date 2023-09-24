@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, TypeVar, Union, Optional
+from abc import ABC
+from typing import TYPE_CHECKING, Any, List, Optional, TypeVar, Union
+
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.compile.constants.constant import BaseConstant
     from hanual.compile.compile_manager import CompileManager
+    from hanual.compile.constants.constant import BaseConstant
 
 T = TypeVar("T")
 
@@ -54,12 +56,8 @@ class CodeBlock(BaseNode, ABC):
         return instructions
 
     def get_constants(self) -> list[BaseConstant]:
-        lst = []
-
         for node in self._children:
-            lst.extend(node.get_constants())
-
-        return lst
+            yield from node.get_constants()
 
     def get_names(self) -> list[str]:
         lst = []
@@ -68,14 +66,6 @@ class CodeBlock(BaseNode, ABC):
             lst.extend(node.get_names())
 
         return lst
-
-    def find_priority(self) -> list[BaseNode]:
-        priority = []
-
-        for child in self._children:
-            priority.extend(child.find_priority())
-
-        return priority
 
     @property
     def children(self):

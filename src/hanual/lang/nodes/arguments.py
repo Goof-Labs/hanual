@@ -1,22 +1,23 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, TypeVar, Union, Optional, Generator
+from typing import TYPE_CHECKING, Generator, List, Optional, TypeVar, Union
+
 from hanual.compile.constants.constant import Constant
-from hanual.exec.wrappers.literal import LiteralWrapper
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
-from hanual.exec.wrappers import hl_wrap
 from hanual.exec.result import Result
+from hanual.exec.wrappers.literal import LiteralWrapper
+from hanual.lang.builtin_lexer import Token
 from hanual.lang.errors import Frame
+from hanual.lang.nodes.base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.lang.nodes import Parameters
-    from .f_def import FunctionDefinition
     from hanual.exec.scope import Scope
+    from hanual.lang.nodes import Parameters
 
-T = TypeVar("T", bound=BaseNode)
+    from .f_def import FunctionDefinition
+
+T = TypeVar("T")
 
 
 class Arguments(BaseNode):
@@ -114,8 +115,14 @@ class Arguments(BaseNode):
 
             # val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
 
-            if not isinstance(val, LiteralWrapper):
-                raise Exception
+            if not (
+                isinstance(val, LiteralWrapper) or isinstance(val.value, LiteralWrapper)
+            ):
+                raise Exception(val)
+
+            # if the val is a `Token` then get it's value
+            if isinstance(val, Token):
+                val = val.value
 
             yield res.success((name, val))
 
@@ -140,7 +147,7 @@ class Arguments(BaseNode):
             func_params = func.arguments.children
 
         # `params`
-        if params:
+        else:
             func_params = params.children
 
         args = {}
@@ -193,6 +200,3 @@ class Arguments(BaseNode):
                 lst.extend(child.get_constants())
 
         return lst
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

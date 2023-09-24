@@ -1,20 +1,23 @@
 from __future__ import annotations
 
-from hanual.lang.errors import HanualError, TraceBack, ErrorType, Frame
-from hanual.compile.constants.constant import Constant
-from hanual.compile.registers import Registers
-from hanual.compile.instruction import *
 from typing import TYPE_CHECKING, Union
+
+from hanual.compile.constants.constant import Constant
+from hanual.compile.instruction import *
 from hanual.compile.label import Label
+from hanual.compile.refs import Ref
+from hanual.compile.registers import Registers
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
-from hanual.compile.refs import Ref
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 from .dot_chain import DotChain
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
+
     from .arguments import Arguments
 
 
@@ -56,7 +59,14 @@ class FunctionCall(BaseNode):
 
         # create a scope for the function
         if isinstance(self._name, Token):
-            f_scope = Scope(parent=scope, frame=Frame(name=str(self.name), line_num=self._name.line, line=self._name.line_val))
+            f_scope = Scope(
+                parent=scope,
+                frame=Frame(
+                    name=str(self.name),
+                    line_num=self._name.line,
+                    line=self._name.line_val,
+                ),
+            )
             func = scope.get(str(self._name.value), None)
 
             # check for errors
@@ -103,11 +113,8 @@ class FunctionCall(BaseNode):
         return res
 
     def get_constants(self) -> list[Constant]:
-        return self._args.get_constants()
+        yield from self._args.get_constants()
 
     def get_names(self):
         yield self._name.value
         yield from self._args.get_names()
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

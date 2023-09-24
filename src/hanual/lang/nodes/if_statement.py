@@ -8,11 +8,12 @@ from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from .conditions import Condition
     from .block import CodeBlock
+    from .conditions import Condition
 
 
 class IfStatement(BaseNode, ABC):
@@ -47,12 +48,8 @@ class IfStatement(BaseNode, ABC):
         return instructions
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
-        consts.extend(self._condition.get_constants())
-        consts.extend(self._block.get_constants())
-
-        return consts
+        yield from self._condition.get_constants()
+        yield from self._block.get_constants()
 
     def get_names(self):
         return [*self._condition.get_names(), *self._block.get_names()]
@@ -76,6 +73,3 @@ class IfStatement(BaseNode, ABC):
 
         # return if the block was run, aka if the condition was true
         return res.success(val)
-
-    def find_priority(self) -> list[BaseNode]:
-        return self._block.find_priority()

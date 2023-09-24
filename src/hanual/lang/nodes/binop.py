@@ -1,18 +1,19 @@
 from __future__ import annotations
 
+from abc import ABC
+from typing import TYPE_CHECKING, Any, Union
 
-from hanual.lang.errors import HanualError, ErrorType, TraceBack, Frame
 from hanual.compile.constants.constant import Constant
-from hanual.exec.wrappers import LiteralWrapper
-from hanual.compile.registers import Registers
-from hanual.exec.wrappers.wrap import hl_wrap
-from typing import TYPE_CHECKING, Union, Any
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
+from hanual.exec.wrappers import LiteralWrapper
+from hanual.exec.wrappers.wrap import hl_wrap
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
     ...
@@ -83,7 +84,7 @@ class BinOpNode(BaseNode, ABC):
         res = Result()
 
         if isinstance(val, Token):
-            if val.type in ("STR", "NUM"): # literal
+            if val.type in ("STR", "NUM"):  # literal
                 return res.success(val.value)
 
             elif val.type == "ID":
@@ -93,7 +94,6 @@ class BinOpNode(BaseNode, ABC):
                 raise Exception
 
         else:
-
             val, err = res.inherit_from(val.execute(scope=scope))
 
             if err:
@@ -137,14 +137,16 @@ class BinOpNode(BaseNode, ABC):
 
         elif self._op.value == "/":
             if right == 0:
-                return res.fail(HanualError(
-                    pos=(self._op.line, self._op.colm, self._op.colm+1),
-                    line=self._op.line_val,
-                    name=ErrorType.division_by_zero,
-                    reason=f"Can't divide by zero",
-                    tb=TraceBack().add_frame(Frame("binary operation")),
-                    tip=f"Try validating {self._right.value!r}",
-                ))
+                return res.fail(
+                    HanualError(
+                        pos=(self._op.line, self._op.colm, self._op.colm + 1),
+                        line=self._op.line_val,
+                        name=ErrorType.division_by_zero,
+                        reason=f"Can't divide by zero",
+                        tb=TraceBack().add_frame(Frame("binary operation")),
+                        tip=f"Try validating {self._right.value!r}",
+                    )
+                )
 
             return res.success(LiteralWrapper(left / right))
 
@@ -185,6 +187,3 @@ class BinOpNode(BaseNode, ABC):
                 names.append(self._right.value)
 
         return names
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

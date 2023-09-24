@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-
-from hanual.exec.wrappers import LiteralWrapper, hl_wrap
-from hanual.compile.constants.constant import Constant
-from hanual.compile.registers import Registers
-from typing import TYPE_CHECKING, Union, Any
-from hanual.compile.instruction import *
-from hanual.exec.result import Result
-from hanual.lang.lexer import Token
-from .base_node import BaseNode
 from abc import ABC
+from typing import TYPE_CHECKING, Any, Union
 
+from hanual.compile.constants.constant import Constant
+from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
+from hanual.exec.result import Result
+from hanual.exec.wrappers import LiteralWrapper, hl_wrap
+from hanual.lang.lexer import Token
+
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
@@ -72,23 +72,19 @@ class Condition(BaseNode, ABC):
         return instructions
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
         if isinstance(self._left, Token):
             if self._left.type in ("STR", "NUM"):
-                consts.append(Constant(self._left.value))
+                yield Constant(self._left.value)
 
         else:
-            consts.extend(self._left.get_constants())
+            yield from self._left.get_constants()
 
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                consts.append(Constant(self._right.value))
+                yield Constant(self._right.value)
 
         else:
-            consts.extend(self._left.get_constants())
-
-        return consts
+            yield from self._left.get_constants()
 
     def get_names(self) -> list[str]:
         names = []
@@ -146,22 +142,15 @@ class Condition(BaseNode, ABC):
             return res.success(left <= right)
 
         elif self._op.value == "===":
-            return res.success(
-                (left == right) and
-                (isinstance(left, type(right)))
-            )
+            return res.success((left == right) and (isinstance(left, type(right))))
 
         else:
             raise NotImplementedError(f"{self._op!r} not accounted for")
 
     @staticmethod
     def _get_value(scope: Scope, value: Any) -> Result:
-
         if isinstance(value, Token):
             return hl_wrap(scope, value)
 
         else:
             return value.execute(scope)
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

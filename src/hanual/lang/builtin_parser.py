@@ -662,12 +662,12 @@ def function_marker(ts: DefaultProduction[FunctionCall]):
 )
 def function_definition(ts: DefaultProduction[FunctionCall, Token, CodeBlock, Token], has_end: bool):
     if has_end is False:
-        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock([]))
+        return FunctionDefinition(name=ts[0].name, params=Parameters(ts[0].args.children), inner=CodeBlock([]))
 
     if not isinstance(ts[2], CodeBlock):
-        return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=CodeBlock(ts[2]))
+        return FunctionDefinition(name=ts[0].name, params=Parameters(ts[0].args.children), inner=CodeBlock(ts[2]))
 
-    return FunctionDefinition(name=ts[0].name, args=Parameters(ts[0].args.children), inner=ts[2])
+    return FunctionDefinition(name=ts[0].name, params=Parameters(ts[0].args.children), inner=ts[2])
 
 
 ###########################

@@ -22,10 +22,7 @@ class HanualList(BaseNode):
         return self._elements.children
 
     def get_constants(self) -> list[Constant]:
-        return self._elements.get_constants()
-
-    def find_priority(self) -> list[BaseNode]:
-        return self._elements.find_priority()
+        yield from self._elements.get_constants()
 
     def get_names(self):
         return self._elements.get_names()

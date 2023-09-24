@@ -14,7 +14,6 @@ from hanual.compile.serialize import DumpFile
 start = time.perf_counter()
 
 
-
 preproc = Preprocessor()
 parser = get_parser()
 lexer = HanualLexer()

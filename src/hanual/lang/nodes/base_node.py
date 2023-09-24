@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, TypeVar, Generator
 from hanual.exec.scope import Scope
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     from hanual.compile.constants.constant import BaseConstant
-    from hanual.lang.builtin_lexer import Token
     from hanual.exec.result import Result
 
 
@@ -15,11 +14,6 @@ N = TypeVar("N", bound="BaseNode")
 
 
 class BaseNode(ABC):
-    #def __new__(cls, *args, **kwargs):
-    #    assert hasattr(cls, "_line"), "class needs to have attr _line"
-    #    assert hasattr(cls, "_line_no"), "class needs to have attr _line_no"
-    #    return super().__new__(cls)
-
     @abstractmethod
     def __init__(self, *args, **kwargs) -> None:
         """
@@ -54,14 +48,5 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_constants(self) -> list[BaseConstant]:
+    def get_constants(self) -> Generator[BaseConstant]:
         raise NotImplementedError
-
-    @abstractmethod
-    def find_priority(self) -> list[BaseNode]:
-        raise NotImplementedError
-
-    @staticmethod
-    def get_repr(o):
-        # Just a convenience function that will call as_dict if it exists
-        return o.as_dict() if hasattr(o, "as_dict") else o

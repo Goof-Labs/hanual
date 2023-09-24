@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Union
 
 from hanual.compile.constants.constant import Constant
-from .strong_field_list import StrongFieldList
-from typing import TYPE_CHECKING, Union
-from .strong_field import StrongField
 from hanual.exec.result import Result
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
+from .strong_field import StrongField
+from .strong_field_list import StrongFieldList
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
@@ -62,6 +63,3 @@ class StructDefinition(BaseNode):
 
             else:
                 yield from field.get_constants()
-
-    def find_priority(self) -> list[BaseNode]:
-        return [self]

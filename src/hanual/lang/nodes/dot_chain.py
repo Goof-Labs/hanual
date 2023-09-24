@@ -1,19 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Union, Any
+from abc import ABC
+from typing import TYPE_CHECKING, Any, List, Union
+
 from hanual.exec.result import Result
 from hanual.lang.errors import Frame
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.exec.scope import Scope
     from typing_extensions import Self
+
+    from hanual.exec.scope import Scope
 
 
 class DotChain(BaseNode, ABC):
-    __slots__ = "_chain",
+    __slots__ = ("_chain",)
 
     def __init__(self: BaseNode) -> None:
         self._chain: List[Token] = []
@@ -42,7 +45,7 @@ class DotChain(BaseNode, ABC):
 
         prev: Any = None
 
-        last_idx = len(self._chain)-1
+        last_idx = len(self._chain) - 1
 
         for i, link in enumerate(self._chain):
             # don't have a starting node, or this is the first one
@@ -79,8 +82,8 @@ class DotChain(BaseNode, ABC):
 
         return res.success(prev)
 
-    def get_constants(self) -> list:
-        return []
+    def get_constants(self):
+        ...
 
     def get_names(self) -> list[str]:
         names = []
@@ -89,6 +92,3 @@ class DotChain(BaseNode, ABC):
             names.append(name.value)
 
         return names
-
-    def find_priority(self) -> list:
-        return []

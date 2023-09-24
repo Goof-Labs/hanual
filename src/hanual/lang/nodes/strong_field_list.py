@@ -1,16 +1,19 @@
 from __future__ import annotations
 
-from hanual.compile.constants.constant import Constant
 from typing import TYPE_CHECKING, List
+
+from hanual.compile.constants.constant import Constant
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from .strong_field import StrongField
     from typing_extensions import Self
+
+    from .strong_field import StrongField
 
 
 class StrongFieldList(BaseNode):
-    __slots__ = "_fields",
+    __slots__ = ("_fields",)
 
     def __init__(self) -> None:
         self._fields: List[StrongField] = []
@@ -38,12 +41,5 @@ class StrongFieldList(BaseNode):
         return names
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
         for field in self._fields:
-            consts.extend(field.get_constants())
-
-        return consts
-
-    def find_priority(self):
-        return []
+            yield field.get_constants()

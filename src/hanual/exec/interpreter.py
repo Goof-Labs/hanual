@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from hanual.lang.errors.trace_back import Frame
+from hanual.lang.nodes import CodeBlock
 
 from .hl_builtin.func_builtin import FuncBuiltinLibrary
 from .hl_builtin.io_builtin import IOBuiltinLibrary
-from hanual.lang.nodes import CodeBlock
 from .scope import Scope
 
 
@@ -16,7 +16,10 @@ class Interpreter:
         with Scope(parent=None, frame=Frame(name="GLOBAL")) as scope:
             self._tree.execute(scope=scope)
 
-            for func in (*IOBuiltinLibrary().get_builtins(), *FuncBuiltinLibrary().get_builtins()):
+            for func in (
+                *IOBuiltinLibrary().get_builtins(),
+                *FuncBuiltinLibrary().get_builtins(),
+            ):
                 scope.set(func.name, func)
 
             _, err = scope.get("main", None)(scope=scope)

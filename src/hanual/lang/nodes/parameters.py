@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, TypeVar, Union, Optional
+from typing import TYPE_CHECKING, List, Optional, TypeVar, Union
+
 from hanual.compile.constants.constant import Constant
-from hanual.lang.nodes.arguments import Arguments
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
 from hanual.exec.result import Result
+from hanual.lang.builtin_lexer import Token
+from hanual.lang.nodes.arguments import Arguments
+from hanual.lang.nodes.base_node import BaseNode
+
 from .f_def import FunctionDefinition
 
 if TYPE_CHECKING:
@@ -64,7 +66,4 @@ class Parameters(BaseNode):
         return names
 
     def get_constants(self) -> list[Constant]:
-        return []
-
-    def find_priority(self) -> list[BaseNode]:
-        return []
+        ...

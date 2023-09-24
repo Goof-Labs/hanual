@@ -9,17 +9,23 @@ from typing import Dict
 
 
 class FuncBuiltinLibrary(BaseBuiltinLibrary):
-	@hl_builtin("x", name="int")
-	def hl_int(self, scope: Scope, args: Dict[str, LiteralWrapper]) -> Result:
-		try:
-			return Result().success(int(args["x"].value))
+    @hl_builtin("x", name="int")
+    def hl_int(self, scope: Scope, args: Dict[str, LiteralWrapper]) -> Result:
+        try:
+            return Result().success(int(args["x"].value))
 
-		except ValueError:
-			return Result().fail(err=HanualError(
-				pos=(-1, 0, 0),
-				line="",
-				name=ErrorType.value_error,
-				reason="The value passed to `int` func can't be parsed",
-				tb=TraceBack(),
-				tip="Validate your inputs",
-			))
+        except ValueError:
+            return Result().fail(
+                err=HanualError(
+                    pos=(-1, 0, 0),
+                    line="",
+                    name=ErrorType.value_error,
+                    reason="The value passed to `int` func can't be parsed",
+                    tb=TraceBack(),
+                    tip="Validate your inputs",
+                )
+            )
+
+    @hl_builtin("x", name="str")
+    def hl_str(self, scope: Scope, args: Dict[str, LiteralWrapper]) -> Result:
+        return Result().success(LiteralWrapper[str](args["x"].as_string(scope)))

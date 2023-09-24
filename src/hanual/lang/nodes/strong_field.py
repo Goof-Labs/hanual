@@ -15,7 +15,10 @@ T = TypeVar("T")
 
 
 class StrongField(BaseNode):
-    __slots__ = "_name", "_type",
+    __slots__ = (
+        "_name",
+        "_type",
+    )
 
     def __init__(self: BaseNode, name: Token, type_: T) -> None:
         self._name: Token = name
@@ -36,10 +39,7 @@ class StrongField(BaseNode):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
-        return []
+        ...
 
     def get_names(self) -> list[str]:
         return [self.name.value]
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

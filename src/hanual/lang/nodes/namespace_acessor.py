@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class NamespaceAccessor(BaseNode, ABC):
-    __slots__ = "_path",
+    __slots__ = ("_path",)
 
     def __init__(self: BaseNode, first: Token) -> None:
         self._path: List[Token] = [first]
@@ -26,9 +26,6 @@ class NamespaceAccessor(BaseNode, ABC):
         else:
             self._path.append(child)
         return self
-
-    def find_priority(self) -> list[BaseNode]:
-        return []
 
     @property
     def full_path(self) -> str:
@@ -45,7 +42,7 @@ class NamespaceAccessor(BaseNode, ABC):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
-        return []
+        ...
 
     def get_names(self) -> list[str]:
         return [self._path[-1].value]

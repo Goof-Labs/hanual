@@ -4,10 +4,11 @@ from typing import TypeVar
 
 from hanual.compile.constants.constant import Constant
 from hanual.lang.lexer import Token
-from .hanual_list import HanualList
-from .f_call import FunctionCall
-from .dot_chain import DotChain
+
 from .base_node import BaseNode
+from .dot_chain import DotChain
+from .f_call import FunctionCall
+from .hanual_list import HanualList
 
 _O = TypeVar("_O", Token, DotChain, FunctionCall)
 P = TypeVar("P", HanualList, ...)
@@ -24,9 +25,6 @@ class SGetattr(BaseNode):
     def compile(self):
         return super().compile()
 
-    def find_priority(self) -> list[BaseNode]:
-        return []
-
     def get_names(self) -> list[str]:
         names = []
 
@@ -42,15 +40,11 @@ class SGetattr(BaseNode):
         return names
 
     def get_constants(self) -> list[Constant]:
-        constants = []
-
         if isinstance(self._obj, Token):
             if self._obj.type in ("NUM", "STR"):
-                constants.append(self._obj.value)
+                yield self._obj.value
 
         else:
-            constants.extend(self._obj.get_constants())
+            yield from self._obj.get_constants()
 
-        constants.extend(self._prt.get_constants())
-
-        return constants
+        yield from self._prt.get_constants()

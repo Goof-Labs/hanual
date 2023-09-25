@@ -1,15 +1,26 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Type, Union, List
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Type,
+    Union,
+)
 
 from .productions import DefaultProduction, P
 from .util.line_range import LineRange
 
 if TYPE_CHECKING:
     from typing_extensions import Self
-    from .pparser import _StackFrame
 
     from hanual.api.hooks import RuleHook
+
+    from .pparser import _StackFrame
 
 """
 This is a proxy class that wraps around a function, I
@@ -72,8 +83,11 @@ class Proxy:
 
             # create a line range to say where code starts and ends
             if ln_range.start == -1:
-                ln_range.start = frame.line_no if isinstance(frame.line_no, int) else frame.line_no.start
-
+                ln_range.start = (
+                    frame.line_no
+                    if isinstance(frame.line_no, int)
+                    else frame.line_no.start
+                )
 
             """
             The problem is that some lines will just overlap. Tokens will store the line they are from and
@@ -97,26 +111,45 @@ class Proxy:
             T3 =            |------|
             The above is a diagram that would show the splicing in action.
             """
-            if f_end := (frame.line_no if isinstance(frame.line_no, int) else frame.line_no.end) > ln_range.end:
+            if (
+                f_end := (
+                    frame.line_no
+                    if isinstance(frame.line_no, int)
+                    else frame.line_no.end
+                )
+                > ln_range.end
+            ):
                 # The if statement cecks if the next token has a greater range then ours
                 if f_end < ln_range.end:
                     # does not fully overlap, like T2 to T3 in diagram
                     frame_lines = frame.lines.split("\n")
 
-                    for line in frame_lines[:ln_range.end-f_end]:
+                    for line in frame_lines[: ln_range.end - f_end]:
                         lines = lines + line + "\n"
 
                 else:
                     # alignes nicely like T1 to T2
                     lines += frame.lines
 
-            ln_range.end = frame.line_no if isinstance(frame.line_no, int) else frame.line_no.end
+            ln_range.end = (
+                frame.line_no if isinstance(frame.line_no, int) else frame.line_no.end
+            )
+            ln_range.start = frame.line_no
 
         # don't want to pass a case
         if self._types != {}:
-            return self._fn(self.prod(values, lines=lines, line_no=ln_range), pattern, lines=lines, line_no=ln_range)
+            return self._fn(
+                self.prod(values, lines=lines, line_no=ln_range),
+                pattern,
+                lines=lines,
+                line_no=ln_range,
+            )
 
-        return self._fn(self.prod(values, lines=lines, line_no=ln_range), lines=lines, line_no=ln_range)
+        return self._fn(
+            self.prod(values, lines=lines, line_no=ln_range),
+            lines=lines,
+            line_no=ln_range,
+        )
 
 
 class HookProxy(Proxy):

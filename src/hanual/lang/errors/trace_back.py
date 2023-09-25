@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
 from io import StringIO
-
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
     from typing_extensions import Self
+
+    from hanual.lang.util.line_range import LineRange
 
 
 class Frame:
@@ -25,7 +25,10 @@ class Frame:
     def summery(self) -> str:
         tb = StringIO()
         tb.write(f"{self._name}:")
-        for line, i in zip(self._line.split("\n"), range(self._line_range.start, self._line_range.end+1)):
+        for line, i in zip(
+            self._line.split("\n"),
+            range(self._line_range.start, self._line_range.end + 1),
+        ):
             tb.write(f" {str(i).zfill(5)} | {line}")
         return tb.getvalue()
 

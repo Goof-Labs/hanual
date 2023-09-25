@@ -84,7 +84,7 @@ class VarChange(BaseNode):
                             line=self._name.line_val,
                             name=ErrorType.unresolved_name,
                             reason=f"Couldn't resolve reference to {self._name.value!r}",
-                            tb=TraceBack().add_frame(Frame("new struct")),
+                            tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                             tip="Did you make a typo?",
                         )
                     )
@@ -97,7 +97,7 @@ class VarChange(BaseNode):
         val, err = res.inherit_from(self._value.execute(scope))
 
         if err:
-            return res.fail(err.add_frame(Frame("var change")))
+            return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
         return res.success(val)
 
@@ -118,7 +118,7 @@ class VarChange(BaseNode):
                         line=self._name.line_val,
                         name=ErrorType.unresolved_name,
                         reason=f"Couldn't resolve reference to {self._name.value!r}",
-                        tb=TraceBack().add_frame(Frame("new struct")),
+                        tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                         tip="Did you make a typo?",
                     )
                 )
@@ -126,7 +126,7 @@ class VarChange(BaseNode):
             val, err = res.inherit_from(self._get_value(scope))
 
             if err:
-                return res.fail(err.add_frame("var change"))
+                return res.fail(err.add_frame(Frame("var change", line=self.lines, line_num=self.line_no)))
 
             scope.set(self._name.value, val)
             return res.success(None)
@@ -137,12 +137,12 @@ class VarChange(BaseNode):
             val, err = res.inherit_from(self._get_value(scope))
 
             if err:
-                return res.fail(err.add_frame(Frame("var change")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
             _, err = res.inherit_from(self._name.execute(scope, set_attr=val))
 
             if err:
-                return res.fail(err.add_frame(Frame("var change")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
         return res.success(None)
 

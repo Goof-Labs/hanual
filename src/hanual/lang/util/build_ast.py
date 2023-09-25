@@ -113,5 +113,5 @@ def create_ast(
     parser.add_hooks(hook_loader.rules)
 
     tree = parser.parse(tokens)  # [0][1]
-    print(dump_tree(tree, depth=10))
+    # print(dump_tree(tree, depth=10))
     return tree[0][1], text

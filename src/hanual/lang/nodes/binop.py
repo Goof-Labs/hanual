@@ -145,7 +145,7 @@ class BinOpNode(BaseNode, ABC):
                         line=self._op.line_val,
                         name=ErrorType.division_by_zero,
                         reason=f"Can't divide by zero",
-                        tb=TraceBack().add_frame(Frame("binary operation")),
+                        tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                         tip=f"Try validating {self._right.value!r}",
                     )
                 )

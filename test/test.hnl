@@ -10,5 +10,7 @@ fn main() {
     x.name = "jeff"
 
     println(x.name)
-    // println(x.to_str())
+    println(x.to_str())
+
+    println(0 / 0)
 }

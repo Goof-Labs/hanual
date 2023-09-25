@@ -65,7 +65,7 @@ class DotChain(BaseNode, ABC):
                     prev, err = res.inherit_from(scope.get(link.value, None, res=True))
 
                     if err:
-                        return res.fail(err.add_frame(Frame(name="dot chain")))
+                        return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
                 elif isinstance(link, Token):
                     prev = link.value
@@ -79,7 +79,7 @@ class DotChain(BaseNode, ABC):
 
             if err:
                 # Info was not passed so pass it manually
-                return res.fail(err.add_frame(Frame("dot chain")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
             prev = curr
 

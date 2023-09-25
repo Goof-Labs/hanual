@@ -91,7 +91,7 @@ class ImplicitBinOp(BaseNode):
                     line=self._op.line_val,
                     name=ErrorType.unresolved_name,
                     reason=f"Couldn't resolve reference to {self._op.value!r}",
-                    tb=TraceBack().add_frame(Frame("implicit binary op")),
+                    tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                     tip="Did you make a typo?",
                 )
             )
@@ -133,7 +133,7 @@ class ImplicitBinOp(BaseNode):
                     line=self._op.line_val,
                     name=ErrorType.unresolved_name,
                     reason=f"Couldn't resolve reference to {self._op.value!r}",
-                    tb=TraceBack().add_frame(Frame("implicit binop")),
+                    tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                     tip="Did you make a typo?",
                 )
             )

@@ -94,7 +94,7 @@ class AssignmentNode(BaseNode, Generic[T]):
                             line=value.line_val,
                             name=ErrorType.unresolved_name,
                             reason=f"Reference to {value.value!r} could not be resolved",
-                            tb=TraceBack().add_frame(Frame("Assignment")),
+                            tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                             tip=f"Did you make a typo?",
                         )
                     )

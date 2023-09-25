@@ -73,7 +73,7 @@ class Arguments(BaseNode):
                     val, err = res.inherit_from(scope.get(str(value.value), res=True))
 
                     if err:
-                        return err.add_frame(Frame("arguments"))
+                        return err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no))
 
                     yield res.success((name, val))
 
@@ -94,7 +94,7 @@ class Arguments(BaseNode):
                     val, err = scope.get(str(value.value), res=True)
 
                     if err:
-                        return err.add_frame(Frame("arguments"))
+                        return err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no))
 
                     yield res.success((name, val))
 
@@ -107,7 +107,7 @@ class Arguments(BaseNode):
             val, err = res.inherit_from(value.execute(scope=scope))
 
             if err:
-                yield res.fail(err.add_frame(Frame(name="arguments")))
+                yield res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
                 return
 
             # val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
@@ -151,7 +151,7 @@ class Arguments(BaseNode):
 
         for resp in self._gen_args(names=func_params, scope=scope):
             if resp.error:
-                return res.fail(resp.error.add_frame(Frame("arguments")))
+                return res.fail(resp.error.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
             val, err = res.inherit_from(resp)
 

@@ -44,5 +44,5 @@ class LoopLoop(BaseNode, ABC):
             _, err = res.inherit_from(self._inner.execute(scope))
 
             if err:
-                err.add_frame(Frame("loop"))
+                err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no))
                 return res

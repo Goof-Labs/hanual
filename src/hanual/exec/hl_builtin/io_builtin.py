@@ -20,7 +20,6 @@ class IOBuiltinLibrary(BaseBuiltinLibrary):
                 val, err = res.inherit_from(scope.get(str(args["x"].value), res=True))
 
                 if err:
-                    err.add_frame(Frame("func call"))
                     return res
 
                 print(val)

@@ -86,18 +86,20 @@ class FunctionCall(BaseNode):
                         line=self._name.line_val,
                         name=ErrorType.unresolved_name,
                         reason=f"Couldn't resolve reference to {self._name.value!r}",
-                        tb=TraceBack().add_frame(Frame("function call")),
+                        tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
                         tip="Did you make a typo?",
                     )
                 )
 
         elif isinstance(self._name, DotChain):
             # get the last name in the chain because that is what the function name is
-            f_scope = Scope(parent=scope, name=str(self._name.chain[0].value))
+            f_scope = Scope(
+                parent=scope,
+                frame=Frame(name=str(self._name.chain[0].value), line=self._lines, line_num=self.line_no))
             func, err = res.inherit_from(self._name.execute(scope))
 
             if func is None:
-                return res.fail(err.add_frame(Frame(name="function call")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
         else:
             raise Exception

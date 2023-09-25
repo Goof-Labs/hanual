@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from hanual.lang.errors.trace_back import Frame
 from hanual.lang.nodes import CodeBlock
 
 from .hl_builtin.func_builtin import FuncBuiltinLibrary

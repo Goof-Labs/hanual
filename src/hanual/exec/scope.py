@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Dict, TypeVar, Generic, Optional, Any, Union, TYPE_CHECKING, List
-from hanual.lang.errors import HanualError, ErrorType, TraceBack
-from hanual.lang.errors.trace_back import Frame
-from hanual.exec.result import Result
-from logging import warn
+from logging import warning
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, TypeVar, Union
 
+from hanual.exec.result import Result
+from hanual.lang.errors import ErrorType, HanualError, TraceBack
+from hanual.lang.errors.trace_back import Frame
 
 if TYPE_CHECKING:
     ...
@@ -16,11 +16,8 @@ _H = TypeVar("_H")
 
 class Scope(Generic[_H]):
     def __init__(
-        self, parent, frame: Optional[Frame]=None, hidden: Optional[bool] = False
+        self, parent, frame: Optional[Frame] = None, hidden: Optional[bool] = False
     ):
-        if frame is None and hidden is False:
-            warn("Should implement frame", stack_info=True)
-
         self._parent: Scope = parent
         self._env: Dict[str, _H] = {}
 

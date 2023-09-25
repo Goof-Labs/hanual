@@ -58,7 +58,7 @@ class ElifStatement(BaseNode, ABC):
 
         if should_run:
             inner_scope = Scope(
-                parent=scope, frame=Frame(name="Elif statement", line=..., line_num=...)
+                parent=scope, frame=Frame(name=type(self).__name__, line=..., line_num=...)
             )
             _, err = res.inherit_from(self.block.execute(inner_scope))
 

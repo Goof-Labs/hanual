@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
     from hanual.compile.constants.constant import BaseConstant
     from hanual.lang.lexer import Token
+    from hanual.lang.util.line_range import LineRange
 
     from .block import CodeBlock
     from .parameters import Parameters
@@ -29,7 +30,7 @@ class FunctionDefinition(BaseNode):
         params: Parameters,
         inner: CodeBlock,
         lines: str,
-        line_no: int,
+        line_no: LineRange,
     ) -> None:
         self._name: Token = name
         self._parameters = params
@@ -84,7 +85,7 @@ class FunctionDefinition(BaseNode):
 
         f_scope = Scope(
             parent=scope,
-            frame=Frame(name=str(self._name.value), line_num=self._name.line),
+            frame=Frame(name=str(self._name.value), line_range=self.line_no, line=self.lines),
         )
         f_scope.extend(args)
         res.inherit_from(self._inner.execute(scope=f_scope))

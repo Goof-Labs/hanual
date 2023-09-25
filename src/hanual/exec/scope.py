@@ -16,24 +16,19 @@ _H = TypeVar("_H")
 
 class Scope(Generic[_H]):
     def __init__(
-        self, parent, name: Optional[str] = "BLANK", frame: Optional[Frame] = None
+        self, parent, frame: Optional[Frame]=None, hidden: Optional[bool] = False
     ):
-        if frame is None and name == "BLANK":
-            raise Exception("Insufficient arguments")
-
-        if frame is None:
+        if frame is None and hidden is False:
             warn("Should implement frame", stack_info=True)
 
         self._parent: Scope = parent
         self._env: Dict[str, _H] = {}
 
-        if frame:
-            assert isinstance(frame, Frame)
-
+        if frame is not None:
             self._frame: Frame = frame
             self._name: str = frame.name
 
-        self._name: str = str(name)
+        self._hidden = hidden
 
     def exists(self, key: str) -> bool:
         return key in self._env

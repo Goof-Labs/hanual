@@ -68,8 +68,8 @@ class FunctionCall(BaseNode):
                 parent=scope,
                 frame=Frame(
                     name=str(self.name),
-                    line_num=self._name.line,
-                    line=self._name.line_val,
+                    line_range=self.line_no,
+                    line=self.lines,
                 ),
             )
             func = scope.get(str(self._name.value), None)

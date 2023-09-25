@@ -72,11 +72,45 @@ class Proxy:
 
             # create a line range to say where code starts and ends
             if ln_range.start == -1:
-                ln_range.start = frame.line_no
+                ln_range.start = frame.line_no if isinstance(frame.line_no, int) else frame.line_no.start
 
-            ln_range.end = frame.line_no
 
-            lines += frame.lines
+            """
+            The problem is that some lines will just overlap. Tokens will store the line they are from and
+            this can be used to construct the environment they where made in. But we may have three tokens
+            NUM(line="1+2") PLUS(line="1+2") NUM(line="1+2")
+            In this scenario a bare implementation might just use a string and concatinate all strings
+            together this has the slight downside of lines being duplicated, in the above exaple the result
+            would be
+            1+21+21+2
+            Which is far from accurate. A better implementation may save the last line and check if the
+            current one is identical. This would work in the example, but if the programmer intentionally
+            writes two identical statements, parts of the code may be ommited.
+            The best solution is to use the hl_range variable and see if the current lines are in range
+            if they are in the range then we have probably covered them and should move on, else just add
+            them.
+            NUM(line="1+2", start=0, end=0) PLUS(line="1+2", start=0, end=1) NUM(line="1+2", start=0, end=1)
+            This time only the first line should be included because all the others have the same range,
+            with an improved implementation parts of the lines can be spliced.
+            T1 = |------|
+            T2 =        |------|
+            T3 =            |------|
+            The above is a diagram that would show the splicing in action.
+            """
+            if f_end := (frame.line_no if isinstance(frame.line_no, int) else frame.line_no.end) > ln_range.end:
+                # The if statement cecks if the next token has a greater range then ours
+                if f_end < ln_range.end:
+                    # does not fully overlap, like T2 to T3 in diagram
+                    frame_lines = frame.lines.split("\n")
+
+                    for line in frame_lines[:ln_range.end-f_end]:
+                        lines = lines + line + "\n"
+
+                else:
+                    # alignes nicely like T1 to T2
+                    lines += frame.lines
+
+            ln_range.end = frame.line_no if isinstance(frame.line_no, int) else frame.line_no.end
 
         # don't want to pass a case
         if self._types != {}:

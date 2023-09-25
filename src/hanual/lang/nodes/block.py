@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Any, List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generator, List, Optional, TypeVar, Union
 
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
@@ -10,7 +10,7 @@ from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.compile.constants.constant import BaseConstant
+    from hanual.compile.constants.constant import Constant
 
 T = TypeVar("T")
 
@@ -58,7 +58,7 @@ class CodeBlock(BaseNode, ABC):
 
         return instructions
 
-    def get_constants(self) -> list[BaseConstant]:
+    def get_constants(self) -> Generator[Constant, None, None]:
         for node in self._children:
             yield from node.get_constants()
 

@@ -1,29 +1,33 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
+from io import StringIO
+
 
 if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
     from typing_extensions import Self
 
 
 class Frame:
     __slots__ = (
-        "_line_num",
+        "_line_range",
         "_name",
         "_line",
     )
 
-    def __init__(self, name: str, line_num: int = -1, line: str = ""):
-        self._line_num = line_num
+    def __init__(self, name: str, line_range: LineRange, line: str = ""):
+        self._line_range = line_range
         self._name = name
         self._line = line
 
     @property
-    def summery(self):
-        if self._line_num is None:
-            return self._name
-
-        return f"{self._name} {str(self._line_num).zfill(5)} | {self._line}"
+    def summery(self) -> str:
+        tb = StringIO()
+        tb.write(f"{self._name}:")
+        for line, i in zip(self._line.split("\n"), range(self._line_range.start, self._line_range.end+1)):
+            tb.write(f" {str(i).zfill(5)} | {line}")
+        return tb.getvalue()
 
     @property
     def name(self) -> str:

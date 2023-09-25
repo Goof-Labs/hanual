@@ -13,7 +13,7 @@ class Interpreter:
         self._tree: CodeBlock = tree
 
     def run(self):
-        with Scope(parent=None, frame=Frame(name="GLOBAL")) as scope:
+        with Scope(parent=None, hidden=True) as scope:
             self._tree.execute(scope=scope)
 
             for func in (

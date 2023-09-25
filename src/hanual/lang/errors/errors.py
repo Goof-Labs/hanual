@@ -5,6 +5,7 @@ from io import StringIO
 from typing import TYPE_CHECKING, Optional, Self, Tuple
 
 if TYPE_CHECKING:
+    from hanual.lang.utils.line_range import LineRange
     from .trace_back import Frame, TraceBack
 
 
@@ -28,7 +29,7 @@ class ErrorType(StrEnum):
 class HanualError:
     def __init__(
         self,
-        pos: Tuple[int, int, int],
+        pos: LineRange,
         line: str,
         name: str,
         reason: str,

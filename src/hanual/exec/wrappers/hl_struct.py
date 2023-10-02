@@ -83,7 +83,8 @@ class HlStruct(BaseValue, ABC):
 
                 if attr == "to_str":
                     return Result().success(
-                        HlWrapperFunction(name="to_str", params=Parameters([]), func=self.to_str))
+                        HlWrapperFunction(
+                            name="to_str", params=Parameters([], line_no=-1, lines=""), func=self.to_str))
 
                     # error if all fails
                 return res.fail(HanualError(

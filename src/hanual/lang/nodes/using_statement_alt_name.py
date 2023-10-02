@@ -14,12 +14,14 @@ if TYPE_CHECKING:
 
 
 class UsingStatementWithAltName(BaseNode):
-    def find_priority(self) -> list[BaseNode]:
-        pass
+    __slots__ = "_path", "_name", "_lines", "_line_no",
 
-    def __init__(self: BaseNode, path: NamespaceAccessor, name: Token) -> None:
+    def __init__(self: BaseNode, path: NamespaceAccessor, name: Token, lines: str, line_no: int) -> None:
         self._path: NamespaceAccessor = path
         self._name: Token = name
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def using(self) -> NamespaceAccessor:
@@ -33,7 +35,7 @@ class UsingStatementWithAltName(BaseNode):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
-        return []
+        ...
 
     def get_names(self) -> list[str]:
         return [self._name.value]

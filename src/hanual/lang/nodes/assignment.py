@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any, Generator, Generic, TypeVar
 
-from hanual.lang.errors import HanualError, ErrorType, Frame, TraceBack
-from typing import TYPE_CHECKING, Generic, TypeVar, Any
 from hanual.compile.constants.constant import Constant
-from hanual.exec.wrappers import LiteralWrapper
-from hanual.compile.registers import Registers
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.exec.result import Result
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -18,11 +18,14 @@ T = TypeVar("T", BaseNode, Token)
 
 
 class AssignmentNode(BaseNode, Generic[T]):
-    __slots__ = ("_target", "_value")
+    __slots__ = ("_target", "_value", "_lines", "_line_no")
 
-    def __init__(self: BaseNode, target: Token, value: T) -> None:
+    def __init__(self: BaseNode, target: Token, value: T, lines: str, line_no: int) -> None:
         self._target: Token = target
         self._value: T = value
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def target(self) -> Token:
@@ -48,13 +51,11 @@ class AssignmentNode(BaseNode, Generic[T]):
         else:
             return [*self._value.compile(), CPY[self._target.value, Registers.R]]
 
-    def get_constants(self) -> list[Constant]:
+    def get_constants(self) -> Generator[Constant]:
         # if we want to set the value to a literal, then we add it as a constant
         if isinstance(self._value, Token):
             if self._value.type in ("STR", "NUM"):
-                return [Constant(self._value.value)]
-
-        return []
+                yield Constant(self._value.value)
 
     def get_names(self) -> list[str]:
         return [self._target.value]
@@ -78,23 +79,25 @@ class AssignmentNode(BaseNode, Generic[T]):
 
         if isinstance(value, Token):
             if value.type == "NUM":
-                return res.success(LiteralWrapper(float(value.value)))
+                return res.success(value)
 
             elif value.type == "STR":
-                return res.success(LiteralWrapper(value.value))
+                return res.success(value)
 
             elif value.type == "ID":
-                val = scope.get(value.value, None)
+                val = scope.get(str(value.value), None)
 
                 if val is None:
-                    return res.fail(HanualError(
-                        pos=(value.line, value.colm, value.colm+len(value.value)),
-                        line=value.line_val,
-                        name=ErrorType.unresolved_name,
-                        reason=f"Reference to {value.value!r} could not be resolved",
-                        tb=TraceBack().add_frame(Frame("Assignment")),
-                        tip=f"Did you make a typo?",
-                    ))
+                    return res.fail(
+                        HanualError(
+                            pos=(value.line, value.colm, value.colm + len(value.value)),
+                            line=value.line_val,
+                            name=ErrorType.unresolved_name,
+                            reason=f"Reference to {value.value!r} could not be resolved",
+                            tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
+                            tip=f"Did you make a typo?",
+                        )
+                    )
 
                 return res.success(val)
 
@@ -103,6 +106,3 @@ class AssignmentNode(BaseNode, Generic[T]):
 
         else:
             return res.inherit_from(self.value.execute(scope=scope))
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

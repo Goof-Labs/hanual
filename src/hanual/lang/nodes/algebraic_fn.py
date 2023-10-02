@@ -11,11 +11,14 @@ if TYPE_CHECKING:
 
 
 class AlgebraicFunc(BaseNode, ABC):
-    __slots__ = "_name", "_expr"
+    __slots__ = "_name", "_expr", "_lines", "_line_no",
 
-    def __init__(self: BaseNode, name: str, expr: AlgebraicExpression) -> None:
+    def __init__(self: BaseNode, name: str, expr: AlgebraicExpression, lines: str, line_no: int) -> None:
         self._name = name
         self._expr = expr
+
+        self._line_no = line_no
+        self._lines = lines
 
     def compile(self) -> Any:
         raise NotImplementedError

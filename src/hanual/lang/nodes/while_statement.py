@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 from hanual.compile.constants.constant import Constant
 from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
-from typing import TYPE_CHECKING
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -15,9 +16,14 @@ if TYPE_CHECKING:
 
 
 class WhileStatement(BaseNode):
-    def __init__(self: BaseNode, condition: Condition, body: CodeBlock) -> None:
+    __slots__ = "_while", "_body", "_lines", "_line_no",
+
+    def __init__(self: BaseNode, condition: Condition, body: CodeBlock, lines: str, line_no: int) -> None:
         self._while: Condition = condition
         self._body: CodeBlock = body
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def condition(self) -> Condition:
@@ -59,10 +65,8 @@ class WhileStatement(BaseNode):
                 return res
 
     def get_constants(self) -> list[Constant]:
-        return [*self._while.get_constants(), *self._body.get_constants()]
+        yield from self._while.get_constants()
+        yield from self._body.get_constants()
 
     def get_names(self) -> list[str]:
         return [*self._while.get_names(), *self._body.get_names()]
-
-    def find_priority(self) -> list[BaseNode]:
-        return self._body.find_priority()

@@ -14,18 +14,20 @@ from .arguments import Arguments
 
 
 class HanualList(BaseNode):
-    def __init__(self, args: Arguments) -> None:
+    __slots__ = "_elements", "_lines", "_line_no"
+
+    def __init__(self, args: Arguments, lines: str, line_no: int) -> None:
         self._elements = args
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def elements(self) -> List:
         return self._elements.children
 
     def get_constants(self) -> list[Constant]:
-        return self._elements.get_constants()
-
-    def find_priority(self) -> list[BaseNode]:
-        return self._elements.find_priority()
+        yield from self._elements.get_constants()
 
     def get_names(self):
         return self._elements.get_names()

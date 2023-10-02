@@ -14,10 +14,13 @@ if TYPE_CHECKING:
 
 
 class NamespaceAccessor(BaseNode, ABC):
-    __slots__ = "_path",
+    __slots__ = ("_path", "_lines", "_line_no")
 
-    def __init__(self: BaseNode, first: Token) -> None:
+    def __init__(self: BaseNode, first: Token, lines: str, line_no: int) -> None:
         self._path: List[Token] = [first]
+
+        self._lines = lines
+        self._line_no = line_no
 
     def add_child(self, child: Union[Token, NamespaceAccessor]) -> Self:
         if isinstance(child, NamespaceAccessor):
@@ -26,9 +29,6 @@ class NamespaceAccessor(BaseNode, ABC):
         else:
             self._path.append(child)
         return self
-
-    def find_priority(self) -> list[BaseNode]:
-        return []
 
     @property
     def full_path(self) -> str:
@@ -45,7 +45,7 @@ class NamespaceAccessor(BaseNode, ABC):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
-        return []
+        ...
 
     def get_names(self) -> list[str]:
         return [self._path[-1].value]

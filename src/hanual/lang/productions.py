@@ -24,10 +24,13 @@ P = TypeVar("P", bound=_ProductionInterface)
 
 
 class DefaultProduction(_ProductionInterface, ABC, Generic[A, B, C]):
-    __slots__ = ("ts",)
+    __slots__ = ("ts", "lines", "line_no")
 
-    def __init__(self: Self, ts: List[T]) -> None:
+    def __init__(self: Self, ts: List[T], lines: str, line_no: str) -> None:
         self.ts: List[T] = ts
+
+        self.lines = lines
+        self.line_no = line_no
 
     def __repr__(self: Self) -> str:
         return str(self.ts)

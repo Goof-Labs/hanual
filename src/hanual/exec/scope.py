@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Dict, TypeVar, Generic, Optional, Any, Union, TYPE_CHECKING, List
-from hanual.lang.errors import HanualError, ErrorType, TraceBack
-from hanual.exec.result import Result
+from logging import warning
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, TypeVar, Union
 
+from hanual.exec.result import Result
+from hanual.lang.errors import ErrorType, HanualError, TraceBack
+from hanual.lang.errors.trace_back import Frame
 
 if TYPE_CHECKING:
-    from hanual.lang.errors.trace_back import Frame
+    ...
 
 
 _H = TypeVar("_H")
@@ -14,21 +16,16 @@ _H = TypeVar("_H")
 
 class Scope(Generic[_H]):
     def __init__(
-        self, parent, name: Optional[str] = "BLANK", frame: Optional[Frame] = None
+        self, parent, frame: Optional[Frame] = None, hidden: Optional[bool] = False
     ):
-        if frame is None and name == "BLANK":
-            raise Exception("Insufficient arguments")
-
         self._parent: Scope = parent
         self._env: Dict[str, _H] = {}
 
-        if frame:
-            assert isinstance(frame, Frame)
-
+        if frame is not None:
             self._frame: Frame = frame
             self._name: str = frame.name
 
-        self._name: str = str(name)
+        self._hidden = hidden
 
     def exists(self, key: str) -> bool:
         return key in self._env

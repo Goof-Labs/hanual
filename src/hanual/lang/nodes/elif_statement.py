@@ -1,22 +1,29 @@
 from __future__ import annotations
 
+from abc import ABC
+from typing import TYPE_CHECKING, Generator
+
 from hanual.compile.constants.constant import Constant
-from hanual.lang.errors.trace_back import Frame
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
-from typing import TYPE_CHECKING
+from hanual.lang.errors.trace_back import Frame
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
-    from .conditions import Condition
     from .block import CodeBlock
+    from .conditions import Condition
 
 
 class ElifStatement(BaseNode, ABC):
-    def __init__(self, condition: Condition, block: CodeBlock) -> None:
+    __slots__ = "_condition", "_block", "_lines", "_line_no",
+
+    def __init__(self, condition: Condition, block: CodeBlock, lines: str, line_no: int) -> None:
         self._condition = condition
         self._block = block
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def condition(self) -> Condition:
@@ -29,16 +36,9 @@ class ElifStatement(BaseNode, ABC):
     def compile(self) -> None:
         raise NotImplementedError
 
-    def find_priority(self) -> list[BaseNode]:
-        return []
-
-    def get_constants(self) -> list[Constant]:
-        consts = []
-
-        consts.extend(self._condition.get_constants())
-        consts.extend(self._block.get_constants())
-
-        return consts
+    def get_constants(self) -> Generator[Constant]:
+        yield from self._condition.get_constants()
+        yield from self._block.get_constants()
 
     def get_names(self) -> list[str]:
         names = []
@@ -57,7 +57,9 @@ class ElifStatement(BaseNode, ABC):
             return res
 
         if should_run:
-            inner_scope = Scope(parent=scope, frame=Frame(name="Elif statement", line=..., line_num=...))
+            inner_scope = Scope(
+                parent=scope, frame=Frame(name=type(self).__name__, line=..., line_num=...)
+            )
             _, err = res.inherit_from(self.block.execute(inner_scope))
 
             if err:

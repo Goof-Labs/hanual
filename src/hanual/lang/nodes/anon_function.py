@@ -15,17 +15,22 @@ if TYPE_CHECKING:
 
 
 class AnonymousFunction(BaseNode, ABC):
-    __slots__ = ("_args", "_inner", "fn_name")
+    __slots__ = ("_args", "_inner", "fn_name", "_lines", "_line_no")
 
     def __init__(
         self: BaseNode,
         args: AnonArgs,
         inner: CodeBlock,
         ret: Optional[Union[Token, BinOpNode, RangeNode]] = None,
+        lines: str = "",
+        line_no: int = 0,
     ) -> None:
         self._inner = inner
         self._args = args
         self._return = ret
+
+        self._line_no = line_no
+        self._lines = lines
 
     def compile(self) -> None:
         raise NotImplementedError

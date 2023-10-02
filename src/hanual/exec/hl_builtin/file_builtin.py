@@ -2,9 +2,10 @@ from __future__ import annotations
 from typing import Dict
 
 from hanual.exec.hl_builtin.base_builtin import BaseBuiltinLibrary, hl_builtin
+from hanual.exec.wrappers.literal import LiteralWrapper
+from hanual.exec.wrappers.hl_struct import HlStruct
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
-from hanual.exec.wrappers.literal import LiteralWrapper
 
 
 class FileBuiltin(BaseBuiltinLibrary):

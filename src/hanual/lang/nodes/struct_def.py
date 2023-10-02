@@ -1,32 +1,40 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Union
 
 from hanual.compile.constants.constant import Constant
-from .strong_field_list import StrongFieldList
-from typing import TYPE_CHECKING, Union
-from .strong_field import StrongField
 from hanual.exec.result import Result
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
+from .strong_field import StrongField
+from .strong_field_list import StrongFieldList
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
 
 
 class StructDefinition(BaseNode):
+    __slots__ = "_fields", "_name", "_lines", "_line_no",
+
     def __init__(
         self: BaseNode,
         name: Token,
         fields: Union[StrongFieldList, StrongField],
+        lines: str,
+        line_no: int,
     ) -> None:
         # if [param:fields] is a StrongField, then we make one and add it to it
         if isinstance(fields, StrongField):
-            self._fields: StrongFieldList = StrongFieldList().add_field(fields)
+            self._fields: StrongFieldList = StrongFieldList(lines=lines, line_no=line_no).add_field(fields)
 
         else:
             self._fields: StrongFieldList = fields
 
         self._name = name
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def raw_fields(self) -> StrongFieldList:
@@ -62,6 +70,3 @@ class StructDefinition(BaseNode):
 
             else:
                 yield from field.get_constants()
-
-    def find_priority(self) -> list[BaseNode]:
-        return [self]

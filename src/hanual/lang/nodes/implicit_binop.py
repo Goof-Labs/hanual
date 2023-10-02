@@ -1,29 +1,39 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Optional, Union
+
 from hanual.compile.compile_manager import CompileManager
 from hanual.compile.constants.constant import Constant
-from typing import TYPE_CHECKING, Union, Optional
-from hanual.exec.wrappers import LiteralWrapper
-from hanual.compile.registers import Registers
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.exec.result import Result
+from hanual.exec.wrappers import LiteralWrapper
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
-from .base_node import BaseNode
-from hanual.lang.errors import ErrorType, HanualError, Frame, TraceBack
 
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.exec.scope import Scope
+
     from .f_call import FunctionCall
 
 
 class ImplicitBinOp(BaseNode):
-    __slots__ = "_right", "_op",
+    __slots__ = (
+        "_right",
+        "_op",
+        "_lines",
+        "_line_no"
+    )
 
-    def __init__(self, op: Token, right: Union[Token, FunctionCall]) -> None:
+    def __init__(self, op: Token, right: Union[Token, FunctionCall], lines: str, line_no: int) -> None:
         # The left side is implied
         self._right = right
         self._op = op
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def op(self) -> Token:
@@ -71,14 +81,20 @@ class ImplicitBinOp(BaseNode):
         val = scope.get(name, None)
 
         if val is None:
-            return res.fail(HanualError(
-                    pos=(self._op.line, self._op.colm, self._op.colm+len(self._op.value)),
+            return res.fail(
+                HanualError(
+                    pos=(
+                        self._op.line,
+                        self._op.colm,
+                        self._op.colm + len(self._op.value),
+                    ),
                     line=self._op.line_val,
                     name=ErrorType.unresolved_name,
                     reason=f"Couldn't resolve reference to {self._op.value!r}",
-                    tb=TraceBack().add_frame(Frame("implicit binary op")),
-                    tip="Did you make a typo?"
-                ))
+                    tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
+                    tip="Did you make a typo?",
+                )
+            )
 
         if not isinstance(val, (float, int)):
             val = val.value
@@ -107,18 +123,24 @@ class ImplicitBinOp(BaseNode):
             other = other.value
 
         if other is None:
-            return res.fail(HanualError(
-                    pos=(self._op.line, self._op.colm, self._op.colm+len(self._op.value)),
+            return res.fail(
+                HanualError(
+                    pos=(
+                        self._op.line,
+                        self._op.colm,
+                        self._op.colm + len(self._op.value),
+                    ),
                     line=self._op.line_val,
                     name=ErrorType.unresolved_name,
                     reason=f"Couldn't resolve reference to {self._op.value!r}",
-                    tb=TraceBack().add_frame(Frame("implicit binop")),
-                    tip="Did you make a typo?"
-                ))
+                    tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
+                    tip="Did you make a typo?",
+                )
+            )
 
         # math
         if self._op.value == "+":
-            scope.set(name, LiteralWrapper(val+other))
+            scope.set(name, LiteralWrapper(val + other))
 
             return Result().success(None)
 
@@ -139,10 +161,7 @@ class ImplicitBinOp(BaseNode):
     def get_constants(self) -> list[Constant]:
         if isinstance(self._right, Token):
             if self._right.type in ("STR", "NUM"):
-                return [Constant(self._right.value)]
+                yield Constant(self._right.value)
 
         else:
-            return self._right.get_constants()
-
-    def find_priority(self):
-        return []
+            yield from self._right.get_constants()

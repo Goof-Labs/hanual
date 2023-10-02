@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-
 class HanualCli:
     __slots__ = ("kwargs",)
 

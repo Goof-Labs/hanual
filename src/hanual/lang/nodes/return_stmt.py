@@ -1,23 +1,28 @@
 from __future__ import annotations
 
+from abc import ABC
+from typing import TYPE_CHECKING
 
 from hanual.compile.constants.constant import Constant
-from hanual.lang.builtin_lexer import Token
-from hanual.exec.wrappers import hl_wrap
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
-from typing import TYPE_CHECKING
-from .base_node import BaseNode
-from abc import ABC
+from hanual.exec.wrappers import hl_wrap
+from hanual.lang.builtin_lexer import Token
 
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     ...
 
 
 class ReturnStatement(BaseNode, ABC):
-    def __init__(self: BaseNode, value) -> None:
+    __slots__ = "_value", "_lines", "_line_no",
+
+    def __init__(self: BaseNode, value, lines: str, line_no: int) -> None:
         self._value = value
+
+        self._line_no = line_no
+        self._lines = lines
 
     def compile(self) -> None:
         raise NotImplementedError
@@ -25,10 +30,10 @@ class ReturnStatement(BaseNode, ABC):
     def get_constants(self) -> list[Constant]:
         if isinstance(self._value, Token):
             if self._value.type in ("STR", "INT"):
-                return [Constant(self._value.value)]
+                yield Constant(self._value.value)
 
         else:
-            return self._value.get_constants()
+            yield from self._value.get_constants()
 
     def get_names(self) -> list[str]:
         if isinstance(self._value, Token):
@@ -37,9 +42,6 @@ class ReturnStatement(BaseNode, ABC):
 
         else:
             return self._value.get_names()
-
-    def find_priority(self) -> list[BaseNode]:
-        return []
 
     def execute(self, scope: Scope) -> Result:
         res = Result()

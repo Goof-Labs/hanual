@@ -16,10 +16,13 @@ T = TypeVar("T", bound=Token)
 
 
 class FreezeNode(BaseNode, ABC):
-    __slots__ = "_var"
+    __slots__ = "_var", "_lines", "_line_no"
 
-    def __init__(self: BaseNode, var: T) -> None:
+    def __init__(self: BaseNode, var: T, lines: str, line_no: int) -> None:
         self._var: T = var
+
+        self._line_no = line_no
+        self._lines = lines
 
     def compile(self) -> None:
         raise NotImplementedError
@@ -28,7 +31,7 @@ class FreezeNode(BaseNode, ABC):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
-        return []
+        ...
 
     def get_names(self) -> list[str]:
         return [self._var.value]

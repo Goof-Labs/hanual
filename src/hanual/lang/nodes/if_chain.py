@@ -1,23 +1,29 @@
 from __future__ import annotations
 
-from hanual.compile.constants.constant import Constant
 from typing import TYPE_CHECKING, List, Union
-from .else_statement import ElseStatement
+
+from hanual.compile.constants.constant import Constant
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
+
 from .base_node import BaseNode
+from .else_statement import ElseStatement
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+
     from .elif_statement import ElifStatement
     from .if_statement import IfStatement
 
 
 class IfChain(BaseNode):
-    __slots__ = "_statements",
+    __slots__ = ("_statements", "_lines", "_line_no",)
 
-    def __init__(self) -> None:
+    def __init__(self, lines: str, line_no: int) -> None:
         self._statements: List[Union[IfStatement, ElifStatement, ElseStatement]] = []
+
+        self._line_no = line_no
+        self._lines = lines
 
     def add_node(self, node: Union[IfStatement, ElifStatement]) -> Self:
         self._statements.append(node)
@@ -31,12 +37,8 @@ class IfChain(BaseNode):
         raise NotImplementedError
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
         for stmt in self._statements:
-            consts.extend(stmt.get_constants())
-
-        return consts
+            yield from stmt.get_constants()
 
     def get_names(self) -> list[str]:
         names = []
@@ -66,9 +68,6 @@ class IfChain(BaseNode):
 
         # the entire chain was run and none of them where true
         return res.success(None)
-
-    def find_priority(self) -> list[BaseNode]:
-        return []
 
     @property
     def statements(self) -> List[Union[IfStatement, ElifStatement, ElseStatement]]:

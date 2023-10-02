@@ -39,7 +39,7 @@ class HanualLexer(Lexer):
         ("EQ", rx(r"\=")),
         ("LPAR", rx(r"\(")),
         ("RPAR", rx(r"\)")),
-        ("OP", rx(r"[\+\-\\\*]")),
+        ("OP", rx(r"[\+\-\/\*]")),
         ("NUM", rx(r"\d+(\.\d+)?")),
         ("COM", rx(r"\,")),
         ("NSA", rx(r"\:\:")),  # name space access

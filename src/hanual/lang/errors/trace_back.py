@@ -1,25 +1,40 @@
 from __future__ import annotations
 
-
+from io import StringIO
 from typing import TYPE_CHECKING, List
-
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
+    from hanual.lang.util.line_range import LineRange
+
 
 class Frame:
-    def __init__(self, name: str, line_num: int, line: str):
-        self._line_num = line_num
+    __slots__ = (
+        "_line_range",
+        "_name",
+        "_line",
+    )
+
+    def __init__(self, name: str, line_range: LineRange, line: str = ""):
+        self._line_range = line_range
         self._name = name
         self._line = line
 
     @property
-    def summery(self):
-        if self._line_num is None:
-            return self._name
+    def summery(self) -> str:
+        tb = StringIO()
+        tb.write(f"{self._name}:")
+        for line, i in zip(
+            self._line.split("\n"),
+            range(self._line_range.start, self._line_range.end + 1),
+        ):
+            tb.write(f" {str(i).zfill(5)} | {line}")
+        return tb.getvalue()
 
-        return f"{self._name} {str(self._line_num).zfill(5)} | {self._line}"
+    @property
+    def name(self) -> str:
+        return self._name
 
 
 class TraceBack:

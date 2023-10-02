@@ -1,31 +1,34 @@
 from __future__ import annotations
 
+from abc import ABC
+from typing import TYPE_CHECKING, Any, Union
 
-from hanual.lang.errors import HanualError, ErrorType, TraceBack, Frame
 from hanual.compile.constants.constant import Constant
-from hanual.exec.wrappers import LiteralWrapper
-from hanual.compile.registers import Registers
-from hanual.exec.wrappers.wrap import hl_wrap
-from typing import TYPE_CHECKING, Union, Any
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
+from hanual.exec.wrappers import LiteralWrapper
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
     ...
 
 
 class BinOpNode(BaseNode, ABC):
-    __slots__ = "_right", "_left", "_op"
+    __slots__ = "_right", "_left", "_op", "_lines", "_line_no"
 
-    def __init__(self, op: Token, left, right) -> None:
+    def __init__(self, op: Token, left, right, lines: str, line_no: int) -> None:
         self._right: Union[Token, BinOpNode] = right
         self._left: Union[Token, BinOpNode] = left
 
         self._op: Token = op
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def left(self):
@@ -79,11 +82,11 @@ class BinOpNode(BaseNode, ABC):
         return instructions
 
     @staticmethod
-    def _get_val(val: Any, scope: Scope) -> Result:
+    def _get_val(val: Any, scope: Scope) -> Result[LiteralWrapper, Any]:
         res = Result()
 
         if isinstance(val, Token):
-            if val.type in ("STR", "NUM"): # literal
+            if val.type in ("STR", "NUM"):  # literal
                 return res.success(val.value)
 
             elif val.type == "ID":
@@ -93,7 +96,6 @@ class BinOpNode(BaseNode, ABC):
                 raise Exception
 
         else:
-
             val, err = res.inherit_from(val.execute(scope=scope))
 
             if err:
@@ -104,20 +106,31 @@ class BinOpNode(BaseNode, ABC):
     def execute(self, scope: Scope) -> Result[LiteralWrapper[float], str]:
         res = Result()
 
-        left = res.inherit_from(self._get_val(self._left, scope=scope))
+        # LEFT
+        left, err = res.inherit_from(self._get_val(self._left, scope=scope))
 
-        if res.error:
+        if err:
             return res
 
-        left = left.response.value
+        left = left.value
 
-        right = res.inherit_from(self._get_val(self._right, scope=scope))
+        # make sure left is a literal
+        if isinstance(left, LiteralWrapper):
+            left = left.value
 
-        if res.error:
+        # RIGHT
+        right, err = res.inherit_from(self._get_val(self._right, scope=scope))
+
+        if err:
             return res
 
-        right = right.response.value
+        right = right.value
 
+        # make sure right is a literal
+        if isinstance(right, LiteralWrapper):
+            right = right.value
+
+        # OPERATIONS
         if self._op.value == "+":
             return res.success(LiteralWrapper(left + right))
 
@@ -126,14 +139,16 @@ class BinOpNode(BaseNode, ABC):
 
         elif self._op.value == "/":
             if right == 0:
-                return res.fail(HanualError(
-                    pos=(self._op.line, self._op.colm, self._op.colm+1),
-                    line=self._op.line_val,
-                    name=ErrorType.division_by_zero,
-                    reason=f"Can't divide by zero",
-                    tb=TraceBack().add_frame(Frame("binary operation")),
-                    tip=f"Try validating {self._right.value!r}",
-                ))
+                return res.fail(
+                    HanualError(
+                        pos=(self._op.line, self._op.colm, self._op.colm + 1),
+                        line=self._op.line_val,
+                        name=ErrorType.division_by_zero,
+                        reason=f"Can't divide by zero",
+                        tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
+                        tip=f"Try validating {self._right.value!r}",
+                    )
+                )
 
             return res.success(LiteralWrapper(left / right))
 
@@ -174,6 +189,3 @@ class BinOpNode(BaseNode, ABC):
                 names.append(self._right.value)
 
         return names
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

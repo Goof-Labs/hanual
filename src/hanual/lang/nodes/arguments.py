@@ -1,39 +1,34 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, TypeVar, Union, Optional, Generator
+from typing import TYPE_CHECKING, Generator, List, Optional, TypeVar, Union
+
 from hanual.compile.constants.constant import Constant
-from hanual.exec.wrappers.literal import LiteralWrapper
-from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.builtin_lexer import Token
 from hanual.compile.instruction import *
-from hanual.exec.wrappers import hl_wrap
 from hanual.exec.result import Result
+from hanual.exec.wrappers.literal import LiteralWrapper
+from hanual.lang.builtin_lexer import Token
 from hanual.lang.errors import Frame
+from hanual.lang.nodes.base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
-    from hanual.lang.nodes import Parameters
-    from .f_def import FunctionDefinition
     from hanual.exec.scope import Scope
+    from hanual.lang.nodes import Parameters
 
-T = TypeVar("T", bound=BaseNode)
+    from .f_def import FunctionDefinition
+
+T = TypeVar("T")
 
 
 class Arguments(BaseNode):
     __slots__ = (
-        "function_def",
         "_children",
+        "_lines",
+        "_line_no",
     )
 
-    def __init__(self, children: Union[T, List[T]]) -> None:
-        self.function_def = False
-
+    def __init__(self, children: Union[T, List[T]], lines: str, line_no: int) -> None:
         if isinstance(children, Token):
-            # if children.type == "ID":
-            #     self._children: List[T] = [children.value]
-
-            # else:
-            #     self._children: List[T] = [children]
             self._children: List[T] = [children]
 
         elif issubclass(type(children), BaseNode):
@@ -41,6 +36,9 @@ class Arguments(BaseNode):
 
         else:  # This is just another node that we have chucked into a list
             self._children: List[T] = list(*children)
+
+        self._line_no = line_no
+        self._lines = lines
 
     def add_child(self, child):
         if isinstance(child, Arguments):
@@ -75,7 +73,7 @@ class Arguments(BaseNode):
                     val, err = res.inherit_from(scope.get(str(value.value), res=True))
 
                     if err:
-                        return err.add_frame(Frame("arguments"))
+                        return err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no))
 
                     yield res.success((name, val))
 
@@ -96,7 +94,7 @@ class Arguments(BaseNode):
                     val, err = scope.get(str(value.value), res=True)
 
                     if err:
-                        return err.add_frame(Frame("arguments"))
+                        return err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no))
 
                     yield res.success((name, val))
 
@@ -109,13 +107,19 @@ class Arguments(BaseNode):
             val, err = res.inherit_from(value.execute(scope=scope))
 
             if err:
-                yield res.fail(err.add_frame(Frame(name="arguments")))
+                yield res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
                 return
 
             # val, err = res.inherit_from(hl_wrap(scope=scope, value=val))
 
-            if not isinstance(val, LiteralWrapper):
-                raise Exception
+            if not (
+                isinstance(val, LiteralWrapper) or isinstance(val.value, LiteralWrapper)
+            ):
+                raise Exception(val)
+
+            # if the val is a `Token` then get it's value
+            if isinstance(val, Token):
+                val = val.value
 
             yield res.success((name, val))
 
@@ -140,14 +144,14 @@ class Arguments(BaseNode):
             func_params = func.arguments.children
 
         # `params`
-        if params:
+        else:
             func_params = params.children
 
         args = {}
 
         for resp in self._gen_args(names=func_params, scope=scope):
             if resp.error:
-                return res.fail(resp.error.add_frame(Frame("arguments")))
+                return res.fail(resp.error.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
             val, err = res.inherit_from(resp)
 
@@ -170,18 +174,12 @@ class Arguments(BaseNode):
                 if child.type == "ID":
                     names.append(child)
 
-            elif not self.function_def:
-                names.extend(child.get_names())
-
         return names
 
     def get_constants(self) -> list[Constant]:
         # function definitions can't have constants as arguments
         # like does this make any sense
         # def spam(1, 2, 3, 4): ...
-        if self.function_def:
-            return []
-
         lst = []
 
         for child in self._children:
@@ -193,6 +191,3 @@ class Arguments(BaseNode):
                 lst.extend(child.get_constants())
 
         return lst
-
-    def find_priority(self) -> list[BaseNode]:
-        return []

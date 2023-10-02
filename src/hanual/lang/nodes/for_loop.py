@@ -1,36 +1,46 @@
 from __future__ import annotations
 
-from .implicit_condition import ImplicitCondition
-from .implicit_binop import ImplicitBinOp
-from hanual.compile.instruction import *
 from typing import TYPE_CHECKING, Union
+
+from hanual.compile.instruction import *
 from hanual.compile.label import Label
 from hanual.exec.result import Result
 from hanual.exec.scope import Scope
+
 from .base_node import BaseNode
+from .implicit_binop import ImplicitBinOp
+from .implicit_condition import ImplicitCondition
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
     from hanual.compile.constants.constant import Constant
-    from .assignment import AssignmentNode
     from hanual.lang.lexer import Token
-    from .conditions import Condition
+
+    from .assignment import AssignmentNode
     from .block import CodeBlock
+    from .conditions import Condition
 
 
 # for let i=0, < 10, +110
 class ForLoop(BaseNode):
+    __slots__ = "_while", "_init", "_action", "_body", "_lines", "_line_no"
+
     def __init__(
         self: BaseNode,
         condition: Union[ImplicitCondition, Condition],
         init: Union[Token, AssignmentNode],
         action: ImplicitBinOp,
         body: CodeBlock,
+        lines: str,
+        line_no: int,
     ) -> None:
         self._while: Union[ImplicitCondition, Condition] = condition
         self._init: Union[Token, AssignmentNode] = init
         self._action: ImplicitBinOp = action
         self._body: CodeBlock = body
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def condition(self) -> Union[ImplicitCondition, Condition]:
@@ -84,11 +94,15 @@ class ForLoop(BaseNode):
         instructions.append(JIF(end_lbl))
 
         if isinstance(self._action, ImplicitBinOp):
-            instructions.extend(self._action.compile(name=self._init.target.value, cm=cm))
+            instructions.extend(
+                self._action.compile(name=self._init.target.value, cm=cm)
+            )
 
         else:
             if isinstance(self._action, ImplicitBinOp):
-                instructions.extend(self._action.compile(name=self._init.target.value, cm=cm))
+                instructions.extend(
+                    self._action.compile(name=self._init.target.value, cm=cm)
+                )
 
             else:
                 raise NotImplementedError
@@ -110,17 +124,10 @@ class ForLoop(BaseNode):
         return names
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
-        consts.extend(self._action.get_constants())
-        consts.extend(self._while.get_constants())
-        consts.extend(self._init.get_constants())
-        consts.extend(self._body.get_constants())
-
-        return consts
-
-    def find_priority(self):
-        return []
+        yield from self._action.get_constants()
+        yield from self._while.get_constants()
+        yield from self._init.get_constants()
+        yield from self._body.get_constants()
 
     def _condition(self, scope: Scope, name: str):
         if isinstance(self._while, ImplicitCondition):
@@ -138,7 +145,9 @@ class ForLoop(BaseNode):
 
         # run the loops while the condition is false
         while True:
-            should_break, err = res.inherit_from(self._condition(scope=for_scope, name=name))
+            should_break, err = res.inherit_from(
+                self._condition(scope=for_scope, name=name)
+            )
 
             if not should_break:
                 break

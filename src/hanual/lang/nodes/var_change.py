@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from hanual.lang.errors import HanualError, ErrorType, Frame, TraceBack
-from hanual.compile.constants.constant import Constant
-from hanual.lang.nodes.dot_chain import DotChain
-from hanual.compile.registers import Registers
 from typing import TYPE_CHECKING, TypeVar
+
+from hanual.compile.constants.constant import Constant
 from hanual.compile.instruction import *
+from hanual.compile.registers import Registers
 from hanual.exec.result import Result
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.dot_chain import DotChain
+
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -17,11 +19,19 @@ T = TypeVar("T", bound=BaseNode)
 
 
 class VarChange(BaseNode):
-    __slots__ = "_name", "_value",
+    __slots__ = (
+        "_name",
+        "_value",
+        "_lines",
+        "_line_no",
+    )
 
-    def __init__(self: BaseNode, name: Token, value) -> None:
+    def __init__(self: BaseNode, name: Token, value, lines: str, line_no: int) -> None:
         self._name: Token = name
         self._value: T = value
+
+        self._line_no = line_no
+        self._lines = lines
 
     @property
     def name(self) -> Token:
@@ -64,14 +74,20 @@ class VarChange(BaseNode):
                 val = scope.get(self._value.value, None)
 
                 if val is None:
-                    return res.fail(HanualError(
-                        pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
-                        line=self._name.line_val,
-                        name=ErrorType.unresolved_name,
-                        reason=f"Couldn't resolve reference to {self._name.value!r}",
-                        tb=TraceBack().add_frame(Frame("new struct")),
-                        tip="Did you make a typo?"
-                    ))
+                    return res.fail(
+                        HanualError(
+                            pos=(
+                                self._name.line,
+                                self._name.colm,
+                                self._name.colm + len(self._name.value),
+                            ),
+                            line=self._name.line_val,
+                            name=ErrorType.unresolved_name,
+                            reason=f"Couldn't resolve reference to {self._name.value!r}",
+                            tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
+                            tip="Did you make a typo?",
+                        )
+                    )
 
                 return res.success(val)
 
@@ -81,7 +97,7 @@ class VarChange(BaseNode):
         val, err = res.inherit_from(self._value.execute(scope))
 
         if err:
-            return res.fail(err.add_frame(Frame("var change")))
+            return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
         return res.success(val)
 
@@ -92,19 +108,25 @@ class VarChange(BaseNode):
         if isinstance(self._name, Token):
             # the variable does not exist
             if not scope.exists(self._name.value):
-                return res.fail(HanualError(
-                    pos=(self._name.line, self._name.colm, self._name.colm + len(self._name.value)),
-                    line=self._name.line_val,
-                    name=ErrorType.unresolved_name,
-                    reason=f"Couldn't resolve reference to {self._name.value!r}",
-                    tb=TraceBack().add_frame(Frame("new struct")),
-                    tip="Did you make a typo?"
-                ))
+                return res.fail(
+                    HanualError(
+                        pos=(
+                            self._name.line,
+                            self._name.colm,
+                            self._name.colm + len(self._name.value),
+                        ),
+                        line=self._name.line_val,
+                        name=ErrorType.unresolved_name,
+                        reason=f"Couldn't resolve reference to {self._name.value!r}",
+                        tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
+                        tip="Did you make a typo?",
+                    )
+                )
             # get the value
             val, err = res.inherit_from(self._get_value(scope))
 
             if err:
-                return res.fail(err.add_frame("var change"))
+                return res.fail(err.add_frame(Frame("var change", line=self.lines, line_num=self.line_no)))
 
             scope.set(self._name.value, val)
             return res.success(None)
@@ -115,33 +137,22 @@ class VarChange(BaseNode):
             val, err = res.inherit_from(self._get_value(scope))
 
             if err:
-                return res.fail(err.add_frame(Frame("var change")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
             _, err = res.inherit_from(self._name.execute(scope, set_attr=val))
 
             if err:
-                return res.fail(err.add_frame(Frame("var change")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
         return res.success(None)
 
     def get_constants(self) -> list[Constant]:
-        consts = []
-
         if isinstance(self._value, Token):
             if self._value.type in ("STR", "NUM"):
-                consts.append(Constant(self._value.value))
+                yield Constant(self._value.value)
 
         else:
-            consts.extend(self._value.get_constants())
-
-        return consts
+            yield from self._value.get_constants()
 
     def get_names(self) -> list[str]:
-        return [
-            self._name.value,
-            *self._value.get_names()
-        ]
-
-    def find_priority(self) -> list[BaseNode]:
-        # TODO take blocks or lambda functions into account
-        return []
+        return [self._name.value, *self._value.get_names()]

@@ -1,23 +1,28 @@
 from __future__ import annotations
 
-from hanual.exec.result import Result
-from typing import TYPE_CHECKING
-from .base_node import BaseNode
 from abc import ABC
+from typing import TYPE_CHECKING
 
+from hanual.exec.result import Result
+
+from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.compile.compile_manager import CompileManager
     from hanual.compile.constants.constant import Constant
-    from .namespace_acessor import NamespaceAccessor
     from hanual.exec.scope import Scope
+
+    from .namespace_acessor import NamespaceAccessor
 
 
 class UsingStatement(BaseNode, ABC):
-    __slots__ = ("_nsa",)
+    __slots__ = ("_nsa", "_lines", "_line_no")
 
-    def __init__(self: BaseNode, nsa: NamespaceAccessor) -> None:
+    def __init__(self: BaseNode, nsa: NamespaceAccessor, lines: str, line_no: int) -> None:
         self._nsa = nsa
+
+        self._lines = lines
+        self._line_no = line_no
 
     @property
     def path(self):
@@ -28,14 +33,10 @@ class UsingStatement(BaseNode, ABC):
         return []
 
     def get_constants(self) -> list[Constant]:
-        return []
+        ...
 
     def get_names(self) -> list[str]:
         return []
 
-    def find_priority(self) -> list[BaseNode]:
-        return []
-
     def execute(self, scope: Scope) -> Result[None, None]:
-        # TODO
         return Result().success(None)

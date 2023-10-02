@@ -1,22 +1,28 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Union, Any
+from abc import ABC
+from typing import TYPE_CHECKING, Any, List, Union
+
 from hanual.exec.result import Result
 from hanual.lang.errors import Frame
 from hanual.lang.lexer import Token
+
 from .base_node import BaseNode
-from abc import ABC
 
 if TYPE_CHECKING:
-    from hanual.exec.scope import Scope
     from typing_extensions import Self
+
+    from hanual.exec.scope import Scope
 
 
 class DotChain(BaseNode, ABC):
-    __slots__ = "_chain",
+    __slots__ = ("_chain", "_lines", "_line_no")
 
-    def __init__(self: BaseNode) -> None:
+    def __init__(self: BaseNode, lines: str, line_no: int) -> None:
         self._chain: List[Token] = []
+
+        self._lines = lines
+        self._line_no = line_no
 
     def add_name(self, name: Union[Token, DotChain]) -> Self:
         if isinstance(name, Token):
@@ -42,7 +48,7 @@ class DotChain(BaseNode, ABC):
 
         prev: Any = None
 
-        last_idx = len(self._chain)-1
+        last_idx = len(self._chain) - 1
 
         for i, link in enumerate(self._chain):
             # don't have a starting node, or this is the first one
@@ -59,7 +65,7 @@ class DotChain(BaseNode, ABC):
                     prev, err = res.inherit_from(scope.get(link.value, None, res=True))
 
                     if err:
-                        return res.fail(err.add_frame(Frame(name="dot chain")))
+                        return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
                 elif isinstance(link, Token):
                     prev = link.value
@@ -73,14 +79,14 @@ class DotChain(BaseNode, ABC):
 
             if err:
                 # Info was not passed so pass it manually
-                return res.fail(err.add_frame(Frame("dot chain")))
+                return res.fail(err.add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)))
 
             prev = curr
 
         return res.success(prev)
 
-    def get_constants(self) -> list:
-        return []
+    def get_constants(self):
+        ...
 
     def get_names(self) -> list[str]:
         names = []
@@ -89,6 +95,3 @@ class DotChain(BaseNode, ABC):
             names.append(name.value)
 
         return names
-
-    def find_priority(self) -> list:
-        return []

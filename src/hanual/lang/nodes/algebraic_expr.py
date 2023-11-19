@@ -9,7 +9,7 @@ from .base_node import BaseNode
 
 
 class AlgebraicExpression(BaseNode, ABC):
-    __slots__ = "_op", "_left", "_right", "_lines", "_line_no",
+    __slots__ = "_op", "_left", "_right", "_lines", "_line_range",
 
     def __init__(
         self: BaseNode,
@@ -17,14 +17,14 @@ class AlgebraicExpression(BaseNode, ABC):
         left: Union[AlgebraicExpression, Token],
         right: Union[AlgebraicExpression, Token],
         lines: str,
-        line_no: int
+        line_range: int
     ) -> None:
         self._op = operator
         self._left = left
         self._right = right
 
         self._lines = lines
-        self._line_no = line_no
+        self._line_range = line_range
 
     def compile(self) -> None:
         raise NotImplementedError

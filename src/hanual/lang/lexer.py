@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator, NamedTuple, Tuple, TypeVar, Union, Iterable
+from typing import TYPE_CHECKING, Generator, Tuple, TypeVar, Union, Iterable
 from hanual.lang.errors import ErrorType, HanualError, TraceBack, Frame
+from .util.line_range import LineRange
+from dataclasses import dataclass
 import re
 
 if TYPE_CHECKING:
@@ -20,27 +22,28 @@ def rx(reg: T) -> Tuple[T, LiteralString]:
     return reg, "rx"
 
 
-class Token(NamedTuple):
+@dataclass
+class Token:
     type: str
     value: Union[str, int, float, LiteralWrapper]
-    line: int
+    line_range: LineRange
     colm: int
-    line_val: str  # The value of the line as a string the token has been extracted from
+    lines: str
 
 
 class Lexer:
-    __slots__ = "last", "rules", "_rules", "_kwrds", "_hooks"
+    __slots__ = "last", "rules", "_rules", "_key_words", "_hooks"
 
     def __init__(self):
         self._rules = []
-        self._kwrds = []
+        self._key_words = []
         self._hooks: dict[str, TokenHook] = {}
         self.update_rules()
 
     def update_rules(self, rules=None):
         for rule in self.rules if not rules else rules:
             if rule[1][1] == "kw":
-                self._kwrds.append((rule[0], rule[1][0]))
+                self._key_words.append((rule[0], rule[1][0]))
 
             elif rule[1][1] == "rx":
                 self._rules.append((rule[0], rule[1][0]))
@@ -55,7 +58,7 @@ class Lexer:
             self._hooks[hook.name] = hook
 
             if hook.type == "kw":
-                self._kwrds.append((hook.name, hook.regex))
+                self._key_words.append((hook.name, hook.regex))
 
             elif hook.type == "rx":
                 self._rules.append((hook.name, hook.regex))
@@ -90,7 +93,7 @@ class Lexer:
             value = pat.group()
             col = pat.start()
 
-            for n, v in self._kwrds:
+            for n, v in self._key_words:
                 if v == value:
                     kind = n
 
@@ -105,7 +108,7 @@ class Lexer:
                         name=ErrorType.illegal_character,
                         reason=f"{value!r} is not recognised as a symbol or valid character",
                         tb=TraceBack().add_frame(
-                            Frame("Lexing", line_num=line_no, line=text)
+                            Frame("Lexing", line=text, line_range=LineRange(start=line_no, end=line_no))
                         ),
                         tip=f"try removing that character",
                     ).as_string()
@@ -116,10 +119,9 @@ class Lexer:
 
             if hook:
                 yield hook.gen_token(kind, value, line_no, col, text)
-                continue
 
             elif hasattr(self, f"t_{mode}_{kind}"):
                 yield getattr(self, f"t_{mode}_{kind}")(kind, value, line_no, col, text)
-                continue
 
-            yield Token(kind, value, line_no, col, text)
+            else:
+                yield Token(type=kind, value=value, line_range=LineRange(line_no, line_no), colm=col, lines=text)

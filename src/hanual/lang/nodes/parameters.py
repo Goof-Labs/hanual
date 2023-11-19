@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, List, TypeVar, Union
 
-from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
-from hanual.exec.result import Result
 from hanual.lang.builtin_lexer import Token
 from hanual.lang.nodes.arguments import Arguments
 from hanual.lang.nodes.base_node import BaseNode
@@ -12,15 +9,21 @@ from hanual.lang.nodes.base_node import BaseNode
 from .f_def import FunctionDefinition
 
 if TYPE_CHECKING:
-    from hanual.compile.compile_manager import CompileManager
+    from hanual.lang.util.line_range import LineRange
 
 T = TypeVar("T")
 
 
 class Parameters(BaseNode):
-    __slots__ = "_children", "_lines", "_line_no",
+    __slots__ = (
+        "_children",
+        "_lines",
+        "_line_no",
+    )
 
-    def __init__(self, children: Union[T, List[T]], lines: str, line_no: int) -> None:
+    def __init__(
+        self, children: Union[T, List[T]], lines: str, line_range: LineRange
+    ) -> None:
         self._children: List[T] = []
 
         if isinstance(children, Token):
@@ -35,7 +38,7 @@ class Parameters(BaseNode):
         else:  # This is just another node that we have chucked into a list
             self._children: List[T] = list(children)
 
-        self._line_no = line_no
+        self._line_range = line_range
         self._lines = lines
 
     def add_child(self, child):
@@ -51,24 +54,5 @@ class Parameters(BaseNode):
     def children(self) -> List[T]:
         return self._children
 
-    def compile(self, cm: CompileManager):
-        return [UPK(self._children)]
-
-    def execute(self, scope, initiator: Optional[str] = None):
-        # TODO: errors
-        func: Union[FunctionDefinition, None] = scope.get(initiator, None)
-        args = {k: v.value for k, v in zip(func.arguments.children, self._children)}
-        return Result().success(args)
-
-    def get_names(self) -> list[Token]:
-        names: List[Token] = []
-
-        for child in self._children:
-            if isinstance(child, Token):
-                if child.type == "ID":
-                    names.append(child)
-
-        return names
-
-    def get_constants(self) -> list[Constant]:
-        ...
+    def compile(self, **kwargs):
+        raise NotImplementedError

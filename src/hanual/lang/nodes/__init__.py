@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from .algebraic_expr import AlgebraicExpression
 from .algebraic_fn import AlgebraicFunc
-from .anon_args import AnonArgs
 from .anon_function import AnonymousFunction
 from .arguments import Arguments
 from .assignment import AssignmentNode

@@ -1,26 +1,46 @@
 from __future__ import annotations
 
 import logging
+import sys
+from argparse import ArgumentParser, Namespace
 
-from hanual.compile.h_compile import hl_compile
-from hanual.exec.interpreter import Interpreter
-from hanual.lang.util.build_ast import create_ast
-from hanual.tools.cli import HanualCli
+from hanual.lang import compile_code
 
-logging.basicConfig(level=logging.DEBUG)
 
-options = HanualCli().options
+def main():
+    logging.basicConfig(level=logging.DEBUG)
 
-if "compile" in options.loose_args:
-    hl_compile()
+    cli = ArgumentParser("Hanual programming language")
 
-elif "pack" in options.loose_args:
-    raise NotImplementedError
+    cli.add_argument(
+        "script",
+        nargs="*",
+        help="The file you want to run",
+    )
 
-elif "run" in options.loose_args:
-    ast, text = create_ast(lexer_mode="exec")
-    it = Interpreter(ast)
-    it.run()
+    cli.add_argument(
+        "-repl",
+        action="store_true",
+        help="Run a repl after the program has executed",
+    )
 
-else:
-    print(f"One of {options.loose_args!r} is not recognised as a mode")
+    cli.add_argument(
+        "-keep",
+        action="store_true",
+        help="Outputs the executed code as a file",
+    )
+
+    cli.add_argument(
+        "-asm",
+        action="store_true",
+        help="Print the asembely of the code",
+    )
+
+    namespace = cli.parse_args(sys.argv)
+
+    with open(namespace.script[1], "r") as f:
+        compile_code(f.read())
+
+
+if __name__ == "__main__":
+    main()

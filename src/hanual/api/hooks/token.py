@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from hanual.lang.util.line_range import LineRange
 from typing import Tuple, LiteralString
 from hanual.lang.lexer import Token
 from .hook import GenericHook
-
 
 def new_token(regex: Tuple[str, LiteralString], name: LiteralString):
     def decor(cls):
@@ -30,5 +30,5 @@ class TokenHook(GenericHook):
     def type(self):
         return self._type
 
-    def gen_token(self, kind: str, value: str, line_no: int, col: int, line: str) -> Token:
-        return Token(kind, value, line_no, col, line)
+    def gen_token(self, kind: str, value: str, line_range: LineRange, col: int, line: str) -> Token:
+        return Token(kind, value, line_range, col, line)

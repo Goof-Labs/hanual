@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sys import argv
-from typing import Generator, List, Literal, Mapping, Optional, Tuple, Union
+from typing import Generator, List, Literal, Mapping, Optional, Tuple, Union, Dict, Any
 
 from hanual.api.load_hooks import HookLoader
 from hanual.lang.builtin_lexer import HanualLexer
@@ -12,12 +12,12 @@ from hanual.lang.nodes import CodeBlock
 from hanual.lang.pparser import PParser
 from hanual.lang.preprocess import Preprocessor
 from hanual.lang.util.dump_tree import dump_tree
-from hanual.tools.cli import CompilerOptions, HanualCli
+from hanual.tools.cli import HanualCli
 
 
 def create_ast(
     *,
-    options: Optional[CompilerOptions] = None,
+    options: Optional[Dict[str, Any]] = None,
     preproc: Optional[Preprocessor] = None,
     hook_loader: Optional[HookLoader] = None,
     parser: Optional[PParser] = None,
@@ -37,17 +37,17 @@ def create_ast(
         hook_loader = HookLoader()
 
     # setup hooks, we do need this before any other stuff is initialized
-    if isinstance(options.inject, tuple):
-        for module in options.inject:
-            hook_loader.load_module(module, module.replace(".", "//") + ".py")
+    if inject := options.get("inject", None):
 
-    elif isinstance(options.inject, str):
-        hook_loader.load_module(
-            options.inject, options.inject.replace(".", "//") + ".py"
-        )
+        if isinstance(inject, tuple):
+            for module in inject:
+                hook_loader.load_module(module, module.replace(".", "//") + ".py")
 
-    else:
-        raise Exception
+        elif isinstance(inject, str):
+            hook_loader.load_module(inject, options["inject"].replace(".", "//") + ".py")
+
+        else:
+            raise Exception
 
     # Default arguments and stuff
     if preproc is None:
@@ -81,7 +81,7 @@ def create_ast(
 
     # preprocessing
 
-    if not options.files:
+    if not options["files"]:
         print(
             HanualError(
                 pos=("SHELL", 0, 0),
@@ -94,7 +94,7 @@ def create_ast(
         )
         exit(1)
 
-    with open(options.files[0], "r") as f:
+    with open(options["files"][0], "r") as f:
         text = preproc.process(
             text=f.read(),
             prefix=prefix,
@@ -113,5 +113,5 @@ def create_ast(
     parser.add_hooks(hook_loader.rules)
 
     tree = parser.parse(tokens)  # [0][1]
-    # print(dump_tree(tree, depth=10))
-    return tree[0][1], text
+    print(dump_tree(tree, depth=10))
+    return tree, text

@@ -2,12 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
-from hanual.compile.constants.constant import Constant
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
     from hanual.lang.lexer import Token
 
 
@@ -20,14 +17,16 @@ class StrongField(BaseNode):
         "_name",
         "_type",
         "_lines",
-        "_line_no",
+        "_line_range",
     )
 
-    def __init__(self: BaseNode, name: Token, type_: T, lines: str, line_no: int) -> None:
+    def __init__(
+        self: BaseNode, name: Token, type_: T, lines: str, line_range: int
+    ) -> None:
         self._name: Token = name
         self._type: T = type_
 
-        self._line_no = line_no
+        self._line_range = line_range
         self._lines = lines
 
     @property
@@ -40,12 +39,3 @@ class StrongField(BaseNode):
 
     def compile(self) -> None:
         return super().compile()
-
-    def execute(self, env):
-        raise NotImplementedError
-
-    def get_constants(self) -> list[Constant]:
-        ...
-
-    def get_names(self) -> list[str]:
-        return [self.name.value]

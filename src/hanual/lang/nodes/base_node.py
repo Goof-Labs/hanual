@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, Generator
-from hanual.exec.scope import Scope
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Generator, TypeVar
 
 if TYPE_CHECKING:
-    from hanual.compile.constants.constant import BaseConstant
-    from hanual.exec.result import Result
+    from hanual.lang.util.line_range import LineRange
 
 
 T = TypeVar("T")
@@ -14,6 +12,11 @@ N = TypeVar("N", bound="BaseNode")
 
 
 class BaseNode(ABC):
+    __slots__ = (
+        "_lines",
+        "_line_range",
+    )
+
     @abstractmethod
     def __init__(self, *args, **kwargs) -> None:
         """
@@ -35,18 +38,16 @@ class BaseNode(ABC):
     def lines(self) -> str:
         return self._lines
 
+    @lines.setter
+    def lines(self, new: str) -> None:
+        assert isinstance(new, str), "new value for lines must be a str"
+        self._lines = new
+
     @property
-    def line_no(self) -> int:
-        return self._line_no
+    def line_range(self) -> LineRange:
+        return self._line_range
 
-    @abstractmethod
-    def execute(self, scope: Scope) -> Result:
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_names(self) -> list[str]:
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_constants(self) -> Generator[BaseConstant]:
-        raise NotImplementedError
+    @line_range.setter
+    def line_range(self, new: LineRange) -> None:
+        assert isinstance(new, LineRange), "new value must be a line_range"
+        self._line_range = new

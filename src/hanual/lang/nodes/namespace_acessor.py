@@ -3,8 +3,6 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING, List, Union
 
-from hanual.compile.constants.constant import Constant
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -14,13 +12,13 @@ if TYPE_CHECKING:
 
 
 class NamespaceAccessor(BaseNode, ABC):
-    __slots__ = ("_path", "_lines", "_line_no")
+    __slots__ = ("_path", "_lines", "_line_range")
 
-    def __init__(self: BaseNode, first: Token, lines: str, line_no: int) -> None:
+    def __init__(self: BaseNode, first: Token, lines: str, line_range: int) -> None:
         self._path: List[Token] = [first]
 
         self._lines = lines
-        self._line_no = line_no
+        self._line_range = line_range
 
     def add_child(self, child: Union[Token, NamespaceAccessor]) -> Self:
         if isinstance(child, NamespaceAccessor):
@@ -40,12 +38,3 @@ class NamespaceAccessor(BaseNode, ABC):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def execute(self, env):
-        raise NotImplementedError
-
-    def get_constants(self) -> list[Constant]:
-        ...
-
-    def get_names(self) -> list[str]:
-        return [self._path[-1].value]

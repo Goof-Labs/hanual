@@ -7,16 +7,22 @@ from typing import TYPE_CHECKING
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.compile.constants.constant import Constant
     from hanual.lang.lexer import Token
 
     from .namespace_acessor import NamespaceAccessor
 
 
 class UsingStatementWithAltName(BaseNode):
-    __slots__ = "_path", "_name", "_lines", "_line_no",
+    __slots__ = (
+        "_path",
+        "_name",
+        "_lines",
+        "_line_no",
+    )
 
-    def __init__(self: BaseNode, path: NamespaceAccessor, name: Token, lines: str, line_no: int) -> None:
+    def __init__(
+        self: BaseNode, path: NamespaceAccessor, name: Token, lines: str, line_no: int
+    ) -> None:
         self._path: NamespaceAccessor = path
         self._name: Token = name
 
@@ -33,12 +39,6 @@ class UsingStatementWithAltName(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def get_constants(self) -> list[Constant]:
-        ...
-
-    def get_names(self) -> list[str]:
-        return [self._name.value]
 
     def execute(self, env):
         raise NotImplementedError

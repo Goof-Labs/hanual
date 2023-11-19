@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from hanual.compile.constants.constant import Constant
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -13,13 +11,13 @@ if TYPE_CHECKING:
 
 
 class StrongFieldList(BaseNode):
-    __slots__ = ("_fields", "_lines", "_line_no")
+    __slots__ = ("_fields", "_lines", "_line_range")
 
-    def __init__(self, lines: str, line_no: int) -> None:
+    def __init__(self, lines: str, line_range: int) -> None:
         self._fields: List[StrongField] = []
 
         self._lines = lines
-        self._line_no = line_no
+        self._line_range = line_range
 
     def add_field(self, field: StrongField) -> Self:
         self._fields.append(field)
@@ -31,18 +29,3 @@ class StrongFieldList(BaseNode):
 
     def compile(self) -> None:
         raise NotImplementedError
-
-    def execute(self, env):
-        raise NotImplementedError
-
-    def get_names(self) -> list[str]:
-        names = []
-
-        for field in self._fields:
-            names.extend(field.get_names())
-
-        return names
-
-    def get_constants(self) -> list[Constant]:
-        for field in self._fields:
-            yield field.get_constants()

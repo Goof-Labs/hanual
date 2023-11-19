@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Union
 
-from hanual.compile.constants.constant import Constant
-from hanual.exec.result import Result
 from hanual.lang.lexer import Token
 
 from .base_node import BaseNode
@@ -11,22 +9,29 @@ from .strong_field import StrongField
 from .strong_field_list import StrongFieldList
 
 if TYPE_CHECKING:
-    from hanual.exec.scope import Scope
+    ...
 
 
 class StructDefinition(BaseNode):
-    __slots__ = "_fields", "_name", "_lines", "_line_no",
+    __slots__ = (
+        "_fields",
+        "_name",
+        "_lines",
+        "_line_range",
+    )
 
     def __init__(
         self: BaseNode,
         name: Token,
         fields: Union[StrongFieldList, StrongField],
         lines: str,
-        line_no: int,
+        line_range: int,
     ) -> None:
         # if [param:fields] is a StrongField, then we make one and add it to it
         if isinstance(fields, StrongField):
-            self._fields: StrongFieldList = StrongFieldList(lines=lines, line_no=line_no).add_field(fields)
+            self._fields: StrongFieldList = StrongFieldList(
+                lines=lines, line_range=line_range
+            ).add_field(fields)
 
         else:
             self._fields: StrongFieldList = fields
@@ -34,7 +39,7 @@ class StructDefinition(BaseNode):
         self._name = name
 
         self._lines = lines
-        self._line_no = line_no
+        self._line_range = line_range
 
     @property
     def raw_fields(self) -> StrongFieldList:
@@ -51,22 +56,4 @@ class StructDefinition(BaseNode):
     def compile(self):
         # Structs are data representation methods and need to be treated as such
         # The struct info is treated as an array (under the hood)
-        return []
-
-    def execute(self, scope: Scope) -> Result:
-        from hanual.exec.wrappers import HlStruct
-
-        scope.set(self.name.value, HlStruct(self))
-        return Result().success(None)
-
-    def get_names(self) -> list[Constant]:
-        for field in self._fields.fields:
-            yield from field.get_names()
-
-    def get_constants(self) -> list[Constant]:
-        for field in self._fields.fields:
-            if isinstance(field, Token):
-                yield Constant(field.value)
-
-            else:
-                yield from field.get_constants()
+        raise NotImplementedError

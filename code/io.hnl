@@ -1,9 +1,0 @@
-struct OpenFile {
-	name: str,
-	mode: str,
-	__file: __python_protected
-}
-
-fn fopen(fp, mode) {
-	return __hl_fopen(fp, mode, OpenFile)
-}

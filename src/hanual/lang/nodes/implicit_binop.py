@@ -2,37 +2,26 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Union
 
-from hanual.compile.compile_manager import CompileManager
-from hanual.compile.constants.constant import Constant
-from hanual.compile.instruction import *
-from hanual.compile.registers import Registers
-from hanual.exec.result import Result
-from hanual.exec.wrappers import LiteralWrapper
 from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
 
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.exec.scope import Scope
-
     from .f_call import FunctionCall
 
 
 class ImplicitBinOp(BaseNode):
-    __slots__ = (
-        "_right",
-        "_op",
-        "_lines",
-        "_line_no"
-    )
+    __slots__ = ("_right", "_op", "_lines", "_line_range")
 
-    def __init__(self, op: Token, right: Union[Token, FunctionCall], lines: str, line_no: int) -> None:
+    def __init__(
+        self, op: Token, right: Union[Token, FunctionCall], lines: str, line_range: int
+    ) -> None:
         # The left side is implied
         self._right = right
         self._op = op
 
-        self._line_no = line_no
+        self._line_range = line_range
         self._lines = lines
 
     @property
@@ -43,125 +32,5 @@ class ImplicitBinOp(BaseNode):
     def right(self) -> Union[Token, FunctionCall]:
         return self._right
 
-    def compile(self, cm: CompileManager, name: str):
-        instructions = []
-
-        reg_1 = new_reg()
-        reg_2 = new_reg()
-
-        # LEFT SIDE
-        instructions.append(MOV_RR[reg_2, name])
-
-        # RIGHT SIDE
-        if isinstance(self._right, Token):
-            if self._right.type in ("STR", "NUM"):
-                instructions.append(MOV_RC[reg_2, Constant(self._right.value)])
-
-            elif self._right.type == "ID":
-                instructions.append(MOV_RC[reg_2, Constant(self._right.value)])
-
-            else:
-                raise NotImplementedError
-
-        else:
-            instructions.extend(self._right.compile(cm))
-            instructions.append(MOV_RR[reg_2, Registers.R])
-
-        instructions.append(EXC[self._op.value, reg_1, reg_2])
-
-        return instructions
-
-    def execute(self, scope: Scope, name: Optional[str] = None) -> Result:
-        res = Result()
-
-        # get name
-        if name is None:
-            raise Exception(f"param 'name' was not passed")
-
-        val = scope.get(name, None)
-
-        if val is None:
-            return res.fail(
-                HanualError(
-                    pos=(
-                        self._op.line,
-                        self._op.colm,
-                        self._op.colm + len(self._op.value),
-                    ),
-                    line=self._op.line_val,
-                    name=ErrorType.unresolved_name,
-                    reason=f"Couldn't resolve reference to {self._op.value!r}",
-                    tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
-                    tip="Did you make a typo?",
-                )
-            )
-
-        if not isinstance(val, (float, int)):
-            val = val.value
-
-        # other
-
-        if isinstance(self._right, Token):
-            if self._right.type == "ID":
-                other = scope.get(self._right.value, None)
-
-            elif self._right.type == "STR":
-                other = self._right.value
-
-            elif self._right.type == "NUM":
-                other = self._right.value
-
-            else:
-                raise Exception(f"{self._right!r} not accounted for")
-
-        else:
-            other, err = res.inherit_from(self._right.execute(scope=scope))
-
-            if err:
-                return res
-
-            other = other.value
-
-        if other is None:
-            return res.fail(
-                HanualError(
-                    pos=(
-                        self._op.line,
-                        self._op.colm,
-                        self._op.colm + len(self._op.value),
-                    ),
-                    line=self._op.line_val,
-                    name=ErrorType.unresolved_name,
-                    reason=f"Couldn't resolve reference to {self._op.value!r}",
-                    tb=TraceBack().add_frame(Frame(name=type(self).__name__, line=self.lines, line_num=self.line_no)),
-                    tip="Did you make a typo?",
-                )
-            )
-
-        # math
-        if self._op.value == "+":
-            scope.set(name, LiteralWrapper(val + other))
-
-            return Result().success(None)
-
-        else:
-            raise Exception(f"{self._op.value!r} not accounted for")
-
-    def get_names(self) -> list[str]:
-        if isinstance(self._right, Token):
-            if self._right.type == "ID":
-                return [self._right.value]
-
-            else:
-                return []
-
-        else:
-            return self._right.get_names()
-
-    def get_constants(self) -> list[Constant]:
-        if isinstance(self._right, Token):
-            if self._right.type in ("STR", "NUM"):
-                yield Constant(self._right.value)
-
-        else:
-            yield from self._right.get_constants()
+    def compile(self):
+        raise NotImplementedError

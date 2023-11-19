@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from hanual.exec.wrappers import LiteralWrapper
+from hanual.lang.data import LiteralWrapper
+from hanual.lang.util.line_range import LineRange
+
 from .lexer import Lexer, Token, kw, rx
 
 
@@ -50,7 +52,7 @@ class HanualLexer(Lexer):
         ("LCB", rx(r"\{")),
         ("RCB", rx(r"\}")),
         ("BAR", rx(r"\|")),
-        ]
+    ]
 
     last = [
         # special cases
@@ -59,47 +61,55 @@ class HanualLexer(Lexer):
     ]
 
     @staticmethod
-    def t_compile_NUM(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+    def t_compile_NUM(
+        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+    ) -> Token:
         return Token(
             kind,
             float(value) if "." in value else int(value),
-            line_no,
+            line_range,
             col,
             origin_line,
         )
 
     @staticmethod
-    def t_exec_NUM(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
+    def t_exec_NUM(
+        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+    ) -> Token:
         return Token(
             kind,
             LiteralWrapper[float](float(value)),
-            line_no,
+            line_range,
             col,
             origin_line,
         )
 
     @staticmethod
-    def t_exec_STR(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
-        # remove last and first character of string, which are " or double quotes
+    def t_exec_STR(
+        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+    ) -> Token:
+        # remove the last and first character of string, which are " or double quotes
         value = value[1:]
         value = value[:-1]
         return Token(
             kind,
             LiteralWrapper[str](value),
-            line_no,
+            line_range,
             col,
             origin_line,
         )
 
     @staticmethod
-    def t_compile_STR(kind: str, value: str, line_no: int, col: int, origin_line: str) -> Token:
-        # remove last and first character of string, which are " or double quotes
+    def t_compile_STR(
+        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+    ) -> Token:
+        # remove the last and first character of string, which are " or double quotes
         value = value[1:]
         value = value[:-1]
         return Token(
             kind,
             value,
-            line_no,
+            line_range,
             col,
             origin_line,
         )

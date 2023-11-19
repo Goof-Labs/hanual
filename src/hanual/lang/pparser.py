@@ -1,13 +1,25 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Generator, List, Optional, Tuple, Type, NamedTuple, TypeVar, Generic
-from .productions import DefaultProduction
-from hanual.api.hooks import RuleHook
-from copy import deepcopy
-from .lexer import Token
-from .proxy import Proxy
 import logging
+from copy import deepcopy
+from typing import (
+    Any,
+    Dict,
+    Generator,
+    Generic,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+)
 
+from hanual.api.hooks import RuleHook
+
+from .lexer import Token
+from .productions import DefaultProduction
+from .util.proxy import Proxy
 
 _T = TypeVar("_T")
 
@@ -16,7 +28,7 @@ class _StackFrame(NamedTuple, Generic[_T]):
     name: str
     value: _T
     lines: str
-    line_no: int
+    line_range: int
 
 
 class PParser:
@@ -81,12 +93,12 @@ class PParser:
             logging.critical("undefined tokens: %s", undef_tokens)
 
     def rule(
-            self: PParser,
-            *rules,
-            prod: Optional[Type] = DefaultProduction,
-            types: Optional[Dict[str, Any]] = None,
-            unless_starts: Optional[List[str]] = None,
-            unless_ends: Optional[List[str]] = None,
+        self: PParser,
+        *rules,
+        prod: Optional[Type] = DefaultProduction,
+        types: Optional[Dict[str, Any]] = None,
+        unless_starts: Optional[List[str]] = None,
+        unless_ends: Optional[List[str]] = None,
     ):
         """
         This function is a decorator, so it can be used with the following syntax
@@ -145,7 +157,16 @@ class PParser:
 
         return inner
 
-    def add_rule(self, rules, func, types, prod, unless_starts, unless_ends, name: Optional[str] = None):
+    def add_rule(
+        self,
+        rules,
+        func,
+        types,
+        prod,
+        unless_starts,
+        unless_ends,
+        name: Optional[str] = None,
+    ):
         for rule in rules:
             prox = Proxy(func, types, prod, unless_starts, unless_ends)
             self.rules[rule] = name or func.__name__, prox
@@ -206,7 +227,8 @@ class PParser:
 
                 # the following two lines are an optimized version of the old for loop
                 broke_out = (
-                    not list(map(lambda x: x.name, stk_coppy[: debth + 1])) == pattern_lst
+                    not list(map(lambda x: x.name, stk_coppy[: debth + 1]))
+                    == pattern_lst
                 )
 
                 # old method
@@ -228,28 +250,32 @@ class PParser:
                         continue
 
                 # create arguments for proxy
+
+                if stack[-debth].name in proxy.unless_start:
+                    continue
+
+                if (next_token is not None) and (next_token.type in proxy.unless_end):
+                    continue
+
                 p_args = []
-
-                copy = None
-
-                if proxy.unless_start:
-                    copy = deepcopy(stack)
 
                 for _ in range(debth + 1):
                     p_args.append(stack.pop())
-
-                if stack and proxy.unless_start and copy is not None:
-                    if stack[-1].name in proxy.unless_start:
-                        # revert changes
-                        stack = copy
-                        continue
 
                 # make normal
                 p_args.reverse()
 
                 # actually run it
                 res = proxy.call(p_args)
-                stack.append(_StackFrame(name=reducer, value=res, lines=res.lines, line_no=res.line_no))
+
+                stack.append(
+                    _StackFrame(
+                        name=reducer,
+                        value=res,
+                        lines=res.lines,
+                        line_range=res.line_range,
+                    )
+                )
 
                 # there has been a reduction aka change so set a flag to true
                 change = True
@@ -258,7 +284,13 @@ class PParser:
                 break
 
             if not (next_token is None):
-                stack.append(_StackFrame(
-                    name=next_token.type, value=next_token, lines=next_token.line_val, line_no=next_token.line))
+                stack.append(
+                    _StackFrame(
+                        next_token.type,
+                        next_token,
+                        next_token.lines,
+                        next_token.line_range,
+                    )
+                )
 
         return stack

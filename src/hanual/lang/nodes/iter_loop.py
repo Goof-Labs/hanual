@@ -13,9 +13,9 @@ if TYPE_CHECKING:
 
 class IterLoop(BaseNode, ABC):
     def __init__(
-            self: BaseNode,
-            name: Token,
-            iterator: Union[Token, FunctionCall],
+        self: BaseNode,
+        name: Token,
+        iterator: Union[Token, FunctionCall],
     ) -> None:
         self._iterator = iterator
         self._name: Token = name
@@ -29,9 +29,6 @@ class IterLoop(BaseNode, ABC):
             names.extend(self._iterator.get_names())
 
         return names
-
-    def execute(self, env):
-        raise NotImplementedError
 
     def compile(self):
         raise NotImplementedError

@@ -78,7 +78,7 @@ class HanualLexer(Lexer):
     ) -> Token:
         return Token(
             kind,
-            LiteralWrapper[float](float(value)),
+            LiteralWrapper(float(value)),
             line_range,
             col,
             origin_line,
@@ -93,7 +93,7 @@ class HanualLexer(Lexer):
         value = value[:-1]
         return Token(
             kind,
-            LiteralWrapper[str](value),
+            LiteralWrapper(value),
             line_range,
             col,
             origin_line,

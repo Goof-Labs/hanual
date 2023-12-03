@@ -102,7 +102,7 @@ class Lexer:
             if kind == "MISMATCH":
                 print(
                     HanualError(
-                        pos=(line_no, col, len(value) + col),
+                        pos=LineRange(line_no, line_no),
                         line=text,
                         name=ErrorType.illegal_character,
                         reason=f"{value!r} is not recognised as a symbol or valid character",

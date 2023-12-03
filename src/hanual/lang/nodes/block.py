@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Generator
 from abc import ABC
-from typing import TYPE_CHECKING, Any
 
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
+    from hanual.compile.back_end.response import Response
+    from hanual.compile.back_end.reply import Reply
     from hanual.lang.util.line_range import LineRange
 
 
@@ -42,8 +44,9 @@ class CodeBlock[C: BaseNode](BaseNode, ABC):
 
         return self
 
-    def compile(self, cm) -> Any:
-        raise NotImplementedError
+    def compile(self) -> Generator[Reply, Response, None]:
+        for child in self._children:
+            yield from child.compile()
 
     @property
     def children(self):

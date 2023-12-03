@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Generator
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
+
+    from hanual.compile.back_end.response import Response
+    from hanual.compile.back_end.request import Request
+    from hanual.compile.back_end.reply import Reply
 
 
 class BaseNode(ABC):
@@ -25,7 +29,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self, **kwargs):
+    def compile(self, **kwargs) -> Generator[Response | Request, Reply, None]:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

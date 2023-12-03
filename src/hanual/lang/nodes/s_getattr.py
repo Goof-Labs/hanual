@@ -1,29 +1,24 @@
 from __future__ import annotations
 
-from typing import TypeVar
-
 from hanual.lang.lexer import Token
-
+from typing import TYPE_CHECKING
 from .base_node import BaseNode
-from .dot_chain import DotChain
-from .f_call import FunctionCall
-from .hanual_list import HanualList
 
-_O = TypeVar("_O", Token, DotChain, FunctionCall)
-P = TypeVar("P", HanualList, ...)
+if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
 
 
-class SGetattr(BaseNode):
+class SGetattr[L: BaseNode, R: Token](BaseNode):
     __slots__ = (
-        "_prt",
-        "_obj",
+        "_left",
+        "_right",
         "_lines",
         "_line_range",
     )
 
-    def __init__(self: BaseNode, obj: _O, part: P, lines: str, line_range: int) -> None:
-        self._prt: P = part
-        self._obj: _O = obj
+    def __init__(self, left: L, right: R, lines: str, line_range: LineRange) -> None:
+        self._left: R = right
+        self._right: L = left
 
         self._line_range = line_range
         self._lines = lines

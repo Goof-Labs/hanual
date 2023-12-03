@@ -5,8 +5,9 @@ from typing import TYPE_CHECKING
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.block import CodeBlock
     from hanual.lang.nodes.conditions import Condition
+    from hanual.lang.util.line_range import LineRange
+    from hanual.lang.nodes.block import CodeBlock
 
 
 class WhileStatement(BaseNode):
@@ -17,9 +18,7 @@ class WhileStatement(BaseNode):
         "_line_no",
     )
 
-    def __init__(
-        self: BaseNode, condition: Condition, body: CodeBlock, lines: str, line_no: int
-    ) -> None:
+    def __init__(self, condition: Condition, body: CodeBlock, lines: str, line_no: LineRange) -> None:
         self._while: Condition = condition
         self._body: CodeBlock = body
 

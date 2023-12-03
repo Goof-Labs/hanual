@@ -1,4 +1,4 @@
-# This file is for a using statement that has an alternative name, to accomodate
+# This file is for a using statement that has an alternative name, to accommodate
 # the following syntax `using std::test::name as std_test_name`
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
-
+    from hanual.lang.util.line_range import LineRange
     from .namespace_acessor import NamespaceAccessor
+    from hanual.lang.lexer import Token
 
 
 class UsingStatementWithAltName(BaseNode):
@@ -21,7 +21,7 @@ class UsingStatementWithAltName(BaseNode):
     )
 
     def __init__(
-        self: BaseNode, path: NamespaceAccessor, name: Token, lines: str, line_no: int
+            self, path: NamespaceAccessor, name: Token, lines: str, line_no: LineRange
     ) -> None:
         self._path: NamespaceAccessor = path
         self._name: Token = name

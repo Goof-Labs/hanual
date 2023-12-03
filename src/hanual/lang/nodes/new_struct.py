@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
@@ -16,9 +14,7 @@ if TYPE_CHECKING:
 class NewStruct(BaseNode):
     __slots__ = "_args", "_name", "_line_range", "_lines"
 
-    def __init__(
-        self: BaseNode, call: FunctionCall, lines: str, line_range: int
-    ) -> None:
+    def __init__(self, call: FunctionCall, lines: str, line_range: int) -> None:
         self._args: Arguments = call.args
         self._name: Token = call.name
 

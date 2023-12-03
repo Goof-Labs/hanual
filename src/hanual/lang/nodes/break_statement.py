@@ -20,11 +20,11 @@ class BreakStatement(BaseNode, ABC):
     )
 
     def __init__(
-        self: Self,
-        node: Token,
-        ctx: Optional[Token] = None,
-        lines: str = "",
-        line_range: LineRange = 0,
+            self: Self,
+            node: Token,
+            ctx: Optional[Token],
+            lines: str,
+            line_range: LineRange,
     ) -> None:
         self._tk = node
         self._cx = ctx

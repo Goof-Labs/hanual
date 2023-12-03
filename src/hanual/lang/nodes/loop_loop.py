@@ -3,8 +3,6 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from hanual.lang.errors import Frame
-
 from .base_node import BaseNode
 from .block import CodeBlock
 

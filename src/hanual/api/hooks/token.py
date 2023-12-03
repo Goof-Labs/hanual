@@ -5,6 +5,7 @@ from typing import Tuple, LiteralString
 from hanual.lang.lexer import Token
 from .hook import GenericHook
 
+
 def new_token(regex: Tuple[str, LiteralString], name: LiteralString):
     def decor(cls):
         cls._regex = regex[0]

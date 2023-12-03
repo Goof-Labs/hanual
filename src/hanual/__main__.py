@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import sys
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser
 
 from hanual.lang import compile_code
 

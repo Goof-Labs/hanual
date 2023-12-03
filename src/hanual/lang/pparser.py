@@ -1,18 +1,16 @@
 from __future__ import annotations
 
 import logging
-from copy import deepcopy
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     Generator,
-    Generic,
     List,
     NamedTuple,
     Optional,
     Tuple,
     Type,
-    TypeVar,
 )
 
 from hanual.api.hooks import RuleHook
@@ -21,14 +19,15 @@ from .lexer import Token
 from .productions import DefaultProduction
 from .util.proxy import Proxy
 
-_T = TypeVar("_T")
+if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
 
 
-class _StackFrame(NamedTuple, Generic[_T]):
+class _StackFrame[T](NamedTuple):
     name: str
-    value: _T
+    value: T
     lines: str
-    line_range: int
+    line_range: LineRange
 
 
 class PParser:
@@ -93,12 +92,12 @@ class PParser:
             logging.critical("undefined tokens: %s", undef_tokens)
 
     def rule(
-        self: PParser,
-        *rules,
-        prod: Optional[Type] = DefaultProduction,
-        types: Optional[Dict[str, Any]] = None,
-        unless_starts: Optional[List[str]] = None,
-        unless_ends: Optional[List[str]] = None,
+            self: PParser,
+            *rules,
+            prod: Optional[Type] = DefaultProduction,
+            types: Optional[Dict[str, Any]] = None,
+            unless_starts: Optional[List[str]] = None,
+            unless_ends: Optional[List[str]] = None,
     ):
         """
         This function is a decorator, so it can be used with the following syntax
@@ -158,14 +157,14 @@ class PParser:
         return inner
 
     def add_rule(
-        self,
-        rules,
-        func,
-        types,
-        prod,
-        unless_starts,
-        unless_ends,
-        name: Optional[str] = None,
+            self,
+            rules,
+            func,
+            types,
+            prod,
+            unless_starts,
+            unless_ends,
+            name: Optional[str] = None,
     ):
         for rule in rules:
             prox = Proxy(func, types, prod, unless_starts, unless_ends)
@@ -195,14 +194,16 @@ class PParser:
     ######################
 
     def parse(self: PParser, stream: Generator[Token, None, None]):
-        stack: List[_StackFrame] = []
+        type T = any
+
+        stack: List[_StackFrame[T]] = []
 
         while True:
             # get next token, default is None
             next_token: Token = next(stream, None)
 
             # flags
-            change = False
+            change: bool = False
             if not (next_token is None):
                 change = True
 
@@ -212,23 +213,23 @@ class PParser:
                 # reducer is what we reduce the pattern to
                 # proxy is a wrapper around a function
 
-                pattern_lst = pattern.split(" ")
+                pattern_lst: list[str] = pattern.split(" ")
 
                 # compare the stack from top to bottom, so we need to reverse
-                stk_coppy = stack.copy()
+                stk_coppy: list[_StackFrame[T]] = stack.copy()
                 stk_coppy.reverse()
                 pattern_lst.reverse()
 
-                debth = pattern.count(" ")
+                debth: int = pattern.count(" ")
 
                 # would not zip up nicely
                 if debth > len(stack):
                     continue
 
                 # the following two lines are an optimized version of the old for loop
-                broke_out = (
+                broke_out: bool = (
                     not list(map(lambda x: x.name, stk_coppy[: debth + 1]))
-                    == pattern_lst
+                        == pattern_lst
                 )
 
                 # old method
@@ -257,7 +258,7 @@ class PParser:
                 if (next_token is not None) and (next_token.type in proxy.unless_end):
                     continue
 
-                p_args = []
+                p_args: list[_StackFrame[T]] = []
 
                 for _ in range(debth + 1):
                     p_args.append(stack.pop())
@@ -266,11 +267,11 @@ class PParser:
                 p_args.reverse()
 
                 # actually run it
-                res = proxy.call(p_args)
+                res: T = proxy.call(p_args)
 
                 stack.append(
-                    _StackFrame(
-                        name=reducer,
+                    _StackFrame[T](
+                        reducer,
                         value=res,
                         lines=res.lines,
                         line_range=res.line_range,
@@ -285,11 +286,11 @@ class PParser:
 
             if not (next_token is None):
                 stack.append(
-                    _StackFrame(
+                    _StackFrame[T](
                         next_token.type,
-                        next_token,
-                        next_token.lines,
-                        next_token.line_range,
+                        value=next_token,
+                        lines=next_token.lines,
+                        line_range=next_token.line_range,
                     )
                 )
 

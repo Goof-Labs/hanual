@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from .base_node import BaseNode
 from .implicit_binop import ImplicitBinOp
@@ -15,36 +15,40 @@ if TYPE_CHECKING:
 
 
 # for let i=0, < 10, +110
-class ForLoop(BaseNode):
+class ForLoop[
+C: (ImplicitCondition, Condition),
+I: (Token, AssignmentNode),
+A: ImplicitBinOp,
+](BaseNode):
     __slots__ = "_while", "_init", "_action", "_body", "_lines", "_line_range"
 
     def __init__(
-        self: BaseNode,
-        condition: Union[ImplicitCondition, Condition],
-        init: Union[Token, AssignmentNode],
-        action: ImplicitBinOp,
-        body: CodeBlock,
-        lines: str,
-        line_range: int,
+            self: BaseNode,
+            condition: C,
+            init: I,
+            action: A,
+            body: CodeBlock,
+            lines: str,
+            line_range: int,
     ) -> None:
-        self._while: Union[ImplicitCondition, Condition] = condition
-        self._init: Union[Token, AssignmentNode] = init
-        self._action: ImplicitBinOp = action
+        self._while: C = condition
+        self._init: I = init
+        self._action: A = action
         self._body: CodeBlock = body
 
         self._lines = lines
         self._line_range = line_range
 
     @property
-    def condition(self) -> Union[ImplicitCondition, Condition]:
+    def condition(self) -> C:
         return self._while
 
     @property
-    def init(self) -> Union[Token, AssignmentNode]:
+    def init(self) -> I:
         return self._init
 
     @property
-    def action(self) -> ImplicitBinOp:
+    def action(self) -> A:
         return self._action
 
     @property
@@ -53,13 +57,3 @@ class ForLoop(BaseNode):
 
     def compile(self):
         raise NotImplementedError
-
-    def get_names(self) -> list[str]:
-        names = []
-
-        names.extend(self._action.get_names())
-        names.extend(self._while.get_names())
-        names.extend(self._init.get_names())
-        names.extend(self._body.get_names())
-
-        return names

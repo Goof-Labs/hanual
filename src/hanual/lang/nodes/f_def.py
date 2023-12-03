@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict
-
-from hanual.lang.errors.trace_back import Frame
+from typing import TYPE_CHECKING
 
 from .base_node import BaseNode
 
@@ -24,12 +22,12 @@ class FunctionDefinition(BaseNode):
     )
 
     def __init__(
-        self: FunctionDefinition,
-        name: Token,
-        params: Parameters,
-        inner: CodeBlock,
-        lines: str,
-        line_range: LineRange,
+            self,
+            name: Token,
+            params: Parameters,
+            inner: CodeBlock,
+            lines: str,
+            line_range: LineRange,
     ) -> None:
         self._name: Token = name
         self._parameters = params

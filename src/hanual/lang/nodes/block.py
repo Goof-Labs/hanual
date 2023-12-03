@@ -1,23 +1,29 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Generator, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any
 
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
 
-T = TypeVar("T")
 
-
-class CodeBlock(BaseNode, ABC):
+class CodeBlock[C: BaseNode](BaseNode, ABC):
     __slots__ = ("_children", "_line_range", "_lines")
 
-    def __init__(
-        self, children: Union[List[T], T], lines: str, line_range: LineRange
-    ) -> None:
-        self._children: List[BaseNode] = []
+    def __init__(self, children: C, lines: str, line_range: LineRange) -> None:
+        """Initializer of the CodeBlock class.
+
+        An object that stores the children of a codeblock.
+        It can have objects added to it using the `add_child` function.
+
+        Args:
+            children: The elements inside the codeblock
+            lines: The lines of the code that comprises the code block
+            line_range: Range of line the codeblock takes up
+        """
+        self._children: list[BaseNode] = []
         self.add_child(children)
 
         self._line_range = line_range

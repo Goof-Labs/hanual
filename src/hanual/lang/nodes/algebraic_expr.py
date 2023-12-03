@@ -9,17 +9,23 @@ from .base_node import BaseNode
 
 
 class AlgebraicExpression(BaseNode, ABC):
-    __slots__ = "_op", "_left", "_right", "_lines", "_line_range",
+    __slots__ = (
+        "_op",
+        "_left",
+        "_right",
+        "_lines",
+        "_line_range",
+    )
 
     def __init__(
-        self: BaseNode,
-        operator: Token,
-        left: Union[AlgebraicExpression, Token],
-        right: Union[AlgebraicExpression, Token],
-        lines: str,
-        line_range: int
+            self: BaseNode,
+            operator: Token,
+            left: Union[AlgebraicExpression, Token],
+            right: Union[AlgebraicExpression, Token],
+            lines: str,
+            line_range: int,
     ) -> None:
-        self._op = operator
+        self._op: Token = operator
         self._left = left
         self._right = right
 

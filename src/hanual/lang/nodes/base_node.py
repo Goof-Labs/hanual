@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Generator, TypeVar
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
-
-
-T = TypeVar("T")
-N = TypeVar("N", bound="BaseNode")
 
 
 class BaseNode(ABC):
@@ -23,6 +19,9 @@ class BaseNode(ABC):
         This method should take n number of arguments,
         these are either more nodes, or raw tokens.
         """
+        self._lines = None
+        self._line_range = None
+
         raise NotImplementedError
 
     @abstractmethod

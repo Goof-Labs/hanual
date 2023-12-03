@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List
 
 from .base_node import BaseNode
 
@@ -11,16 +11,17 @@ if TYPE_CHECKING:
     from hanual.lang.builtin_lexer import Token
 
 
-class NamespaceAccessor(BaseNode, ABC):
+class NamespaceAccessor[C: (Token, "NamespaceAccessor")](BaseNode, ABC):
     __slots__ = ("_path", "_lines", "_line_range")
 
-    def __init__(self: BaseNode, first: Token, lines: str, line_range: int) -> None:
-        self._path: List[Token] = [first]
+    def __init__(self, first: Token, lines: str, line_range: int) -> None:
+        self._path: List[C] = []
+        self.add_child(first)
 
         self._lines = lines
         self._line_range = line_range
 
-    def add_child(self, child: Union[Token, NamespaceAccessor]) -> Self:
+    def add_child(self, child: C) -> Self:
         if isinstance(child, NamespaceAccessor):
             self._path.extend(child.path)
 

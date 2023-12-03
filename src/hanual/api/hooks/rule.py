@@ -19,12 +19,12 @@ from .hook import GenericHook
 
 
 def new_rule(
-    *pattern: LiteralString,
-    prod: Optional[Type] = DefaultProduction,
-    unless_starts: Optional[Iterable[LiteralString]] = None,
-    unless_ends: Optional[Iterable[LiteralString]] = None,
-    types: Optional[Dict[LiteralString, Any]] = None,
-    name: Optional[str] = "",
+        *pattern: LiteralString,
+        prod: Optional[Type] = DefaultProduction,
+        unless_starts: Optional[Iterable[LiteralString]] = None,
+        unless_ends: Optional[Iterable[LiteralString]] = None,
+        types: Optional[Dict[LiteralString, Any]] = None,
+        name: Optional[str] = "",
 ) -> Callable[[Type[RuleHook]], Type[RuleHook]]:
     def decor(cls: Type[RuleHook]):
         cls._proxy = HookProxy(cls, types, prod, unless_starts, unless_ends)
@@ -64,6 +64,6 @@ class RuleHook(GenericHook):
         # and that is used. THX to: vvvvvvv
         # <https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case>
         return (
-            self._name
-            or re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
+                self._name
+                or re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
         )

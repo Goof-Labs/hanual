@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
-from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 from hanual.lang.lexer import Token
 
 from .base_node import BaseNode
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
     ...
 
 
-class ImplicitCondition(BaseNode):
+class ImplicitCondition[O: Token, V: (Token, FunctionCall)](BaseNode):
     __slots__ = (
         "_val",
         "_op",
@@ -20,21 +19,19 @@ class ImplicitCondition(BaseNode):
         "_line_range",
     )
 
-    def __init__(
-        self, op: Token, val: Union[Token, FunctionCall], lines: str, line_range: int
-    ) -> None:
-        self._val: Union[Token, FunctionCall] = val
-        self._op: Token = op
+    def __init__(self, op: O, val: V, lines: str, line_range: int) -> None:
+        self._val: V = val
+        self._op: O = op
 
         self._line_range = line_range
         self._lines = lines
 
     @property
-    def value(self) -> Union[Token, FunctionCall]:
+    def value(self) -> V:
         return self._val
 
     @property
-    def op(self) -> Token:
+    def op(self) -> O:
         return self._op
 
     def compile(self, name: str):

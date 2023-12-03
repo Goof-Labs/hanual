@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Generator, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from hanual.lang.lexer import Token
 
@@ -20,12 +20,12 @@ class AnonymousFunction(BaseNode, ABC):
     __slots__ = ("_args", "_inner", "fn_name", "_lines", "_line_no", "_return")
 
     def __init__(
-        self: BaseNode,
-        args: Parameters,
-        inner: CodeBlock,
-        ret: Optional[Union[Token, BinOpNode, RangeNode]] = None,
-        lines: str = "",
-        line_range: LineRange = 0,
+            self: BaseNode,
+            args: Parameters,
+            inner: CodeBlock,
+            ret: Optional[Union[Token, BinOpNode, RangeNode]] = None,
+            lines: str = "",
+            line_range: LineRange = 0,
     ) -> None:
         self._inner = inner
         self._args = args

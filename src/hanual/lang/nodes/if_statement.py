@@ -16,11 +16,11 @@ class IfStatement(BaseNode, ABC):
     __slots__ = "_condition", "_block", "_lines", "_line_range"
 
     def __init__(
-        self: IfStatement,
-        condition: Condition,
-        block: CodeBlock,
-        lines: str,
-        line_range: LineRange,
+            self,
+            condition: Condition,
+            block: CodeBlock,
+            lines: str,
+            line_range: LineRange,
     ) -> None:
         self._condition: Condition = condition
         self._block: CodeBlock = block

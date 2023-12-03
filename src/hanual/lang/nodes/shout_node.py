@@ -15,9 +15,7 @@ class ShoutNode(BaseNode):
         "_line_range",
     )
 
-    def __init__(
-        self: BaseNode, shout_token: Token, lines: str, line_range: int
-    ) -> None:
+    def __init__(self, shout_token: Token, lines: str, line_range: int) -> None:
         self._st = shout_token
 
         self._line_range = line_range

@@ -27,7 +27,8 @@ class IfChain(BaseNode):
         self._line_range = line_range
         self._lines = lines
 
-    def add_node(self, node: Union[IfStatement, ElifStatement]) -> Self:
+    def add_node[N: (IfStatement, ElifStatement)](self, node: N) -> Self:
+        assert isinstance(node, (IfStatement, ElifStatement))
         self._statements.append(node)
         return self
 

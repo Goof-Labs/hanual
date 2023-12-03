@@ -3,13 +3,13 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from hanual.lang.errors.trace_back import Frame
-
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
     from .block import CodeBlock
     from .conditions import Condition
+
+    from hanual.lang.util.line_range import LineRange
 
 
 class ElifStatement(BaseNode, ABC):
@@ -21,7 +21,7 @@ class ElifStatement(BaseNode, ABC):
     )
 
     def __init__(
-        self, condition: Condition, block: CodeBlock, lines: str, line_no: int
+            self, condition: Condition, block: CodeBlock, lines: str, line_no: LineRange
     ) -> None:
         self._condition = condition
         self._block = block

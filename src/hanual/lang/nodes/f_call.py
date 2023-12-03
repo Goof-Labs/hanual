@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from hanual.lang.lexer import Token
 
@@ -8,10 +8,11 @@ from .base_node import BaseNode
 from .dot_chain import DotChain
 
 if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
     from .arguments import Arguments
 
 
-class FunctionCall(BaseNode):
+class FunctionCall[N: (Token, DotChain)](BaseNode):
     __slots__ = (
         "_name",
         "_args",
@@ -20,16 +21,20 @@ class FunctionCall(BaseNode):
     )
 
     def __init__(
-        self, name: Token, arguments: Arguments, lines: str, line_range: int
+            self,
+            name: N,
+            arguments: Arguments,
+            lines: str,
+            line_range: LineRange,
     ) -> None:
-        self._name: Union[Token, DotChain] = name
+        self._name: N = name
         self._args: Arguments = arguments
 
         self._line_range = line_range
         self._lines = lines
 
     @property
-    def name(self) -> Union[Token, DotChain]:
+    def name(self) -> N:
         return self._name
 
     @property

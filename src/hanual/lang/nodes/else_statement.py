@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
     from .block import CodeBlock
 
 
@@ -15,7 +16,7 @@ class ElseStatement(BaseNode):
         "_line_range",
     )
 
-    def __init__(self: BaseNode, body: CodeBlock, lines: str, line_range: int) -> None:
+    def __init__(self, body: CodeBlock, lines: str, line_range: LineRange) -> None:
         self._body = body
 
         self._line_range = line_range
@@ -26,4 +27,4 @@ class ElseStatement(BaseNode):
         return self._body
 
     def compile(self, cm):
-        return self._body.compile(cm=cm)
+        raise NotImplementedError

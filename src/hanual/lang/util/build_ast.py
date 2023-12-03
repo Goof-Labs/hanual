@@ -16,18 +16,18 @@ from hanual.tools.cli import HanualCli
 
 
 def create_ast(
-    *,
-    options: Optional[Dict[str, Any]] = None,
-    preproc: Optional[Preprocessor] = None,
-    hook_loader: Optional[HookLoader] = None,
-    parser: Optional[PParser] = None,
-    lexer: Optional[Lexer] = None,
-    #  preproc arguments
-    prefix: Optional[str] = None,
-    starting_definitions: Optional[List[str]] = None,
-    mappings: Optional[Mapping[str, str]] = None,
-    #  Lexer arguments
-    lexer_mode: Union[Literal["exec"], Literal["compile"], None] = None,
+        *,
+        options: Optional[Dict[str, Any]] = None,
+        preproc: Optional[Preprocessor] = None,
+        hook_loader: Optional[HookLoader] = None,
+        parser: Optional[PParser] = None,
+        lexer: Optional[Lexer] = None,
+        #  preproc arguments
+        prefix: Optional[str] = None,
+        starting_definitions: Optional[List[str]] = None,
+        mappings: Optional[Mapping[str, str]] = None,
+        #  Lexer arguments
+        lexer_mode: Union[Literal["exec"], Literal["compile"], None] = None,
 ) -> Tuple[CodeBlock, Generator[str, None, None]]:
     # set default arguments and stuff
     if options is None:
@@ -88,7 +88,7 @@ def create_ast(
                 line=" ".join(argv) + "\n",
                 name=ErrorType.cli_argument_unresolved,
                 tip="Try passing the argument like this: files=my_file.hnl",
-                reason="The `files` argument was not passed as a paramiter",
+                reason="The `files` argument was not passed as a parameter",
                 tb=TraceBack(),
             ).as_string()
         )

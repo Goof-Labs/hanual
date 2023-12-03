@@ -8,11 +8,7 @@ if TYPE_CHECKING:
     from hanual.lang.lexer import Token
 
 
-# type var to represent a type in the language
-T = TypeVar("T")
-
-
-class StrongField(BaseNode):
+class StrongField[T](BaseNode):
     __slots__ = (
         "_name",
         "_type",
@@ -21,7 +17,7 @@ class StrongField(BaseNode):
     )
 
     def __init__(
-        self: BaseNode, name: Token, type_: T, lines: str, line_range: int
+            self: BaseNode, name: Token, type_: T, lines: str, line_range: int
     ) -> None:
         self._name: Token = name
         self._type: T = type_

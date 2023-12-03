@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator, Tuple, TypeVar, Union, Iterable
 from hanual.lang.errors import ErrorType, HanualError, TraceBack, Frame
+from typing import TYPE_CHECKING, Generator, Tuple, TypeVar, Iterable
 from .util.line_range import LineRange
 from dataclasses import dataclass
 import re
 
 if TYPE_CHECKING:
     from typing_extensions import LiteralString, Literal
-    from hanual.exec.wrappers import LiteralWrapper
     from hanual.api.hooks import TokenHook
 
 T = TypeVar("T")
@@ -23,9 +22,9 @@ def rx(reg: T) -> Tuple[T, LiteralString]:
 
 
 @dataclass
-class Token:
+class Token[T]:
     type: str
-    value: Union[str, int, float, LiteralWrapper]
+    value: T
     line_range: LineRange
     colm: int
     lines: str
@@ -69,9 +68,9 @@ class Lexer:
                 )
 
     def tokenize(
-        self,
-        stream: Generator[str, None, None],
-        mode: Literal["exec"] | Literal["compile"],
+            self,
+            stream: Generator[str, None, None],
+            mode: Literal["exec"] | Literal["compile"],
     ) -> Generator[Token, None, None]:
         # TODO allow rules to ble cleared
         self.update_rules(self.last)
@@ -82,11 +81,11 @@ class Lexer:
             yield from self._tokenize_str(tok_reg, line, line_no, mode=mode)
 
     def _tokenize_str(
-        self,
-        tok_reg: str,
-        text: str,
-        line_no: int,
-        mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both",
+            self,
+            tok_reg: str,
+            text: str,
+            line_no: int,
+            mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both",
     ) -> Generator[Token, None, None]:
         for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
@@ -118,7 +117,7 @@ class Lexer:
             hook = self._hooks.get(kind, None)
 
             if hook:
-                yield hook.gen_token(kind, value, line_no, col, text)
+                yield hook.gen_token(kind, value, LineRange(line_no, line_no), col, text)
 
             elif hasattr(self, f"t_{mode}_{kind}"):
                 yield getattr(self, f"t_{mode}_{kind}")(kind, value, line_no, col, text)

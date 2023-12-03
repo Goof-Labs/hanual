@@ -20,11 +20,11 @@ class RangeNode(BaseNode, ABC):
     )
 
     def __init__(
-        self: Self,
-        from_: Optional[Token] = None,
-        to_: Optional[Token] = None,
-        lines: str = "",
-        line_no: int = 0,
+            self: Self,
+            from_: Optional[Token] = None,
+            to_: Optional[Token] = None,
+            lines: str = "",
+            line_no: int = 0,
     ) -> None:
         self._from = from_
         self._to = to_

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -37,12 +36,12 @@ class Proxy:
     __slots__ = "_fn", "_types", "_prod", "_unless_b", "_unless_e"
 
     def __init__(
-        self: Self,
-        fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook],
-        types: Dict[str, Any],
-        prod: type[P] = None,
-        unless_start: Iterable[str] = (),
-        unless_end: Iterable[str] = (),
+            self: Self,
+            fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook],
+            types: Dict[str, Any],
+            prod: type[P] = None,
+            unless_start: Iterable[str] = (),
+            unless_end: Iterable[str] = (),
     ) -> None:
         self._fn: Union[
             Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook
@@ -113,12 +112,12 @@ class Proxy:
             The above is a diagram that would show the splicing in action.
             """
             if (
-                f_end := (
-                    frame.line_range
-                    if isinstance(frame.line_range, int)
-                    else frame.line_range.end
-                )
-                > ln_range.end
+                    f_end := (
+                                     frame.line_range
+                                     if isinstance(frame.line_range, int)
+                                     else frame.line_range.end
+                             )
+                             > ln_range.end
             ):
                 # checks if the next token has a greater range then ours
                 if f_end < ln_range.end:
@@ -141,6 +140,8 @@ class Proxy:
             # don't want to pass a case
 
         func_args = self._fn.__annotations__.keys()
+
+        # TODO warn user if lines or line_range is a function argument, now passed through implicitly
 
         #
         # No types defined
@@ -196,12 +197,12 @@ class Proxy:
 
 class HookProxy(Proxy):
     def __init__(
-        self,
-        cls: Type[RuleHook],
-        types: Dict[str, Any],
-        prod: type[P] = None,
-        unless_start: Iterable[str] = (),
-        unless_end: Iterable[str] = (),
+            self,
+            cls: Type[RuleHook],
+            types: Dict[str, Any],
+            prod: type[P] = None,
+            unless_start: Iterable[str] = (),
+            unless_end: Iterable[str] = (),
     ) -> None:
         super().__init__(cls(), types, prod, unless_start, unless_end)
 

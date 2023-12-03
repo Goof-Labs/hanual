@@ -62,7 +62,7 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_compile_NUM(
-        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
     ) -> Token:
         return Token(
             kind,
@@ -74,7 +74,7 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_exec_NUM(
-        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
     ) -> Token:
         return Token(
             kind,
@@ -86,7 +86,7 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_exec_STR(
-        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
     ) -> Token:
         # remove the last and first character of string, which are " or double quotes
         value = value[1:]
@@ -101,7 +101,7 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_compile_STR(
-        kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
     ) -> Token:
         # remove the last and first character of string, which are " or double quotes
         value = value[1:]

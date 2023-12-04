@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -37,8 +38,5 @@ class UsingStatementWithAltName(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self) -> None:
-        raise NotImplementedError
-
-    def execute(self, env):
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

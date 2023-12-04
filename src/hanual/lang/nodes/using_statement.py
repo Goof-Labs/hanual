@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from typing import TYPE_CHECKING
+from hanual.util import Reply, Response, Request
 
 from .base_node import BaseNode
 
@@ -23,5 +24,5 @@ class UsingStatement(BaseNode, ABC):
     def path(self) -> NamespaceAccessor:
         return self._nsa
 
-    def compile(self, **kwargs):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

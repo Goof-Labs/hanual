@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, Generator, Self
 
 from .base_node import BaseNode
 from .else_statement import ElseStatement
 
-if TYPE_CHECKING:
-    from typing_extensions import Self
+from hanual.util import Reply, Response, Request
 
+
+if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
 
     from .elif_statement import ElifStatement
@@ -22,12 +23,12 @@ class IfChain(BaseNode):
     )
 
     def __init__(self, lines: str, line_range: LineRange) -> None:
-        self._statements: List[Union[IfStatement, ElifStatement, ElseStatement]] = []
+        self._statements: list[IfStatement | ElifStatement | ElseStatement] = []
 
         self._line_range = line_range
         self._lines = lines
 
-    def add_node[N: (IfStatement, ElifStatement)](self, node: N) -> Self:
+    def add_node(self, node: IfStatement | ElifStatement) -> Self:
         assert isinstance(node, (IfStatement, ElifStatement))
         self._statements.append(node)
         return self
@@ -36,9 +37,9 @@ class IfChain(BaseNode):
         self._statements.append(node)
         return self
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError
 
     @property
-    def statements(self) -> List[Union[IfStatement, ElifStatement, ElseStatement]]:
+    def statements(self) -> list[IfStatement | ElifStatement | ElseStatement]:
         return self._statements

@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
 
-from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
+
 
 if TYPE_CHECKING:
     ...
 
 
-class FreezeNode[T: Token](BaseNode, ABC):
+class FreezeNode[T: Token](BaseNode):
     __slots__ = "_var", "_lines", "_line_no"
 
     def __init__(self, var: T, lines: str, line_no: int) -> None:
@@ -20,7 +21,7 @@ class FreezeNode[T: Token](BaseNode, ABC):
         self._line_no = line_no
         self._lines = lines
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError
 
     @property

@@ -2,17 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator
 
-from hanual.lang.lexer import Token
-
-from hanual.compile.back_end.response import Response
-from hanual.compile.back_end.request import Request
-from hanual.compile.back_end.reply import Reply
-
 from hanual.compile.instruction.ir_push import PUSH
 from hanual.compile.instruction.ir_ld import LD
 
-from .base_node import BaseNode
-from .dot_chain import DotChain
+from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.nodes.dot_chain import DotChain
+
+from hanual.util import Reply, Response, Request
 
 
 if TYPE_CHECKING:

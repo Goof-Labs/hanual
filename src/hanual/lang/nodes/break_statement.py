@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Self, Generator
+
+from hanual.util import Request, Response, Reply
 
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
 
-from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
-
     from hanual.lang.util.line_range import LineRange
 
 
-class BreakStatement(BaseNode, ABC):
+class BreakStatement(BaseNode):
     __slots__ = (
         "_lines",
         "_line_range",
@@ -32,5 +31,5 @@ class BreakStatement(BaseNode, ABC):
         self._line_range = line_range
         self._lines = lines
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

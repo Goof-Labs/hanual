@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.nodes.block import CodeBlock
 
-from .base_node import BaseNode
-from .block import CodeBlock
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.binop import BinOpNode
     from hanual.lang.nodes.range_node import RangeNode
-    from hanual.lang.util.line_range import LineRange
+    from hanual.lang.nodes.parameters import Parameters
+    from hanual.lang.nodes.binop import BinOpNode
 
-    from .parameters import Parameters
+    from hanual.lang.util.line_range import LineRange
 
 
 class AnonymousFunction(BaseNode, ABC):
@@ -23,9 +24,9 @@ class AnonymousFunction(BaseNode, ABC):
             self: BaseNode,
             args: Parameters,
             inner: CodeBlock,
-            ret: Optional[Union[Token, BinOpNode, RangeNode]] = None,
-            lines: str = "",
-            line_range: LineRange = 0,
+            ret: Token | BinOpNode | RangeNode,
+            lines: str,
+            line_range: LineRange,
     ) -> None:
         self._inner = inner
         self._args = args
@@ -34,5 +35,5 @@ class AnonymousFunction(BaseNode, ABC):
         self._line_range = line_range
         self._lines = lines
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

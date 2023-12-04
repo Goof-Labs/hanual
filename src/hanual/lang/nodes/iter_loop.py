@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
+from hanual.lang.nodes.base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
+
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -12,7 +14,7 @@ if TYPE_CHECKING:
     from .f_call import FunctionCall
 
 
-class IterLoop[I: (Token, FunctionCall)](BaseNode, ABC):
+class IterLoop[I: (Token, FunctionCall)](BaseNode):
     def __init__(
             self, name: Token, iterator: I, lines: str, line_range: LineRange
     ) -> None:
@@ -22,5 +24,5 @@ class IterLoop[I: (Token, FunctionCall)](BaseNode, ABC):
         self._lines = lines
         self._line_range = line_range
 
-    def compile(self):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

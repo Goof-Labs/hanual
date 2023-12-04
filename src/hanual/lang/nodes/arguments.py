@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Generator, Self
 from collections.abc import Iterable
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.compile.back_end.response import Response
-from hanual.compile.back_end.request import Request
-from hanual.compile.back_end.reply import Reply
+from hanual.lang.lexer import Token
+
+from hanual.util import Reply, Response, Request
+
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
-    from typing import Self
 
 
-class Arguments[T](BaseNode):
+class Arguments[T: (BaseNode, Token)](BaseNode):
     __slots__ = (
         "_children",
         "_lines",
@@ -23,8 +23,8 @@ class Arguments[T](BaseNode):
     def __init__(
             self,
             children: T | Iterable[T],
-            lines: str = None,
-            line_range: LineRange = None,
+            lines: str,
+            line_range: LineRange,
     ) -> None:
         self._children: list[T] = []
         self.add_child(children)
@@ -49,4 +49,7 @@ class Arguments[T](BaseNode):
         return self._children
 
     def compile(self) -> Generator[Reply | Request, Response, None]:
-        ...
+        for arg in self._children:
+            if isinstance(arg, Token):
+                if arg.type == "ID":
+                    var_data = yield Request

@@ -1,24 +1,26 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Generator
 
-from .algebraic_expr import AlgebraicExpression
-from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
+
+
+from hanual.lang.nodes.algebraic_expr import AlgebraicExpression
+from hanual.lang.nodes.base_node import BaseNode
 
 if TYPE_CHECKING:
-    ...
+    from hanual.lang.util.line_range import LineRange
 
 
-class AlgebraicFunc(BaseNode, ABC):
+class AlgebraicFunc(BaseNode):
     __slots__ = "_name", "_expr", "_lines", "_line_range",
 
-    def __init__(self: BaseNode, name: str, expr: AlgebraicExpression, lines: str, line_range: int) -> None:
+    def __init__(self: BaseNode, name: str, expr: AlgebraicExpression, lines: str, line_range: LineRange) -> None:
         self._name = name
         self._expr = expr
 
-        self._line_range = line_range
         self._lines = lines
+        self._line_range = line_range
 
-    def compile(self) -> Any:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

@@ -1,14 +1,18 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import Union
 
-from hanual.lang.lexer import Token
+from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
+from hanual.lang.nodes.base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
+
+if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
+    from hanual.lang.lexer import Token
 
 
-class AlgebraicExpression(BaseNode, ABC):
+class AlgebraicExpression(BaseNode):
     __slots__ = (
         "_op",
         "_left",
@@ -18,12 +22,12 @@ class AlgebraicExpression(BaseNode, ABC):
     )
 
     def __init__(
-            self: BaseNode,
+            self,
             operator: Token,
-            left: Union[AlgebraicExpression, Token],
-            right: Union[AlgebraicExpression, Token],
+            left: AlgebraicExpression | Token,
+            right: AlgebraicExpression | Token,
             lines: str,
-            line_range: int,
+            line_range: LineRange,
     ) -> None:
         self._op: Token = operator
         self._left = left
@@ -32,5 +36,5 @@ class AlgebraicExpression(BaseNode, ABC):
         self._lines = lines
         self._line_range = line_range
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Generator
 
 from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from hanual.lang.lexer import Token
 
 
-class RangeNode(BaseNode, ABC):
+class RangeNode(BaseNode):
     __slots__ = (
         "_from",
         "_to",
@@ -32,5 +32,5 @@ class RangeNode(BaseNode, ABC):
         self._line_no = line_no
         self._lines = lines
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

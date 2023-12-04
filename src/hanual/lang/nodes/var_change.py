@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from hanual.lang.lexer import Token
 from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -31,5 +32,5 @@ class VarChange[V: (BaseNode, Token)](BaseNode):
     def value(self) -> V:
         return self._value
 
-    def compile(self):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
     from hanual.lang.lexer import Token
 
 
-class ReturnStatement[V: (Token, BaseNode)](BaseNode, ABC):
+class ReturnStatement[V: (Token, BaseNode)](BaseNode):
     __slots__ = (
         "_value",
         "_lines",
@@ -27,5 +27,5 @@ class ReturnStatement[V: (Token, BaseNode)](BaseNode, ABC):
     def value(self) -> V:
         return self._value
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

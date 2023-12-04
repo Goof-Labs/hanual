@@ -6,21 +6,16 @@ from typing import (
     Callable,
     Dict,
     Iterable,
-    List,
-    Optional,
     Type,
-    Union,
+    Self
 )
 
-from ..productions import DefaultProduction, P
-from .line_range import LineRange
+from hanual.lang.productions import DefaultProduction
+from hanual.lang.util.line_range import LineRange
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
-
     from hanual.api.hooks import RuleHook
-
-    from ..pparser import _StackFrame
+    from hanual.lang.pparser import _StackFrame
 
 """
 This is a proxy class that wraps around a function, I
@@ -32,21 +27,19 @@ This class will store:
 """
 
 
-class Proxy:
+class Proxy[F: Callable, P:DefaultProduction]:
     __slots__ = "_fn", "_types", "_prod", "_unless_b", "_unless_e"
 
     def __init__(
             self: Self,
-            fn: Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook],
+            fn: F,
             types: Dict[str, Any],
-            prod: type[P] = None,
+            prod: type[P] = DefaultProduction,
             unless_start: Iterable[str] = (),
             unless_end: Iterable[str] = (),
     ) -> None:
-        self._fn: Union[
-            Callable[[P], Any], Callable[[P, Optional[Dict]], Any], RuleHook
-        ] = fn
-        self._prod: Type[P] = prod or DefaultProduction
+        self._fn: F = fn
+        self._prod: Type[P] = prod
         self._types = types or {}
         self._unless_b = unless_start or tuple()
         self._unless_e = unless_end or tuple()
@@ -68,10 +61,10 @@ class Proxy:
         return self._unless_e
 
     @property
-    def fn(self) -> Union[Callable[[P], Any], Callable[[P, Optional[Dict]], Any]]:
+    def fn(self) -> F:
         return self._fn
 
-    def call(self: Proxy, args: List[_StackFrame]):
+    def call(self: Proxy, args: list[_StackFrame]):
         ln_range = LineRange(-1, -1)
         pattern = []
         values = []
@@ -93,13 +86,13 @@ class Proxy:
             The problem is that some lines will just overlap. Tokens will store the line they are from and
             this can be used to construct the environment they where made in. But we may have three tokens
             NUM(line="1+2") PLUS(line="1+2") NUM(line="1+2")
-            In this scenario a bare implementation might just use a string and concatinate all strings
-            together this has the slight downside of lines being duplicated, in the above exaple the result
+            In this scenario a bare implementation might just use a string and concatenate all strings
+            together this has the slight downside of lines being duplicated, in the above example the result
             would be
             1+21+21+2
             Which is far from accurate. A better implementation may save the last line and check if the
             current one is identical. This would work in the example, but if the programmer intentionally
-            writes two identical statements, parts of the code may be ommited.
+            writes two identical statements, parts of the code may be omitted.
             The best solution is to use the hl_range variable and see if the current lines are in range
             if they are in the range then we have probably covered them and should move on, else just add
             them.
@@ -112,12 +105,11 @@ class Proxy:
             The above is a diagram that would show the splicing in action.
             """
             if (
-                    f_end := (
-                                     frame.line_range
-                                     if isinstance(frame.line_range, int)
-                                     else frame.line_range.end
-                             )
-                             > ln_range.end
+                f_end := (
+                    frame.line_range
+                    if isinstance(frame.line_range, int)
+                    else frame.line_range.end
+                ) > ln_range.end
             ):
                 # checks if the next token has a greater range then ours
                 if f_end < ln_range.end:
@@ -195,12 +187,12 @@ class Proxy:
         return res
 
 
-class HookProxy(Proxy):
+class HookProxy[P](Proxy):
     def __init__(
             self,
             cls: Type[RuleHook],
             types: Dict[str, Any],
-            prod: type[P] = None,
+            prod: type[P] = DefaultProduction,
             unless_start: Iterable[str] = (),
             unless_end: Iterable[str] = (),
     ) -> None:

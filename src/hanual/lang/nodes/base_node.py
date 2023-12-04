@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import Generator
 from abc import ABC, abstractmethod
 
-if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+from hanual.lang.util.line_range import LineRange
 
-    from hanual.compile.back_end.response import Response
-    from hanual.compile.back_end.request import Request
-    from hanual.compile.back_end.reply import Reply
+from hanual.util import Reply, Response, Request
 
 
 class BaseNode(ABC):
@@ -23,13 +20,13 @@ class BaseNode(ABC):
         This method should take n number of arguments,
         these are either more nodes, or raw tokens.
         """
-        self._lines = None
-        self._line_range = None
+        self._lines = ""
+        self._line_range = LineRange(-1, -1)
 
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self, **kwargs) -> Generator[Response | Request, Reply, None]:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         """
         This method is called if the node needs to be
         compiled, this should return a stream of bytes,

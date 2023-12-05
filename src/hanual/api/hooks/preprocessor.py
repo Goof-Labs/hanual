@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from typing import List, Generator, Optional, LiteralString, Callable
+from hanual.api.hooks import GenericHook
 from abc import ABC, abstractmethod
-from .hook import GenericHook
 
 
 def new_preprocessor(skip: Optional[List[LiteralString]]) -> Callable[[PreProcessorHook], PreProcessorHook]:

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Union, Self
+from typing import TYPE_CHECKING, List, Self
 
 if TYPE_CHECKING:
-    from nodes.base_node import BaseNode
-    from lexer import Token
+    from hanual.lang.nodes.base_node import BaseNode
+    from hanual.lang.lexer import Token
 
 
 class DefaultProduction[T: Token | BaseNode]:

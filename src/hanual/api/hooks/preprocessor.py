@@ -14,6 +14,8 @@ def new_preprocessor(skip: Optional[List[LiteralString]]) -> Callable[[PreProces
 
 
 class PreProcessorHook(GenericHook, ABC):
+    __slots__ = "_skip",
+
     @abstractmethod
     def scan_lines(self, lines: Generator[str, None, None]) -> Generator[str, None, None]:
         """

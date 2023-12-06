@@ -9,7 +9,7 @@ def new_preprocessor(skip: list[LiteralString]) -> Callable[[PreProcessorHook], 
     """A decorator to define a new preprocessor Hook
 
     > This is a class decorator that needs to be used to define a
-    > new preprocessor hook. For example:
+    > new preprocessor hook. For example,
     >
     > @new_preprocessor(skip=["@", "!", "banana"])
     > class MyPreprocessor(PreProcessorHook):

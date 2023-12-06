@@ -23,7 +23,7 @@ class StructDefinition(BaseNode):
     def __init__(
             self,
             name: Token,
-            fields: Union[StrongFieldList, StrongField],
+            fields: StrongFieldList | StrongField,
             lines: str,
             line_range: LineRange,
     ) -> None:
@@ -33,7 +33,7 @@ class StructDefinition(BaseNode):
             self._fields.add_field(fields)
 
         else:
-            self._fields: StrongFieldList = fields
+            self._fields: StrongFieldList = fields  # type: ignore
 
         self._name = name
 

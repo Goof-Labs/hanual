@@ -3,54 +3,32 @@ from __future__ import annotations
 from typing import Literal
 
 
-def get_long_description(lines: list[str]):
-    while lines:
-        line: str = lines[0].lstrip()
-
-        if not line:
-            lines.pop(0)
-            continue
-
-        if line[0] != ">":
-            break
-
-        lines.pop(0)
-        yield line.lstrip(" >")
-
-
-def get_parameters(text: list[str]):
-    while text:
-        line: str = text[0].lstrip()
-
-        if line[0] == "@":  # new parameter doc
-            p_name, *rest = line[1:].split("^")
-            p_type, *doc = "^".join(rest).split(">")
-
-            text.pop(0)
-
-            buildup = ""
-            while text:
-                ln: str = text[0].lstrip()
-
-                if not ln:
-                    text.pop(0)
-                    continue
-
-                if ln[0] == "|":
-                    buildup += text.pop(0).lstrip(" |")
-
-                else:
-                    break
-
-            yield p_name, p_type, ">".join(doc), buildup
-
-        else:
-            raise Exception
-
-
 def parse_doc_string(text: str | Literal[None]):
     if text is None:
-        raise Exception("doc string is None")
+        return
 
-    lines: list[str] = text.split("\n")
-    return {"desc": get_long_description(lines), "params": get_parameters(lines)}
+    summary: str | None = None
+    long: str = ""
+    params: list = []
+
+    for line in text.split("\n"):
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if line[0] not in ">@" and summary is None:
+            summary = line
+
+        elif line[0] == ">":
+            long += line.lstrip(">") + "\n"
+
+        elif line[0] == "@":
+            name, *rest = line[1:].split("^")
+            data_type, *desc = "^".join(rest).split(">")
+            params.append([name, data_type, ">".join(desc), ""])
+
+        elif line[0] == '|':
+            params[-1][3] += line.lstrip("| ") + " "
+
+    return summary, long, params

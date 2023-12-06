@@ -26,6 +26,46 @@ def new_rule(
         types: Optional[Dict[LiteralString, Any]] = None,
         name: Optional[str] = "",
 ) -> Callable[[Type[RuleHook]], Type[RuleHook]]:
+    """A class decorator for a RuleHook.
+
+    > This is a decorator used to decorate a RuleHook. The decorator
+    > takes in paramiters and sets them as attributes on the RuleHook.
+    > The paramiters are verry reminicent of the ones used in the
+    > `parser.rule` decorator. Example:
+    > 
+    > @new_rule("some pattern", "pattern two")
+    > class MyRule(RuleHook):
+    >     pass
+
+    @pattern^tuple[LiteralString]>Patterns that match to the rule
+    | The patterns are a string that outlines what pattern the rule
+    | matches up to. e.g. "thing1 thing2 thing3", in this case the
+    | rule would only be run if there was a pattern on the stack
+    | with [rule1 rule2 rule2].
+    @prod^Optional[Type]>The production passed to the rule
+    | The production is a class that prepresents elements on the
+    | stack. For example, a `DefaultProduction` will be passed to
+    | the rule by default, however you can use different, or your
+    | own productions if you want.
+    @unless_starts^Optional[Iterable[LiteralString]]>New tokens that will prevent the rule from running.
+    | A list of token types. If the previous token type is listed in the
+    | list then the rule will not be run. For example, if we want a
+    | rule that simplifies [ A B ] => AB but only if C is not directley
+    | before the match e.g. [C A B]. In this example C could be listed
+    | in the unless_starts param.
+    @unless_ends^Optional[Iterable[LiteralString]]>Tokens at the stack bottom that will prevent the rule from running.
+    |
+    |
+    |
+    @types^Optional[Dict[LiteralString, Any]]>The types of matches asociated.
+    |
+    |
+    |
+    @name^Optional[str]>Custom name for the rule.
+    |
+    |
+    |
+    """
     def decor(cls: Type[RuleHook]):
         cls._proxy = HookProxy(cls, types, prod, unless_starts, unless_ends)
         cls._pattern = pattern

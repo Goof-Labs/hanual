@@ -68,7 +68,7 @@ class Preprocessor:
 
         for hook in self._hooks:
             # same function
-            ignore = hook.props.get("skip", ())
+            ignore = hook.props.skip
 
             text = hook.scan_lines(self._skip_lines(text, ignore))
 

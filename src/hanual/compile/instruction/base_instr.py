@@ -38,11 +38,11 @@ class BaseInstruction[P: BaseInstructionParameter](ABC):
     def __init__(self, *args, **kwargs):
         self._line_range: LineRange = kwargs.get("line_range", None)
         if self._line_range is None:
-            raise TypeError(f"`line_range` was not passed")
+            raise TypeError("`line_range` was not passed")
 
         self._lines: str = kwargs.get("lines", None)
         if self._lines is None:
-            raise TypeError(f"`lines` was not passed")
+            raise TypeError("`lines` was not passed")
 
         self._params: list[P] = []
 

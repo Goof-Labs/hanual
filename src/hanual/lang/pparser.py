@@ -34,8 +34,7 @@ class PParser:
     """
     The PParser class is used to create a parser.
     The class is initialized with no params.
-    A decorator syntax is then
-    used to create new rules for the parser.
+    A decorator syntax is then used to create new rules for the parser.
     Finally, parser function is called to parse the input.
     """
 
@@ -49,8 +48,7 @@ class PParser:
     def toggle_debug_messages(self: PParser, setting: Optional[bool] = None) -> None:
         """
         This will toggle debug messages on or off.
-        The user should explicitly provide what the
-        setting should be.
+        The user should explicitly provide what the setting should be.
         """
 
         if setting is None:
@@ -66,7 +64,7 @@ class PParser:
         """
         This function checks for redundancy. It
         will warn the user about any tokens not
-        used, this can be used to keep the
+        used, and this can be used to keep the
         codebase clean.
         """
         def_tokens = []  # tokens defined by the user

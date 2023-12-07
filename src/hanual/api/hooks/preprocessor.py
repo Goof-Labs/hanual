@@ -43,7 +43,7 @@ class PreProcessorHook(GenericHook, ABC):
         """A function that yields lines of code.
 
         > This function takes in the lines of the python file as a generator,
-        > and yeilds lines of code. An example use case would be:
+        > and yields lines of code. An example use case would be:
         >
         > ...
         >

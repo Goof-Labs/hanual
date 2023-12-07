@@ -79,7 +79,7 @@ class RuleHook(GenericHook):
     __slots__ = "_proxy", "_pattern", "_name"
 
     @overload
-    def create_rule(self, ts: DefaultProduction, types):
+    def create_rule(self, ts: DefaultProduction, types: dict[str, Any]):
         ...
 
     @overload

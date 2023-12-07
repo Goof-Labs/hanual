@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Generator
+
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.lexer import Token
-from typing import TYPE_CHECKING
-from .base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -23,5 +26,5 @@ class SGetattr[L: BaseNode, R: Token](BaseNode):
         self._line_range = line_range
         self._lines = lines
 
-    def compile(self):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

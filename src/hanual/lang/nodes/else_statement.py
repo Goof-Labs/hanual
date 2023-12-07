@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
+from hanual.lang.nodes.base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -26,5 +28,5 @@ class ElseStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def compile(self, cm):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

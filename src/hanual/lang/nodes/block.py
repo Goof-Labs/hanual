@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
+from hanual.util import Reply, Response, Request
+from hanual.lang.nodes.base_node import BaseNode
+
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
 
 
-class CodeBlock[C: BaseNode](BaseNode, ABC):
+class CodeBlock[C: BaseNode](BaseNode):
     __slots__ = ("_children", "_line_range", "_lines")
 
     def __init__(self, children: C, lines: str, line_range: LineRange) -> None:
@@ -42,8 +43,9 @@ class CodeBlock[C: BaseNode](BaseNode, ABC):
 
         return self
 
-    def compile(self, cm) -> Any:
-        raise NotImplementedError
+    def compile(self) -> Generator[Reply | Request, Response, None]:
+        for child in self._children:
+            yield from child.compile()
 
     @property
     def children(self):

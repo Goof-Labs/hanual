@@ -34,6 +34,9 @@ class Lexer:
     __slots__ = "last", "rules", "_rules", "_key_words", "_hooks"
 
     def __init__(self):
+        self.last = []
+        self.rules = []
+
         self._rules = []
         self._key_words = []
         self._hooks: dict[str, TokenHook] = {}
@@ -102,7 +105,7 @@ class Lexer:
             if kind == "MISMATCH":
                 print(
                     HanualError(
-                        pos=(line_no, col, len(value) + col),
+                        pos=LineRange(line_no, line_no),
                         line=text,
                         name=ErrorType.illegal_character,
                         reason=f"{value!r} is not recognised as a symbol or valid character",
@@ -114,9 +117,9 @@ class Lexer:
                 )
                 exit()
 
-            hook = self._hooks.get(kind, None)
+            hook: TokenHook | None = self._hooks.get(kind, None)
 
-            if hook:
+            if hook is not None:
                 yield hook.gen_token(kind, value, LineRange(line_no, line_no), col, text)
 
             elif hasattr(self, f"t_{mode}_{kind}"):

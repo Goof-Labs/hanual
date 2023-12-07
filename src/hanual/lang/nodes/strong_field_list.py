@@ -1,6 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from .base_node import BaseNode
+
+from typing import TYPE_CHECKING, Generator
+
+from hanual.lang.nodes.base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -25,5 +29,5 @@ class StrongFieldList[F: StrongField](BaseNode):
     def fields(self) -> list[F]:
         return self._fields
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

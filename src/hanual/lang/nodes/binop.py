@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.lexer import Token
-
-from .base_node import BaseNode
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
 
 
-class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode, ABC):
+class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
     __slots__ = "_right", "_left", "_op", "_lines", "_line_range"
 
     def __init__(
@@ -42,5 +41,5 @@ class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode, ABC):
     def op(self) -> Token:
         return self._op
 
-    def compile(self):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

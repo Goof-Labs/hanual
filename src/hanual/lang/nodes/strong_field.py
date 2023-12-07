@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
+from hanual.lang.nodes.base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
+    from hanual.lang.util.line_range import LineRange
     from hanual.lang.lexer import Token
 
 
@@ -16,9 +19,7 @@ class StrongField[T](BaseNode):
         "_line_range",
     )
 
-    def __init__(
-            self: BaseNode, name: Token, type_: T, lines: str, line_range: int
-    ) -> None:
+    def __init__(self, name: Token, type_: T, lines: str, line_range: LineRange) -> None:
         self._name: Token = name
         self._type: T = type_
 
@@ -33,5 +34,5 @@ class StrongField[T](BaseNode):
     def type(self) -> T:
         return self._type
 
-    def compile(self) -> None:
-        return super().compile()
+    def compile(self) -> Generator[Response | Request, Reply, None]:
+        raise NotImplementedError

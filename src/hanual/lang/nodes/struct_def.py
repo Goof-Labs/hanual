@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.lexer import Token
-
 from .base_node import BaseNode
 from .strong_field import StrongField
 from .strong_field_list import StrongFieldList
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -23,7 +23,7 @@ class StructDefinition(BaseNode):
     def __init__(
             self,
             name: Token,
-            fields: Union[StrongFieldList, StrongField],
+            fields: StrongFieldList | StrongField,
             lines: str,
             line_range: LineRange,
     ) -> None:
@@ -33,7 +33,7 @@ class StructDefinition(BaseNode):
             self._fields.add_field(fields)
 
         else:
-            self._fields: StrongFieldList = fields
+            self._fields: StrongFieldList = fields  # type: ignore
 
         self._name = name
 
@@ -52,7 +52,5 @@ class StructDefinition(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self):
-        # Structs are data representation methods and need to be treated as such
-        # The struct info is treated as an array (under the hood)
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

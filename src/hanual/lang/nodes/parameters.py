@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, TypeVar, Generator
+
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
-
-T = TypeVar("T")
 
 
 class Parameters[C: BaseNode](BaseNode):
@@ -18,7 +18,7 @@ class Parameters[C: BaseNode](BaseNode):
 
     def __init__(
             self,
-            children: (C, list[C]),
+            children: C | list[C],
             lines: str,
             line_range: LineRange,
     ) -> None:
@@ -41,5 +41,5 @@ class Parameters[C: BaseNode](BaseNode):
     def children(self) -> C:
         return self._children
 
-    def compile(self, **kwargs):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

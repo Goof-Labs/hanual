@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from hanual.api.hooks import PreProcessorHook, TokenHook, RuleHook
-from typing import List, Tuple, TypeVar
+from typing import List, Tuple, TYPE_CHECKING
 import importlib.util
 import logging
 
-_H = TypeVar("_H", PreProcessorHook, TokenHook, RuleHook)
+if TYPE_CHECKING:
+    from hanual.api.hooks import PreProcessorHook, TokenHook, RuleHook
 
 
-class HookLoader:
+class HookLoader[_H]:
     def __init__(self):
         self._pp_hooks: List[PreProcessorHook] = []  # pre-processor hooks
         self._tk_hook: List[TokenHook] = []  # token hooks
@@ -19,6 +19,8 @@ class HookLoader:
             self.load_module(py_path, path)
 
     def load_module(self, py_path, path):
+        from hanual.api.hooks import PreProcessorHook, TokenHook, RuleHook
+
         logging.debug(f"Loading module: {py_path!r}")
 
         spec = importlib.util.spec_from_file_location(py_path, path)

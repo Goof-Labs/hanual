@@ -1,5 +1,6 @@
 # Code of Conduct
 
+
 The Hanual langauge is designed to help software development. We don't want to micro-manage the community and say do this
 do that. We don't mind whatever attitude the comunity takes, whether it becomes eliteist or a simple community we don't
 mind. However I do want that the comunity respects and adhears to the following rules:

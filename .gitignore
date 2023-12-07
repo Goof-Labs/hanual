@@ -6,3 +6,5 @@ hanual.egg-info
 vscode
 test.txt
 venv
+.dmypy.json
+.mypy_cache

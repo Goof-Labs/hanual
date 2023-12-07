@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from .base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
+
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -12,7 +14,7 @@ if TYPE_CHECKING:
     from .conditions import Condition
 
 
-class IfStatement(BaseNode, ABC):
+class IfStatement(BaseNode):
     __slots__ = "_condition", "_block", "_lines", "_line_range"
 
     def __init__(
@@ -36,5 +38,5 @@ class IfStatement(BaseNode, ABC):
     def block(self) -> CodeBlock:
         return self._block
 
-    def compile(self):
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

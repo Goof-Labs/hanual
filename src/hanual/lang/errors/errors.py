@@ -40,7 +40,7 @@ class HanualError:
         self._name = name
         self._line = line
         self._tip = tip
-        self._pos = pos
+        self._pos: LineRange = pos
         self._tb = tb
 
     def add_frame(self, frame: Frame) -> Self:
@@ -57,7 +57,7 @@ class HanualError:
 
         error.write("\n")
         error.write(("-" * 50) + "\n")
-        error.write(f"{self._pos[0]} | {self._line}")
+        error.write(f"{self._pos.start} | {self._line}")
         error.write(("-" * 50) + "\n")
         error.write("\n")
         error.write(f"{self._name}: {self._reason}\n")

@@ -4,7 +4,8 @@ import logging
 import sys
 from argparse import ArgumentParser
 
-from hanual.lang import compile_code
+from hanual.lang.util.compile_code import compile_code
+from hanual.lang.util.dump_tree import dump_tree
 
 
 def main():
@@ -39,7 +40,7 @@ def main():
     namespace = cli.parse_args(sys.argv)
 
     with open(namespace.script[1], "r") as f:
-        compile_code(f.read())
+        code, lines, line_range = compile_code(f.read())
 
 
 if __name__ == "__main__":

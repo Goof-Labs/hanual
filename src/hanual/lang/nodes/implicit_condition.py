@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.lexer import Token
 
 from .base_node import BaseNode
 from .f_call import FunctionCall
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     ...
@@ -34,5 +35,5 @@ class ImplicitCondition[O: Token, V: (Token, FunctionCall)](BaseNode):
     def op(self) -> O:
         return self._op
 
-    def compile(self, name: str):
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

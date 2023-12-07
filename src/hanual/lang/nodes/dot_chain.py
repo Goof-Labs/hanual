@@ -1,31 +1,29 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING, Union
+from typing import Self, Generator
 
 from hanual.lang.lexer import Token
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.util.line_range import LineRange
 
-from .base_node import BaseNode
-
-if TYPE_CHECKING:
-    from typing_extensions import Self
+from hanual.util import Reply, Response, Request
 
 
-class DotChain(BaseNode, ABC):
+class DotChain(BaseNode):
     __slots__ = ("_chain", "_lines", "_line_range")
 
-    def __init__(self: BaseNode, lines: str, line_range: int) -> None:
+    def __init__(self,  lines: str, line_range: LineRange) -> None:
         self._chain: list[Token] = []
 
         self._lines = lines
         self._line_range = line_range
 
-    def add_name(self, name: Union[Token, DotChain]) -> Self:
+    def add_name(self, name: Token | DotChain) -> Self:
         if isinstance(name, Token):
             self._chain.insert(0, name)
 
         elif isinstance(name, DotChain):
-            self._chain = [*self._chain, *name.chain]
+            self._chain.extend(name.chain)
 
         else:
             raise Exception
@@ -36,5 +34,5 @@ class DotChain(BaseNode, ABC):
     def chain(self) -> list[Token]:
         return self._chain
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Reply | Request, Response, None]:
         raise NotImplementedError

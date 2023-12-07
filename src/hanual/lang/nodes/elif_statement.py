@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
+from hanual.lang.nodes.base_node import BaseNode
+
+from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from .block import CodeBlock
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
 
 
-class ElifStatement(BaseNode, ABC):
+class ElifStatement(BaseNode):
     __slots__ = (
         "_condition",
         "_block",
@@ -37,5 +38,5 @@ class ElifStatement(BaseNode, ABC):
     def block(self) -> CodeBlock:
         return self._block
 
-    def compile(self) -> None:
+    def compile(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

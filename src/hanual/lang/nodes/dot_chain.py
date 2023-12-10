@@ -34,5 +34,8 @@ class DotChain(BaseNode):
     def chain(self) -> list[Token]:
         return self._chain
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

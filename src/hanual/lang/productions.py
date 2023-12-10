@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Self
+from warnings import warn_explicit
+import inspect
+
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.base_node import BaseNode
@@ -8,13 +11,19 @@ if TYPE_CHECKING:
 
 
 class DefaultProduction[T: Token | BaseNode]:
-    __slots__ = ("ts", "lines", "line_no")
+    __slots__ = ("ts",)
 
-    def __init__(self: Self, ts: List[T], lines: str, line_range: str) -> None:
+    def __init__(self: Self, ts: List[T], **kwargs) -> None:
         self.ts: List[T] = ts
 
-        self.lines = lines
-        self.line_range = line_range
+        if kwargs:
+            func_ln = inspect.getfile(kwargs["fn"])
+            warn_explicit(
+                message=f"Default production was passed too many arguments",
+                category=UserWarning,
+                filename=func_ln,
+                lineno=kwargs["fn"].__code__.co_firstlineno
+            )
 
     def __repr__(self: Self) -> str:
         return str(self.ts)

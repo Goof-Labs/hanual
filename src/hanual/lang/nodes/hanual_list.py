@@ -25,5 +25,8 @@ class HanualList(BaseNode):
     def elements(self) -> list:
         return self._elements.children
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

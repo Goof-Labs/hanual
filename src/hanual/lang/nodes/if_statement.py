@@ -38,5 +38,8 @@ class IfStatement(BaseNode):
     def block(self) -> CodeBlock:
         return self._block
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

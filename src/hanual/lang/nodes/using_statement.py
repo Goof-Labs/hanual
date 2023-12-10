@@ -24,5 +24,8 @@ class UsingStatement(BaseNode, ABC):
     def path(self) -> NamespaceAccessor:
         return self._nsa
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

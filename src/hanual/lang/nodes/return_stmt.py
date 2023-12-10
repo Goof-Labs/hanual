@@ -27,5 +27,8 @@ class ReturnStatement[V: (Token, BaseNode)](BaseNode):
     def value(self) -> V:
         return self._value
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

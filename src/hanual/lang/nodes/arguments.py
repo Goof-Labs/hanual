@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator, Self
 from collections.abc import Iterable
+from typing import TYPE_CHECKING, Generator, Self
 
+from hanual.compile.bytecode_instruction import ByteCodeInstruction
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.lexer import Token
 
@@ -48,8 +49,21 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
     def children(self) -> list[T]:
         return self._children
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self) -> Generator[Response | Request, Reply, None]:
         for arg in self._children:
-            if isinstance(arg, Token):
-                if arg.type == "ID":
-                    var_data = yield Request
+            if isinstance(arg, Token) and arg.type == "STR":
+                yield Response(ByteCodeInstruction("LOAD_CONST", arg.value))
+
+            else:
+                raise NotImplementedError(f"{arg}")
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
+        for arg in self._children:
+            if isinstance(arg, Token) and arg.type == "STR":
+                yield Request(Request.ADD_CONSTANT, arg.value)
+
+            elif isinstance(arg, Token) and arg.type == "NUM":
+                yield Request(Request.ADD_CONSTANT, arg.value)
+
+            else:
+                raise NotImplementedError

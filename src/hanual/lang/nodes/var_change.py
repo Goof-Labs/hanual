@@ -32,5 +32,8 @@ class VarChange[V: (BaseNode, Token)](BaseNode):
     def value(self) -> V:
         return self._value
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

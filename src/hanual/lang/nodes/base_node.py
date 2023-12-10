@@ -17,8 +17,6 @@ class BaseNode(ABC):
     @abstractmethod
     def __init__(self, *args, **kwargs) -> None:
         """
-        This method should take n number of arguments,
-        these are either more nodes, or raw tokens.
         """
         self._lines = ""
         self._line_range = LineRange(-1, -1)
@@ -26,11 +24,23 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
+        """Used to collect information from the node.
+
+        > Provides all necessary info to the compiler such as variable names and
+        > constants.
+
+        @return^Generator[Response | Request, Reply, None]>A gen that provides information to the compiler.
+        | This gen takes in a compiler Reply and yields either a Request or a reply.
+        | The gen should yield data or a request to the compiler and take a reply
+        | in this sense, this gen is bidirectional.
         """
-        This method is called if the node needs to be
-        compiled, this should return a stream of bytes,
-        that corresponds to valid hanual bytecode.
+        raise NotImplementedError
+
+    @abstractmethod
+    def gen_code(self):
+        """Generates the code for the compiler to omit.
+
         """
         raise NotImplementedError
 

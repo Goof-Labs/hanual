@@ -40,7 +40,8 @@ def main():
     namespace = cli.parse_args(sys.argv)
 
     with open(namespace.script[1], "r") as f:
-        code, lines, line_range = compile_code(f.read())
+        out = compile_code(f.read())
+        print(out)
 
 
 if __name__ == "__main__":

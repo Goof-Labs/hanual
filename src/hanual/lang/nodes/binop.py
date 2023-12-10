@@ -41,5 +41,8 @@ class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
     def op(self) -> Token:
         return self._op
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

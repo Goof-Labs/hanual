@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class AlgebraicFunc(BaseNode):
     __slots__ = "_name", "_expr", "_lines", "_line_range",
 
-    def __init__(self: BaseNode, name: str, expr: AlgebraicExpression, lines: str, line_range: LineRange) -> None:
+    def __init__(self, name: str, expr: AlgebraicExpression, lines: str, line_range: LineRange) -> None:
         self._name = name
         self._expr = expr
 

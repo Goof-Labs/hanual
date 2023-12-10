@@ -8,6 +8,8 @@ T = TypeVar("T")
 
 # a reply is from the gen
 class Reply(Generic[T]):
+    SUCCESS = 0
+
     def __init__(self, response: T) -> None:
         self._response = response
 
@@ -17,8 +19,9 @@ class Reply(Generic[T]):
 
 
 class Request:
-    MAKE_CONSTANT = 0
-    MAKE_REGISTER = 1
+    ADD_CONSTANT = 0
+    ADD_NAME = 1
+    GET_MEM_LOCATION = 2
 
     def __init__(self, *params):
         self.params = params

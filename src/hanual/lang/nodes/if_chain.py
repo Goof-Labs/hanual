@@ -37,9 +37,12 @@ class IfChain(BaseNode):
         self._statements.append(node)
         return self
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
-        raise NotImplementedError
-
     @property
     def statements(self) -> list[IfStatement | ElifStatement | ElseStatement]:
         return self._statements
+
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
+        raise NotImplementedError

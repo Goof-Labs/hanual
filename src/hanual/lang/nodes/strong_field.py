@@ -34,5 +34,8 @@ class StrongField[T](BaseNode):
     def type(self) -> T:
         return self._type
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator
 
-from hanual.compile.instruction.ir_push import PUSH
-from hanual.compile.instruction.ir_ld import LD
+from hanual.compile.bytecode_instruction import ByteCodeInstruction
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
@@ -46,19 +45,11 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
-        res = yield Request(
-            Request.MAKE_CONSTANT, self.name,
-            Request.MAKE_CONSTANT, len(self._args.children),
-            Request.MAKE_REGISTER,
-            Request.MAKE_REGISTER,
-        )
-        r0, r1, name_const, num_children = res.response
+    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+        yield Response(ByteCodeInstruction("LOAD_GLOBAL", self._name.value))
+        yield from self._args.gen_code()
+        yield Response(ByteCodeInstruction("CALL", len(self._args.children)))
 
-        yield Response(LD[r0](name_const))
-        yield Response(PUSH[r0]())
-
-        yield Response(LD[r1](num_children))
-        yield Response(PUSH[r0]())
-
-        yield from self._args.compile()
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
+        yield Request(Request.ADD_NAME, self._name.value)
+        yield from self._args.prepare()

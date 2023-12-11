@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from typing import Dict, Generator, Mapping, Optional, Union, List
-from hanual.api.hooks import PreProcessorHook
+from typing import Dict, Generator, Mapping, Optional, Union, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from hanual.api.hooks import PreProcessorHook
 
 
 class Preprocessor:
@@ -21,12 +23,12 @@ class Preprocessor:
 
     def __init__(
             self,
-            pre_defs: Optional[List[str]] = (),
+            pre_defs: Optional[List[str]] = None,
             prefix: Optional[str] = "@",
-            hooks: Optional[List[PreProcessorHook]] = ()
+            hooks: Optional[List[PreProcessorHook]] = None
     ) -> None:
-        self._hooks: List[PreProcessorHook] = hooks or ()
-        self._definitions: list[str] = pre_defs or ()
+        self._hooks: List[PreProcessorHook] = hooks or []
+        self._definitions: list[str] = pre_defs or []
         self._prefix: str = prefix or "@"
 
         self._ignore_code: bool = False

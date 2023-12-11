@@ -142,15 +142,15 @@ class Proxy[F: Callable, P:DefaultProduction]:
             try:
                 if "lines" in func_args and "line_range" in func_args:
                     res = self._fn(
-                        self.prod(values, lines=lines, line_range=ln_range),
-                        self.types[" ".join(pattern)],
+                        self.prod(values, lines=lines, line_range=ln_range, fn=self._fn),
+                        self.types.get(" ".join(pattern), "*"),
                         lines=lines,
                         line_range=ln_range,
                     )
 
                 else:
                     res = self._fn(
-                        self.prod(values, lines=lines, line_range=ln_range),
+                        self.prod(values, lines=lines, line_range=ln_range, fn=self._fn),
                         self.types[" ".join(pattern)],
                         lines=lines,
                         line_range=ln_range,
@@ -171,9 +171,10 @@ class Proxy[F: Callable, P:DefaultProduction]:
         #
         try:
             if "lines" in func_args and "line_range" in func_args:
-                res = self._fn(self.prod(values, lines=lines, line_range=ln_range))
+                res = self._fn(self.prod(values, lines=lines, line_range=ln_range, fn=self._fn))
 
             else:
+                # should be using this vv
                 res = self._fn(self.prod(values))
                 res.lines = lines
                 res.line_range = ln_range

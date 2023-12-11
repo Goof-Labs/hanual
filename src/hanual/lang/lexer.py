@@ -34,9 +34,6 @@ class Lexer:
     __slots__ = "last", "rules", "_rules", "_key_words", "_hooks"
 
     def __init__(self):
-        self.last = []
-        self.rules = []
-
         self._rules = []
         self._key_words = []
         self._hooks: dict[str, TokenHook] = {}

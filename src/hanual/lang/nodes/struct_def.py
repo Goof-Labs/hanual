@@ -52,5 +52,8 @@ class StructDefinition(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

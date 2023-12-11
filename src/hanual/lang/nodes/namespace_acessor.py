@@ -37,5 +37,8 @@ class NamespaceAccessor[C: (Token, "NamespaceAccessor")](BaseNode):
     def path(self):
         return self._path
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

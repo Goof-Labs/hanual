@@ -32,5 +32,8 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
     def right(self) -> R:
         return self._right
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

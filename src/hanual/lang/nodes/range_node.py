@@ -32,5 +32,8 @@ class RangeNode(BaseNode):
         self._line_no = line_no
         self._lines = lines
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

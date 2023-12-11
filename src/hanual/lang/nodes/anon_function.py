@@ -35,5 +35,8 @@ class AnonymousFunction(BaseNode, ABC):
         self._line_range = line_range
         self._lines = lines
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

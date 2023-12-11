@@ -21,9 +21,12 @@ class FreezeNode[T: Token](BaseNode):
         self._line_no = line_no
         self._lines = lines
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
-        raise NotImplementedError
-
     @property
     def target(self):
         return self._var
+
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
+        raise NotImplementedError

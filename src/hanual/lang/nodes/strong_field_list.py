@@ -29,5 +29,8 @@ class StrongFieldList[F: StrongField](BaseNode):
     def fields(self) -> list[F]:
         return self._fields
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

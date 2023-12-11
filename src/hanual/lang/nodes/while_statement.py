@@ -34,5 +34,8 @@ class WhileStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def compile(self) -> Generator[Reply | Request, Response, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

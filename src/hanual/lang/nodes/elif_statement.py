@@ -38,5 +38,8 @@ class ElifStatement(BaseNode):
     def block(self) -> CodeBlock:
         return self._block
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

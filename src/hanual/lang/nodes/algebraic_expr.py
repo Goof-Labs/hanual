@@ -36,5 +36,8 @@ class AlgebraicExpression(BaseNode):
         self._lines = lines
         self._line_range = line_range
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

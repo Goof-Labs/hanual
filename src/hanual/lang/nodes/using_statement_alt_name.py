@@ -38,5 +38,8 @@ class UsingStatementWithAltName(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

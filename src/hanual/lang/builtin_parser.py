@@ -849,6 +849,7 @@ def function_marker(
     "function_marker LCB lines RCB",
     types={
         "function_marker LCB RCB": False,
+        "*": True
     },
     unless_ends=["AS"],
 )

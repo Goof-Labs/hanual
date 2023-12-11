@@ -35,5 +35,8 @@ class ImplicitCondition[O: Token, V: (Token, FunctionCall)](BaseNode):
     def op(self) -> O:
         return self._op
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self):
+        raise NotImplementedError
+
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         raise NotImplementedError

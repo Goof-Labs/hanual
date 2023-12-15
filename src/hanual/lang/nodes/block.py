@@ -1,19 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import Generator
+
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.util.line_range import LineRange
 
 from hanual.util import Reply, Response, Request
-from hanual.lang.nodes.base_node import BaseNode
-
-
-if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
 
 
 class CodeBlock[C: BaseNode](BaseNode):
     __slots__ = ("_children", "_line_range", "_lines")
 
-    def __init__(self, children: C, lines: str, line_range: LineRange) -> None:
+    def __init__(self, children: C, **kwargs) -> None:
         """Initializer of the CodeBlock class.
 
         An object that stores the children of a codeblock.
@@ -27,8 +25,8 @@ class CodeBlock[C: BaseNode](BaseNode):
         self._children: list[BaseNode] = []
         self.add_child(children)
 
-        self._line_range = line_range
-        self._lines = lines
+        self._line_range = kwargs.get("line_range", LineRange(-1, -1))
+        self._lines = kwargs.get("lines", None)
 
     def add_child(self, child: CodeBlock):
         if isinstance(child, (list, tuple)):

@@ -9,7 +9,6 @@ from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
-    from hanual.lang.util.line_range import LineRange
 
     from .block import CodeBlock
     from .parameters import Parameters
@@ -29,15 +28,10 @@ class FunctionDefinition(BaseNode):
             name: Token,
             params: Parameters,
             inner: CodeBlock,
-            lines: str,
-            line_range: LineRange,
     ) -> None:
         self._name: Token = name
         self._parameters = params
         self._inner = inner
-
-        self._line_range = line_range
-        self._lines = lines
 
     @property
     def name(self) -> Token:

@@ -360,7 +360,7 @@ def args_(
     "LPAR s_getattr RPAR",
 )
 def par_args(ts, lines: str = "", line_range: int = 0):
-    return Arguments(ts[1], lines=lines, line_range=line_range)
+    return Arguments(ts[1])
 
 
 ###########################
@@ -383,23 +383,17 @@ def par_args(ts, lines: str = "", line_range: int = 0):
 def f_call(
         ts: DefaultProduction[Token, Token, any, Token],
         mode: int,
-        lines: str = "",
-        line_range: int = 0,
 ):
     if mode == 1:
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            arguments=Arguments([]),
         )
 
     if mode == 2:
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments(ts[1], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            arguments=Arguments(ts[1]),
         )
 
     raise NotImplementedError
@@ -856,33 +850,25 @@ def function_marker(
 def function_definition(
         ts: DefaultProduction[FunctionCall, Token, CodeBlock, Token],
         has_end: bool,
-        lines: str,
-        line_range: LineRange,
 ):
     if has_end is False:
         return FunctionDefinition(
             name=ts[0].name,
-            params=Parameters(ts[0].args.children, lines=lines, line_range=line_range),
-            inner=CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            params=Parameters(ts[0].args.children),
+            inner=CodeBlock([]),
         )
 
     if not isinstance(ts[2], CodeBlock):
         return FunctionDefinition(
             name=ts[0].name,
-            params=Parameters(ts[0].args.children, lines=lines, line_range=line_range),
-            inner=CodeBlock(ts[2], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            params=Parameters(ts[0].args.children),
+            inner=CodeBlock(ts[2]),
         )
 
     return FunctionDefinition(
         name=ts[0].name,
-        params=Parameters(ts[0].args.children, lines=lines, line_range=line_range),
+        params=Parameters(ts[0].args.children),
         inner=ts[2],
-        lines=lines,
-        line_range=line_range,
     )
 
 

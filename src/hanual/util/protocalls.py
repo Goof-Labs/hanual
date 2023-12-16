@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 
+from warnings import warn
 from typing import Self
 
 
@@ -16,11 +17,12 @@ class Reply[T]:
         return self._response
 
 
-class Request:
+class Request[T]:
     ADD_CONSTANT = 0
     ADD_NAME = 1
     GET_MEM_LOCATION = 2
-    GET_LAST_CONTEXT = 3
+    GET_CONTEXT = 3
+    CREATE_CONTEXT = 4
 
     def __init__(self, *params):
         self.params = params
@@ -33,6 +35,18 @@ class Request:
     @property
     def lazy(self) -> bool:
         return self._is_lazy
+
+    # used to describe what the request should yield, the logic for this is actually in the response
+    @property
+    def response(self) -> T:
+        warn(
+            f"{type(self).__name__}.response was called, this should never be called",
+            Warning,
+        )
+        return
+
+    def __str__(self):
+        return f"{type(self).__name__}{self.params}"
 
 
 # A response is given to the gen

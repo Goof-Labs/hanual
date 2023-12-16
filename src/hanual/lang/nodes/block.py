@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Generator
 
+from hanual.compile.context import Context
+
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.util.line_range import LineRange
 
@@ -41,9 +43,12 @@ class CodeBlock[C: BaseNode](BaseNode):
 
         return self
 
-    def gen_code(self):
-        for child in self._children:
-            yield from child.gen_code()
+    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+        with (yield Request[Context](Request.CREATE_CONTEXT)).response as ctx:
+            ctx.add(parent=self)
+
+            for child in self._children:
+                yield from child.gen_code()
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         for child in self._children:

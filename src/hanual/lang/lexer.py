@@ -1,23 +1,53 @@
 from __future__ import annotations
 
-from hanual.lang.errors import ErrorType, HanualError, TraceBack, Frame
-from typing import TYPE_CHECKING, Generator, Tuple, TypeVar, Iterable
-from .util.line_range import LineRange
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
+from typing import Generator
+from typing import Iterable
+from typing import Tuple
+from typing import TYPE_CHECKING
+
+from hanual.lang.errors import ErrorType
+from hanual.lang.errors import Frame
+from hanual.lang.errors import HanualError
+from hanual.lang.errors import TraceBack
+
+from .util.line_range import LineRange
 
 if TYPE_CHECKING:
     from typing_extensions import LiteralString, Literal
     from hanual.api.hooks import TokenHook
 
-T = TypeVar("T")
 
+def kw(reg: LiteralString) -> Tuple[LiteralString, LiteralString]:
+    """Used to define a keyword in the lexer.
 
-def kw(reg: T) -> Tuple[T, LiteralString]:
+    > The function us used with in the lexer. This function lets the user define keywords. For example, if you want to
+    > make a keyword called `let` you could use this function.
+    >
+    > ```py
+    > kw("let")
+    > ```
+
+    @reg^LiteralString>Name of the keyword.
+    | The value of the keyword, e.g. `let`, `if`
+    """
     return reg, "kw"
 
 
-def rx(reg: T) -> Tuple[T, LiteralString]:
+def rx(reg: LiteralString) -> Tuple[LiteralString, LiteralString]:
+    """Used to define a token in the lexer.
+
+    > The function us used with in the lexer. This function lets the user define patterns/tokens. For example, if you
+    > want to make a symbol, `|>` you could use this function with a regular expression that matches the token.
+    >
+    > ```py
+    > rx(r"\\|\\>")
+    > ```
+
+    @reg^LiteralString>Value of the regex.
+    | The pattern of the token, e.g. [a-zA-Z_][a-zA-Z0-9_]+
+    """
     return reg, "rx"
 
 
@@ -68,9 +98,9 @@ class Lexer:
                 )
 
     def tokenize(
-            self,
-            stream: Generator[str, None, None],
-            mode: Literal["exec"] | Literal["compile"],
+        self,
+        stream: Generator[str, None, None],
+        mode: Literal["exec"] | Literal["compile"],
     ) -> Generator[Token, None, None]:
         # TODO allow rules to ble cleared
         self.update_rules(self.last)
@@ -81,11 +111,11 @@ class Lexer:
             yield from self._tokenize_str(tok_reg, line, line_no, mode=mode)
 
     def _tokenize_str(
-            self,
-            tok_reg: str,
-            text: str,
-            line_no: int,
-            mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both",
+        self,
+        tok_reg: str,
+        text: str,
+        line_no: int,
+        mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both",
     ) -> Generator[Token, None, None]:
         for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
@@ -107,7 +137,11 @@ class Lexer:
                         name=ErrorType.illegal_character,
                         reason=f"{value!r} is not recognised as a symbol or valid character",
                         tb=TraceBack().add_frame(
-                            Frame("Lexing", line=text, line_range=LineRange(start=line_no, end=line_no))
+                            Frame(
+                                "Lexing",
+                                line=text,
+                                line_range=LineRange(start=line_no, end=line_no),
+                            )
                         ),
                         tip=f"try removing that character",
                     ).as_string()
@@ -117,10 +151,18 @@ class Lexer:
             hook: TokenHook | None = self._hooks.get(kind, None)
 
             if hook is not None:
-                yield hook.gen_token(kind, value, LineRange(line_no, line_no), col, text)
+                yield hook.gen_token(
+                    kind, value, LineRange(line_no, line_no), col, text
+                )
 
             elif hasattr(self, f"t_{mode}_{kind}"):
                 yield getattr(self, f"t_{mode}_{kind}")(kind, value, line_no, col, text)
 
             else:
-                yield Token(type=kind, value=value, line_range=LineRange(line_no, line_no), colm=col, lines=text)
+                yield Token(
+                    type=kind,
+                    value=value,
+                    line_range=LineRange(line_no, line_no),
+                    colm=col,
+                    lines=text,
+                )

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from io import StringIO
 
 
@@ -10,12 +9,16 @@ class DocumentationTemplate:
 
     def gen_documentation(self, documentation):
         for func in documentation:
+            if isinstance(func, str):
+                self._buffer.write(f"\n# {func}\n\n---\n")
+                continue
+
             cls_name, fnc_name, (summary, desc, params) = func
 
             self._buffer.write(f"## {cls_name}.{fnc_name}\n")
 
-            self._buffer.write("> "+(summary or "No provided summary")+"\n\n")
-            self._buffer.write((desc or "No provided description")+"\n")
+            self._buffer.write("> " + (summary or "No provided summary") + "\n\n")
+            self._buffer.write((desc or "No provided description") + "\n")
 
             for param in params:
                 p_name, p_type, p_summary, p_long = param

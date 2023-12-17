@@ -1,26 +1,25 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
+from typing import TYPE_CHECKING
 
+from bytecode import Bytecode
+from bytecode import Instr
 from hanual.compile.context import Context
-from hanual.util import Reply, Request, Response
+from hanual.util import Reply
+from hanual.util import Request
+from hanual.util import Response
 
 if TYPE_CHECKING:
-    from hanual.compile.bytecode_instruction import ByteCodeInstruction
     from hanual.lang.nodes.base_node import BaseNode
 
 
 class Compiler:
     def __init__(self):
-        self._instructions: list[ByteCodeInstruction] = []
-        self._constants: set[int | str] = set()
-        self._names: set[str] = set()
-
+        self._instructions: list[Instr] = []
+        self._constants: list[Any] = []
+        self._names: list[str] = []
         self._context: list = []
-
-    def compile_code(self, node: BaseNode):
-        self.prepare_nodes(node)
-        self.compile_body(node)
 
     def prepare_nodes(self, node: BaseNode):
         reply: Reply | None = None
@@ -47,12 +46,12 @@ class Compiler:
 
             if req_type == Request.ADD_CONSTANT:
                 const = next(req)
-                self._constants.add(const)
+                self._constants.append(const)
                 reply.append(Reply.SUCCESS)
 
             elif req_type == Request.ADD_NAME:
                 name = next(req)
-                self._names.add(name)
+                self._names.append(name)
                 reply.append(Reply.SUCCESS)
 
             else:
@@ -127,3 +126,9 @@ class Compiler:
     @property
     def instructions(self):
         return self._instructions
+
+    def gen_code(self, block):
+        self.prepare_nodes(block)
+        self.compile_body(block)
+        self._instructions.append(Instr("RETURN_CONST", 1))
+        return Bytecode(self._instructions)

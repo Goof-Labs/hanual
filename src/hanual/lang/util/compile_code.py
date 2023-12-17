@@ -17,5 +17,5 @@ def compile_code(code):
     frame = parser.parse(tokens)
 
     func = HanualFunction.from_func(frame[0].value.children[0])
-    func.compile()
+    print(func.compile().instructions)
     return func

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from types import CodeType, FunctionType
+from types import CodeType
 from typing import Optional
 
 from hanual.lang.nodes.f_def import FunctionDefinition
@@ -83,9 +83,10 @@ class HanualFunction:
             b""
         )
 
-    def compile(self) -> FunctionType:
+    def compile(self) -> Compiler:
         com = Compiler()
-        return com.compile_code(self._body)
+        com.compile_code(self._body)
+        return com
 
     @classmethod
     def from_func(cls, func: FunctionDefinition):

@@ -123,3 +123,7 @@ class Compiler:
 
     def _add_context(self, ctx):
         self._context.append(ctx)
+
+    @property
+    def instructions(self):
+        return self._instructions

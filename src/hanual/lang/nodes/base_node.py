@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 from typing import Generator
-from abc import ABC, abstractmethod
 
+from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
 from hanual.lang.util.line_range import LineRange
-
 from hanual.util import Reply, Response, Request
 
 
-class BaseNode(ABC):
+class BaseNode(metaclass=_BaseNodeMeta):
     __slots__ = (
         "_lines",
         "_line_range",
@@ -16,10 +16,8 @@ class BaseNode(ABC):
 
     @abstractmethod
     def __init__(self, *args, **kwargs) -> None:
-        """
-        """
-        self._lines = ""
-        self._line_range = LineRange(-1, -1)
+        self._lines = None
+        self._line_range = None
 
         raise NotImplementedError
 
@@ -38,7 +36,7 @@ class BaseNode(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def gen_code(self):
+    def gen_code(self) -> Generator[Response | Request, Reply, None]:
         """Generates the code for the compiler to omit.
 
         """
@@ -61,3 +59,22 @@ class BaseNode(ABC):
     def line_range(self, new: LineRange) -> None:
         assert isinstance(new, LineRange), "new value must be a line_range"
         self._line_range = new
+
+
+def defines_protocols(cls):
+    idx = 1
+
+    for idx, attr in enumerate(dir(cls)):
+        if attr.isupper():
+            value: int = getattr(cls, attr)
+            assert isinstance(value, int)
+
+            setattr(cls, attr, defines_protocols.calls + value)
+
+    defines_protocols.calls += idx
+    defines_protocols.classes.append(cls)
+    return cls
+
+
+defines_protocols.calls = 0
+defines_protocols.classes = []

@@ -12,7 +12,6 @@ from typing import (
 
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.util.line_range import LineRange
-
 if TYPE_CHECKING:
     from hanual.api.hooks import RuleHook
     from hanual.lang.pparser import _StackFrame
@@ -129,8 +128,6 @@ class Proxy[F: Callable, P:DefaultProduction]:
                 else frame.line_range.end
             )
 
-            # don't want to pass a case
-
         func_args = self._fn.__annotations__.keys()
 
         # TODO warn user if lines or line_range is a function argument, now passed through implicitly
@@ -142,7 +139,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
             try:
                 if "lines" in func_args and "line_range" in func_args:
                     res = self._fn(
-                        self.prod(values, lines=lines, line_range=ln_range, fn=self._fn),
+                        self.prod(values),
                         self.types.get(" ".join(pattern), "*"),
                         lines=lines,
                         line_range=ln_range,
@@ -150,20 +147,16 @@ class Proxy[F: Callable, P:DefaultProduction]:
 
                 else:
                     res = self._fn(
-                        self.prod(values, lines=lines, line_range=ln_range, fn=self._fn),
-                        self.types[" ".join(pattern)],
-                        lines=lines,
-                        line_range=ln_range,
+                        self.prod(values),
+                        self.types.get(" ".join(pattern), "*"),
                     )
                     res.lines = lines
                     res.line_range = ln_range
 
                 return res
 
-            except Exception as e:
-                e.add_note(
-                    f"{self._fn.__name__!r}@ SIG {list(map(lambda x: x.name, args))!r}"
-                )
+            except ExceptionGroup as e:
+                e.add_note(f"@rule{tuple(map(lambda x: x.name, args))!r}\ndef {self._fn.__name__} ...")
                 raise e
 
         #
@@ -171,7 +164,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
         #
         try:
             if "lines" in func_args and "line_range" in func_args:
-                res = self._fn(self.prod(values, lines=lines, line_range=ln_range, fn=self._fn))
+                res = self._fn(self.prod(values))
 
             else:
                 # should be using this vv
@@ -181,7 +174,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
 
         except Exception as e:
             e.add_note(
-                f"{self._fn.__name__!r} @ SIG {list(map(lambda x: x.name, args))!r}"
+                f"@rule{tuple(map(lambda x: x.name, args))!r}\n"
             )
             raise e
 
@@ -196,8 +189,8 @@ class HookProxy[P](Proxy):
             prod: type[P] = DefaultProduction,
             unless_start: Iterable[str] = (),
             unless_end: Iterable[str] = (),
-    ) -> None:
-        super().__init__(cls(), types, prod, unless_start, unless_end)
+    ):
+        raise NotImplementedError
 
     def call(self: Proxy, args):
         raise NotImplementedError

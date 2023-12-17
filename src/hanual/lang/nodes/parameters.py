@@ -14,20 +14,15 @@ class Parameters(BaseNode):
     __slots__ = (
         "_children",
         "_lines",
-        "_line_no",
+        "_line_range",
     )
 
     def __init__(
             self,
             children: Token | list[Token],
-            lines: str,
-            line_range: LineRange,
     ) -> None:
         self._children: list[Token] = []
         self.add_child(children)
-
-        self._line_range = line_range
-        self._lines = lines
 
     def add_child(self, child: Token | Parameters | list) -> Self:
         if isinstance(child, Parameters):

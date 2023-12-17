@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import TYPE_CHECKING, Generator, Self
+from typing import Generator, Self
 
 from hanual.compile.bytecode_instruction import ByteCodeInstruction
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.lexer import Token
 
 from hanual.util import Reply, Response, Request
-
-
-if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
 
 
 class Arguments[T: (BaseNode, Token)](BaseNode):
@@ -21,17 +17,9 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
         "_line_range",
     )
 
-    def __init__(
-            self,
-            children: T | Iterable[T],
-            lines: str,
-            line_range: LineRange,
-    ) -> None:
+    def __init__(self, children: T | Iterable[T],) -> None:
         self._children: list[T] = []
         self.add_child(children)
-
-        self._line_range: LineRange = line_range
-        self._lines: str = lines
 
     def add_child(self, child) -> Self:
         if isinstance(child, Arguments):
@@ -60,10 +48,10 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         for arg in self._children:
             if isinstance(arg, Token) and arg.type == "STR":
-                yield Request(Request.ADD_CONSTANT, arg.value)
+                yield Request(Request.ADD_CONSTANT, arg.value).make_lazy()
 
             elif isinstance(arg, Token) and arg.type == "NUM":
-                yield Request(Request.ADD_CONSTANT, arg.value)
+                yield Request(Request.ADD_CONSTANT, arg.value).make_lazy()
 
             else:
                 raise NotImplementedError

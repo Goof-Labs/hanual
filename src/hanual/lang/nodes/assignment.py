@@ -14,18 +14,9 @@ if TYPE_CHECKING:
 class AssignmentNode[T](BaseNode):
     __slots__ = ("_target", "_value", "_lines", "_line_range")
 
-    def __init__(
-            self,
-            target: Token,
-            value: T,
-            lines: str,
-            line_range: LineRange,
-    ) -> None:
+    def __init__(self, target: Token, value: T) -> None:
         self._target: Token = target
         self._value: T = value
-
-        self._line_range: LineRange = line_range
-        self._lines: str = lines
 
     @property
     def target(self) -> Token:
@@ -35,8 +26,9 @@ class AssignmentNode[T](BaseNode):
     def value(self) -> T:
         return self._value
 
-    def gen_code(self):
+    def gen_code(self, **kwargs):
         raise NotImplementedError
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
-        raise NotImplementedError
+        yield from self._target.prepare()
+        yield from self._value.prepare()

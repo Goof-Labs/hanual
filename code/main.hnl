@@ -1,3 +1,5 @@
 fn main() {
+    let some_var = 10
+
     print("Hello universe")
 }

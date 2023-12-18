@@ -555,8 +555,8 @@ def algebraic_fn(ts, lines: str = "", line_range: int = 0):
     "LET ID EQ anon_function",
     unless_ends=["DOT"],
 )
-def assignment(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return AssignmentNode(target=ts[1], value=ts[3], lines=lines, line_range=line_range)
+def assignment(ts: DefaultProduction):
+    return AssignmentNode(target=ts[1], value=ts[3])
 
 
 @par.rule("LET ID EQ h_range")

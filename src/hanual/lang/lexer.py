@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
 from typing import Generator
 from typing import Iterable
 from typing import Tuple
@@ -13,6 +12,7 @@ from hanual.lang.errors import HanualError
 from hanual.lang.errors import TraceBack
 
 from .util.line_range import LineRange
+from .token import Token
 
 if TYPE_CHECKING:
     from typing_extensions import LiteralString, Literal
@@ -49,15 +49,6 @@ def rx(reg: LiteralString) -> Tuple[LiteralString, LiteralString]:
     | The pattern of the token, e.g. [a-zA-Z_][a-zA-Z0-9_]+
     """
     return reg, "rx"
-
-
-@dataclass
-class Token[T]:
-    type: str
-    value: T
-    line_range: LineRange
-    colm: int
-    lines: str
 
 
 class Lexer:
@@ -160,7 +151,7 @@ class Lexer:
 
             else:
                 yield Token(
-                    type=kind,
+                    token_type=kind,
                     value=value,
                     line_range=LineRange(line_no, line_no),
                     colm=col,

@@ -52,11 +52,4 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         for arg in self._children:
-            if isinstance(arg, Token) and arg.type == "STR":
-                yield Request(Request.ADD_CONSTANT, arg.value).make_lazy()
-
-            elif isinstance(arg, Token) and arg.type == "NUM":
-                yield Request(Request.ADD_CONSTANT, arg.value).make_lazy()
-
-            else:
-                raise NotImplementedError
+            yield from arg.prepare()

@@ -245,7 +245,7 @@ class PParser:
                 # the contense of this function need to know the token but nothing else so this is ok
                 if not (next_token is None):
                     # check if next is an unless
-                    if next_token.type in proxy.unless_end:
+                    if next_token.token_type in proxy.unless_end:
                         continue
 
                 # create arguments for proxy
@@ -253,7 +253,7 @@ class PParser:
                 if stack[-debth].name in proxy.unless_start:
                     continue
 
-                if (next_token is not None) and (next_token.type in proxy.unless_end):
+                if (next_token is not None) and (next_token.token_type in proxy.unless_end):
                     continue
 
                 p_args: list[_StackFrame[T]] = []
@@ -285,7 +285,7 @@ class PParser:
             if not (next_token is None):
                 stack.append(
                     _StackFrame[T](
-                        next_token.type,
+                        next_token.token_type,
                         value=next_token,
                         lines=next_token.lines,
                         line_range=next_token.line_range,

@@ -218,21 +218,21 @@ class PParser:
                 stk_coppy.reverse()
                 pattern_lst.reverse()
 
-                debth: int = pattern.count(" ")
+                depth: int = pattern.count(" ")
 
                 # would not zip up nicely
-                if debth > len(stack):
+                if depth > len(stack):
                     continue
 
                 # the following two lines are an optimized version of the old for loop
                 broke_out: bool = (
-                    not list(map(lambda x: x.name, stk_coppy[: debth + 1]))
+                    not list(map(lambda x: x.name, stk_coppy[: depth + 1]))
                         == pattern_lst
                 )
 
                 # old method
                 # =============================
-                # for debth, (left, right) in enumerate(zip(stk_coppy, pattern_lst)):
+                # for depth, (left, right) in enumerate(zip(stk_coppy, pattern_lst)):
                 #    if left[0] != right:
                 #        broke_out = True
                 #        break
@@ -242,7 +242,7 @@ class PParser:
                 if broke_out:
                     continue
 
-                # the contense of this function need to know the token but nothing else so this is ok
+                # the content of this function needs to know the token but nothing else so this is ok
                 if not (next_token is None):
                     # check if next is an unless
                     if next_token.token_type in proxy.unless_end:
@@ -250,7 +250,7 @@ class PParser:
 
                 # create arguments for proxy
 
-                if stack[-debth].name in proxy.unless_start:
+                if stack[len(stack)-2-depth].name in proxy.unless_start:
                     continue
 
                 if (next_token is not None) and (next_token.token_type in proxy.unless_end):
@@ -258,7 +258,7 @@ class PParser:
 
                 p_args: list[_StackFrame[T]] = []
 
-                for _ in range(debth + 1):
+                for _ in range(depth + 1):
                     p_args.append(stack.pop())
 
                 # make normal

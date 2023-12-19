@@ -149,25 +149,24 @@ def s_getattr(
     "FOR assignment COM impl_condition COM impl_binop LCB RCB",
     "FOR assignment COM impl_condition COM impl_binop LCB line RCB",
     "FOR assignment COM impl_condition COM impl_binop LCB lines RCB",
-    types={"FOR assignment COM impl_condition COM impl_binop LCB RCB": True},
+    types={
+        "FOR assignment COM impl_condition COM impl_binop LCB RCB": True,
+        "_": False
+    },
 )
 def for_loop(
         ts,
         no_body: Union[Literal[True], Literal[None]],
-        lines: str = "",
-        line_range: int = 0,
 ) -> ForLoop:
-    if no_body:
+    if no_body is True:
         return ForLoop(
             ts[3],
             ts[1],
             ts[5],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            CodeBlock([]),
         )
 
-    return ForLoop(ts[3], ts[1], ts[5], ts[7], lines=lines, line_range=line_range)
+    return ForLoop(ts[3], ts[1], ts[5], ts[7])
 
 
 ###########################
@@ -259,12 +258,8 @@ def expr(
     "EL f_call",
     unless_starts=["NUM", "ID", "f_call", "STR"],
 )
-def impl_condition(
-        ts: DefaultProduction[Token, Token | FunctionCall],
-        lines: str = "",
-        line_range: int = 0,
-):
-    return ImplicitCondition(ts[0], ts[1], lines=lines, line_range=line_range)
+def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
+    return ImplicitCondition(ts[0], ts[1])
 
 
 ###########################
@@ -273,12 +268,8 @@ def impl_condition(
 
 
 @par.rule("OP OP NUM", "OP OP ID", "OP OP f_call", unless_ends=["LPAR"])
-def impl_binop(
-        ts: DefaultProduction[Token, Token, Token | FunctionCall],
-        lines: str = "",
-        line_range: int = 0,
-):
-    return ImplicitBinOp(ts[0], ts[2], lines=lines, line_range=line_range)
+def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
+    return ImplicitBinOp(ts[0], ts[2])
 
 
 ###########################

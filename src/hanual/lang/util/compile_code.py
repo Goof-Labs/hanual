@@ -7,6 +7,8 @@ from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.preprocess.preprocesser import Preprocessor
 
+from hanual.lang.util.dump_tree import dump_tree
+
 
 def compile_code(code):
     pp = Preprocessor()
@@ -18,11 +20,15 @@ def compile_code(code):
     parser = get_parser()
     frame = parser.parse(tokens)
 
+    print(dump_tree(frame[0], depth=1000))
+
     func = HanualFunction.from_func(frame[0].value.children[0])
     out = func.compile()
-    print(out)
+    code = out.to_code()
 
-    res = eval(out.to_code())
+    dis.dis(code)
+
+    res = eval(code)
     print(res)
 
-    return func
+    return

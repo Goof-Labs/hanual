@@ -60,6 +60,10 @@ class BaseNode(metaclass=_BaseNodeMeta):
         assert isinstance(new, LineRange), "new value must be a line_range"
         self._line_range = new
 
+    @property
+    def is_token(self):
+        return True
+
 
 def defines_protocols(cls):
     idx = 1

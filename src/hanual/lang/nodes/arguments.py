@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import Generator, Self
+from typing import Generator
+from typing import Self
 
-from hanual.compile.bytecode_instruction import ByteCodeInstruction
-from hanual.lang.nodes.base_node import BaseNode
+from bytecode import Instr
 from hanual.lang.lexer import Token
-
-from hanual.util import Reply, Response, Request
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.util import Reply
+from hanual.util import Request
+from hanual.util import Response
 
 
 class Arguments[T: (BaseNode, Token)](BaseNode):
@@ -17,7 +19,10 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
         "_line_range",
     )
 
-    def __init__(self, children: T | Iterable[T],) -> None:
+    def __init__(
+        self,
+        children: T | Iterable[T],
+    ) -> None:
         self._children: list[T] = []
         self.add_child(children)
 
@@ -38,20 +43,12 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
         return self._children
 
     def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        for arg in self._children:
-            if isinstance(arg, Token) and arg.type == "STR":
-                yield Response(ByteCodeInstruction("LOAD_CONST", arg.value))
-
-            else:
-                raise NotImplementedError(f"{arg}")
+        for arg in reversed(self._children):
+            yield from arg.gen_code(store=False)
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         for arg in self._children:
-            if isinstance(arg, Token) and arg.type == "STR":
-                yield Request(Request.ADD_CONSTANT, arg.value).make_lazy()
+            yield from arg.prepare()
 
-            elif isinstance(arg, Token) and arg.type == "NUM":
-                yield Request(Request.ADD_CONSTANT, arg.value).make_lazy()
-
-            else:
-                raise NotImplementedError
+    def __len__(self):
+        return len(self._children)

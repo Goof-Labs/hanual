@@ -1,3 +1,5 @@
 fn main() {
-    print("Hello world")
+    for let i=0, <10, ++1 {
+        print(i)
+    }
 }

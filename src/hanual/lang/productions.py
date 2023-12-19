@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Self
-from warnings import warn_explicit
 import inspect
+from typing import List
+from typing import Self
+from typing import TYPE_CHECKING
+from warnings import warn_explicit
 
 
 if TYPE_CHECKING:
@@ -22,7 +24,7 @@ class DefaultProduction[T: Token | BaseNode]:
                 message=f"Default production was passed too many arguments",
                 category=UserWarning,
                 filename=func_ln,
-                lineno=kwargs["fn"].__code__.co_firstlineno
+                lineno=kwargs["fn"].__code__.co_first_line_no,
             )
 
     def __repr__(self: Self) -> str:

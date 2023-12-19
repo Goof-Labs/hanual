@@ -1,3 +1,4 @@
 setuptools~=67.6.1
 colorama~=0.4.6
 hanual~=0.0.0
+bytecode~=0.15.1

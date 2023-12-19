@@ -149,25 +149,24 @@ def s_getattr(
     "FOR assignment COM impl_condition COM impl_binop LCB RCB",
     "FOR assignment COM impl_condition COM impl_binop LCB line RCB",
     "FOR assignment COM impl_condition COM impl_binop LCB lines RCB",
-    types={"FOR assignment COM impl_condition COM impl_binop LCB RCB": True},
+    types={
+        "FOR assignment COM impl_condition COM impl_binop LCB RCB": True,
+        "_": False
+    },
 )
 def for_loop(
         ts,
         no_body: Union[Literal[True], Literal[None]],
-        lines: str = "",
-        line_range: int = 0,
 ) -> ForLoop:
-    if no_body:
+    if no_body is True:
         return ForLoop(
             ts[3],
             ts[1],
             ts[5],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            CodeBlock([]),
         )
 
-    return ForLoop(ts[3], ts[1], ts[5], ts[7], lines=lines, line_range=line_range)
+    return ForLoop(ts[3], ts[1], ts[5], ts[7])
 
 
 ###########################
@@ -259,12 +258,8 @@ def expr(
     "EL f_call",
     unless_starts=["NUM", "ID", "f_call", "STR"],
 )
-def impl_condition(
-        ts: DefaultProduction[Token, Token | FunctionCall],
-        lines: str = "",
-        line_range: int = 0,
-):
-    return ImplicitCondition(ts[0], ts[1], lines=lines, line_range=line_range)
+def impl_condition(ts: DefaultProduction[Token, Token | FunctionCall]):
+    return ImplicitCondition(ts[0], ts[1])
 
 
 ###########################
@@ -273,12 +268,8 @@ def impl_condition(
 
 
 @par.rule("OP OP NUM", "OP OP ID", "OP OP f_call", unless_ends=["LPAR"])
-def impl_binop(
-        ts: DefaultProduction[Token, Token, Token | FunctionCall],
-        lines: str = "",
-        line_range: int = 0,
-):
-    return ImplicitBinOp(ts[0], ts[2], lines=lines, line_range=line_range)
+def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
+    return ImplicitBinOp(ts[0], ts[2])
 
 
 ###########################
@@ -326,8 +317,8 @@ def namespace_accessor(
     "COM s_getattr",
     "COM args_",
 )
-def args_(ts: DefaultProduction[Token, Any], lines: str = "", line_range: int = 0):
-    return Arguments(ts[1], lines=lines, line_range=line_range)
+def args_(ts: DefaultProduction[Token, Any]):
+    return Arguments(ts[1])
 
 
 @par.rule(
@@ -555,8 +546,8 @@ def algebraic_fn(ts, lines: str = "", line_range: int = 0):
     "LET ID EQ anon_function",
     unless_ends=["DOT"],
 )
-def assignment(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return AssignmentNode(target=ts[1], value=ts[3], lines=lines, line_range=line_range)
+def assignment(ts: DefaultProduction):
+    return AssignmentNode(target=ts[1], value=ts[3])
 
 
 @par.rule("LET ID EQ h_range")
@@ -646,10 +637,8 @@ def break_stmt(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0
     "f_call EL ID",
     unless_ends=["LPAR"],
 )
-def condition(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
-    return Condition(
-        op=ts[1], left=ts[0], right=ts[2], lines=lines, line_range=line_range
-    )
+def condition(ts: DefaultProduction):
+    return Condition(op=ts[1], left=ts[0], right=ts[2])
 
 
 ###########################
@@ -658,9 +647,8 @@ def condition(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0)
 
 
 @par.rule(
+    "IF condition LCB lines RCB",
     "IF condition LCB line RCB",
-    "IF condition LCB lines RCB",
-    "IF condition LCB lines RCB",
     "IF condition LCB RCB",
     types={
         "IF condition LCB line RCB": 1,
@@ -668,27 +656,19 @@ def condition(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0)
         "IF condition LCB RCB": 2,
     },
 )
-def if_statement(
-        ts: DefaultProduction, type_: int, lines: str = "", line_range: LineRange = 0
-):
+def if_statement(ts: DefaultProduction, type_: int):
     if type_ == 1:
-        return IfStatement(ts[1], ts[3], lines=lines, line_range=line_range)
+        return IfStatement(ts[1], ts[3])
 
     elif type_ == 2:
         return IfStatement(
             ts[1],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            CodeBlock([]),
         )
 
-    elif type_ == 4:
-        return IfStatement(
-            ts[1],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
-        )
+    else:
+        raise Exception
+
 
 
 @par.rule(

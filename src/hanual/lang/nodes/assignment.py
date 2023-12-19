@@ -8,7 +8,7 @@ from hanual.lang.nodes.base_node import BaseNode
 from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+    pass
 
 
 class AssignmentNode[T](BaseNode):
@@ -27,7 +27,8 @@ class AssignmentNode[T](BaseNode):
         return self._value
 
     def gen_code(self, **kwargs):
-        raise NotImplementedError
+        yield from self._value.gen_code()
+        yield from self._target.gen_code(store=True)
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         yield from self._target.prepare()

@@ -50,7 +50,7 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
 
         yield Response(Instr("LOAD_NAME", self._name.value))
         yield from self._args.gen_code()
-        yield Response(Instr("CALL", 0))
+        yield Response(Instr("CALL", len(self._args) - 1))
 
         ctx: Context = yield Request(Request.GET_CONTEXT)
 

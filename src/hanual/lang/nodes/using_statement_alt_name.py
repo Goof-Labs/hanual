@@ -2,7 +2,7 @@
 # the following syntax `using std::test::name as std_test_name`
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from .base_node import BaseNode
 from hanual.util import Reply, Response, Request
@@ -10,7 +10,7 @@ from hanual.util import Reply, Response, Request
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
     from .namespace_acessor import NamespaceAccessor
-    from hanual.lang.lexer import Token
+    from hanual.lang.token import Token
 
 
 class UsingStatementWithAltName(BaseNode):
@@ -21,14 +21,9 @@ class UsingStatementWithAltName(BaseNode):
         "_line_no",
     )
 
-    def __init__(
-            self, path: NamespaceAccessor, name: Token, lines: str, line_no: LineRange
-    ) -> None:
+    def __init__(self, path: NamespaceAccessor, name: Token) -> None:
         self._path: NamespaceAccessor = path
         self._name: Token = name
-
-        self._line_no = line_no
-        self._lines = lines
 
     @property
     def using(self) -> NamespaceAccessor:

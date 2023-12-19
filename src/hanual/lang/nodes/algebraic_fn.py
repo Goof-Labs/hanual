@@ -13,6 +13,12 @@ if TYPE_CHECKING:
 
 
 class AlgebraicFunc(BaseNode):
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
+        pass
+
+    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+        pass
+
     __slots__ = "_name", "_expr", "_lines", "_line_range",
 
     def __init__(self, name: str, expr: AlgebraicExpression, lines: str, line_range: LineRange) -> None:

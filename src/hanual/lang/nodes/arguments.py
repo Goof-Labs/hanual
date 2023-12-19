@@ -43,13 +43,12 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
         return self._children
 
     def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        for arg in self._children:
-            if isinstance(arg, Token) and arg.type == "STR":
-                yield Response(Instr("LOAD_CONST", arg.value))
-
-            else:
-                raise NotImplementedError(f"{arg}")
+        for arg in reversed(self._children):
+            yield from arg.gen_code(store=False)
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         for arg in self._children:
             yield from arg.prepare()
+
+    def __len__(self):
+        return len(self._children)

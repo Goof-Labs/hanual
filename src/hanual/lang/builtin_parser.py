@@ -326,8 +326,8 @@ def namespace_accessor(
     "COM s_getattr",
     "COM args_",
 )
-def args_(ts: DefaultProduction[Token, Any], lines: str = "", line_range: int = 0):
-    return Arguments(ts[1], lines=lines, line_range=line_range)
+def args_(ts: DefaultProduction[Token, Any]):
+    return Arguments(ts[1])
 
 
 @par.rule(

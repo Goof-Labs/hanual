@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from bytecode import Instr
+from typing import Generator
+
 from hanual.util.protocalls import Reply, Response, Request
 from hanual.lang.util.line_range import LineRange
 
@@ -17,7 +20,7 @@ class Token[T]:
         self._colm: int = colm
         self._lines: str = lines
 
-    def prepare(self):
+    def prepare(self) -> Generator[Response | Request, Reply, None]:
         if self._token_type == "ID":
             yield Request(Request.ADD_NAME, self._value)
 
@@ -26,6 +29,28 @@ class Token[T]:
 
         elif self._token_type == "NUM":
             yield Request(Request.ADD_CONSTANT, self._value)
+
+        else:
+            raise NotImplementedError
+
+    def gen_code(self, **kwargs) -> Generator[Response | Request, Reply, None]:
+        if self._token_type == "ID":
+            store: bool | None = kwargs.get("store", None)
+
+            if store:
+                yield Response(Instr("STORE_FAST", self._value))
+
+            elif store is False:
+                yield Response(Instr("LOAD_FAST", self._value))
+
+            else:
+                raise Exception
+
+        elif self._token_type == "STR":
+            yield Response(Instr("LOAD_CONST", self._value))
+
+        elif self._token_type == "NUM":
+            yield Response(Instr("LOAD_CONST", self._value))
 
         else:
             raise NotImplementedError

@@ -44,7 +44,7 @@ class Token[T]:
                 yield Response(Instr("LOAD_FAST", self._value))
 
             else:
-                raise Exception
+                raise Exception(f"{type(self).__name__} {self._token_type} {self.value}")
 
         elif self._token_type == "STR":
             yield Response(Instr("LOAD_CONST", self._value))

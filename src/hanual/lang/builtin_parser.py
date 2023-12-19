@@ -646,10 +646,8 @@ def break_stmt(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0
     "f_call EL ID",
     unless_ends=["LPAR"],
 )
-def condition(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
-    return Condition(
-        op=ts[1], left=ts[0], right=ts[2], lines=lines, line_range=line_range
-    )
+def condition(ts: DefaultProduction):
+    return Condition(op=ts[1], left=ts[0], right=ts[2])
 
 
 ###########################
@@ -658,9 +656,8 @@ def condition(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0)
 
 
 @par.rule(
+    "IF condition LCB lines RCB",
     "IF condition LCB line RCB",
-    "IF condition LCB lines RCB",
-    "IF condition LCB lines RCB",
     "IF condition LCB RCB",
     types={
         "IF condition LCB line RCB": 1,
@@ -668,27 +665,19 @@ def condition(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0)
         "IF condition LCB RCB": 2,
     },
 )
-def if_statement(
-        ts: DefaultProduction, type_: int, lines: str = "", line_range: LineRange = 0
-):
+def if_statement(ts: DefaultProduction, type_: int):
     if type_ == 1:
-        return IfStatement(ts[1], ts[3], lines=lines, line_range=line_range)
+        return IfStatement(ts[1], ts[3])
 
     elif type_ == 2:
         return IfStatement(
             ts[1],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            CodeBlock([]),
         )
 
-    elif type_ == 4:
-        return IfStatement(
-            ts[1],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
-        )
+    else:
+        raise Exception
+
 
 
 @par.rule(

@@ -1,5 +1,9 @@
 fn main() {
     let some_var = 10
 
+    if some_var == 10 {
+        print("Very true")
+    }
+
     print("Hello universe", some_var)
 }

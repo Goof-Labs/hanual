@@ -1,15 +1,14 @@
 from __future__ import annotations
 
+
+from bytecode import Label, Instr
 from typing import TYPE_CHECKING, Generator
 
-from .base_node import BaseNode
-
+from hanual.lang.nodes.base_node import BaseNode
 from hanual.util import Reply, Response, Request
 
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
-
     from .block import CodeBlock
     from .conditions import Condition
 
@@ -17,18 +16,9 @@ if TYPE_CHECKING:
 class IfStatement(BaseNode):
     __slots__ = "_condition", "_block", "_lines", "_line_range"
 
-    def __init__(
-            self,
-            condition: Condition,
-            block: CodeBlock,
-            lines: str,
-            line_range: LineRange,
-    ) -> None:
+    def __init__(self, condition: Condition, block: CodeBlock) -> None:
         self._condition: Condition = condition
         self._block: CodeBlock = block
-
-        self._lines = lines
-        self._line_range = line_range
 
     @property
     def condition(self) -> Condition:
@@ -38,8 +28,16 @@ class IfStatement(BaseNode):
     def block(self) -> CodeBlock:
         return self._block
 
-    def gen_code(self):
-        raise NotImplementedError
+    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+        false_jump = Label()
+
+        yield from self._condition.gen_code()
+        yield Response(Instr("POP_JUMP_IF_FALSE", false_jump))
+
+        yield from self._block.gen_code()
+
+        yield Response(false_jump)
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
-        raise NotImplementedError
+        yield from self._condition.prepare()
+        yield from self._block.prepare()

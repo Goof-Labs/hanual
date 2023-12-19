@@ -1,26 +1,23 @@
 from __future__ import annotations
 
+from bytecode import Instr, Compare
 from typing import TYPE_CHECKING, Generator
 
 from hanual.util import Reply, Response, Request
-
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.lexer import Token
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+    pass
 
 
 class Condition[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
     __slots__ = "_op", "_left", "_right", "_lines", "_line_range"
 
-    def __init__(self, op: Token, left, right, lines: str, line_range: LineRange) -> None:
+    def __init__(self, op: Token, left, right) -> None:
         self._right: R = right
         self._left: L = left
         self._op: Token = op
-
-        self._line_range = line_range
-        self._lines = lines
 
     @property
     def op(self) -> Token:
@@ -34,8 +31,31 @@ class Condition[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
     def right(self) -> R:
         return self._right
 
-    def gen_code(self):
-        raise NotImplementedError
+    def gen_code(self, **kwargs) -> Generator[Response | Request, Reply, None]:
+        yield from self._left.gen_code(store=False)
+        yield from self._right.gen_code(store=False)
+
+        if self._op.value == "==":
+            yield Response(Instr("COMPARE_OP", Compare.EQ))
+
+        elif self._op.value == ">":
+            yield Response(Instr("COMPARE_OP", Compare.GT))
+
+        elif self._op.value == "<":
+            yield Response(Instr("COMPARE_OP", Compare.LT))
+
+        elif self._op.value == ">=":
+            yield Response(Instr("COMPARE_OP", Compare.GE))
+
+        elif self._op.value == "<=":
+            yield Response(Instr("COMPARE_OP", Compare.LE))
+
+        elif self._op.value == "!=":
+            yield Response(Instr("COMPARE_OP", Compare.NE))
+
+        else:
+            raise NotImplementedError(f"Have not implemented operator {self._op.value}")
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
-        raise NotImplementedError
+        yield from self._left.prepare()
+        yield from self._right.prepare()

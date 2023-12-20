@@ -128,7 +128,10 @@ class Compiler:
         return self._instructions
 
     def gen_code(self, block):
+        self._instructions.append(Instr("RESUME", 0))
+        self._instructions.append(Instr("PUSH_NULL"))
         self.prepare_nodes(block)
         self.compile_body(block)
+        self._instructions.append(Instr("LOAD_CONST", 1))
         self._instructions.append(Instr("RETURN_CONST", 1))
         return Bytecode(self._instructions)

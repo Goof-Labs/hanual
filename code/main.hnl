@@ -1,5 +1,3 @@
 fn main() {
-    for let i=0, <10, ++1 {
-        print(i)
-    }
+    input()
 }

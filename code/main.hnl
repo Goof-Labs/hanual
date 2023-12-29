@@ -1,3 +1,4 @@
 fn main() {
-    input()
+    let inp = input()
+    print(inp)
 }

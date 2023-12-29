@@ -129,7 +129,6 @@ class Compiler:
 
     def gen_code(self, block):
         self._instructions.append(Instr("RESUME", 0))
-        self._instructions.append(Instr("PUSH_NULL"))
         self.prepare_nodes(block)
         self.compile_body(block)
         self._instructions.append(Instr("LOAD_CONST", 1))

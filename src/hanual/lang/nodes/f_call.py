@@ -48,6 +48,8 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
     def gen_code(self) -> Generator[Response | Request, Reply, None]:
         from hanual.lang.nodes.assignment import AssignmentNode
 
+        yield Response(Instr("PUSH_NULL"))
+
         yield Response(Instr("LOAD_NAME", self._name.value))
         yield from self._args.gen_code()
 

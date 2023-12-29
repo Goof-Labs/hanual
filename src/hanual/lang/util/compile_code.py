@@ -25,6 +25,9 @@ def compile_code(code):
 
     out = func.compile()
 
+    for n in out:
+        print(n)
+
     code = out.to_code()
 
     dis.dis(code)

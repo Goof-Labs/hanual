@@ -55,7 +55,7 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
 
         yield Response(Instr("CALL", len(self._args)))
 
-        ctx: Context = yield Request(Request.GET_CONTEXT)
+        ctx: Context = yield Request[Context](Request.GET_CONTEXT)
 
         if ctx.assert_instance("parent", AssignmentNode) is False:
             yield Response(Instr("POP_TOP"))

@@ -78,9 +78,9 @@ class Compiler:
                 reply = Reply(True)  # accepted
 
             else:
-                raise NotImplementedError
+                raise NotImplementedError(val)
 
-    def _satisfy_compile_request(self, request: Request) -> Reply:
+    def _satisfy_compile_request[T](self, request: Request[T]) -> Reply[T] | T:
         requests = iter(request.params)
         reply: list[Any] = []
 

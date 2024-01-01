@@ -238,12 +238,8 @@ def iwith_dot(
     "STR OP ID",
     "STR OP expr",
 )
-def expr(
-        ts: DefaultProduction[Token, Token, Token], lines: str = "", line_range: int = 0
-) -> BinOpNode:
-    return BinOpNode(
-        op=ts[1], left=ts[0], right=ts[2], lines=lines, line_range=line_range
-    )
+def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
+    return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 
 
 ###########################

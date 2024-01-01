@@ -20,7 +20,7 @@ def compile_code(code):
     parser = get_parser()
     frame = parser.parse(tokens)
 
-    # print(dump_tree(frame[0], depth=1000))
+    print(dump_tree(frame, depth=1000))
     func = HanualFunction.from_func(frame[0].value.children[0])
 
     out = func.compile()

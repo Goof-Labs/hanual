@@ -102,7 +102,7 @@ class Compiler:
 
             elif req == Request.CREATE_CONTEXT:
                 # create a blank context
-                ctx = Context(deleter=self._delete_context, adder=self._add_context)
+                ctx = Context(deleter=self._delete_context, adder=self._add_context, getter=self._get_context)
 
                 self._context.append(ctx)
 
@@ -122,6 +122,9 @@ class Compiler:
 
     def _add_context(self, ctx):
         self._context.append(ctx)
+
+    def _get_context(self):
+        return self._context
 
     @property
     def instructions(self):

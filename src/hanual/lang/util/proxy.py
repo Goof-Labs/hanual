@@ -133,14 +133,14 @@ class Proxy[F: Callable, P:DefaultProduction]:
         # TODO warn user if lines or line_range is a function argument, now passed through implicitly
 
         #
-        # No types defined
+        # Types defined
         #
         if self._types != {}:
             try:
                 if "lines" in func_args and "line_range" in func_args:
                     res = self._fn(
                         self.prod(values),
-                        self.types.get(" ".join(pattern), "*"),
+                        self.types.get(" ".join(pattern), None) or self.types.get("*"),
                         lines=lines,
                         line_range=ln_range,
                     )
@@ -148,7 +148,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
                 else:
                     res = self._fn(
                         self.prod(values),
-                        self.types.get(" ".join(pattern), "*"),
+                        self.types.get(" ".join(pattern), None) or self.types.get("*"),
                     )
                     res.lines = lines
                     res.line_range = ln_range
@@ -160,7 +160,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
                 raise e
 
         #
-        # Normal execution
+        # No types defined
         #
         try:
             if "lines" in func_args and "line_range" in func_args:

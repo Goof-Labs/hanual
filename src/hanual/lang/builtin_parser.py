@@ -178,19 +178,15 @@ def for_loop(
     "LOOP LCB line RCB",
     "LOOP LCB lines RCB",
     "LOOP LCB RCB",
-    types={"LOOP LCB RCB": True},
+    types={"LOOP LCB RCB": True, "*": False},
 )
-def loop_loop(
-        ts: DefaultProduction, no_inner: bool = False, lines: str = "", line_range: int = 0
-):
-    if no_inner:
-        return LoopLoop(
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
-        )
+def loop_loop(ts: DefaultProduction, no_inner: bool):
+    print(no_inner, ts)
 
-    return LoopLoop(ts[2], lines=lines, line_range=line_range)
+    if no_inner:
+        return LoopLoop(CodeBlock([]))
+
+    return LoopLoop(ts[2])
 
 
 ###########################
@@ -596,10 +592,8 @@ def ret(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
 
 
 @par.rule("BREAK", unless_ends=["CTX"])
-def break_stmt(
-        ts: DefaultProduction[Token], lines: str = "", line_range: LineRange = 0
-):
-    return BreakStatement(ts[0], lines=lines, line_range=line_range)
+def break_stmt(ts: DefaultProduction[Token]):
+    return BreakStatement(ts[0])
 
 
 @par.rule("BREAK CTX")

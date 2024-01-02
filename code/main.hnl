@@ -1,5 +1,9 @@
 fn main() {
-    let inp = input()
-    print(inp)
+    loop {
+        let inp = input("? ")
 
+        if inp == "x" {
+            break
+        }
+    }
 }

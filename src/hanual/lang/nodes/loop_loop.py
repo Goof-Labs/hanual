@@ -36,8 +36,6 @@ class LoopLoop(BaseNode):
             context.add(end_label=end_label)
             context.add(start_label=start_label)
 
-            print(context)
-
             yield Response(start_label)
             yield from self._inner.gen_code()
             yield Response(Instr("JUMP_BACKWARD", start_label))

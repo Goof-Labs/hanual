@@ -12,6 +12,7 @@ from typing import (
 
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.util.line_range import LineRange
+
 if TYPE_CHECKING:
     from hanual.api.hooks import RuleHook
     from hanual.lang.pparser import _StackFrame
@@ -64,7 +65,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
         return self._fn
 
     def call(self: Proxy, args: list[_StackFrame]):
-        ln_range = LineRange(-1, -1)
+        ln_range = LineRange(start=float("inf"), end=float("-inf"))
         pattern = []
         values = []
         lines = ""
@@ -74,12 +75,11 @@ class Proxy[F: Callable, P:DefaultProduction]:
             values.append(frame.value)
 
             # create a line range to say where code starts and ends
-            if ln_range.start == -1:
-                ln_range.start = (
-                    frame.line_range
-                    if isinstance(frame.line_range, int)
-                    else frame.line_range.start
-                )
+            ln_range_end = frame.value.line_range.end
+            ln_range_start = frame.value.line_range.start
+
+            if ln_range.start > ln_range_start:
+                ln_range.start = ln_range_start
 
             """
             The problem is that some lines will just overlap. Tokens will store the line they are from and
@@ -103,30 +103,23 @@ class Proxy[F: Callable, P:DefaultProduction]:
             T3 =            |------|
             The above is a diagram that would show the splicing in action.
             """
-            if (
-                f_end := (
-                    frame.line_range
-                    if isinstance(frame.line_range, int)
-                    else frame.line_range.end
-                ) > ln_range.end
-            ):
+            if ln_range_end > ln_range.end:
                 # checks if the next token has a greater range then ours
-                if f_end < ln_range.end:
+                if ln_range_end < ln_range.end:
                     # does not fully overlap, like T2 to T3 in diagram
                     frame_lines = frame.lines.split("\n")
 
-                    for line in frame_lines[: ln_range.end - f_end]:
+                    for line in frame_lines[: ln_range.end - ln_range_end]:
                         lines = lines + line + "\n"
 
                 else:
                     # aligns nicely like T1 to T2
                     lines += frame.lines
 
-            ln_range.end = (
-                frame.line_range
-                if isinstance(frame.line_range, int)
-                else frame.line_range.end
-            )
+            ln_range.end = ln_range_end
+
+        if not ln_range.end >= 1:
+            ln_range.end = ln_range.start
 
         func_args = self._fn.__annotations__.keys()
 

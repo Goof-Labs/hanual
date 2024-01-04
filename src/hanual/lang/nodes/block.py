@@ -13,7 +13,7 @@ from hanual.util import Reply, Response, Request
 class CodeBlock[C: BaseNode](BaseNode):
     __slots__ = ("_children", "_line_range", "_lines")
 
-    def __init__(self, children: C, **kwargs) -> None:
+    def __init__(self, children: C) -> None:
         """Initializer of the CodeBlock class.
 
         An object that stores the children of a codeblock.
@@ -21,14 +21,9 @@ class CodeBlock[C: BaseNode](BaseNode):
 
         Args:
             children: The elements inside the codeblock
-            lines: The lines of the code that comprises the code block
-            line_range: Range of line the codeblock takes up
         """
         self._children: list[BaseNode] = []
         self.add_child(children)
-
-        self._line_range = kwargs.get("line_range", LineRange(-1, -1))
-        self._lines = kwargs.get("lines", None)
 
     def add_child(self, child: CodeBlock):
         if isinstance(child, (list, tuple)):

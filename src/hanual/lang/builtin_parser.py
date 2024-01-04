@@ -181,8 +181,6 @@ def for_loop(
     types={"LOOP LCB RCB": True, "*": False},
 )
 def loop_loop(ts: DefaultProduction, no_inner: bool):
-    print(no_inner, ts)
-
     if no_inner:
         return LoopLoop(CodeBlock([]))
 
@@ -934,8 +932,8 @@ def h_range(ts: DefaultProduction, lines: str = "", line_range: int = 0):
     "ret",
     unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS", "DOT"],
 )
-def line(ts, lines: str = "", line_range: int = 0):
-    return CodeBlock(ts[0], lines=lines, line_range=line_range)
+def line(ts):
+    return CodeBlock(ts[0])
 
 
 @par.rule("line line", "line lines", "lines line")

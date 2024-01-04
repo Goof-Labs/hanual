@@ -33,7 +33,7 @@ class BreakStatement(BaseNode):
         # TODO implement contexts
         context: Context = yield Request(Request.GET_CONTEXT)
         end_lbl: Label = context.get("end_label", recursive=True)[0]
-        yield Response(Instr("JUMP_FORWARD", end_lbl))
+        yield Response(Instr("JUMP_FORWARD", end_lbl, location=self.get_location()))
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         yield from ()

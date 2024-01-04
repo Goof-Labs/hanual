@@ -62,31 +62,31 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_compile_NUM(
-            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         return Token(
-            kind,
-            float(value) if "." in value else int(value),
-            line_range,
-            col,
-            origin_line,
+            token_type=kind,
+            value=float(value) if "." in value else int(value),
+            line_range=LineRange(line_num, line_num),
+            colm=col,
+            lines=origin_line,
         )
 
     @staticmethod
     def t_exec_NUM(
-            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         return Token(
             kind,
             LiteralWrapper(float(value)),
-            line_range,
+            LineRange(line_num, line_num),
             col,
             origin_line,
         )
 
     @staticmethod
     def t_exec_STR(
-            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         # remove the last and first character of string, which are " or double quotes
         value = value[1:]
@@ -94,14 +94,14 @@ class HanualLexer(Lexer):
         return Token(
             kind,
             LiteralWrapper(value),
-            line_range,
+            LineRange(line_num, line_num),
             col,
             origin_line,
         )
 
     @staticmethod
     def t_compile_STR(
-            kind: str, value: str, line_range: LineRange, col: int, origin_line: str
+            kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         # remove the last and first character of string, which are " or double quotes
         value = value[1:]
@@ -109,7 +109,7 @@ class HanualLexer(Lexer):
         return Token(
             kind,
             value,
-            line_range,
+            LineRange(line_num, line_num),
             col,
             origin_line,
         )

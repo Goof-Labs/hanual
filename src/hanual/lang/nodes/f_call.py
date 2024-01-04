@@ -48,17 +48,17 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
     def gen_code(self) -> Generator[Response | Request, Reply, None]:
         from hanual.lang.nodes.assignment import AssignmentNode
 
-        yield Response(Instr("PUSH_NULL"))
+        yield Response(Instr("PUSH_NULL", location=self.get_location()))
 
-        yield Response(Instr("LOAD_NAME", self._name.value))
+        yield Response(Instr("LOAD_NAME", self._name.value, location=self._name.get_location()))
         yield from self._args.gen_code()
 
-        yield Response(Instr("CALL", len(self._args)))
+        yield Response(Instr("CALL", len(self._args), location=self.get_location()))
 
         ctx: Context = yield Request[Context](Request.GET_CONTEXT)
 
         if ctx.assert_instance("parent", AssignmentNode) is False:
-            yield Response(Instr("POP_TOP"))
+            yield Response(Instr("POP_TOP", location=self.get_location()))
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         yield Request(Request.ADD_NAME, self._name.value).make_lazy()

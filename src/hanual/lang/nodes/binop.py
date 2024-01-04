@@ -49,16 +49,16 @@ class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
             yield from self._right.gen_code()
 
             if self._op.value == '+':
-                yield Response(Instr("BINARY_OP", BinaryOp.ADD))
+                yield Response(Instr("BINARY_OP", BinaryOp.ADD, location=self.get_location()))
 
             elif self._op.value == '-':
-                yield Response(Instr("BINARY_OP", BinaryOp.SUBTRACT))
+                yield Response(Instr("BINARY_OP", BinaryOp.SUBTRACT, location=self.get_location()))
 
             elif self._op.value == '/':
-                yield Response(Instr("BINARY_OP", BinaryOp.TRUE_DIVIDE))
+                yield Response(Instr("BINARY_OP", BinaryOp.TRUE_DIVIDE, location=self.get_location()))
 
             elif self._op.value == '*':
-                yield Response(Instr("BINARY_OP", BinaryOp.MULTIPLY))
+                yield Response(Instr("BINARY_OP", BinaryOp.MULTIPLY, location=self.get_location()))
 
             else:
                 raise NotImplementedError(f"operator {self._op.value!r} has not been implemented yet")

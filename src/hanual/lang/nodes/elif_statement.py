@@ -10,8 +10,6 @@ if TYPE_CHECKING:
     from .block import CodeBlock
     from .conditions import Condition
 
-    from hanual.lang.util.line_range import LineRange
-
 
 class ElifStatement(BaseNode):
     __slots__ = (
@@ -21,14 +19,9 @@ class ElifStatement(BaseNode):
         "_line_no",
     )
 
-    def __init__(
-            self, condition: Condition, block: CodeBlock, lines: str, line_no: LineRange
-    ) -> None:
-        self._condition = condition
-        self._block = block
-
-        self._line_no = line_no
-        self._lines = lines
+    def __init__(self, condition: Condition, block: CodeBlock) -> None:
+        self._condition: Condition = condition
+        self._block: CodeBlock = block
 
     @property
     def condition(self) -> Condition:

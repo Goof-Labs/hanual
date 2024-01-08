@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from bytecode import Instr
 from typing import Generator
+
+from bytecode.instr import InstrLocation, Instr
 
 from hanual.util.protocalls import Reply, Response, Request
 from hanual.lang.util.line_range import LineRange
@@ -38,7 +39,7 @@ class Token[T]:
             store: bool | None = kwargs.get("store", None)
 
             if store:
-                yield Response(Instr("STORE_FAST", self._value))
+                yield Response(Instr("STORE_FAST", self._value, location=self.get_location()))
 
             elif store is False:
                 yield Response(Instr("LOAD_FAST", self._value))
@@ -54,6 +55,14 @@ class Token[T]:
 
         else:
             raise NotImplementedError
+
+    def get_location(self) -> InstrLocation:
+        return InstrLocation(
+            lineno=self._line_range.start,
+            end_lineno=self._line_range.end,
+            col_offset=None,
+            end_col_offset=None
+        )
 
     @property
     def token_type(self):

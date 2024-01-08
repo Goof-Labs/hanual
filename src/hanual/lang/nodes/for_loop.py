@@ -62,8 +62,8 @@ class ForLoop(BaseNode):
         yield from self._body.gen_code()
 
         yield from self._while.gen_code(infer=var)
-        yield Response(Instr("POP_JUMP_IF_FALSE", loop_end))
-        yield Response(Instr("JUMP_BACKWARD", loop_start))
+        yield Response(Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location()))
+        yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
         yield Response(loop_end)
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:

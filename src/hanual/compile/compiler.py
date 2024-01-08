@@ -78,9 +78,9 @@ class Compiler:
                 reply = Reply(True)  # accepted
 
             else:
-                raise NotImplementedError
+                raise NotImplementedError(val)
 
-    def _satisfy_compile_request(self, request: Request) -> Reply:
+    def _satisfy_compile_request[T](self, request: Request[T]) -> Reply[T] | T:
         requests = iter(request.params)
         reply: list[Any] = []
 
@@ -102,7 +102,7 @@ class Compiler:
 
             elif req == Request.CREATE_CONTEXT:
                 # create a blank context
-                ctx = Context(deleter=self._delete_context, adder=self._add_context)
+                ctx = Context(deleter=self._delete_context, adder=self._add_context, getter=self._get_context)
 
                 self._context.append(ctx)
 
@@ -123,12 +123,17 @@ class Compiler:
     def _add_context(self, ctx):
         self._context.append(ctx)
 
+    def _get_context(self):
+        return self._context
+
     @property
     def instructions(self):
         return self._instructions
 
     def gen_code(self, block):
+        self._instructions.append(Instr("RESUME", 0))
         self.prepare_nodes(block)
         self.compile_body(block)
+        self._instructions.append(Instr("LOAD_CONST", 1))
         self._instructions.append(Instr("RETURN_CONST", 1))
         return Bytecode(self._instructions)

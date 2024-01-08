@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from bytecode import Instr
 from typing import Generator
 from typing import TYPE_CHECKING
 
-from bytecode import Instr
 from hanual.compile.context import Context
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
@@ -46,18 +46,19 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
         return self._args
 
     def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        print("HERE")
-
         from hanual.lang.nodes.assignment import AssignmentNode
 
-        yield Response(Instr("LOAD_NAME", self._name.value))
-        yield from self._args.gen_code()
-        yield Response(Instr("CALL", len(self._args) - 1))
+        yield Response(Instr("PUSH_NULL", location=self.get_location()))
 
-        ctx: Context = yield Request(Request.GET_CONTEXT)
+        yield Response(Instr("LOAD_NAME", self._name.value, location=self._name.get_location()))
+        yield from self._args.gen_code()
+
+        yield Response(Instr("CALL", len(self._args), location=self.get_location()))
+
+        ctx: Context = yield Request[Context](Request.GET_CONTEXT)
 
         if ctx.assert_instance("parent", AssignmentNode) is False:
-            yield Response(Instr("POP_TOP"))
+            yield Response(Instr("POP_TOP", location=self.get_location()))
 
     def prepare(self) -> Generator[Response | Request, Reply, None]:
         yield Request(Request.ADD_NAME, self._name.value).make_lazy()

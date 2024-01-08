@@ -1,5 +1,9 @@
 fn main() {
-    for let i=0, <10, ++1 {
-        print(i)
+    loop {
+        let inp = input("? ")
+
+        if inp == "x" {
+            break
+        }
     }
 }

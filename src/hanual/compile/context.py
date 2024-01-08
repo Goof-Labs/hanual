@@ -5,8 +5,9 @@ from typing import Type
 
 
 class Context:
-    def __init__(self, *, deleter, adder):
+    def __init__(self, *, deleter, adder, getter):
         self._deleter = deleter
+        self._getter = getter
         self._adder = adder
 
         self._mentioned = set()
@@ -26,10 +27,13 @@ class Context:
         if set(args) & set(kwargs):
             raise Exception(f"Duplicated params {set(args) & set(kwargs)}")
 
-        self._mentioned = set(args) | set(kwargs)
-        self._options = kwargs
+        self._mentioned.update(set(args) | set(kwargs))
+        self._options.update(kwargs)
 
-    def get(self, inf):
+    def get(self, inf, recursive: bool = False):
+        if recursive:
+            return list(set(self._get_recursive(inf)))
+
         key = self._options.get(inf, None)
 
         if key is not None:
@@ -40,6 +44,13 @@ class Context:
 
         return None
 
+    def _get_recursive(self, inf):
+        for context in self._getter():  # get all contexts
+            res = context.get(inf)
+
+            if res:
+                yield res
+
     def assert_instance(self, option: str, *cls: Type):
         key = self._options.get(option, None)
 
@@ -47,3 +58,9 @@ class Context:
             return False
 
         return isinstance(key, cls)
+
+    def __str__(self):
+        return f"Context({self._options=} {self._mentioned=})"
+
+    def __repr__(self):
+        return str(self)

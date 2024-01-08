@@ -178,19 +178,13 @@ def for_loop(
     "LOOP LCB line RCB",
     "LOOP LCB lines RCB",
     "LOOP LCB RCB",
-    types={"LOOP LCB RCB": True},
+    types={"LOOP LCB RCB": True, "*": False},
 )
-def loop_loop(
-        ts: DefaultProduction, no_inner: bool = False, lines: str = "", line_range: int = 0
-):
+def loop_loop(ts: DefaultProduction, no_inner: bool):
     if no_inner:
-        return LoopLoop(
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
-        )
+        return LoopLoop(CodeBlock([]))
 
-    return LoopLoop(ts[2], lines=lines, line_range=line_range)
+    return LoopLoop(ts[2])
 
 
 ###########################
@@ -238,12 +232,8 @@ def iwith_dot(
     "STR OP ID",
     "STR OP expr",
 )
-def expr(
-        ts: DefaultProduction[Token, Token, Token], lines: str = "", line_range: int = 0
-) -> BinOpNode:
-    return BinOpNode(
-        op=ts[1], left=ts[0], right=ts[2], lines=lines, line_range=line_range
-    )
+def expr(ts: DefaultProduction[Token, Token, Token]) -> BinOpNode:
+    return BinOpNode(op=ts[1], left=ts[0], right=ts[2])
 
 
 ###########################
@@ -600,10 +590,8 @@ def ret(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
 
 
 @par.rule("BREAK", unless_ends=["CTX"])
-def break_stmt(
-        ts: DefaultProduction[Token], lines: str = "", line_range: LineRange = 0
-):
-    return BreakStatement(ts[0], lines=lines, line_range=line_range)
+def break_stmt(ts: DefaultProduction[Token]):
+    return BreakStatement(ts[0])
 
 
 @par.rule("BREAK CTX")
@@ -944,8 +932,8 @@ def h_range(ts: DefaultProduction, lines: str = "", line_range: int = 0):
     "ret",
     unless_ends=["RPAR", "COM", "BAR", "EIF", "ELS", "DOT"],
 )
-def line(ts, lines: str = "", line_range: int = 0):
-    return CodeBlock(ts[0], lines=lines, line_range=line_range)
+def line(ts):
+    return CodeBlock(ts[0])
 
 
 @par.rule("line line", "line lines", "lines line")

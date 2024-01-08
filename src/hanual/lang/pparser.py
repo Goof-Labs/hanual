@@ -20,14 +20,13 @@ from .productions import DefaultProduction
 from .util.proxy import Proxy
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+    pass
 
 
 class _StackFrame[T](NamedTuple):
     name: str
     value: T
     lines: str
-    line_range: LineRange
 
 
 class PParser:
@@ -269,10 +268,9 @@ class PParser:
 
                 stack.append(
                     _StackFrame[T](
-                        reducer,
+                        name=reducer,
                         value=res,
                         lines=res.lines,
-                        line_range=res.line_range,
                     )
                 )
 
@@ -285,10 +283,9 @@ class PParser:
             if not (next_token is None):
                 stack.append(
                     _StackFrame[T](
-                        next_token.token_type,
+                        name=next_token.token_type,
                         value=next_token,
                         lines=next_token.lines,
-                        line_range=next_token.line_range,
                     )
                 )
 

@@ -32,7 +32,7 @@ class IfStatement(BaseNode):
         false_jump = Label()
 
         yield from self._condition.gen_code()
-        yield Response(Instr("POP_JUMP_IF_FALSE", false_jump))
+        yield Response(Instr("POP_JUMP_IF_FALSE", false_jump, location=self.get_location()))
 
         yield from self._block.gen_code()
 

@@ -27,7 +27,7 @@ class _BaseNodeMeta(ABCMeta):
             cls.__validate(self, method)
 
             self._lines = ""
-            self._line_range = LineRange(-1, -1)
+            self._line_range = LineRange(start=float("inf"), end=float("-inf"))
 
             method(self, *args, **kwargs)
 

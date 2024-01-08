@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Generator
 
+from bytecode.instr import InstrLocation
+
 from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
 from hanual.lang.util.line_range import LineRange
 from hanual.util import Reply, Response, Request
@@ -16,8 +18,8 @@ class BaseNode(metaclass=_BaseNodeMeta):
 
     @abstractmethod
     def __init__(self, *args, **kwargs) -> None:
-        self._lines = None
-        self._line_range = None
+        self._line_range: LineRange | None = None
+        self._lines: str | None = None
 
         raise NotImplementedError
 
@@ -42,6 +44,18 @@ class BaseNode(metaclass=_BaseNodeMeta):
         """
         raise NotImplementedError
 
+    def get_location(self) -> InstrLocation:
+        if self._line_range.start <= 1 or self._line_range.end <= 1:
+            raise Exception(f"LineRange has a range of -1 {self._line_range}")
+
+        # TODO add column offsets and change second `self._line_range.start` to the `self._line_range.end`
+        return InstrLocation(
+            lineno=self._line_range.start,
+            end_lineno=self._line_range.start,
+            col_offset=None,
+            end_col_offset=None
+        )
+
     @property
     def lines(self) -> str:
         return self._lines
@@ -63,6 +77,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
     @property
     def is_token(self):
         return True
+
 
 
 def defines_protocols(cls):

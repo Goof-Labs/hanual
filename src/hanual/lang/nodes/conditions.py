@@ -36,22 +36,22 @@ class Condition[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
         yield from self._right.gen_code(store=False)
 
         if self._op.value == "==":
-            yield Response(Instr("COMPARE_OP", Compare.EQ))
+            yield Response(Instr("COMPARE_OP", Compare.EQ, location=self.get_location()))
 
         elif self._op.value == ">":
-            yield Response(Instr("COMPARE_OP", Compare.GT))
+            yield Response(Instr("COMPARE_OP", Compare.GT, location=self.get_location()))
 
         elif self._op.value == "<":
-            yield Response(Instr("COMPARE_OP", Compare.LT))
+            yield Response(Instr("COMPARE_OP", Compare.LT, location=self.get_location()))
 
         elif self._op.value == ">=":
-            yield Response(Instr("COMPARE_OP", Compare.GE))
+            yield Response(Instr("COMPARE_OP", Compare.GE, location=self.get_location()))
 
         elif self._op.value == "<=":
-            yield Response(Instr("COMPARE_OP", Compare.LE))
+            yield Response(Instr("COMPARE_OP", Compare.LE, location=self.get_location()))
 
         elif self._op.value == "!=":
-            yield Response(Instr("COMPARE_OP", Compare.NE))
+            yield Response(Instr("COMPARE_OP", Compare.NE, location=self.get_location()))
 
         else:
             raise NotImplementedError(f"Have not implemented operator {self._op.value}")

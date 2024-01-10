@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator
 
-from hanual.compile.context import Context
-from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
-    ...
+    from hanual.compile.context import Context
+    from hanual.lang.lexer import Token
 
 
 class AssignmentNode[T](BaseNode):

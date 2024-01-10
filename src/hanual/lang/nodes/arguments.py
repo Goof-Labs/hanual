@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import Generator
-from typing import Self
+from typing import Generator, Self
 
-from bytecode import Instr
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.util import Reply

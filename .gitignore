@@ -8,3 +8,4 @@ test.txt
 venv
 .dmypy.json
 .mypy_cache
+.obsidian

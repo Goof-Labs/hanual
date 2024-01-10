@@ -1,27 +1,20 @@
 from __future__ import annotations
 
 from bytecode import Instr
-from typing import Generator
-from typing import TYPE_CHECKING
+from typing import Generator, TYPE_CHECKING
 
 from hanual.compile.context import Context
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.nodes.base_node import defines_protocols
 from hanual.lang.nodes.dot_chain import DotChain
-from hanual.util import Reply
-from hanual.util import Request
-from hanual.util import Response
+from hanual.util import Reply, Request, Response
 
 
 if TYPE_CHECKING:
     from .arguments import Arguments
 
 
-@defines_protocols
 class FunctionCall[N: (Token, DotChain)](BaseNode):
-    PRESERVE_RETURN = 0
-
     __slots__ = (
         "_name",
         "_args",

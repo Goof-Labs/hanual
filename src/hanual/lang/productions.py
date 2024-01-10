@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import inspect
-from typing import List
-from typing import Self
-from typing import TYPE_CHECKING
+from typing import Self, TYPE_CHECKING
 from warnings import warn_explicit
 
 
@@ -15,8 +13,8 @@ if TYPE_CHECKING:
 class DefaultProduction[T: Token | BaseNode]:
     __slots__ = ("ts",)
 
-    def __init__(self: Self, ts: List[T], **kwargs) -> None:
-        self.ts: List[T] = ts
+    def __init__(self: Self, ts: list[T], **kwargs) -> None:
+        self.ts: list[T] = ts
 
         if kwargs:
             func_ln = inspect.getfile(kwargs["fn"])

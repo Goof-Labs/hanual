@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Generator, Mapping, Optional, Union, List, TYPE_CHECKING
+from typing import Generator, Mapping, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from hanual.api.hooks import PreProcessorHook
@@ -23,11 +23,11 @@ class Preprocessor:
 
     def __init__(
             self,
-            pre_defs: Optional[List[str]] = None,
+            pre_defs: Optional[list[str]] = None,
             prefix: Optional[str] = "@",
-            hooks: Optional[List[PreProcessorHook]] = None
+            hooks: Optional[list[PreProcessorHook]] = None
     ) -> None:
-        self._hooks: List[PreProcessorHook] = hooks or []
+        self._hooks: list[PreProcessorHook] = hooks or []
         self._definitions: list[str] = pre_defs or []
         self._prefix: str = prefix or "@"
 
@@ -64,7 +64,7 @@ class Preprocessor:
 
             yield line
 
-    def process_hooks(self, text: Union[str, List[str]]):
+    def _process_hooks(self, text: str | list[str]):
         if isinstance(text, str):
             text = text.split("\n")
 
@@ -83,13 +83,13 @@ class Preprocessor:
             self,
             text: str,
             prefix: Optional[str] = None,
-            starting_defs: Optional[List[str]] = None,
+            starting_defs: Optional[list[str]] = None,
             mappings: Optional[Mapping[str, str]] = None,
     ) -> Generator[str, None, None]:
         if mappings is None:
             mappings = {}
 
-        mappings: Dict[str, str] = {  # TODO: make this modifiable too
+        mappings: dict[str, str] = {  # TODO: make this modifiable too
             "def": "def",
             "end": "end",
             "nif": "nif",
@@ -104,14 +104,14 @@ class Preprocessor:
             self._definitions.extend(starting_defs)
 
         # run our own preprocessors
-        for line in self.process_hooks(text):
+        for line in self._process_hooks(text):
             # each preprocessor starts with a prefix
             if line.startswith(self.prefix):
 
                 # check all pre procs both possible aliases and run a corresponding function
                 for orig, alias in mappings.items():
                     if line.startswith((self.prefix + orig, self.prefix + alias)):
-                        getattr(self, f"get_{orig}")(line)
+                        getattr(self, f"_get_{orig}")(line)
                         break
 
                 else:
@@ -120,20 +120,20 @@ class Preprocessor:
             elif not self._ignore_code:
                 yield line + "\n"
 
-    def get_def(self, line: str) -> None:
+    def _get_def(self, line: str) -> None:
         # TODO use lexer
         name: str = line.split(" ")[1]  # Get the definition name
 
         self._definitions.append(name)
 
-    def get_end(self, line: str) -> None:
+    def _get_end(self, line: str) -> None:
         # We will just reset it
         self._ignore_code = False
 
-    def get_nif(self, line) -> None:
-        # TODO: add better support for this stuff
-        self._ignore_code = line.split(" ")[1] in self._definitions
-
-    def get_if(self, line: str) -> None:
+    def _get_nif(self, line) -> None:
         # TODO: add better support for this stuff
         self._ignore_code = not (line.split(" ")[1] in self._definitions)
+
+    def _get_if(self, line: str) -> None:
+        # TODO: add better support for this stuff
+        self._ignore_code = line.split(" ")[1] in self._definitions

@@ -176,11 +176,11 @@ No provided description
 
 
 
-# src\hanual\compile\bytecode.py
+# src\hanual\compile\compiler.py
 
 ---
 
-# src\hanual\compile\bytecode_instruction.py
+# src\hanual\compile\context.py
 
 ---
 
@@ -281,6 +281,10 @@ No provided description
 
 ---
 
+# src\hanual\lang\token.py
+
+---
+
 # src\hanual\lang\data\literal_wrapper.py
 
 ---
@@ -316,11 +320,6 @@ No provided description
 # src\hanual\lang\nodes\base_node.py
 
 ---
-## BaseNode.__init__
-> No provided summary
-
-No provided description
-
 ## BaseNode.prepare
 > Used to collect information from the node.
 
@@ -340,6 +339,10 @@ No provided description
 
 No provided description
 
+
+# src\hanual\lang\nodes\base_node_meta.py
+
+---
 
 # src\hanual\lang\nodes\binop.py
 
@@ -500,6 +503,10 @@ No provided description
 ---
 
 # src\hanual\lang\util\proxy.py
+
+---
+
+# src\hanual\util\errors.py
 
 ---
 

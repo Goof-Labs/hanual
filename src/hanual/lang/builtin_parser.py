@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Literal, Union
+from typing import Any
 
 from hanual.lang.builtin_lexer import Token
 from hanual.lang.nodes import (
@@ -101,7 +101,7 @@ def strong_fields(
 def struct_def(
         ts: DefaultProduction[
             DefaultProduction[Token, Token],  # struct header
-            Union[StrongField, StrongFieldList],  # struct fields
+            StrongField | StrongFieldList,  # struct fields
             Token,  # end token
         ],
         lines: str = "",
@@ -156,7 +156,7 @@ def s_getattr(
 )
 def for_loop(
         ts,
-        no_body: Union[Literal[True], Literal[None]],
+        no_body: True | None,
 ) -> ForLoop:
     if no_body is True:
         return ForLoop(

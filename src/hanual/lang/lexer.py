@@ -1,15 +1,9 @@
 from __future__ import annotations
 
 import re
-from typing import Generator
-from typing import Iterable
-from typing import Tuple
-from typing import TYPE_CHECKING
+from typing import Generator, Iterable, TYPE_CHECKING
 
-from hanual.lang.errors import ErrorType
-from hanual.lang.errors import Frame
-from hanual.lang.errors import HanualError
-from hanual.lang.errors import TraceBack
+from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 
 from .util.line_range import LineRange
 from .token import Token
@@ -19,7 +13,7 @@ if TYPE_CHECKING:
     from hanual.api.hooks import TokenHook
 
 
-def kw(reg: LiteralString) -> Tuple[LiteralString, LiteralString]:
+def kw(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
     """Used to define a keyword in the lexer.
 
     > The function us used with in the lexer. This function lets the user define keywords. For example, if you want to
@@ -35,7 +29,7 @@ def kw(reg: LiteralString) -> Tuple[LiteralString, LiteralString]:
     return reg, "kw"
 
 
-def rx(reg: LiteralString) -> Tuple[LiteralString, LiteralString]:
+def rx(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
     """Used to define a token in the lexer.
 
     > The function us used with in the lexer. This function lets the user define patterns/tokens. For example, if you

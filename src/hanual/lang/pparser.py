@@ -4,23 +4,18 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
     Generator,
-    List,
     NamedTuple,
     Optional,
-    Tuple,
     Type,
 )
 
-from hanual.api.hooks import RuleHook
-
-from .lexer import Token
-from .productions import DefaultProduction
 from .util.proxy import Proxy
 
 if TYPE_CHECKING:
-    pass
+    from hanual.api.hooks import RuleHook
+    from .productions import DefaultProduction
+    from .lexer import Token
 
 
 class _StackFrame[T](NamedTuple):
@@ -38,26 +33,11 @@ class PParser:
     """
 
     def __init__(self) -> None:
-        self.rules: Dict[str, Tuple[str, Proxy]] = {}
-        self._always: List = []
+        self.rules: dict[str, tuple[str, Proxy]] = {}
+        self._always: list = []
         self.debug = False
 
         logging.basicConfig(level=logging.DEBUG)
-
-    def toggle_debug_messages(self: PParser, setting: Optional[bool] = None) -> None:
-        """
-        This will toggle debug messages on or off.
-        The user should explicitly provide what the setting should be.
-        """
-
-        if setting is None:
-            self.debug = not self.debug
-
-        elif setting is False or setting is True:
-            self.debug = setting
-
-        else:
-            self.debug = bool(setting)
 
     def check_redundancy(self: PParser) -> None:
         """
@@ -88,14 +68,12 @@ class PParser:
             logging.warning("unused tokens: %s", unused_tokens)
             logging.critical("undefined tokens: %s", undef_tokens)
 
-    def rule(
-            self: PParser,
-            *rules,
-            prod: Optional[Type] = DefaultProduction,
-            types: Optional[Dict[str, Any]] = None,
-            unless_starts: Optional[List[str]] = None,
-            unless_ends: Optional[List[str]] = None,
-    ):
+    def rule(self: PParser,
+             *rules,
+             prod: Optional[Type] = DefaultProduction,
+             types: Optional[dict[str, Any]] = None,
+             unless_starts: Optional[list[str]] = None,
+             unless_ends: Optional[list[str]] = None) -> None:
         """
         This function is a decorator, so it can be used with the following syntax
 
@@ -167,7 +145,7 @@ class PParser:
             prox = Proxy(func, types, prod, unless_starts, unless_ends)
             self.rules[rule] = name or func.__name__, prox
 
-    def add_hooks(self, hooks: List[RuleHook]) -> None:
+    def add_hooks(self, hooks: list[RuleHook]) -> None:
         for hook in hooks:
             for rule in hook.patterns:
                 self.rules[rule] = hook.name, hook.proxy
@@ -190,10 +168,8 @@ class PParser:
     # PARSING THE TOKENS #
     ######################
 
-    def parse(self: PParser, stream: Generator[Token, None, None]):
-        type T = any
-
-        stack: List[_StackFrame[T]] = []
+    def parse[T](self: PParser, stream: Generator[Token, None, None]):
+        stack: list[_StackFrame[T]] = []
 
         while True:
             # get next token, default is None

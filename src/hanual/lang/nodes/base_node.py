@@ -45,7 +45,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     def get_location(self) -> InstrLocation:
-        if self._line_range.start <= 1 or self._line_range.end <= 1:
+        if self._line_range.start < 1 or self._line_range.end < 1:
             raise Exception(f"LineRange has a range of -1 {self._line_range}")
 
         # TODO add column offsets and change second `self._line_range.start` to the `self._line_range.end`
@@ -77,23 +77,3 @@ class BaseNode(metaclass=_BaseNodeMeta):
     @property
     def is_token(self):
         return True
-
-
-
-def defines_protocols(cls):
-    idx = 1
-
-    for idx, attr in enumerate(dir(cls)):
-        if attr.isupper():
-            value: int = getattr(cls, attr)
-            assert isinstance(value, int)
-
-            setattr(cls, attr, defines_protocols.calls + value)
-
-    defines_protocols.calls += idx
-    defines_protocols.classes.append(cls)
-    return cls
-
-
-defines_protocols.calls = 0
-defines_protocols.classes = []

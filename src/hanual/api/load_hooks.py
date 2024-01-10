@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import importlib.util
 import logging
 
@@ -10,11 +10,11 @@ if TYPE_CHECKING:
 
 class HookLoader[_H]:
     def __init__(self):
-        self._pp_hooks: List[PreProcessorHook] = []  # pre-processor hooks
-        self._tk_hook: List[TokenHook] = []  # token hooks
-        self._rl_hook: List[RuleHook] = []  # rule hooks
+        self._pp_hooks: list[PreProcessorHook] = []  # pre-processor hooks
+        self._tk_hook: list[TokenHook] = []  # token hooks
+        self._rl_hook: list[RuleHook] = []  # rule hooks
 
-    def load_modules(self, files: List[Tuple[str, str]]) -> None:
+    def load_modules(self, files: list[tuple[str, str]]) -> None:
         for py_path, path in files:
             self.load_module(py_path, path)
 
@@ -29,7 +29,7 @@ class HookLoader[_H]:
 
         assert hasattr(module, "get_hooks"), AttributeError(f"{py_path!r} must have function 'get_hooks'")
 
-        hooks: List[_H] = module.get_hooks()
+        hooks: list[_H] = module.get_hooks()
 
         for hook in hooks:
             if issubclass(type(hook), PreProcessorHook):

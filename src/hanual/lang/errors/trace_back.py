@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -45,7 +45,7 @@ class TraceBack:
         self._frames.append(frame)
         return self
 
-    def add_frames(self, frames: List[Frame]) -> Self:
+    def add_frames(self, frames: list[Frame]) -> Self:
         self._frames.extend(frames)
         return self
 

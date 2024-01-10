@@ -73,6 +73,7 @@ for file in glob.glob(namespace.p + "\\**\\*.py", recursive=True):
             continue
 
         if ignore_case in file:
+            print(file, f"{ignore_case in file}")
             skip_file = True
 
     if skip_file:

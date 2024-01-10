@@ -4,7 +4,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    Dict,
     Iterable,
     Type,
     Self
@@ -33,7 +32,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
     def __init__(
             self: Self,
             fn: F,
-            types: Dict[str, Any],
+            types: dict[str, Any],
             prod: type[P] = DefaultProduction,
             unless_start: Iterable[str] = (),
             unless_end: Iterable[str] = (),
@@ -49,7 +48,7 @@ class Proxy[F: Callable, P:DefaultProduction]:
         return self._prod
 
     @property
-    def types(self) -> Dict[str, Any]:
+    def types(self) -> dict[str, Any]:
         return self._types
 
     @property
@@ -178,7 +177,7 @@ class HookProxy[P](Proxy):
     def __init__(
             self,
             cls: Type[RuleHook],
-            types: Dict[str, Any],
+            types: dict[str, Any],
             prod: type[P] = DefaultProduction,
             unless_start: Iterable[str] = (),
             unless_end: Iterable[str] = (),

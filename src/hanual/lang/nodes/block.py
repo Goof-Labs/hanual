@@ -44,10 +44,10 @@ class CodeBlock[C: BaseNode](BaseNode):
             for child in self._children:
                 yield from child.gen_code()
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         for child in self._children:
             yield from child.prepare()
 
     @property
-    def children(self):
+    def children(self) -> list[BaseNode]:
         return self._children

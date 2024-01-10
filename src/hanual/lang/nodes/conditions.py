@@ -32,30 +32,43 @@ class Condition[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
         return self._right
 
     def gen_code(self, **kwargs) -> Generator[Response | Request, Reply, None]:
-        yield from self._left.gen_code(store=False)
-        yield from self._right.gen_code(store=False)
+        # TODO : addd context
+        yield from self._left.gen_code()
+        yield from self._right.gen_code()
 
         if self._op.value == "==":
-            yield Response(Instr("COMPARE_OP", Compare.EQ, location=self.get_location()))
+            yield Response(
+                Instr("COMPARE_OP", Compare.EQ, location=self.get_location())
+            )
 
         elif self._op.value == ">":
-            yield Response(Instr("COMPARE_OP", Compare.GT, location=self.get_location()))
+            yield Response(
+                Instr("COMPARE_OP", Compare.GT, location=self.get_location())
+            )
 
         elif self._op.value == "<":
-            yield Response(Instr("COMPARE_OP", Compare.LT, location=self.get_location()))
+            yield Response(
+                Instr("COMPARE_OP", Compare.LT, location=self.get_location())
+            )
 
         elif self._op.value == ">=":
-            yield Response(Instr("COMPARE_OP", Compare.GE, location=self.get_location()))
+            yield Response(
+                Instr("COMPARE_OP", Compare.GE, location=self.get_location())
+            )
 
         elif self._op.value == "<=":
-            yield Response(Instr("COMPARE_OP", Compare.LE, location=self.get_location()))
+            yield Response(
+                Instr("COMPARE_OP", Compare.LE, location=self.get_location())
+            )
 
         elif self._op.value == "!=":
-            yield Response(Instr("COMPARE_OP", Compare.NE, location=self.get_location()))
+            yield Response(
+                Instr("COMPARE_OP", Compare.NE, location=self.get_location())
+            )
 
         else:
             raise NotImplementedError(f"Have not implemented operator {self._op.value}")
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from self._left.prepare()
         yield from self._right.prepare()

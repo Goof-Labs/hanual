@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generator, Mapping, Optional, TYPE_CHECKING
+from typing import Generator, Mapping, Optional, TYPE_CHECKING, Iterable
 
 if TYPE_CHECKING:
     from hanual.api.hooks import PreProcessorHook
@@ -22,10 +22,10 @@ class Preprocessor:
     """
 
     def __init__(
-            self,
-            pre_defs: Optional[list[str]] = None,
-            prefix: Optional[str] = "@",
-            hooks: Optional[list[PreProcessorHook]] = None
+        self,
+        pre_defs: Optional[list[str]] = None,
+        prefix: Optional[str] = "@",
+        hooks: Optional[list[PreProcessorHook]] = None,
     ) -> None:
         self._hooks: list[PreProcessorHook] = hooks or []
         self._definitions: list[str] = pre_defs or []
@@ -57,14 +57,16 @@ class Preprocessor:
         self._definitions.append(name)
 
     @staticmethod
-    def _skip_lines(text: list[str], ignore: list[str]) -> Generator[str, None, None]:
+    def _skip_lines(
+        text: Iterable[str], ignore: list[str]
+    ) -> Generator[str, None, None]:
         for line in text:
             if line in ignore:
                 continue
 
             yield line
 
-    def _process_hooks(self, text: str | list[str]):
+    def _process_hooks(self, text: str | Iterable[str]):
         if isinstance(text, str):
             text = text.split("\n")
 
@@ -80,21 +82,21 @@ class Preprocessor:
         self._hooks.append(hook)
 
     def process(
-            self,
-            text: str,
-            prefix: Optional[str] = None,
-            starting_defs: Optional[list[str]] = None,
-            mappings: Optional[Mapping[str, str]] = None,
+        self,
+        text: str,
+        prefix: Optional[str] = None,
+        starting_defs: Optional[list[str]] = None,
+        # mappings: Optional[Mapping[str, str]] = None,
     ) -> Generator[str, None, None]:
-        if mappings is None:
-            mappings = {}
+        # if mappings is None:
+        #    mappings = {}
 
         mappings: dict[str, str] = {  # TODO: make this modifiable too
             "def": "def",
             "end": "end",
             "nif": "nif",
             "if": "if",
-            **mappings,
+            # **mappings,
         }
 
         if prefix is not None:
@@ -107,7 +109,6 @@ class Preprocessor:
         for line in self._process_hooks(text):
             # each preprocessor starts with a prefix
             if line.startswith(self.prefix):
-
                 # check all pre procs both possible aliases and run a corresponding function
                 for orig, alias in mappings.items():
                     if line.startswith((self.prefix + orig, self.prefix + alias)):

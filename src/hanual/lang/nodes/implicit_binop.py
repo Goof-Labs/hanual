@@ -32,7 +32,9 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
         inferred: Token | None = kwargs.get("infer", None)
 
         if inferred is None:
-            raise TypeError(f"Argument 'infer' was left blank in '{type(self).__name__}.gen_code'")
+            raise TypeError(
+                f"Argument 'infer' was left blank in '{type(self).__name__}.gen_code'"
+            )
 
         yield from inferred.gen_code(store=False)
         yield from self._right.gen_code(store=False)
@@ -45,5 +47,5 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
 
         yield from inferred.gen_code(store=True)
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from self._right.prepare()

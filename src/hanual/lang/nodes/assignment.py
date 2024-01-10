@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Request
 
 if TYPE_CHECKING:
     from hanual.compile.context import Context
@@ -32,6 +32,6 @@ class AssignmentNode[T](BaseNode):
             yield from self._value.gen_code()
             yield from self._target.gen_code(store=True)
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from self._target.prepare()
         yield from self._value.prepare()

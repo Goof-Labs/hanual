@@ -39,11 +39,9 @@ class Request[T]:
     # used to describe what the request should yield, the logic for this is actually in the response
     @property
     def response(self) -> T:
-        warn(
-            f"{type(self).__name__}.response was called, this should never be called",
-            Warning,
+        raise Exception(
+            f"{type(self).__name__}.response was called, this should never be called"
         )
-        return
 
     def __str__(self):
         return f"{type(self).__name__}{self.params}"

@@ -14,17 +14,12 @@ if TYPE_CHECKING:
 
 
 class BreakStatement(BaseNode):
-    __slots__ = (
-        "_token",
-        "_context",
-        "_line_range",
-        "_lines"
-    )
+    __slots__ = ("_token", "_context", "_line_range", "_lines")
 
     def __init__(
-            self: Self,
-            node: Token,
-            ctx: Optional[Token] = None,
+        self: Self,
+        node: Token,
+        ctx: Optional[Token] = None,
     ) -> None:
         self._token = node
         self._context = ctx
@@ -35,5 +30,5 @@ class BreakStatement(BaseNode):
         end_lbl: Label = context.get("end_label", recursive=True)[0]
         yield Response(Instr("JUMP_FORWARD", end_lbl, location=self.get_location()))
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from ()

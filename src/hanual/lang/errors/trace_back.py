@@ -26,8 +26,8 @@ class Frame:
         tb = StringIO()
         tb.write(f"{self._name}:")
         for line, i in zip(
-                self._line.split("\n"),
-                range(self._line_range.start, self._line_range.end + 1),
+            self._line.split("\n"),
+            range(self._line_range.start, self._line_range.end + 1),
         ):
             tb.write(f" {str(i).zfill(5)} | {line}")
         return tb.getvalue()

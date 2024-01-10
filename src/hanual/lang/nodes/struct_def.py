@@ -6,7 +6,7 @@ from hanual.lang.lexer import Token
 from .base_node import BaseNode
 from .strong_field import StrongField
 from .strong_field_list import StrongFieldList
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -21,15 +21,17 @@ class StructDefinition(BaseNode):
     )
 
     def __init__(
-            self,
-            name: Token,
-            fields: StrongFieldList | StrongField,
-            lines: str,
-            line_range: LineRange,
+        self,
+        name: Token,
+        fields: StrongFieldList | StrongField,
+        lines: str,
+        line_range: LineRange,
     ) -> None:
         # if [param:fields] is a StrongField, then we make one and add it to it
         if isinstance(fields, StrongField):
-            self._fields: StrongFieldList = StrongFieldList(lines=lines, line_range=line_range)
+            self._fields: StrongFieldList = StrongFieldList(
+                lines=lines, line_range=line_range
+            )
             self._fields.add_field(fields)
 
         else:
@@ -55,5 +57,5 @@ class StructDefinition(BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Generator, Iterable, TYPE_CHECKING
+from typing import Generator, Iterable, TYPE_CHECKING, LiteralString, Literal
 
 from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 
@@ -9,7 +9,6 @@ from .util.line_range import LineRange
 from .token import Token
 
 if TYPE_CHECKING:
-    from typing_extensions import LiteralString, Literal
     from hanual.api.hooks import TokenHook
 
 
@@ -113,6 +112,9 @@ class Lexer:
 
             if kind == "SKIP":
                 continue
+
+            if kind is None:
+                raise Exception("kind is None")
 
             if kind == "MISMATCH":
                 print(

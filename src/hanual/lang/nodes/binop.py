@@ -17,10 +17,10 @@ class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
     __slots__ = "_right", "_left", "_op", "_lines", "_line_range"
 
     def __init__(
-            self,
-            op: Token,
-            left: L,
-            right: R,
+        self,
+        op: Token,
+        left: L,
+        right: R,
     ) -> None:
         self._right: R = right
         self._left: L = left
@@ -48,21 +48,33 @@ class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
             yield from self._left.gen_code()
             yield from self._right.gen_code()
 
-            if self._op.value == '+':
-                yield Response(Instr("BINARY_OP", BinaryOp.ADD, location=self.get_location()))
+            if self._op.value == "+":
+                yield Response(
+                    Instr("BINARY_OP", BinaryOp.ADD, location=self.get_location())
+                )
 
-            elif self._op.value == '-':
-                yield Response(Instr("BINARY_OP", BinaryOp.SUBTRACT, location=self.get_location()))
+            elif self._op.value == "-":
+                yield Response(
+                    Instr("BINARY_OP", BinaryOp.SUBTRACT, location=self.get_location())
+                )
 
-            elif self._op.value == '/':
-                yield Response(Instr("BINARY_OP", BinaryOp.TRUE_DIVIDE, location=self.get_location()))
+            elif self._op.value == "/":
+                yield Response(
+                    Instr(
+                        "BINARY_OP", BinaryOp.TRUE_DIVIDE, location=self.get_location()
+                    )
+                )
 
-            elif self._op.value == '*':
-                yield Response(Instr("BINARY_OP", BinaryOp.MULTIPLY, location=self.get_location()))
+            elif self._op.value == "*":
+                yield Response(
+                    Instr("BINARY_OP", BinaryOp.MULTIPLY, location=self.get_location())
+                )
 
             else:
-                raise NotImplementedError(f"operator {self._op.value!r} has not been implemented yet")
+                raise NotImplementedError(
+                    f"operator {self._op.value!r} has not been implemented yet"
+                )
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from self._left.prepare()
         yield from self._right.prepare()

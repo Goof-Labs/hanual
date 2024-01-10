@@ -3,13 +3,15 @@ from __future__ import annotations
 from typing import Literal
 
 
-def parse_doc_string(text: str | Literal[None]):
+def parse_doc_string(
+    text: str | Literal[None],
+) -> tuple[str | None, str, list[list[str]]] | None:
     if text is None:
         return
 
     summary: str | None = None
     long: str = ""
-    params: list = []
+    params: list[list[str]] = []
 
     for line in text.split("\n"):
         line = line.strip()
@@ -28,7 +30,7 @@ def parse_doc_string(text: str | Literal[None]):
             data_type, *desc = "^".join(rest).split(">")
             params.append([name, data_type, ">".join(desc), ""])
 
-        elif line[0] == '|':
+        elif line[0] == "|":
             params[-1][3] += line.lstrip("| ") + " "
 
     return summary, long, params

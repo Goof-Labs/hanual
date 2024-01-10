@@ -28,13 +28,13 @@ class ErrorType(StrEnum):
 
 class HanualError:
     def __init__(
-            self,
-            pos: LineRange,
-            line: str,
-            name: str,
-            reason: str,
-            tb: TraceBack,
-            tip: Optional[str] = None,
+        self,
+        pos: LineRange,
+        line: str,
+        name: str,
+        reason: str,
+        tb: TraceBack,
+        tip: Optional[str] = None,
     ) -> None:
         self._reason = reason
         self._name = name

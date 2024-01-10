@@ -6,7 +6,9 @@ from typing import Callable, Generator, LiteralString
 from hanual.api.hooks import GenericHook
 
 
-def new_preprocessor(skip: list[LiteralString]) -> Callable[[PreProcessorHook], PreProcessorHook]:
+def new_preprocessor(
+    skip: list[LiteralString],
+) -> Callable[[PreProcessorHook], PreProcessorHook]:
     """A decorator to define a new preprocessor Hook
 
     > This is a class decorator that needs to be used to define a
@@ -43,7 +45,9 @@ class PreProcessorHook(GenericHook, ABC):
     __slots__ = ("_skip",)
 
     @abstractmethod
-    def scan_lines(self, lines: Generator[str, None, None]) -> Generator[str, None, None]:
+    def scan_lines(
+        self, lines: Generator[str, None, None]
+    ) -> Generator[str, None, None]:
         """A function that yields lines of code.
 
         > This function takes in the lines of the python file as a generator,

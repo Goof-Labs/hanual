@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Generator
 
 from bytecode import Bytecode
 from bytecode import Instr
+
 from hanual.compile.context import Context
 from hanual.util import Reply
 from hanual.util import Request
@@ -21,8 +22,8 @@ class Compiler:
         self._context: list = []
 
     def prepare_nodes(self, node: BaseNode):
-        reply: Reply | None = None
-        pipe = node.prepare()
+        reply: Reply[list] | None = None
+        pipe: Generator[Request, Reply[list] | None, None] = node.prepare()
 
         while True:
             try:
@@ -31,11 +32,11 @@ class Compiler:
             except StopIteration:
                 break
 
-            reply = Reply(self._satisfy_prepare_request(req))
+            reply: Reply[list] | None = self._satisfy_prepare_request(req)
 
-    def _satisfy_prepare_request(self, request: Request) -> list:
+    def _satisfy_prepare_request(self, request: Request) -> Reply[list] | None:
         req = iter(request.params)
-        reply = []
+        reply: list = []
 
         while True:
             req_type = next(req, None)
@@ -56,11 +57,11 @@ class Compiler:
             else:
                 raise NotImplementedError(f"{req_type}")
 
-        return reply
+        return Reply(reply)
 
     def compile_body(self, nodes: BaseNode):
         instructions = nodes.gen_code()
-        reply: Reply | None = None
+        reply: Reply | Any | None = None
 
         while True:
             try:
@@ -79,7 +80,7 @@ class Compiler:
             else:
                 raise NotImplementedError(val)
 
-    def _satisfy_compile_request[T](self, request: Request[T]) -> Reply[T] | T:
+    def _satisfy_compile_request(self, request: Request[list]) -> Reply[list | Any]:
         requests = iter(request.params)
         reply: list[Any] = []
 
@@ -101,7 +102,11 @@ class Compiler:
 
             elif req == Request.CREATE_CONTEXT:
                 # create a blank context
-                ctx = Context(deleter=self._delete_context, adder=self._add_context, getter=self._get_context)
+                ctx = Context(
+                    deleter=self._delete_context,
+                    adder=self._add_context,
+                    getter=self._get_context,
+                )
 
                 self._context.append(ctx)
 

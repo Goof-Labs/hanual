@@ -32,12 +32,14 @@ class IfStatement(BaseNode):
         false_jump = Label()
 
         yield from self._condition.gen_code()
-        yield Response(Instr("POP_JUMP_IF_FALSE", false_jump, location=self.get_location()))
+        yield Response(
+            Instr("POP_JUMP_IF_FALSE", false_jump, location=self.get_location())
+        )
 
         yield from self._block.gen_code()
 
         yield Response(false_jump)
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from self._condition.prepare()
         yield from self._block.prepare()

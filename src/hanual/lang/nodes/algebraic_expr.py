@@ -22,12 +22,12 @@ class AlgebraicExpression(BaseNode):
     )
 
     def __init__(
-            self,
-            operator: Token,
-            left: AlgebraicExpression | Token,
-            right: AlgebraicExpression | Token,
-            lines: str,
-            line_range: LineRange,
+        self,
+        operator: Token,
+        left: AlgebraicExpression | Token,
+        right: AlgebraicExpression | Token,
+        lines: str,
+        line_range: LineRange,
     ) -> None:
         self._op: Token = operator
         self._left = left
@@ -39,5 +39,5 @@ class AlgebraicExpression(BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

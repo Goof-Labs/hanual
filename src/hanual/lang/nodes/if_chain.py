@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Generator, Self
 from .base_node import BaseNode
 from .else_statement import ElseStatement
 
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Request
 
 
 if TYPE_CHECKING:
@@ -44,5 +44,5 @@ class IfChain(BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

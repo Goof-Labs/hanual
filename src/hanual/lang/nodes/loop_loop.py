@@ -41,5 +41,5 @@ class LoopLoop(BaseNode):
             yield Response(Instr("JUMP_BACKWARD", start_label))
             yield Response(end_label)
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         yield from self._inner.prepare()

@@ -19,12 +19,12 @@ from .hook import GenericHook
 
 
 def new_rule(
-        *pattern: LiteralString,
-        prod: Optional[Type] = DefaultProduction,
-        unless_starts: Optional[Iterable[LiteralString]] = None,
-        unless_ends: Optional[Iterable[LiteralString]] = None,
-        types: Optional[Dict[LiteralString, Any]] = None,
-        name: Optional[str] = "",
+    name: str,
+    *pattern,
+    prod: Optional[Type] = DefaultProduction,
+    types: Optional[dict[str, Any]] = None,
+    unless_starts: Optional[list[str]] = None,
+    unless_ends: Optional[list[str]] = None,
 ) -> Callable[[Type[RuleHook]], Type[RuleHook]]:
     """A class decorator for a RuleHook.
 
@@ -32,7 +32,7 @@ def new_rule(
     > takes in paramiters and sets them as attributes on the RuleHook.
     > The paramiters are verry reminicent of the ones used in the
     > `parser.rule` decorator. Example:
-    > 
+    >
     > @new_rule("some pattern", "pattern two")
     > class MyRule(RuleHook):
     >     pass
@@ -66,6 +66,7 @@ def new_rule(
     |
     |
     """
+
     def decor(cls: Type[RuleHook]):
         cls._proxy = HookProxy(cls, types, prod, unless_starts, unless_ends)
         cls._pattern = pattern
@@ -104,6 +105,6 @@ class RuleHook(GenericHook):
         # and that is used. THX to: vvvvvvv
         # <https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case>
         return (
-                self._name
-                or re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
+            self._name
+            or re.sub(r"(?<!^)(?=[A-Z])", "_", self.__class__.__name__).lower()
         )

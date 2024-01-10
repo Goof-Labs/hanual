@@ -24,7 +24,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare[R1, R2](self) -> Generator[Request[R1], Reply[R2] | None, None]:
         """Used to collect information from the node.
 
         > Provides all necessary info to the compiler such as variable names and
@@ -38,13 +38,14 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        """Generates the code for the compiler to omit.
-
-        """
+    def gen_code(self) -> Generator[Response | Request, Reply | None, None]:
+        """Generates the code for the compiler to omit."""
         raise NotImplementedError
 
     def get_location(self) -> InstrLocation:
+        if self._line_range is None:
+            raise Exception("self._line_range is None (was never set)")
+
         if self._line_range.start < 1 or self._line_range.end < 1:
             raise Exception(f"LineRange has a range of -1 {self._line_range}")
 
@@ -53,11 +54,14 @@ class BaseNode(metaclass=_BaseNodeMeta):
             lineno=self._line_range.start,
             end_lineno=self._line_range.start,
             col_offset=None,
-            end_col_offset=None
+            end_col_offset=None,
         )
 
     @property
     def lines(self) -> str:
+        if self._lines is None:
+            raise Exception("self._lines is None (was never set)")
+
         return self._lines
 
     @lines.setter
@@ -67,6 +71,9 @@ class BaseNode(metaclass=_BaseNodeMeta):
 
     @property
     def line_range(self) -> LineRange:
+        if self._line_range is None:
+            raise Exception("self._line_range is none (was never set)")
+
         return self._line_range
 
     @line_range.setter

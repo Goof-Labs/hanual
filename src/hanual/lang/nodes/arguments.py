@@ -44,7 +44,7 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
         for arg in reversed(self._children):
             yield from arg.gen_code(store=False)
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         for arg in self._children:
             yield from arg.prepare()
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING
-from hanual.util import Reply, Response, Request
+from typing import TYPE_CHECKING, Generator
+from hanual.util import Reply, Request
 
 from .base_node import BaseNode
 
@@ -27,5 +27,5 @@ class UsingStatement(BaseNode, ABC):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

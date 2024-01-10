@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Generator
 
 from hanual.lang.nodes.base_node import BaseNode
 
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Request
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -19,7 +19,9 @@ class StrongField[T](BaseNode):
         "_line_range",
     )
 
-    def __init__(self, name: Token, type_: T, lines: str, line_range: LineRange) -> None:
+    def __init__(
+        self, name: Token, type_: T, lines: str, line_range: LineRange
+    ) -> None:
         self._name: Token = name
         self._type: T = type_
 
@@ -37,5 +39,5 @@ class StrongField[T](BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

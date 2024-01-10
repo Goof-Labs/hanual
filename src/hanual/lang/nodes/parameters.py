@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, Generator, Self
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Request
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+    pass
 
 
 class Parameters(BaseNode):
@@ -18,8 +18,8 @@ class Parameters(BaseNode):
     )
 
     def __init__(
-            self,
-            children: Token | list[Token],
+        self,
+        children: Token | list[Token],
     ) -> None:
         self._children: list[Token] = []
         self.add_child(children)
@@ -43,5 +43,5 @@ class Parameters(BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

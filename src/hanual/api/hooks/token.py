@@ -17,6 +17,7 @@ def new_token(regex: tuple[str, LiteralString], name: LiteralString):
 
     @regex^tuple[str, LiteralString]>
     """
+
     def decor(cls):
         cls._regex = regex[0]
         cls._type = regex[1]
@@ -41,5 +42,7 @@ class TokenHook(GenericHook):
     def type(self):
         return self._type
 
-    def gen_token(self, kind: str, value: str, line_range: LineRange, col: int, line: str) -> Token:
+    def gen_token(
+        self, kind: str, value: str, line_range: LineRange, col: int, line: str
+    ) -> Token:
         return Token(kind, value, line_range, col, line)

@@ -1,13 +1,37 @@
 
-# src\hanual\__main__.py
+# .\setup.py
 
 ---
 
-# src\hanual\api\load_hooks.py
+# .\dev\tools\document\doc_parser.py
 
 ---
 
-# src\hanual\api\hooks\hook.py
+# .\dev\tools\document\template.py
+
+---
+
+# .\dev\tools\document\__main__.py
+
+---
+
+# .\src\hanual\__init__.py
+
+---
+
+# .\src\hanual\__main__.py
+
+---
+
+# .\src\hanual\api\load_hooks.py
+
+---
+
+# .\src\hanual\api\__init__.py
+
+---
+
+# .\src\hanual\api\hooks\hook.py
 
 ---
 ## props.props
@@ -33,7 +57,7 @@
 No provided description
 
 
-# src\hanual\api\hooks\preprocessor.py
+# .\src\hanual\api\hooks\preprocessor.py
 
 ---
 ## new_preprocessor.new_preprocessor
@@ -98,7 +122,7 @@ No provided description
 
 
 
-# src\hanual\api\hooks\rule.py
+# .\src\hanual\api\hooks\rule.py
 
 ---
 ## new_rule.new_rule
@@ -157,7 +181,7 @@ No provided description
 
 
 
-# src\hanual\api\hooks\token.py
+# .\src\hanual\api\hooks\token.py
 
 ---
 ## new_token.new_token
@@ -176,27 +200,31 @@ No provided description
 
 
 
-# src\hanual\compile\compiler.py
+# .\src\hanual\api\hooks\__init__.py
 
 ---
 
-# src\hanual\compile\context.py
+# .\src\hanual\compile\compiler.py
 
 ---
 
-# src\hanual\compile\hanual_function.py
+# .\src\hanual\compile\context.py
 
 ---
 
-# src\hanual\lang\builtin_lexer.py
+# .\src\hanual\compile\hanual_function.py
 
 ---
 
-# src\hanual\lang\builtin_parser.py
+# .\src\hanual\lang\builtin_lexer.py
 
 ---
 
-# src\hanual\lang\lexer.py
+# .\src\hanual\lang\builtin_parser.py
+
+---
+
+# .\src\hanual\lang\lexer.py
 
 ---
 ## kw.kw
@@ -236,14 +264,9 @@ No provided description
 
 
 
-# src\hanual\lang\pparser.py
+# .\src\hanual\lang\pparser.py
 
 ---
-## PParser.toggle_debug_messages
-> This will toggle debug messages on or off.
-
-No provided description
-
 ## PParser.check_redundancy
 > This function checks for redundancy. It
 
@@ -277,47 +300,59 @@ No provided description
 No provided description
 
 
-# src\hanual\lang\productions.py
+# .\src\hanual\lang\productions.py
 
 ---
 
-# src\hanual\lang\token.py
+# .\src\hanual\lang\token.py
 
 ---
 
-# src\hanual\lang\data\literal_wrapper.py
+# .\src\hanual\lang\__init__.py
 
 ---
 
-# src\hanual\lang\errors\errors.py
+# .\src\hanual\lang\data\literal_wrapper.py
 
 ---
 
-# src\hanual\lang\errors\trace_back.py
+# .\src\hanual\lang\data\__init__.py
 
 ---
 
-# src\hanual\lang\nodes\algebraic_expr.py
+# .\src\hanual\lang\errors\errors.py
 
 ---
 
-# src\hanual\lang\nodes\algebraic_fn.py
+# .\src\hanual\lang\errors\trace_back.py
 
 ---
 
-# src\hanual\lang\nodes\anon_function.py
+# .\src\hanual\lang\errors\__init__.py
 
 ---
 
-# src\hanual\lang\nodes\arguments.py
+# .\src\hanual\lang\nodes\algebraic_expr.py
 
 ---
 
-# src\hanual\lang\nodes\assignment.py
+# .\src\hanual\lang\nodes\algebraic_fn.py
 
 ---
 
-# src\hanual\lang\nodes\base_node.py
+# .\src\hanual\lang\nodes\anon_function.py
+
+---
+
+# .\src\hanual\lang\nodes\arguments.py
+
+---
+
+# .\src\hanual\lang\nodes\assignment.py
+
+---
+
+# .\src\hanual\lang\nodes\base_node.py
 
 ---
 ## BaseNode.prepare
@@ -340,15 +375,15 @@ No provided description
 No provided description
 
 
-# src\hanual\lang\nodes\base_node_meta.py
+# .\src\hanual\lang\nodes\base_node_meta.py
 
 ---
 
-# src\hanual\lang\nodes\binop.py
+# .\src\hanual\lang\nodes\binop.py
 
 ---
 
-# src\hanual\lang\nodes\block.py
+# .\src\hanual\lang\nodes\block.py
 
 ---
 ## CodeBlock.__init__
@@ -357,135 +392,143 @@ No provided description
 No provided description
 
 
-# src\hanual\lang\nodes\break_statement.py
+# .\src\hanual\lang\nodes\break_statement.py
 
 ---
 
-# src\hanual\lang\nodes\conditions.py
+# .\src\hanual\lang\nodes\conditions.py
 
 ---
 
-# src\hanual\lang\nodes\dot_chain.py
+# .\src\hanual\lang\nodes\dot_chain.py
 
 ---
 
-# src\hanual\lang\nodes\elif_statement.py
+# .\src\hanual\lang\nodes\elif_statement.py
 
 ---
 
-# src\hanual\lang\nodes\else_statement.py
+# .\src\hanual\lang\nodes\else_statement.py
 
 ---
 
-# src\hanual\lang\nodes\for_loop.py
+# .\src\hanual\lang\nodes\for_loop.py
 
 ---
 
-# src\hanual\lang\nodes\freeze_node.py
+# .\src\hanual\lang\nodes\freeze_node.py
 
 ---
 
-# src\hanual\lang\nodes\f_call.py
+# .\src\hanual\lang\nodes\f_call.py
 
 ---
 
-# src\hanual\lang\nodes\f_def.py
+# .\src\hanual\lang\nodes\f_def.py
 
 ---
 
-# src\hanual\lang\nodes\hanual_list.py
+# .\src\hanual\lang\nodes\hanual_list.py
 
 ---
 
-# src\hanual\lang\nodes\if_chain.py
+# .\src\hanual\lang\nodes\if_chain.py
 
 ---
 
-# src\hanual\lang\nodes\if_statement.py
+# .\src\hanual\lang\nodes\if_statement.py
 
 ---
 
-# src\hanual\lang\nodes\implicit_binop.py
+# .\src\hanual\lang\nodes\implicit_binop.py
 
 ---
 
-# src\hanual\lang\nodes\implicit_condition.py
+# .\src\hanual\lang\nodes\implicit_condition.py
 
 ---
 
-# src\hanual\lang\nodes\iter_loop.py
+# .\src\hanual\lang\nodes\iter_loop.py
 
 ---
 
-# src\hanual\lang\nodes\loop_loop.py
+# .\src\hanual\lang\nodes\loop_loop.py
 
 ---
 
-# src\hanual\lang\nodes\namespace_acessor.py
+# .\src\hanual\lang\nodes\namespace_acessor.py
 
 ---
 
-# src\hanual\lang\nodes\new_struct.py
+# .\src\hanual\lang\nodes\new_struct.py
 
 ---
 
-# src\hanual\lang\nodes\parameters.py
+# .\src\hanual\lang\nodes\parameters.py
 
 ---
 
-# src\hanual\lang\nodes\range_node.py
+# .\src\hanual\lang\nodes\range_node.py
 
 ---
 
-# src\hanual\lang\nodes\return_stmt.py
+# .\src\hanual\lang\nodes\return_stmt.py
 
 ---
 
-# src\hanual\lang\nodes\shout_node.py
+# .\src\hanual\lang\nodes\shout_node.py
 
 ---
 
-# src\hanual\lang\nodes\strong_field.py
+# .\src\hanual\lang\nodes\strong_field.py
 
 ---
 
-# src\hanual\lang\nodes\strong_field_list.py
+# .\src\hanual\lang\nodes\strong_field_list.py
 
 ---
 
-# src\hanual\lang\nodes\struct_def.py
+# .\src\hanual\lang\nodes\struct_def.py
 
 ---
 
-# src\hanual\lang\nodes\s_getattr.py
+# .\src\hanual\lang\nodes\s_getattr.py
 
 ---
 
-# src\hanual\lang\nodes\using_statement.py
+# .\src\hanual\lang\nodes\using_statement.py
 
 ---
 
-# src\hanual\lang\nodes\using_statement_alt_name.py
+# .\src\hanual\lang\nodes\using_statement_alt_name.py
 
 ---
 
-# src\hanual\lang\nodes\var_change.py
+# .\src\hanual\lang\nodes\var_change.py
 
 ---
 
-# src\hanual\lang\nodes\while_statement.py
+# .\src\hanual\lang\nodes\while_statement.py
 
 ---
 
-# src\hanual\lang\preprocess\preprocesser.py
+# .\src\hanual\lang\nodes\__init__.py
 
 ---
 
-# src\hanual\lang\util\compile_code.py
+# .\src\hanual\lang\preprocess\preprocesser.py
 
 ---
 
-# src\hanual\lang\util\deprecated.py
+# .\src\hanual\lang\preprocess\__init__.py
+
+---
+
+# .\src\hanual\lang\util\compile_code.py
+
+---
+
+# .\src\hanual\lang\util\deprecated.py
 
 ---
 ## deprecated.deprecated
@@ -494,22 +537,26 @@ No provided description
 No provided description
 
 
-# src\hanual\lang\util\dump_tree.py
+# .\src\hanual\lang\util\dump_tree.py
 
 ---
 
-# src\hanual\lang\util\line_range.py
+# .\src\hanual\lang\util\line_range.py
 
 ---
 
-# src\hanual\lang\util\proxy.py
+# .\src\hanual\lang\util\proxy.py
 
 ---
 
-# src\hanual\util\errors.py
+# .\src\hanual\util\errors.py
 
 ---
 
-# src\hanual\util\protocalls.py
+# .\src\hanual\util\protocalls.py
+
+---
+
+# .\src\hanual\util\__init__.py
 
 ---

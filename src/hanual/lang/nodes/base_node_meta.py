@@ -38,32 +38,48 @@ class _BaseNodeMeta(ABCMeta):
 
         # check class attributes
         if not ("_lines" in instance.__slots__):
-            err = AttributeError(f"{type(instance).__name__!r} must have an attribute _lines")
+            err = AttributeError(
+                f"{type(instance).__name__!r} must have an attribute _lines"
+            )
             exceptions.append(err)
 
         if not ("_line_range" in instance.__slots__):
-            err = AttributeError(f"{type(instance).__name__!r} must have an attribute _line_range")
+            err = AttributeError(
+                f"{type(instance).__name__!r} must have an attribute _line_range"
+            )
             exceptions.append(err)
 
         # check constructor parameters
         if "lines" in constructor.__annotations__:
-            err = ArgumentError(f"{type(instance).__name__}.__init__ takes in deprecated param lines")
+            err = ArgumentError(
+                f"{type(instance).__name__}.__init__ takes in deprecated param lines"
+            )
             exceptions.append(err)
 
         if "line_range" in constructor.__annotations__:
-            err = ArgumentError(f"{type(instance).__name__}.__init__ takes in deprecated param line_range")
+            err = ArgumentError(
+                f"{type(instance).__name__}.__init__ takes in deprecated param line_range"
+            )
             exceptions.append(err)
 
         # check getters and setters
         if not ("line_range" in dir(instance)):
-            exceptions.append(AttributeError(f"{type(instance).__name__} must have a property line_range"))
+            exceptions.append(
+                AttributeError(
+                    f"{type(instance).__name__} must have a property line_range"
+                )
+            )
 
         if not ("lines" in dir(instance)):
-            exceptions.append(AttributeError(f"{type(instance).__name__} must have a property lines"))
+            exceptions.append(
+                AttributeError(f"{type(instance).__name__} must have a property lines")
+            )
 
         # raise errors if there are any
         if exceptions:
-            raise ExceptionGroup(f"{type(instance).__name__} failed to pass inspection", exceptions)
+            raise ExceptionGroup(
+                f"{type(instance).__name__} failed to pass inspection", exceptions
+            )
 
     def __validate_input(cls, func, args, kwargs):
         exceptions = []
@@ -75,4 +91,6 @@ class _BaseNodeMeta(ABCMeta):
             exceptions.append(ArgumentError("Got unexpected parameter line_range"))
 
         if exceptions:
-            raise ExceptionGroup(f"Bad parameters passed to {func.__name__}", exceptions)
+            raise ExceptionGroup(
+                f"Bad parameters passed to {func.__name__}", exceptions
+            )

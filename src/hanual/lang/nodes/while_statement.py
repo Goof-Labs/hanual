@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from .base_node import BaseNode
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Request
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.conditions import Condition
@@ -19,7 +19,9 @@ class WhileStatement(BaseNode):
         "_line_no",
     )
 
-    def __init__(self, condition: Condition, body: CodeBlock, lines: str, line_no: LineRange) -> None:
+    def __init__(
+        self, condition: Condition, body: CodeBlock, lines: str, line_no: LineRange
+    ) -> None:
         self._while: Condition = condition
         self._body: CodeBlock = body
 
@@ -37,5 +39,5 @@ class WhileStatement(BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request, Reply, None]:
         raise NotImplementedError

@@ -2,12 +2,13 @@ from __future__ import annotations
 
 
 from bytecode import Instr, Label
-from typing import TYPE_CHECKING, Generator
+
+from typing import TYPE_CHECKING, Generator, Optional
 
 from .base_node import BaseNode
 from .implicit_binop import ImplicitBinOp
 from .implicit_condition import ImplicitCondition
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Response, Request, REQUEST_TYPE
 
 if TYPE_CHECKING:
     from .assignment import AssignmentNode
@@ -48,7 +49,7 @@ class ForLoop(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         loop_start = Label()
         loop_end = Label()
 
@@ -68,7 +69,7 @@ class ForLoop(BaseNode):
         yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
         yield Response(loop_end)
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._while.prepare()
         yield from self._init.prepare()
         yield from self._action.prepare()

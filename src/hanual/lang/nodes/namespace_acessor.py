@@ -1,9 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator, Self
+from bytecode import Instr
 
-from .base_node import BaseNode
-from hanual.util import Reply, Request
+from typing import TYPE_CHECKING, Generator, Self, Optional
+
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.util import Reply, Request, Response, REQUEST_TYPE
+from hanual.lang.util.compileable_object import CompilableObject
+
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -11,34 +15,35 @@ if TYPE_CHECKING:
     from hanual.lang.builtin_lexer import Token
 
 
-class NamespaceAccessor[C: (Token, "NamespaceAccessor")](BaseNode):
+class NamespaceAccessor(BaseNode):
     __slots__ = ("_path", "_lines", "_line_range")
 
     def __init__(self, first: Token, lines: str, line_range: LineRange) -> None:
-        self._path: list[C] = []
+        self._path: list[CompilableObject] = []
         self.add_child(first)
 
-        self._lines = lines
-        self._line_range = line_range
-
-    def add_child(self, child: C) -> Self:
+    def add_child(self, child: CompilableObject) -> Self:
         if isinstance(child, NamespaceAccessor):
             self._path.extend(child.path)
 
-        else:
+        elif isinstance(child, Token):
             self._path.append(child)
+
+        else:
+            raise NotImplementedError(f"Child {child} has not been implemented yet")
+
         return self
 
     @property
     def full_path(self) -> str:
-        return "/".join(map(lambda x: x.value, self._path))
+        raise NotImplementedError
 
     @property
     def path(self):
         return self._path
 
-    def gen_code(self):
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError

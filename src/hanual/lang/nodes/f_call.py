@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from bytecode import Instr
-from typing import Generator, TYPE_CHECKING
+from typing import Generator, TYPE_CHECKING, Optional
 
 from hanual.compile.context import Context
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.nodes.dot_chain import DotChain
-from hanual.util import Reply, Request, Response
+from hanual.util import Reply, Request, Response, REQUEST_TYPE
 
 
 if TYPE_CHECKING:
@@ -38,7 +38,7 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         from hanual.lang.nodes.assignment import AssignmentNode
 
         yield Response(Instr("PUSH_NULL", location=self.get_location()))
@@ -59,6 +59,6 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
         if ctx.assert_instance("parent", AssignmentNode) is False:
             yield Response(Instr("POP_TOP", location=self.get_location()))
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._name.prepare()
         yield from self._args.prepare()

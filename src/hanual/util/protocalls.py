@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-
-from warnings import warn
 from typing import Self
 
+
+type REQUEST_TYPE = int
 
 # a reply is from the gen
 class Reply[T]:

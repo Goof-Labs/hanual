@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Generator
+from typing import Generator, Optional
 
-from bytecode.instr import InstrLocation
+from bytecode.instr import InstrLocation, Instr
 
 from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
 from hanual.lang.util.line_range import LineRange
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Response, Request, REQUEST_TYPE
 
 
 class BaseNode(metaclass=_BaseNodeMeta):
@@ -24,7 +24,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def prepare[R1, R2](self) -> Generator[Request[R1], Reply[R2] | None, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         """Used to collect information from the node.
 
         > Provides all necessary info to the compiler such as variable names and
@@ -38,7 +38,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def gen_code(self) -> Generator[Response | Request, Reply | None, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         """Generates the code for the compiler to omit."""
         raise NotImplementedError
 

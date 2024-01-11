@@ -2,10 +2,11 @@ from __future__ import annotations
 
 
 from bytecode import Label, Instr
-from typing import TYPE_CHECKING, Generator
+
+from typing import TYPE_CHECKING, Generator, Optional
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Response, Request, REQUEST_TYPE
 
 
 if TYPE_CHECKING:
@@ -28,7 +29,7 @@ class IfStatement(BaseNode):
     def block(self) -> CodeBlock:
         return self._block
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         false_jump = Label()
 
         yield from self._condition.gen_code()
@@ -40,6 +41,6 @@ class IfStatement(BaseNode):
 
         yield Response(false_jump)
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._condition.prepare()
         yield from self._block.prepare()

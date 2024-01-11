@@ -35,5 +35,5 @@ class AlgebraicFunc(BaseNode):
         self._lines = lines
         self._line_range = line_range
 
-    def compile(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from hanual.lang.lexer import Token
 
 
-class AssignmentNode[T](BaseNode):
+class AssignmentNode[T: BaseNode](BaseNode):
     __slots__ = ("_target", "_value", "_lines", "_line_range")
 
     def __init__(self, target: Token, value: T) -> None:
@@ -32,6 +32,6 @@ class AssignmentNode[T](BaseNode):
             yield from self._value.gen_code()
             yield from self._target.gen_code(store=True)
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._target.prepare()
         yield from self._value.prepare()

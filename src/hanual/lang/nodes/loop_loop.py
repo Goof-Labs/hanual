@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
-
 from bytecode import Instr, Label
+
+from typing import TYPE_CHECKING, Generator, Optional
+
+from hanual.compile.context import Context
+from hanual.util import Reply, Response, Request, REQUEST_TYPE
 
 from .base_node import BaseNode
 from .block import CodeBlock
-
-from hanual.compile.context import Context
-from hanual.util import Reply, Response, Request
 
 
 if TYPE_CHECKING:
@@ -25,8 +25,9 @@ class LoopLoop(BaseNode):
     def inner(self) -> CodeBlock:
         return self._inner
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        context: Context = (yield Request[Context](Request.CREATE_CONTEXT)).response
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply[object]], None]:
+        reply: Reply[Context] = (yield Request(Request.CREATE_CONTEXT))
+        context: Context = reply.response
 
         start_label = Label()  # for the start of the loop; jumped to if we continue
         end_label = Label()  # end label; jumped to if we break
@@ -41,5 +42,5 @@ class LoopLoop(BaseNode):
             yield Response(Instr("JUMP_BACKWARD", start_label))
             yield Response(end_label)
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._inner.prepare()

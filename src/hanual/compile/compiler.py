@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, Generator
+from typing import Any, TYPE_CHECKING, Generator, Optional
 
 from bytecode import Bytecode
 from bytecode import Instr
 
 from hanual.compile.context import Context
-from hanual.util import Reply
-from hanual.util import Request
-from hanual.util import Response
+from hanual.util import Reply, Request, Response, REQUEST_TYPE
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.base_node import BaseNode
@@ -61,11 +59,11 @@ class Compiler:
 
     def compile_body(self, nodes: BaseNode):
         instructions = nodes.gen_code()
-        reply: Reply | Any | None = None
+        reply: Optional[Reply] | Any = None
 
         while True:
             try:
-                val = instructions.send(reply)
+                val: Response[Instr] | Request[REQUEST_TYPE] = instructions.send(reply)
 
             except StopIteration:
                 break
@@ -80,7 +78,7 @@ class Compiler:
             else:
                 raise NotImplementedError(val)
 
-    def _satisfy_compile_request(self, request: Request[list]) -> Reply[list | Any]:
+    def _satisfy_compile_request(self, request: Request[REQUEST_TYPE]) -> Reply[list | Any]:
         requests = iter(request.params)
         reply: list[Any] = []
 

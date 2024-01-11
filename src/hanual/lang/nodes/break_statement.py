@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional, Self, Generator
 
 from bytecode import Label, Instr
 
-from hanual.util import Request, Response, Reply
+from hanual.util import Request, Response, Reply, REQUEST_TYPE
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 
@@ -24,11 +24,11 @@ class BreakStatement(BaseNode):
         self._token = node
         self._context = ctx
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         # TODO implement contexts
         context: Context = yield Request(Request.GET_CONTEXT)
         end_lbl: Label = context.get("end_label", recursive=True)[0]
         yield Response(Instr("JUMP_FORWARD", end_lbl, location=self.get_location()))
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from ()

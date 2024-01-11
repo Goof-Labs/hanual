@@ -75,6 +75,6 @@ class BinOpNode[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
                     f"operator {self._op.value!r} has not been implemented yet"
                 )
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._left.prepare()
         yield from self._right.prepare()

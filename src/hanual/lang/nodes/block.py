@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Generator
+from bytecode import Instr
+
+from typing import Generator, Optional
 
 from hanual.compile.context import Context
-
 from hanual.lang.nodes.base_node import BaseNode
-
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Response, Request, REQUEST_TYPE
 
 
 class CodeBlock[C: BaseNode](BaseNode):
@@ -37,14 +37,14 @@ class CodeBlock[C: BaseNode](BaseNode):
 
         return self
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         with (yield Request[Context](Request.CREATE_CONTEXT)).response as ctx:
             ctx.add(parent=self)
 
             for child in self._children:
                 yield from child.gen_code()
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         for child in self._children:
             yield from child.prepare()
 

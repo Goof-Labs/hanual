@@ -9,7 +9,7 @@ from hanual.lang.util.line_range import LineRange
 
 
 class CompilableObject:
-    def prepare[R1, R2](self) -> Generator[Request[R1], Reply[R2] | None, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError
 
     def gen_code(self) -> Generator[Response | Request, Reply | None, None]:

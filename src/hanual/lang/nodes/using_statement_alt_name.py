@@ -36,5 +36,5 @@ class UsingStatementWithAltName(BaseNode):
     def gen_code(self):
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError

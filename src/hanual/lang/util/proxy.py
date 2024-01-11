@@ -172,8 +172,8 @@ class HookProxy(Proxy):
     def __init__(
         self,
         cls: Type[RuleHook],
-        types: dict[str, Any] | None,
-        prod: type[Type] = DefaultProduction,
+        types: dict[str, Any] | None = None,
+        prod: type | None = None,
         unless_start: list[str] | None = None,
         unless_end: list[str] | None = None,
     ):

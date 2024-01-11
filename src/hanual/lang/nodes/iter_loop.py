@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from bytecode import Instr
+
+from typing import TYPE_CHECKING, Generator, Optional
 
 from hanual.lang.nodes.base_node import BaseNode
-
-from hanual.util import Reply, Request
+from hanual.util import Reply, Request, Response, REQUEST_TYPE
 
 
 if TYPE_CHECKING:
@@ -24,8 +25,8 @@ class IterLoop[I: (Token, FunctionCall)](BaseNode):
         self._lines = lines
         self._line_range = line_range
 
-    def gen_code(self):
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+from bytecode import Instr
+
 from collections.abc import Iterable
-from typing import Generator, Self
+from typing import Generator, Self, Optional
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply
-from hanual.util import Request
-from hanual.util import Response
+from hanual.util import Reply, Request, Response, REQUEST_TYPE
 
 
 class Arguments[T: (BaseNode, Token)](BaseNode):
@@ -40,11 +40,11 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
     def children(self) -> list[T]:
         return self._children
 
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         for arg in reversed(self._children):
             yield from arg.gen_code(store=False)
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         for arg in self._children:
             yield from arg.prepare()
 

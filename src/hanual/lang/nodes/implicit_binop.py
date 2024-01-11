@@ -47,5 +47,5 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
 
         yield from inferred.gen_code(store=True)
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._right.prepare()

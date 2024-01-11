@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+from bytecode import Instr
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Generator, Optional
 
 from hanual.lang.nodes.base_node import BaseNode
-
-from hanual.util import Reply, Response, Request
+from hanual.util import Reply, Response, Request, REQUEST_TYPE
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -36,8 +36,8 @@ class AlgebraicExpression(BaseNode):
         self._lines = lines
         self._line_range = line_range
 
-    def gen_code(self):
+    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError

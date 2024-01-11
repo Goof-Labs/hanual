@@ -69,6 +69,6 @@ class Condition[L: (Token, BaseNode), R: (Token, BaseNode)](BaseNode):
         else:
             raise NotImplementedError(f"Have not implemented operator {self._op.value}")
 
-    def prepare(self) -> Generator[Request, Reply, None]:
+    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         yield from self._left.prepare()
         yield from self._right.prepare()

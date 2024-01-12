@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-from bytecode import Instr
+from typing import TYPE_CHECKING, Self
 
-from typing import TYPE_CHECKING, Generator, Self, Optional
-
-from .base_node import BaseNode
-from .else_statement import ElseStatement
-
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
-
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.nodes.else_statement import ElseStatement
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -43,8 +39,8 @@ class IfChain(BaseNode):
     def statements(self) -> list[IfStatement | ElifStatement | ElseStatement]:
         return self._statements
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, Generator, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from bytecode import Bytecode
-from bytecode import Instr
+from bytecode import Bytecode, Instr, Label
 
 from hanual.compile.context import Context
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
+from hanual.util import Reply, Request, Response
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET, REQUEST_TYPE
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.base_node import BaseNode
@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
 class Compiler:
     def __init__(self):
-        self._instructions: list[Instr] = []
+        self._instructions = []
         self._constants: list[Any] = []
         self._names: list[str] = []
         self._context: list = []
 
     def prepare_nodes(self, node: BaseNode):
         reply: Reply[list] | None = None
-        pipe: Generator[Request, Reply[list] | None, None] = node.prepare()
+        pipe: PREPARE_RET = node.prepare()
 
         while True:
             try:
@@ -58,12 +58,12 @@ class Compiler:
         return Reply(reply)
 
     def compile_body(self, nodes: BaseNode):
-        instructions = nodes.gen_code()
+        instructions: GENCODE_RET = nodes.gen_code()
         reply: Optional[Reply] | Any = None
 
         while True:
             try:
-                val: Response[Instr] | Request[REQUEST_TYPE] = instructions.send(reply)
+                val: Response[Instr] | Response[Label] | Request[REQUEST_TYPE] = instructions.send(reply)
 
             except StopIteration:
                 break
@@ -92,11 +92,7 @@ class Compiler:
                 raise NotImplementedError
 
             elif req == Request.GET_CONTEXT:
-                if len(request.params) == 1:
-                    return self._context[-1]
-
-                else:
-                    reply.append(self._context[-1])
+                reply.append(self._context[-1])
 
             elif req == Request.CREATE_CONTEXT:
                 # create a blank context
@@ -116,6 +112,9 @@ class Compiler:
 
             else:
                 raise Exception
+
+        if len(reply) == 1:
+            return Reply(reply[0])
 
         return Reply(reply)
 

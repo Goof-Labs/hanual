@@ -1,13 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import (
-    Any,
-    Callable,
-    Optional,
-    Type,
-    overload,
-)
+from typing import Any, Callable, Optional, Type, overload
 
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.util.proxy import HookProxy, Proxy

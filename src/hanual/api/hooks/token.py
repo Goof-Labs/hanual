@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import LiteralString
 
 from hanual.api.hooks.hook import GenericHook
-
-from hanual.lang.util.line_range import LineRange
 from hanual.lang.lexer import Token
+from hanual.lang.util.line_range import LineRange
 
 
 def new_token(regex: tuple[str, LiteralString], name: LiteralString):

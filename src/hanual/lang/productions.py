@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import inspect
-from typing import Self, TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 from warnings import warn_explicit
 
-
 if TYPE_CHECKING:
-    from hanual.lang.nodes.base_node import BaseNode
     from hanual.lang.lexer import Token
+    from hanual.lang.nodes.base_node import BaseNode
 
 
 class DefaultProduction[T: Token | BaseNode]:

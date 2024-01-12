@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from bytecode import Bytecode
+
 from hanual.lang.nodes.block import CodeBlock
 from hanual.lang.nodes.f_def import FunctionDefinition
 from hanual.lang.nodes.parameters import Parameters
@@ -70,7 +71,7 @@ class HanualFunction:
                 f"expected type FunctionDefinition, got {type(func).__name__}"
             )
 
-        instance = cls(func.name.value, func.line_range)
+        instance = cls(str(func.name.value), func.line_range)
         instance.take_params(func.arguments)
         instance.set_body(func.inner)
         return instance

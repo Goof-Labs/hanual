@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from bytecode import Instr
-from typing import Generator, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
-from hanual.compile.context import Context
+from bytecode import Instr
+
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.nodes.dot_chain import DotChain
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
-
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util import Request, Response
 
 if TYPE_CHECKING:
     from .arguments import Arguments
@@ -38,7 +38,7 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         from hanual.lang.nodes.assignment import AssignmentNode
 
         yield Response(Instr("PUSH_NULL", location=self.get_location()))
@@ -47,18 +47,19 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
             yield from self._name.gen_code()
 
         else:
-            yield Response(
-                Instr("LOAD_NAME", self._name.value, location=self._name.get_location())
-            )
+            yield Response(Instr("LOAD_NAME", str(self._name.value), location=self._name.get_location()))
+
         yield from self._args.gen_code()
 
         yield Response(Instr("CALL", len(self._args), location=self.get_location()))
 
-        ctx: Context = (yield Request[Context](Request.GET_CONTEXT)).response
+        reply = yield Request(Request.GET_CONTEXT)
 
-        if ctx.assert_instance("parent", AssignmentNode) is False:
+        assert reply is not None
+
+        if reply.response.assert_instance("parent", AssignmentNode) is False:
             yield Response(Instr("POP_TOP", location=self.get_location()))
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         yield from self._name.prepare()
         yield from self._args.prepare()

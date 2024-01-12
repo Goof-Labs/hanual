@@ -1,24 +1,19 @@
 from __future__ import annotations
 
-from bytecode import Instr
-
-from typing import TYPE_CHECKING, Generator, Self, Optional
+from typing import TYPE_CHECKING, Self
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
 from hanual.lang.util.compileable_object import CompilableObject
-
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
-
     from hanual.lang.builtin_lexer import Token
 
 
 class NamespaceAccessor(BaseNode):
     __slots__ = ("_path", "_lines", "_line_range")
 
-    def __init__(self, first: Token, lines: str, line_range: LineRange) -> None:
+    def __init__(self, first: Token) -> None:
         self._path: list[CompilableObject] = []
         self.add_child(first)
 
@@ -42,8 +37,8 @@ class NamespaceAccessor(BaseNode):
     def path(self):
         return self._path
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

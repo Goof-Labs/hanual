@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from bytecode import Instr
-
-from typing import TYPE_CHECKING, Generator, Self, Optional
+from typing import TYPE_CHECKING, Self
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
     pass
@@ -42,8 +40,8 @@ class Parameters(BaseNode):
     def children(self) -> list[Token]:
         return self._children
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

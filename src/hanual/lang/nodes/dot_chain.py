@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from typing import Self, Generator, Optional
+from typing import Self
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.util.line_range import LineRange
-
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 
 class DotChain(BaseNode):
@@ -34,8 +33,8 @@ class DotChain(BaseNode):
     def chain(self) -> list[Token]:
         return self._chain
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

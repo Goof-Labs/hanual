@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from hanual.lang.util.line_range import LineRange
 from hanual.util import ArgumentError
 
-
 if TYPE_CHECKING:
     from .base_node import BaseNode
 

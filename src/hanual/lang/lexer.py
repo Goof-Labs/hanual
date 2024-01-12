@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import Generator, Iterable, TYPE_CHECKING, LiteralString, Literal
+from typing import TYPE_CHECKING, Generator, Iterable, Literal, LiteralString
 
 from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
 
-from .util.line_range import LineRange
 from .token import Token
+from .util.line_range import LineRange
 
 if TYPE_CHECKING:
     from hanual.api.hooks import TokenHook

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Type, Self
+from typing import TYPE_CHECKING, Any, Callable, Self, Type
 
-from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.productions import DefaultProduction
+from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.util.line_range import LineRange
 
-
 if TYPE_CHECKING:
-    from hanual.lang.pparser import _StackFrame
     from hanual.api.hooks import RuleHook
+    from hanual.lang.pparser import _StackFrame
 
 """
 This is a proxy class that wraps around a function, I

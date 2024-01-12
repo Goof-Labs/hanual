@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Generator, Optional
 
-from bytecode.instr import InstrLocation, Instr
+from bytecode.instr import InstrLocation
 
 from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
 from hanual.lang.util.line_range import LineRange
-from hanual.util import Reply, Response, Request, REQUEST_TYPE
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 
 class BaseNode(metaclass=_BaseNodeMeta):
@@ -24,7 +23,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         """Used to collect information from the node.
 
         > Provides all necessary info to the compiler such as variable names and
@@ -38,7 +37,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         """Generates the code for the compiler to omit."""
         raise NotImplementedError
 
@@ -51,8 +50,8 @@ class BaseNode(metaclass=_BaseNodeMeta):
 
         # TODO add column offsets and change second `self._line_range.start` to the `self._line_range.end`
         return InstrLocation(
-            lineno=self._line_range.start,
-            end_lineno=self._line_range.start,
+            lineno=int(self._line_range.start),
+            end_lineno=int(self._line_range.start),
             col_offset=None,
             end_col_offset=None,
         )

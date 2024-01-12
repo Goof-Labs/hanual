@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from bytecode.instr import InstrLocation
-
 from typing import Generator
 
-from hanual.util import Reply, Response, Request
+from bytecode.instr import InstrLocation
+
 from hanual.lang.util.line_range import LineRange
+from hanual.util import Reply, Request, Response
 
 
 class CompilableObject:

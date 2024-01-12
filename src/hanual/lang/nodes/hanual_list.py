@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from bytecode import Instr
+from typing import TYPE_CHECKING
 
-from typing import TYPE_CHECKING, Generator, Optional
-
-from .base_node import BaseNode
-from hanual.util import Reply, Request, Response, REQUEST_TYPE
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
+
     from .arguments import Arguments
 
 
@@ -25,8 +24,8 @@ class HanualList(BaseNode):
     def elements(self) -> list:
         return self._elements.children
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

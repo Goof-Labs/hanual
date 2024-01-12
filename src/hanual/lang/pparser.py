@@ -1,25 +1,15 @@
 from __future__ import annotations
 
 import logging
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generator,
-    NamedTuple,
-    Optional,
-    Type,
-    Callable
-)
+from typing import (TYPE_CHECKING, Any, Callable, Generator, NamedTuple,
+                    Optional, Type)
 
 from .util.compileable_object import CompilableObject
 from .util.proxy import Proxy
+from .productions import DefaultProduction
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.base_node import BaseNode
-    from .productions import DefaultProduction
     from hanual.api.hooks import RuleHook
-    from .lexer import Token
-
 
 class _StackFrame[T: CompilableObject](NamedTuple):
     name: str

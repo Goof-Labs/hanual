@@ -3,8 +3,6 @@ from __future__ import annotations
 from typing import Self
 
 
-type REQUEST_TYPE = int
-
 # a reply is from the gen
 class Reply[T]:
     SUCCESS = 0
@@ -49,8 +47,8 @@ class Request[T]:
 
 # A response is given to the gen
 class Response[T]:
-    def __init__(self, requests: T) -> None:
-        self._response = requests
+    def __init__(self, response: T) -> None:
+        self._response = response
 
     @property
     def response(self) -> T:

@@ -1,20 +1,21 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 from bytecode import Instr, Label
 
-from typing import TYPE_CHECKING, Generator, Optional
-
-from .base_node import BaseNode
-from .implicit_binop import ImplicitBinOp
-from .implicit_condition import ImplicitCondition
-from hanual.util import Reply, Response, Request, REQUEST_TYPE
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.nodes.implicit_binop import ImplicitBinOp
+from hanual.lang.nodes.implicit_condition import ImplicitCondition
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util import Response, Request
 
 if TYPE_CHECKING:
+    from hanual.lang.lexer import Token
+
     from .assignment import AssignmentNode
     from .block import CodeBlock
     from .conditions import Condition
-    from hanual.lang.lexer import Token
 
 
 # for let i=0, < 10, +110
@@ -49,27 +50,33 @@ class ForLoop(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def gen_code(self) -> Generator[Response[Instr] | Request[REQUEST_TYPE], Optional[Reply], None]:
-        loop_start = Label()
-        loop_end = Label()
+    def gen_code(self) -> GENCODE_RET:
+        reply = yield Request(Request.GET_CONTEXT)
 
-        yield from self._init.gen_code()
+        assert reply is not None
 
-        var: Token = self._init.target
+        with reply.response as ctx:
+            loop_start = Label()
+            loop_end = Label()
 
-        yield Response(loop_start)
-        yield from self._action.gen_code(infer=var)
+            yield from self._init.gen_code()
 
-        yield from self._body.gen_code()
+            var: Token = self._init.target
+            ctx.add(infer=var)
 
-        yield from self._while.gen_code(infer=var)
-        yield Response(
-            Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location())
-        )
-        yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
-        yield Response(loop_end)
+            yield Response(loop_start)
+            yield from self._action.gen_code()
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+            yield from self._body.gen_code()
+
+            yield from self._while.gen_code()
+            yield Response(
+                Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location())
+            )
+            yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
+            yield Response(loop_end)
+
+    def prepare(self) -> PREPARE_RET:
         yield from self._while.prepare()
         yield from self._init.prepare()
         yield from self._action.prepare()

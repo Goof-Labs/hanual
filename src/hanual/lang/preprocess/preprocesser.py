@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generator, Mapping, Optional, TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Generator, Iterable, Optional
 
 if TYPE_CHECKING:
     from hanual.api.hooks import PreProcessorHook

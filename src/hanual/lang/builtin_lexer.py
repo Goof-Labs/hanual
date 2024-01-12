@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from hanual.lang.data import LiteralWrapper
 from hanual.lang.util.line_range import LineRange
 
 from .lexer import Lexer, Token, kw, rx
@@ -78,7 +77,7 @@ class HanualLexer(Lexer):
     ) -> Token:
         return Token(
             kind,
-            LiteralWrapper(float(value)),
+            float(value),
             LineRange(line_num, line_num),
             col,
             origin_line,
@@ -93,7 +92,7 @@ class HanualLexer(Lexer):
         value = value[:-1]
         return Token(
             kind,
-            LiteralWrapper(value),
+            value,
             LineRange(line_num, line_num),
             col,
             origin_line,

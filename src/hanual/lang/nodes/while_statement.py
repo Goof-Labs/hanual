@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
+
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 from .base_node import BaseNode
-from hanual.util import Reply, Request
 
 if TYPE_CHECKING:
+    from hanual.lang.nodes.block import CodeBlock
     from hanual.lang.nodes.conditions import Condition
     from hanual.lang.util.line_range import LineRange
-    from hanual.lang.nodes.block import CodeBlock
 
 
 class WhileStatement(BaseNode):
@@ -36,8 +37,8 @@ class WhileStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def gen_code(self):
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

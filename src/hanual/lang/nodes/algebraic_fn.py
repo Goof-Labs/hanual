@@ -1,24 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
-
-from hanual.util import Reply, Response, Request
-
+from typing import TYPE_CHECKING
 
 from hanual.lang.nodes.algebraic_expr import AlgebraicExpression
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
 
 
 class AlgebraicFunc(BaseNode):
-    def prepare(self) -> Generator[Request, Reply, None]:
-        pass
-
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        pass
-
     __slots__ = (
         "_name",
         "_expr",
@@ -35,5 +27,8 @@ class AlgebraicFunc(BaseNode):
         self._lines = lines
         self._line_range = line_range
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
+        raise NotImplementedError
+
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError

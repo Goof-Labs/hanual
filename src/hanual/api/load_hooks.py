@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import importlib.util
 import logging
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from hanual.api.hooks import PreProcessorHook, TokenHook, RuleHook
+    from hanual.api.hooks import PreProcessorHook, RuleHook, TokenHook
 
 
 class HookLoader[P: PreProcessorHook, T: TokenHook, R: RuleHook]:
@@ -19,7 +19,7 @@ class HookLoader[P: PreProcessorHook, T: TokenHook, R: RuleHook]:
             self.load_module(py_path, path)
 
     def load_module(self, py_path, path):
-        from hanual.api.hooks import PreProcessorHook, TokenHook, RuleHook
+        from hanual.api.hooks import PreProcessorHook, RuleHook, TokenHook
 
         logging.debug(f"Loading module: {py_path!r}")
 

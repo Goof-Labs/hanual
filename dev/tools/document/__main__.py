@@ -5,8 +5,7 @@ import glob
 from argparse import ArgumentParser
 from sys import argv
 
-from colorama import Fore
-from colorama import init
+from colorama import Fore, init
 from doc_parser import parse_doc_string
 from template import DocumentationTemplate
 

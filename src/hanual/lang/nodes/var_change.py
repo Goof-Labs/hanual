@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
 
 from hanual.lang.lexer import Token
-from hanual.util import Reply, Request
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 from .base_node import BaseNode
 
@@ -36,8 +36,8 @@ class VarChange[V: (BaseNode, Token)](BaseNode):
     def value(self) -> V:
         return self._value
 
-    def gen_code(self):
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

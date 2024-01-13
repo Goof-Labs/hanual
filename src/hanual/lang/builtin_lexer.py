@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from hanual.lang.data import LiteralWrapper
 from hanual.lang.util.line_range import LineRange
 
 from .lexer import Lexer, Token, kw, rx
@@ -62,7 +61,7 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_compile_NUM(
-            kind: str, value: str, line_num: int, col: int, origin_line: str
+        kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         return Token(
             token_type=kind,
@@ -74,11 +73,11 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_exec_NUM(
-            kind: str, value: str, line_num: int, col: int, origin_line: str
+        kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         return Token(
             kind,
-            LiteralWrapper(float(value)),
+            float(value),
             LineRange(line_num, line_num),
             col,
             origin_line,
@@ -86,14 +85,14 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_exec_STR(
-            kind: str, value: str, line_num: int, col: int, origin_line: str
+        kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         # remove the last and first character of string, which are " or double quotes
         value = value[1:]
         value = value[:-1]
         return Token(
             kind,
-            LiteralWrapper(value),
+            value,
             LineRange(line_num, line_num),
             col,
             origin_line,
@@ -101,7 +100,7 @@ class HanualLexer(Lexer):
 
     @staticmethod
     def t_compile_STR(
-            kind: str, value: str, line_num: int, col: int, origin_line: str
+        kind: str, value: str, line_num: int, col: int, origin_line: str
     ) -> Token:
         # remove the last and first character of string, which are " or double quotes
         value = value[1:]

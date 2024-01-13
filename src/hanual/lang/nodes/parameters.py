@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator, Self
+from typing import TYPE_CHECKING, Self
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Response, Request
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+    pass
 
 
 class Parameters(BaseNode):
@@ -18,8 +18,8 @@ class Parameters(BaseNode):
     )
 
     def __init__(
-            self,
-            children: Token | list[Token],
+        self,
+        children: Token | list[Token],
     ) -> None:
         self._children: list[Token] = []
         self.add_child(children)
@@ -40,8 +40,8 @@ class Parameters(BaseNode):
     def children(self) -> list[Token]:
         return self._children
 
-    def gen_code(self):
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
 
-from hanual.compile.context import Context
-from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Response, Request
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util import Request
 
 if TYPE_CHECKING:
-    ...
+    from hanual.lang.lexer import Token
 
 
-class AssignmentNode[T](BaseNode):
+class AssignmentNode[T: BaseNode](BaseNode):
     __slots__ = ("_target", "_value", "_lines", "_line_range")
 
     def __init__(self, target: Token, value: T) -> None:
@@ -26,13 +25,18 @@ class AssignmentNode[T](BaseNode):
     def value(self) -> T:
         return self._value
 
-    def gen_code(self, **kwargs):
-        with (yield Request[Context](Request.CREATE_CONTEXT)).response as ctx:
+    def gen_code(self, **kwargs) -> GENCODE_RET:
+        reply = yield Request(Request.CREATE_CONTEXT)
+
+        assert reply is not None
+
+        with reply.response as ctx:
             ctx.add(parent=self)
-
             yield from self._value.gen_code()
-            yield from self._target.gen_code(store=True)
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+            ctx.add(store=True)
+            yield from self._target.gen_code()
+
+    def prepare(self) -> PREPARE_RET:
         yield from self._target.prepare()
         yield from self._value.prepare()

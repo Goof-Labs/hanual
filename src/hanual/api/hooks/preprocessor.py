@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from abc import ABC
-from abc import abstractmethod
-from typing import Callable
-from typing import Generator
-from typing import LiteralString
+from abc import ABC, abstractmethod
+from typing import Callable, Generator, LiteralString
 
 from hanual.api.hooks import GenericHook
 

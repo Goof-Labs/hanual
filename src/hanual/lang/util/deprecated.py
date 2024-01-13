@@ -1,7 +1,7 @@
 # https://stackoverflow.com/questions/2536307/decorators-in-the-python-standard-lib-deprecated-specifically
 
-import warnings
 import functools
+import warnings
 
 
 def deprecated(func):
@@ -11,11 +11,13 @@ def deprecated(func):
 
     @functools.wraps(func)
     def new_func(*args, **kwargs):
-        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
-        warnings.warn("Call to deprecated function {}.".format(func.__name__),
-                      category=DeprecationWarning,
-                      stacklevel=2)
-        warnings.simplefilter('default', DeprecationWarning)  # reset filter
+        warnings.simplefilter("always", DeprecationWarning)  # turn off filter
+        warnings.warn(
+            "Call to deprecated function {}.".format(func.__name__),
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        warnings.simplefilter("default", DeprecationWarning)  # reset filter
         return func(*args, **kwargs)
 
     return new_func

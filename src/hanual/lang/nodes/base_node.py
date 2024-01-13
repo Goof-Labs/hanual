@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Generator
 
 from bytecode.instr import InstrLocation
 
 from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
 from hanual.lang.util.line_range import LineRange
-from hanual.util import Reply, Response, Request
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 
 class BaseNode(metaclass=_BaseNodeMeta):
@@ -24,7 +23,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> PREPARE_RET:
         """Used to collect information from the node.
 
         > Provides all necessary info to the compiler such as variable names and
@@ -38,26 +37,30 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def gen_code(self) -> Generator[Response | Request, Reply, None]:
-        """Generates the code for the compiler to omit.
-
-        """
+    def gen_code(self) -> GENCODE_RET:
+        """Generates the code for the compiler to omit."""
         raise NotImplementedError
 
     def get_location(self) -> InstrLocation:
-        if self._line_range.start <= 1 or self._line_range.end <= 1:
+        if self._line_range is None:
+            raise Exception("self._line_range is None (was never set)")
+
+        if self._line_range.start < 1 or self._line_range.end < 1:
             raise Exception(f"LineRange has a range of -1 {self._line_range}")
 
         # TODO add column offsets and change second `self._line_range.start` to the `self._line_range.end`
         return InstrLocation(
-            lineno=self._line_range.start,
-            end_lineno=self._line_range.start,
+            lineno=int(self._line_range.start),
+            end_lineno=int(self._line_range.start),
             col_offset=None,
-            end_col_offset=None
+            end_col_offset=None,
         )
 
     @property
     def lines(self) -> str:
+        if self._lines is None:
+            raise Exception("self._lines is None (was never set)")
+
         return self._lines
 
     @lines.setter
@@ -67,6 +70,9 @@ class BaseNode(metaclass=_BaseNodeMeta):
 
     @property
     def line_range(self) -> LineRange:
+        if self._line_range is None:
+            raise Exception("self._line_range is none (was never set)")
+
         return self._line_range
 
     @line_range.setter
@@ -77,23 +83,3 @@ class BaseNode(metaclass=_BaseNodeMeta):
     @property
     def is_token(self):
         return True
-
-
-
-def defines_protocols(cls):
-    idx = 1
-
-    for idx, attr in enumerate(dir(cls)):
-        if attr.isupper():
-            value: int = getattr(cls, attr)
-            assert isinstance(value, int)
-
-            setattr(cls, attr, defines_protocols.calls + value)
-
-    defines_protocols.calls += idx
-    defines_protocols.classes.append(cls)
-    return cls
-
-
-defines_protocols.calls = 0
-defines_protocols.classes = []

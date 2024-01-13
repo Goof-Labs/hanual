@@ -1,18 +1,17 @@
 from __future__ import annotations
 
-from typing import Self, Generator
+from typing import Self
 
 from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.util.line_range import LineRange
-
-from hanual.util import Reply, Response, Request
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 
 class DotChain(BaseNode):
     __slots__ = ("_chain", "_lines", "_line_range")
 
-    def __init__(self,  lines: str, line_range: LineRange) -> None:
+    def __init__(self, lines: str, line_range: LineRange) -> None:
         self._chain: list[Token] = []
 
         self._lines = lines
@@ -34,8 +33,8 @@ class DotChain(BaseNode):
     def chain(self) -> list[Token]:
         return self._chain
 
-    def gen_code(self):
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

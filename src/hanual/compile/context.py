@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from typing import Type
 
 
@@ -10,8 +9,7 @@ class Context:
         self._getter = getter
         self._adder = adder
 
-        self._mentioned = set()
-        self._options = {}
+        self._options: dict[str, object] = {}
 
     def __enter__(self):
         self._adder(self)
@@ -27,20 +25,16 @@ class Context:
         if set(args) & set(kwargs):
             raise Exception(f"Duplicated params {set(args) & set(kwargs)}")
 
-        self._mentioned.update(set(args) | set(kwargs))
         self._options.update(kwargs)
 
-    def get(self, inf, recursive: bool = False):
+    def get(self, inf, recursive: bool = False) -> object | None:
         if recursive:
             return list(set(self._get_recursive(inf)))
 
-        key = self._options.get(inf, None)
+        key: object = self._options.get(inf, None)
 
         if key is not None:
             return key
-
-        if inf in self._mentioned:
-            return True
 
         return None
 
@@ -60,7 +54,7 @@ class Context:
         return isinstance(key, cls)
 
     def __str__(self):
-        return f"Context({self._options=} {self._mentioned=})"
+        return f"Context({self._options=})"
 
     def __repr__(self):
         return str(self)

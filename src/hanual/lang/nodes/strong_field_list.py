@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, Self
 
 from hanual.lang.nodes.base_node import BaseNode
-
-from hanual.util import Reply, Response, Request
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
+
     from .strong_field import StrongField
-    from typing_extensions import Self
 
 
 class StrongFieldList[F: StrongField](BaseNode):
@@ -29,8 +28,8 @@ class StrongFieldList[F: StrongField](BaseNode):
     def fields(self) -> list[F]:
         return self._fields
 
-    def gen_code(self):
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

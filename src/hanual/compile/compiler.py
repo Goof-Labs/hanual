@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Any
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
-from bytecode import Bytecode
-from bytecode import Instr
+from bytecode import Bytecode, Instr, Label
+
 from hanual.compile.context import Context
-from hanual.util import Reply
-from hanual.util import Request
-from hanual.util import Response
+from hanual.util import Reply, Request, Response
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET, REQUEST_TYPE
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.base_node import BaseNode
@@ -16,14 +14,14 @@ if TYPE_CHECKING:
 
 class Compiler:
     def __init__(self):
-        self._instructions: list[Instr] = []
+        self._instructions = []
         self._constants: list[Any] = []
         self._names: list[str] = []
         self._context: list = []
 
     def prepare_nodes(self, node: BaseNode):
-        reply: Reply | None = None
-        pipe = node.prepare()
+        reply: Reply[list] | None = None
+        pipe: PREPARE_RET = node.prepare()
 
         while True:
             try:
@@ -32,11 +30,11 @@ class Compiler:
             except StopIteration:
                 break
 
-            reply = Reply(self._satisfy_prepare_request(req))
+            reply: Reply[list] | None = self._satisfy_prepare_request(req)
 
-    def _satisfy_prepare_request(self, request: Request) -> list:
+    def _satisfy_prepare_request(self, request: Request) -> Reply[list] | None:
         req = iter(request.params)
-        reply = []
+        reply: list = []
 
         while True:
             req_type = next(req, None)
@@ -57,15 +55,15 @@ class Compiler:
             else:
                 raise NotImplementedError(f"{req_type}")
 
-        return reply
+        return Reply(reply)
 
     def compile_body(self, nodes: BaseNode):
-        instructions = nodes.gen_code()
-        reply: Reply | None = None
+        instructions: GENCODE_RET = nodes.gen_code()
+        reply: Optional[Reply] | Any = None
 
         while True:
             try:
-                val = instructions.send(reply)
+                val: Response[Instr] | Response[Label] | Request[REQUEST_TYPE] = instructions.send(reply)
 
             except StopIteration:
                 break
@@ -80,7 +78,7 @@ class Compiler:
             else:
                 raise NotImplementedError(val)
 
-    def _satisfy_compile_request[T](self, request: Request[T]) -> Reply[T] | T:
+    def _satisfy_compile_request(self, request: Request[REQUEST_TYPE]) -> Reply[list | Any]:
         requests = iter(request.params)
         reply: list[Any] = []
 
@@ -94,15 +92,15 @@ class Compiler:
                 raise NotImplementedError
 
             elif req == Request.GET_CONTEXT:
-                if len(request.params) == 1:
-                    return self._context[-1]
-
-                else:
-                    reply.append(self._context[-1])
+                reply.append(self._context[-1])
 
             elif req == Request.CREATE_CONTEXT:
                 # create a blank context
-                ctx = Context(deleter=self._delete_context, adder=self._add_context, getter=self._get_context)
+                ctx = Context(
+                    deleter=self._delete_context,
+                    adder=self._add_context,
+                    getter=self._get_context,
+                )
 
                 self._context.append(ctx)
 
@@ -114,6 +112,9 @@ class Compiler:
 
             else:
                 raise Exception
+
+        if len(reply) == 1:
+            return Reply(reply[0])
 
         return Reply(reply)
 

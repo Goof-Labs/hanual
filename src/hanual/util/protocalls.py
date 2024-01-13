@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-
-from warnings import warn
 from typing import Self
 
 
@@ -39,11 +37,9 @@ class Request[T]:
     # used to describe what the request should yield, the logic for this is actually in the response
     @property
     def response(self) -> T:
-        warn(
-            f"{type(self).__name__}.response was called, this should never be called",
-            Warning,
+        raise Exception(
+            f"{type(self).__name__}.response was called, this should never be called"
         )
-        return
 
     def __str__(self):
         return f"{type(self).__name__}{self.params}"
@@ -51,8 +47,8 @@ class Request[T]:
 
 # A response is given to the gen
 class Response[T]:
-    def __init__(self, requests: T) -> None:
-        self._response = requests
+    def __init__(self, response: T) -> None:
+        self._response = response
 
     @property
     def response(self) -> T:

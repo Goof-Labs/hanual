@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -26,8 +26,8 @@ class Frame:
         tb = StringIO()
         tb.write(f"{self._name}:")
         for line, i in zip(
-                self._line.split("\n"),
-                range(self._line_range.start, self._line_range.end + 1),
+            self._line.split("\n"),
+            range(int(self._line_range.start), int(self._line_range.end + 1)),
         ):
             tb.write(f" {str(i).zfill(5)} | {line}")
         return tb.getvalue()
@@ -45,7 +45,7 @@ class TraceBack:
         self._frames.append(frame)
         return self
 
-    def add_frames(self, frames: List[Frame]) -> Self:
+    def add_frames(self, frames: list[Frame]) -> Self:
         self._frames.extend(frames)
         return self
 

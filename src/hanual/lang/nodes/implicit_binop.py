@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from bytecode import Instr, BinaryOp
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from hanual.lang.lexer import Token, Generator
+from bytecode import BinaryOp, Instr
+
+from hanual.compile.context import Context
+from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.util import Reply, Response, Request
-
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util import Response, Request, Reply
 
 if TYPE_CHECKING:
     from hanual.lang.nodes.f_call import FunctionCall
@@ -28,22 +30,30 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
     def right(self) -> R:
         return self._right
 
-    def gen_code(self, **kwargs: Any) -> Generator[Response | Request, Reply, None]:
-        inferred: Token | None = kwargs.get("infer", None)
+    def gen_code(self) -> GENCODE_RET:
+        reply: Reply[Context] | None = yield Request(Request.GET_CONTEXT)
+        assert reply is not None
 
-        if inferred is None:
-            raise TypeError(f"Argument 'infer' was left blank in '{type(self).__name__}.gen_code'")
+        with reply.response as ctx:
+            ctx.add(store=True)
 
-        yield from inferred.gen_code(store=False)
-        yield from self._right.gen_code(store=False)
+            inferred: Token | object | None = ctx.get('infer')
 
-        if self._op.value == "+":
-            yield Response(Instr("BINARY_OP", BinaryOp.ADD))
+            if inferred is None or not isinstance(inferred, Token):
+                raise TypeError(
+                    f"Argument 'infer' was left blank in '{type(self).__name__}.gen_code'"
+                )
 
-        else:
-            raise NotImplementedError(f"Have not implemented operator {self._op.value}")
+            yield from inferred.gen_code()
+            yield from self._right.gen_code()
 
-        yield from inferred.gen_code(store=True)
+            if self._op.value == "+":
+                yield Response(Instr("BINARY_OP", BinaryOp.ADD))
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+            else:
+                raise NotImplementedError(f"Have not implemented operator {self._op.value}")
+
+            yield from inferred.gen_code()
+
+    def prepare(self) -> PREPARE_RET:
         yield from self._right.prepare()

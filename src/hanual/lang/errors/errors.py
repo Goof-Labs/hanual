@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Optional, Self
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
+
     from .trace_back import Frame, TraceBack
 
 
@@ -28,13 +29,13 @@ class ErrorType(StrEnum):
 
 class HanualError:
     def __init__(
-            self,
-            pos: LineRange,
-            line: str,
-            name: str,
-            reason: str,
-            tb: TraceBack,
-            tip: Optional[str] = None,
+        self,
+        pos: LineRange,
+        line: str,
+        name: str,
+        reason: str,
+        tb: TraceBack,
+        tip: Optional[str] = None,
     ) -> None:
         self._reason = reason
         self._name = name

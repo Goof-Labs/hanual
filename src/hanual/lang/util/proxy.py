@@ -1,16 +1,9 @@
 from __future__ import annotations
 
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    Type,
-    Self
-)
+from typing import TYPE_CHECKING, Any, Callable, Self, Type
 
 from hanual.lang.productions import DefaultProduction
+from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.util.line_range import LineRange
 
 if TYPE_CHECKING:
@@ -27,44 +20,44 @@ This class will store:
 """
 
 
-class Proxy[F: Callable, P:DefaultProduction]:
+class Proxy[F: Callable]:
     __slots__ = "_fn", "_types", "_prod", "_unless_b", "_unless_e"
 
     def __init__(
-            self: Self,
-            fn: F,
-            types: Dict[str, Any],
-            prod: type[P] = DefaultProduction,
-            unless_start: Iterable[str] = (),
-            unless_end: Iterable[str] = (),
+        self: Self,
+        fn: F,
+        types: dict[str, Any] | None = None,
+        prod: Type | None = None,
+        unless_start: list[str] | None = None,
+        unless_end: list[str] | None = None,
     ) -> None:
         self._fn: F = fn
-        self._prod: Type[P] = prod
+        self._prod: Type = prod or DefaultProduction
         self._types = types or {}
-        self._unless_b = unless_start or tuple()
-        self._unless_e = unless_end or tuple()
+        self._unless_b = unless_start or []
+        self._unless_e = unless_end or []
 
     @property
-    def prod(self) -> Type[P]:
+    def prod(self) -> Type:
         return self._prod
 
     @property
-    def types(self) -> Dict[str, Any]:
+    def types(self) -> dict[str, Any]:
         return self._types
 
     @property
-    def unless_start(self) -> Iterable[str]:
+    def unless_start(self) -> list[str]:
         return self._unless_b
 
     @property
-    def unless_end(self) -> Iterable[str]:
+    def unless_end(self) -> list[str]:
         return self._unless_e
 
     @property
     def fn(self) -> F:
         return self._fn
 
-    def call(self: Proxy, args: list[_StackFrame]):
+    def call(self: Proxy, args: list[_StackFrame]) -> CompilableObject:
         ln_range = LineRange(start=float("inf"), end=float("-inf"))
         pattern = []
         values = []
@@ -149,7 +142,9 @@ class Proxy[F: Callable, P:DefaultProduction]:
                 return res
 
             except ExceptionGroup as e:
-                e.add_note(f"@rule{tuple(map(lambda x: x.name, args))!r}\ndef {self._fn.__name__} ...")
+                e.add_note(
+                    f"@rule{tuple(map(lambda x: x.name, args))!r}\ndef {self._fn.__name__} ..."
+                )
                 raise e
 
         #
@@ -166,22 +161,20 @@ class Proxy[F: Callable, P:DefaultProduction]:
                 res.line_range = ln_range
 
         except Exception as e:
-            e.add_note(
-                f"@rule{tuple(map(lambda x: x.name, args))!r}\n"
-            )
+            e.add_note(f"@rule{tuple(map(lambda x: x.name, args))!r}\n")
             raise e
 
         return res
 
 
-class HookProxy[P](Proxy):
+class HookProxy(Proxy):
     def __init__(
-            self,
-            cls: Type[RuleHook],
-            types: Dict[str, Any],
-            prod: type[P] = DefaultProduction,
-            unless_start: Iterable[str] = (),
-            unless_end: Iterable[str] = (),
+        self,
+        cls: Type[RuleHook],
+        types: dict[str, Any] | None = None,
+        prod: type | None = None,
+        unless_start: list[str] | None = None,
+        unless_end: list[str] | None = None,
     ):
         raise NotImplementedError
 

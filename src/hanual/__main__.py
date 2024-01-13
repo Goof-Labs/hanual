@@ -5,7 +5,6 @@ import sys
 from argparse import ArgumentParser
 
 from hanual.lang.util.compile_code import compile_code
-from hanual.lang.util.dump_tree import dump_tree
 
 
 def main():

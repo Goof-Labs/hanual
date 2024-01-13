@@ -5,8 +5,7 @@ import glob
 from argparse import ArgumentParser
 from sys import argv
 
-from colorama import Fore
-from colorama import init
+from colorama import Fore, init
 from doc_parser import parse_doc_string
 from template import DocumentationTemplate
 
@@ -73,6 +72,7 @@ for file in glob.glob(namespace.p + "\\**\\*.py", recursive=True):
             continue
 
         if ignore_case in file:
+            print(file, f"{ignore_case in file}")
             skip_file = True
 
     if skip_file:

@@ -2,15 +2,16 @@
 # the following syntax `using std::test::name as std_test_name`
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
+
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 from .base_node import BaseNode
-from hanual.util import Reply, Response, Request
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
-    from .namespace_acessor import NamespaceAccessor
     from hanual.lang.token import Token
+
+    from .namespace_acessor import NamespaceAccessor
 
 
 class UsingStatementWithAltName(BaseNode):
@@ -33,8 +34,8 @@ class UsingStatementWithAltName(BaseNode):
     def name(self) -> Token:
         return self._name
 
-    def gen_code(self):
+    def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

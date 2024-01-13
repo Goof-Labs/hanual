@@ -7,8 +7,6 @@ from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.preprocess.preprocesser import Preprocessor
 
-from hanual.lang.util.dump_tree import dump_tree
-
 
 def compile_code(code):
     pp = Preprocessor()

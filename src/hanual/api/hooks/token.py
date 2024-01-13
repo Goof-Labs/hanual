@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import Tuple, LiteralString
+from typing import LiteralString
 
 from hanual.api.hooks.hook import GenericHook
-
-from hanual.lang.util.line_range import LineRange
 from hanual.lang.lexer import Token
+from hanual.lang.util.line_range import LineRange
 
 
-def new_token(regex: Tuple[str, LiteralString], name: LiteralString):
+def new_token(regex: tuple[str, LiteralString], name: LiteralString):
     """A decorator to define a new token.
 
     > This decorator is used to decorate a token class, said class must
@@ -17,6 +16,7 @@ def new_token(regex: Tuple[str, LiteralString], name: LiteralString):
 
     @regex^tuple[str, LiteralString]>
     """
+
     def decor(cls):
         cls._regex = regex[0]
         cls._type = regex[1]
@@ -41,5 +41,7 @@ class TokenHook(GenericHook):
     def type(self):
         return self._type
 
-    def gen_token(self, kind: str, value: str, line_range: LineRange, col: int, line: str) -> Token:
+    def gen_token(
+        self, kind: str, value: str, line_range: LineRange, col: int, line: str
+    ) -> Token:
         return Token(kind, value, line_range, col, line)

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from bytecode import Instr, Compare
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
+
+from bytecode import Compare, Instr
 
 from hanual.lang.lexer import Token
-from .base_node import BaseNode
-from .f_call import FunctionCall
-from hanual.util import Reply, Response, Request
+from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.nodes.f_call import FunctionCall
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util import Response, Request
 
 if TYPE_CHECKING:
     ...
@@ -32,35 +34,41 @@ class ImplicitCondition[OP: Token, V: (Token, FunctionCall)](BaseNode):
     def op(self) -> OP:
         return self._op
 
-    def gen_code(self, **kwargs) -> Generator[Response | Request, Reply, None]:
-        infered: Token = kwargs.get("infer", None)
+    def gen_code(self) -> GENCODE_RET:
+        reply = yield Request(Request.GET_CONTEXT)
 
-        if infered is None:
-            raise TypeError(f"infer was left blank for {type(self).__name__}.gen_code")
+        assert reply is not None
 
-        yield from infered.gen_code(store=False)
-        yield from self._right.gen_code(store=False)
+        with reply.response as ctx:
+            inferred: object | None = ctx.get("infer")
 
-        if self._op.value == "==":
-            yield Response(Instr("COMPARE_OP", Compare.EQ))
+            if inferred is None or not isinstance(inferred, Token):
+                raise TypeError(f"infer was left blank for {type(self).__name__}.gen_code")
 
-        elif self._op.value == ">":
-            yield Response(Instr("COMPARE_OP", Compare.GT))
+            # implement context here
+            yield from inferred.gen_code()
+            yield from self._right.gen_code()
 
-        elif self._op.value == "<":
-            yield Response(Instr("COMPARE_OP", Compare.LT))
+            if self._op.value == "==":
+                yield Response(Instr("COMPARE_OP", Compare.EQ))
 
-        elif self._op.value == ">=":
-            yield Response(Instr("COMPARE_OP", Compare.GE))
+            elif self._op.value == ">":
+                yield Response(Instr("COMPARE_OP", Compare.GT))
 
-        elif self._op.value == "<=":
-            yield Response(Instr("COMPARE_OP", Compare.LE))
+            elif self._op.value == "<":
+                yield Response(Instr("COMPARE_OP", Compare.LT))
 
-        elif self._op.value == "!=":
-            yield Response(Instr("COMPARE_OP", Compare.NE))
+            elif self._op.value == ">=":
+                yield Response(Instr("COMPARE_OP", Compare.GE))
 
-        else:
-            raise NotImplementedError(f"Have not implemented operator {self._op.value}")
+            elif self._op.value == "<=":
+                yield Response(Instr("COMPARE_OP", Compare.LE))
 
-    def prepare(self) -> Generator[Response | Request, Reply, None]:
+            elif self._op.value == "!=":
+                yield Response(Instr("COMPARE_OP", Compare.NE))
+
+            else:
+                raise NotImplementedError(f"Have not implemented operator {self._op.value}")
+
+    def prepare(self) -> PREPARE_RET:
         yield from self._right.prepare()

@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from bytecode import Bytecode, Instr, Label
 
-from hanual.compile.context import Context
 from hanual.util import Reply, Request, Response
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET, REQUEST_TYPE
 
@@ -59,7 +58,7 @@ class Compiler:
 
     def compile_body(self, nodes: BaseNode):
         instructions: GENCODE_RET = nodes.gen_code()
-        reply: Optional[Reply] | Any = None
+        reply: Reply | None = None
 
         while True:
             try:
@@ -88,30 +87,8 @@ class Compiler:
             if req is None:
                 break
 
-            if req == Request.GET_MEM_LOCATION:
-                raise NotImplementedError
-
-            elif req == Request.GET_CONTEXT:
-                reply.append(self._context[-1])
-
-            elif req == Request.CREATE_CONTEXT:
-                # create a blank context
-                ctx = Context(
-                    deleter=self._delete_context,
-                    adder=self._add_context,
-                    getter=self._get_context,
-                )
-
-                self._context.append(ctx)
-
-                if len(request.params) == 1:  # this is the only element
-                    return Reply(ctx)
-
-                else:
-                    reply.append(ctx)
-
             else:
-                raise Exception
+                raise Exception("Requests not implemented")
 
         if len(reply) == 1:
             return Reply(reply[0])
@@ -119,10 +96,7 @@ class Compiler:
         return Reply(reply)
 
     def _delete_context(self, ctx):
-        self._context.remove(ctx)
-
-    def _add_context(self, ctx):
-        self._context.append(ctx)
+        self._context.pop()
 
     def _get_context(self):
         return self._context

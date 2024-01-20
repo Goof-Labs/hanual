@@ -4,11 +4,12 @@ from typing import TYPE_CHECKING
 
 from bytecode import Instr, Label
 
+from hanual.lang.util.node_utils import Intent
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.nodes.implicit_binop import ImplicitBinOp
 from hanual.lang.nodes.implicit_condition import ImplicitCondition
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
-from hanual.util import Response, Request
+from hanual.util import Response
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
@@ -50,19 +51,15 @@ class ForLoop(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def gen_code(self) -> GENCODE_RET:
-        reply = yield Request(Request.GET_CONTEXT)
-
-        assert reply is not None
-
-        with reply.response as ctx:
+    def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
             loop_start = Label()
             loop_end = Label()
 
             yield from self._init.gen_code()
 
             var: Token = self._init.target
-            ctx.add(infer=var)
+
+            new_ctx.add(infer=var)
 
             yield Response(loop_start)
             yield from self._action.gen_code()

@@ -3,11 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from hanual.lang.nodes.base_node import BaseNode
+from hanual.lang.nodes.f_call import FunctionCall
+from hanual.lang.util.node_utils import Intent
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
-from hanual.util import Request
+from hanual.lang.lexer import Token
+
 
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
+    pass
 
 
 class AssignmentNode[T: BaseNode](BaseNode):
@@ -25,17 +28,9 @@ class AssignmentNode[T: BaseNode](BaseNode):
     def value(self) -> T:
         return self._value
 
-    def gen_code(self, **kwargs) -> GENCODE_RET:
-        reply = yield Request(Request.CREATE_CONTEXT)
-
-        assert reply is not None
-
-        with reply.response as ctx:
-            ctx.add(parent=self)
-            yield from self._value.gen_code()
-
-            ctx.add(store=True)
-            yield from self._target.gen_code()
+    def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
+        yield from self._value.gen_code(self.CAPTURE_RESULT)
+        yield from self._target.gen_code(Token.SET_VARIABLE)
 
     def prepare(self) -> PREPARE_RET:
         yield from self._target.prepare()

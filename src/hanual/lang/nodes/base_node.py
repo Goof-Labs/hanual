@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-
 from bytecode.instr import InstrLocation
-
 from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
+from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.util.line_range import LineRange
+from hanual.lang.util.node_utils import Intent
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 
-class BaseNode(metaclass=_BaseNodeMeta):
+class BaseNode(CompilableObject, metaclass=_BaseNodeMeta):
     __slots__ = (
         "_lines",
         "_line_range",
@@ -37,7 +37,7 @@ class BaseNode(metaclass=_BaseNodeMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def gen_code(self) -> GENCODE_RET:
+    def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
         """Generates the code for the compiler to omit."""
         raise NotImplementedError
 

@@ -31,10 +31,6 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
         return self._right
 
     def gen_code(self) -> GENCODE_RET:
-        reply: Reply[Context] | None = yield Request(Request.GET_CONTEXT)
-        assert reply is not None
-
-        with reply.response as ctx:
             ctx.add(store=True)
 
             inferred: Token | object | None = ctx.get('infer')

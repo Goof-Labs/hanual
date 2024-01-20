@@ -35,11 +35,6 @@ class ImplicitCondition[OP: Token, V: (Token, FunctionCall)](BaseNode):
         return self._op
 
     def gen_code(self) -> GENCODE_RET:
-        reply = yield Request(Request.GET_CONTEXT)
-
-        assert reply is not None
-
-        with reply.response as ctx:
             inferred: object | None = ctx.get("infer")
 
             if inferred is None or not isinstance(inferred, Token):

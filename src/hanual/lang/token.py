@@ -4,11 +4,16 @@ from bytecode.instr import Instr, InstrLocation
 
 from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.util.line_range import LineRange
+from hanual.lang.util.node_utils import Intent
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util.equal_list import ItemEqualList
 from hanual.util.protocalls import Request, Response
 
 
 class Token(CompilableObject):
+    GET_VARIABLE = Intent().set_attrs("GET_VARIABLE", value=1)
+    SET_VARIABLE = Intent().set_attrs("SET_VARIABLE", value=2)
+
     def __init__(self, token_type: str, value: str | int | float, line_range: LineRange, colm: int, lines: str) -> None:
         self._value: str | int | float = value
         self._line_range: LineRange = line_range
@@ -29,25 +34,18 @@ class Token(CompilableObject):
         else:
             raise NotImplementedError
 
-    def gen_code(self) -> GENCODE_RET:
+    def gen_code(self, *intents, **options) -> GENCODE_RET:
+        intents = ItemEqualList(intents)
+
         if self._token_type == "ID":
-            reply = yield Request(Request.GET_CONTEXT)
-            assert reply is not None
+            if self.GET_VARIABLE in intents:
+                yield Response[Instr](Instr("LOAD_FAST", str(self._value), location=self.get_location()))
 
-            store = reply.response.get("store")
-
-            if store is True:
-                yield Response[Instr](
-                    Instr("STORE_FAST", str(self._value), location=self.get_location())
-                )
-
-            elif store is False:
-                yield Response[Instr](Instr("LOAD_FAST", str(self._value)))
+            elif self.SET_VARIABLE in intents:
+                yield Response[Instr](Instr("STORE_FAST", str(self._value), location=self.get_location()))
 
             else:
-                raise Exception(
-                    f"{type(self).__name__} {self._token_type} {self.value} {store}"
-                )
+                raise Exception(f"Neither GET_VARIABLE or SET_VARIABLE was passed as an intent, ( {intents} )")
 
         elif self._token_type == "STR":
             yield Response[Instr](Instr("LOAD_CONST", str(self._value)))
@@ -75,13 +73,19 @@ class Token(CompilableObject):
         return self._value
 
     @property
-    def line_range(self):
+    def line_range(self) -> LineRange:
         return self._line_range
 
-    @property
-    def colm(self):
-        return self._colm
+    @line_range.setter
+    def line_range(self, new: LineRange) -> None:
+        assert isinstance(new, LineRange), "new value must be a line_range"
+        self._line_range = new
 
     @property
-    def lines(self):
+    def lines(self) -> str:
         return self._lines
+
+    @lines.setter
+    def lines(self, new: str) -> None:
+        assert isinstance(new, str), "new value for lines must be a str"
+        self._lines = new

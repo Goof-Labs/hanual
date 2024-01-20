@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.util.type_objects import GENCODE_RET
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 
 if TYPE_CHECKING:
     from .block import CodeBlock
@@ -26,5 +26,5 @@ class ElseStatement(BaseNode):
     def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 
-    def prepare(self) -> GENCODE_RET:
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError

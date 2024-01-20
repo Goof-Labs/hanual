@@ -4,11 +4,13 @@ from typing import TYPE_CHECKING
 
 from bytecode import Instr
 
-from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.nodes.dot_chain import DotChain
+from hanual.lang.token import Token
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
-from hanual.util import Request, Response
+from hanual.lang.util.node_utils import Intent
+from hanual.util.equal_list import ItemEqualList
+from hanual.util import Response
 
 if TYPE_CHECKING:
     from .arguments import Arguments
@@ -38,9 +40,7 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
     def args(self) -> Arguments:
         return self._args
 
-    def gen_code(self) -> GENCODE_RET:
-        from hanual.lang.nodes.assignment import AssignmentNode
-
+    def gen_code(self, intents: ItemEqualList[Intent], **options) -> GENCODE_RET:
         yield Response(Instr("PUSH_NULL", location=self.get_location()))
 
         if isinstance(self._name, DotChain):
@@ -53,12 +53,14 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
 
         yield Response(Instr("CALL", len(self._args), location=self.get_location()))
 
-        reply = yield Request(Request.GET_CONTEXT)
+        if self.CAPTURE_RESULT in intents:
+            pass
 
-        assert reply is not None
-
-        if reply.response.assert_instance("parent", AssignmentNode) is False:
+        elif self.IGNORE_RESULT in intents:
             yield Response(Instr("POP_TOP", location=self.get_location()))
+
+        else:
+            raise Exception(f"Intent wasn't provided, either CAPTURE_RESULT or IGNORE_RESULT ( {intents} )")
 
     def prepare(self) -> PREPARE_RET:
         yield from self._name.prepare()

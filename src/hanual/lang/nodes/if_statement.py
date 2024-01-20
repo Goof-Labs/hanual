@@ -6,6 +6,8 @@ from bytecode import Instr, Label
 
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util.equal_list import ItemEqualList
+from hanual.lang.util.node_utils import Intent
 from hanual.util import Response
 
 if TYPE_CHECKING:
@@ -28,7 +30,7 @@ class IfStatement(BaseNode):
     def block(self) -> CodeBlock:
         return self._block
 
-    def gen_code(self) -> GENCODE_RET:
+    def gen_code(self, intents: ItemEqualList[Intent], **options) -> GENCODE_RET:
         false_jump = Label()
 
         yield from self._condition.gen_code()

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from hanual.lang.nodes.algebraic_expr import AlgebraicExpression
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.lang.util.node_utils import Intent
 
 if TYPE_CHECKING:
     from hanual.lang.util.line_range import LineRange
@@ -30,5 +31,5 @@ class AlgebraicFunc(BaseNode):
     def prepare(self) -> PREPARE_RET:
         raise NotImplementedError
 
-    def gen_code(self) -> GENCODE_RET:
+    def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
         raise NotImplementedError

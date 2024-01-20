@@ -5,10 +5,14 @@ from typing import Generator
 from bytecode.instr import InstrLocation
 
 from hanual.lang.util.line_range import LineRange
+from hanual.lang.util.node_utils import Intent
 from hanual.util import Reply, Request, Response
 
 
 class CompilableObject:
+    CAPTURE_RESULT = Intent('CAPTURE_RESULT')  # If the node evaluates to something, keep it on the stack
+    IGNORE_RESULT = Intent('IGNORE_RESULT')  # Ignore the result of the operation, pop it off the stack
+
     def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
         raise NotImplementedError
 

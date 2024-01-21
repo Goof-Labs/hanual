@@ -67,39 +67,12 @@ class Compiler:
             except StopIteration:
                 break
 
-            if isinstance(val, Request):
-                reply = self._satisfy_compile_request(val)
-
-            elif isinstance(val, Response):
+            if isinstance(val, Response):
                 self._instructions.append(val.response)
                 reply = Reply(True)  # accepted
 
             else:
                 raise NotImplementedError(val)
-
-    def _satisfy_compile_request(self, request: Request[REQUEST_TYPE]) -> Reply[list | Any]:
-        requests = iter(request.params)
-        reply: list[Any] = []
-
-        while True:
-            req: Any | None = next(requests, None)
-
-            if req is None:
-                break
-
-            else:
-                raise Exception("Requests not implemented")
-
-        if len(reply) == 1:
-            return Reply(reply[0])
-
-        return Reply(reply)
-
-    def _delete_context(self, ctx):
-        self._context.pop()
-
-    def _get_context(self):
-        return self._context
 
     @property
     def instructions(self):

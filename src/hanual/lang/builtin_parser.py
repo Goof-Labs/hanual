@@ -540,8 +540,8 @@ def assignment(ts: DefaultProduction, lines: str = "", line_range: int = 0):
     "iwith_dot EQ iwith_dot",
     unless_ends=["DOT", "LPAR", "OP"],
 )
-def var_change(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return VarChange(ts[0], ts[2], lines=lines, line_range=line_range)
+def var_change(ts: DefaultProduction):
+    return VarChange(ts[0], ts[2])
 
 
 ###########################
@@ -734,20 +734,14 @@ def if_chain(
         "WHL condition LCB RCB": True,
     },
 )
-def while_stmt(
-    ts: DefaultProduction, no_body: bool = True, lines: str = "", line_range: int = 0
-):
+def while_stmt(ts: DefaultProduction, no_body: bool = True):
     if no_body:
         return WhileStatement(
             ts[1],
-            CodeBlock([], lines=lines, line_range=line_range),
-            lines=lines,
-            line_range=line_range,
+            CodeBlock([]),
         )
 
-    return WhileStatement(
-        condition=ts[1], body=ts[3], lines=lines, line_range=line_range
-    )
+    return WhileStatement(condition=ts[1], body=ts[3])
 
 
 ###########################

@@ -6,4 +6,8 @@ fn main() {
     }
 
     print(inp)
+
+    while inp != "out" {
+        inp = input("enter 'out' to break free!")
+    }
 }

@@ -1,19 +1,11 @@
 from __future__ import annotations
 
 
-from typing import Self
-
-
 class Intent:
     __slots__ = "_name", "_value"
 
     def __init__(self, name=""):
         self._name = name
-
-    def set_attrs(self, name: str, value: int) -> Self:
-        self._name = name
-
-        return self
 
     @property
     def name(self):
@@ -23,7 +15,7 @@ class Intent:
     def value(self):
         return self._value
 
-    def __eq__(self, other: Intent):
+    def __eq__(self, other: object):
         if not isinstance(other, Intent):
             raise Exception(f"other in op == must be an intent, got {type(other).__name__}")
 

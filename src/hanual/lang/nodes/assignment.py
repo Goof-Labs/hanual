@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.nodes.f_call import FunctionCall
 from hanual.lang.util.node_utils import Intent
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 from hanual.lang.lexer import Token

@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from bytecode import Instr, Label
 
-from hanual.compile.context import Context
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 from hanual.util import Request, Response
 

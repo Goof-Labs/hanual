@@ -52,7 +52,7 @@ class _BaseNodeMeta(ABCMeta):
                 yield from method(self, ItemEqualList(tuple(args)), **kwargs)
 
             except Exception as e:
-                e.add_note(f"Occurred in {method.__name__} (mod: {method.__module__})")
+                e.add_note(f"^ occurred in {method.__name__} (mod: {method.__module__})")
                 raise e
 
         return decor

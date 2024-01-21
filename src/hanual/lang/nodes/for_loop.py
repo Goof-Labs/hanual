@@ -12,8 +12,6 @@ from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 from hanual.util import Response
 
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
-
     from .assignment import AssignmentNode
     from .block import CodeBlock
     from .conditions import Condition
@@ -24,11 +22,11 @@ class ForLoop(BaseNode):
     __slots__ = "_while", "_init", "_action", "_body", "_lines", "_line_range"
 
     def __init__(
-        self,
-        condition: Condition | ImplicitCondition,
-        init: AssignmentNode,
-        action: ImplicitBinOp,
-        body: CodeBlock,
+            self,
+            condition: Condition | ImplicitCondition,
+            init: AssignmentNode,
+            action: ImplicitBinOp,
+            body: CodeBlock,
     ) -> None:
         self._while: Condition | ImplicitCondition = condition
         self._init: AssignmentNode = init
@@ -52,26 +50,20 @@ class ForLoop(BaseNode):
         return self._body
 
     def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
-            loop_start = Label()
-            loop_end = Label()
+        loop_start = Label()
+        loop_end = Label()
 
-            yield from self._init.gen_code()
+        yield from self._init.gen_code(self.IGNORE_RESULT)
+        yield Response(loop_start)
 
-            var: Token = self._init.target
+        yield from self._action.gen_code(self.IGNORE_RESULT, self.INPLACE, imply_var=self._init.target)
+        yield from self._body.gen_code(self.IGNORE_RESULT)
+        yield from self._while.gen_code(self.CAPTURE_RESULT, imply_var=self._init.target)
 
-            new_ctx.add(infer=var)
+        yield Response(Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location()))
 
-            yield Response(loop_start)
-            yield from self._action.gen_code()
-
-            yield from self._body.gen_code()
-
-            yield from self._while.gen_code()
-            yield Response(
-                Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location())
-            )
-            yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
-            yield Response(loop_end)
+        yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
+        yield Response(loop_end)
 
     def prepare(self) -> PREPARE_RET:
         yield from self._while.prepare()

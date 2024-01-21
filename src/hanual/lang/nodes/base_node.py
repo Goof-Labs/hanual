@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from bytecode.instr import InstrLocation
+from typing import overload
 from hanual.lang.nodes.base_node_meta import _BaseNodeMeta
 from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.util.line_range import LineRange
 from hanual.lang.util.node_utils import Intent
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util.equal_list import ItemEqualList
 
 
 class BaseNode(CompilableObject, metaclass=_BaseNodeMeta):
@@ -36,9 +38,17 @@ class BaseNode(CompilableObject, metaclass=_BaseNodeMeta):
         """
         raise NotImplementedError
 
-    @abstractmethod
+    @overload
     def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
         """Generates the code for the compiler to omit."""
+        raise NotImplementedError
+
+    @overload
+    def gen_code(self, intent: ItemEqualList[Intent], **options) -> GENCODE_RET:
+        raise NotImplementedError
+
+    @abstractmethod
+    def gen_code(self, *args, **kwargs):
         raise NotImplementedError
 
     def get_location(self) -> InstrLocation:

@@ -11,8 +11,8 @@ from hanual.util.protocalls import Request, Response
 
 
 class Token(CompilableObject):
-    GET_VARIABLE = Intent().set_attrs("GET_VARIABLE", value=1)
-    SET_VARIABLE = Intent().set_attrs("SET_VARIABLE", value=2)
+    GET_VARIABLE = Intent('GET_VARIABLE')
+    SET_VARIABLE = Intent('SET_VARIABLE')
 
     def __init__(self, token_type: str, value: str | int | float, line_range: LineRange, colm: int, lines: str) -> None:
         self._value: str | int | float = value

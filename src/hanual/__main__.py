@@ -33,14 +33,19 @@ def main():
     cli.add_argument(
         "-asm",
         action="store_true",
-        help="Print the asembely of the code",
+        help="Print the assembly of the code",
     )
 
     namespace = cli.parse_args(sys.argv)
 
-    with open(namespace.script[1], "r") as f:
-        out = compile_code(f.read())
-        print(out)
+    if len(namespace.script) > 1:
+        with open(namespace.script[1], "r") as f:
+            out = compile_code(f.read())
+            print(out)
+
+    else:
+        print("No file inputted")
+        cli.print_help()
 
 
 if __name__ == "__main__":

@@ -10,4 +10,8 @@ fn main() {
     while inp != "out" {
         inp = input("enter 'out' to break free!")
     }
+
+    for num of 1..5 {
+        print(num)
+    }
 }

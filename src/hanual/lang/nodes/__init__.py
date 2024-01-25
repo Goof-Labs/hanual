@@ -27,6 +27,7 @@ from .loop_loop import LoopLoop
 from .namespace_acessor import NamespaceAccessor
 from .new_struct import NewStruct
 from .parameters import Parameters
+from .range_for_loop import RangeForLoop
 from .range_node import RangeNode
 from .return_stmt import ReturnStatement
 from .s_getattr import SGetattr
@@ -38,6 +39,7 @@ from .using_statement import UsingStatement
 from .using_statement_alt_name import UsingStatementWithAltName
 from .var_change import VarChange
 from .while_statement import WhileStatement
+
 
 __all__ = [
     "AlgebraicExpression",
@@ -65,6 +67,7 @@ __all__ = [
     "IterLoop",
     "NamespaceAccessor",
     "NewStruct",
+    "RangeForLoop",
     "RangeNode",
     "ReturnStatement",
     "SGetattr",

@@ -1,13 +1,11 @@
 fn main() {
-    let inp = input("input something: ")
+    let inp = input("what is your name? ")
 
-    if inp == "no" {
-        print("no you")
+    if inp == "han" {
+        print("you are cool")
     }
 
-    print(inp)
-
-    while inp != "out" {
-        inp = input("enter 'out' to break free!")
+    else {
+        print("Hi", inp)
     }
 }

@@ -31,7 +31,7 @@ par = PParser()
 def strong_field(
     ts: DefaultProduction[Token, Token, Token], lines: str = "", line_range: int = 0
 ) -> StrongField:
-    return StrongField(ts[0], ts[2], lines=lines, line_range=line_range)
+    return StrongField(ts[0], ts[2])
 
 
 @par.rule(
@@ -82,7 +82,7 @@ def struct_def(
     lines: str = "",
     line_range: int = 0,
 ) -> StructDefinition:
-    return StructDefinition(ts[0][1], ts[2], lines=lines, line_range=line_range)
+    return StructDefinition(ts[0][1], ts[2])
 
 
 ###########################
@@ -94,7 +94,7 @@ def struct_def(
 def h_list(
     ts: DefaultProduction[Token, Arguments, Token], lines: str = "", line_range: int = 0
 ) -> HanualList:
-    return HanualList(ts[1], lines=lines, line_range=line_range)
+    return HanualList(ts[1])
 
 
 @par.rule("LSB ID RSB", "LSB NUM RSB")
@@ -102,7 +102,7 @@ def h_list(
     ts: DefaultProduction[Token, Token, Token], lines: str = "", line_range: int = 0
 ) -> HanualList:
     return HanualList(
-        Arguments(ts[1], lines=lines, line_range=line_range),
+        Arguments(ts[1]),
         lines=lines,
         line_range=line_range,
     )
@@ -112,7 +112,7 @@ def h_list(
 def s_getattr(
     ts: DefaultProduction[Token, HanualList], lines: str = "", line_range: int = 0
 ):
-    return SGetattr(ts[0], ts[1], lines=lines, line_range=line_range)
+    return SGetattr(ts[0], ts[1])
 
 
 ###########################
@@ -246,7 +246,7 @@ def impl_binop(ts: DefaultProduction[Token, Token, Token | FunctionCall]):
 def namespace_accessor(
     ts: DefaultProduction[Token, Token], lines: str = "", line_range: int = 0
 ) -> NamespaceAccessor:
-    return NamespaceAccessor(ts[1], lines=lines, line_range=line_range)
+    return NamespaceAccessor(ts[1])
 
 
 @par.rule("namespace_accessor namespace_accessor")
@@ -374,7 +374,7 @@ def f_call(
     if mode == 1:
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments([], lines=lines, line_range=line_range),
+            arguments=Arguments([]),
             lines=lines,
             line_range=line_range,
         )
@@ -382,7 +382,7 @@ def f_call(
     if mode == 2:
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments(ts[1], lines=lines, line_range=line_range),
+            arguments=Arguments(ts[1]),
             lines=lines,
             line_range=line_range,
         )
@@ -390,14 +390,14 @@ def f_call(
     if isinstance(ts[2], Token):
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments(ts[2], lines=lines, line_range=line_range),
+            arguments=Arguments(ts[2]),
             lines=lines,
             line_range=line_range,
         )
 
     return FunctionCall(
         name=ts[0],
-        arguments=Arguments(ts[2], lines=lines, line_range=line_range),
+        arguments=Arguments(ts[2]),
         lines=lines,
         line_range=line_range,
     )
@@ -423,7 +423,7 @@ def f_call(
         # ( )
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments([], lines=lines, line_range=line_range),
+            arguments=Arguments([]),
             lines=lines,
             line_range=line_range,
         )
@@ -432,7 +432,7 @@ def f_call(
         # automatic params
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments(ts[1], lines=lines, line_range=line_range),
+            arguments=Arguments(ts[1]),
             lines=lines,
             line_range=line_range,
         )
@@ -440,14 +440,14 @@ def f_call(
     if isinstance(ts[2], Token):
         return FunctionCall(
             name=ts[0],
-            arguments=Arguments(ts[2], lines=lines, line_range=line_range),
+            arguments=Arguments(ts[2]),
             lines=lines,
             line_range=line_range,
         )
 
     return FunctionCall(
         name=ts[0],
-        arguments=Arguments(ts[2], lines=lines, line_range=line_range),
+        arguments=Arguments(ts[2]),
         lines=lines,
         line_range=line_range,
     )
@@ -460,7 +460,7 @@ def f_call(
 def new_struct(
     ts: DefaultProduction[Token, FunctionCall], lines: str = "", line_range: int = 0
 ) -> NewStruct:
-    return NewStruct(ts[1], lines=lines, line_range=line_range)
+    return NewStruct(ts[1])
 
 
 ###########################
@@ -488,13 +488,13 @@ def new_struct(
 )
 def algebraic_op(ts: DefaultProduction, lines: str = "", line_range: int = 0):
     return AlgebraicExpression(
-        operator=ts[1], left=ts[0], right=ts[2], lines=lines, line_range=line_range
+        operator=ts[1], left=ts[0], right=ts[2]
     )
 
 
 @par.rule("LET ID EQ algebraic_op")
 def algebraic_fn(ts, lines: str = "", line_range: int = 0):
-    return AlgebraicFunc(ts[1], ts[3], lines=lines, line_range=line_range)
+    return AlgebraicFunc(ts[1], ts[3])
 
 
 ###########################
@@ -517,7 +517,7 @@ def assignment(ts: DefaultProduction):
 
 @par.rule("LET ID EQ h_range")
 def assignment(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return AssignmentNode(target=ts[1], value=ts[3], lines=lines, line_range=line_range)
+    return AssignmentNode(target=ts[1], value=ts[3])
 
 
 ###########################
@@ -551,12 +551,12 @@ def var_change(ts: DefaultProduction):
 
 @par.rule("RET", unless_ends=["ID", "NUM", "STR"])
 def ret(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
-    return ReturnStatement(None, lines=lines, line_range=line_range)
+    return ReturnStatement(None)
 
 
 @par.rule("RET ID", "RET NUM", "RET f_call", "RET expr", unless_ends=["LPAR", "OP"])
 def ret(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
-    return ReturnStatement(ts[1], lines=lines, line_range=line_range)
+    return ReturnStatement(ts[1])
 
 
 ###########################
@@ -571,7 +571,7 @@ def break_stmt(ts: DefaultProduction[Token]):
 
 @par.rule("BREAK CTX")
 def break_stmt(ts: DefaultProduction, lines: str = "", line_range: LineRange = 0):
-    return BreakStatement(ts[0], ts[1], lines=lines, line_range=line_range)
+    return BreakStatement(ts[0], ts[1])
 
 
 ###########################
@@ -653,14 +653,14 @@ def if_chain_start(
 
     if type_ == 1:
         return chain.add_node(
-            IfStatement(ts[1], ts[3], lines=lines, line_range=line_range)
+            IfStatement(ts[1], ts[3])
         )
 
     elif type_ == 2:
         return chain.add_node(
             IfStatement(
                 ts[1],
-                CodeBlock([], lines=lines, line_range=line_range),
+                CodeBlock([]),
                 lines=lines,
                 line_range=line_range,
             )
@@ -673,13 +673,10 @@ def if_chain_start(
 
 
 @par.rule(
-    "if_chain_start ELS LCB line RCB",
-    "if_chain_start ELS LCB lines RCB",
-    "if_chain ELS LCB line RCB",
-    "if_chain ELS LCB lines RCB",
+    "if_statement ELS LCB line RCB"
 )
 def if_chain(ts: DefaultProduction, lines: str = "", line_range: int = 0) -> IfChain:
-    return ts[0].add_else(ElseStatement(ts[3], lines=lines, line_range=line_range))
+    return IfChain().add_node(ts[0]).add_else(ElseStatement(ts[3]))
 
 
 @par.rule(
@@ -697,14 +694,14 @@ def if_chain(
 ) -> IfChain:
     if type_ == 1:
         return ts[0].add_node(
-            ElifStatement(ts[1], ts[3], lines=lines, line_range=line_range)
+            ElifStatement(ts[1], ts[3])
         )
 
     elif type_ == 2:
         return ts[0].add_node(
             ElifStatement(
                 ts[1],
-                CodeBlock([], lines=lines, line_range=line_range),
+                CodeBlock([]),
                 lines=lines,
                 line_range=line_range,
             )
@@ -712,7 +709,7 @@ def if_chain(
 
     elif type_ == 3:
         return ts[0].add_node(
-            ElifStatement(ts[1], ts[3], lines=lines, line_range=line_range),
+            ElifStatement(ts[1], ts[3]),
             lines=lines,
             line_range=line_range,
         )
@@ -751,7 +748,7 @@ def while_stmt(ts: DefaultProduction, no_body: bool = True):
 
 @par.rule("SHOUT")
 def shout(ts: DefaultProduction[Token], lines: str, line_range: LineRange) -> ShoutNode:
-    return ShoutNode(ts[0], lines=lines, line_range=line_range)
+    return ShoutNode(ts[0])
 
 
 ###########################
@@ -815,7 +812,7 @@ def function_definition(
     unless_ends=["AS", "NSA"],
 )
 def using(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return UsingStatement(ts[1], lines=lines, line_range=line_range)
+    return UsingStatement(ts[1])
 
 
 @par.rule("USE namespace_accessor AS ID")
@@ -824,7 +821,7 @@ def using(
     lines: str = "",
     line_range: int = 0,
 ):
-    return UsingStatementWithAltName(ts[1], ts[3], lines=lines, line_range=line_range)
+    return UsingStatementWithAltName(ts[1], ts[3])
 
 
 @par.rule("USE ID", unless_ends=["NSA"])
@@ -832,7 +829,7 @@ def using(
     ts: DefaultProduction[Token, Token], lines: str = "", line_range: int = 0
 ) -> UsingStatement:
     return UsingStatement(
-        NamespaceAccessor(ts[1], lines=lines, line_range=line_range),
+        NamespaceAccessor(ts[1]),
         lines=lines,
         line_range=line_range,
     )
@@ -856,7 +853,7 @@ def anon_function(
     ts: DefaultProduction, lines: str = "", line_range: int = 0
 ) -> AnonymousFunction:
     return AnonymousFunction(
-        args=ts[0], inner=ts[2], lines=lines, line_range=line_range
+        args=ts[0], inner=ts[2]
     )
 
 
@@ -871,7 +868,7 @@ def anon_function(
     "ID DOT DOT",
 )
 def h_range(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return RangeNode(from_=ts[0], to_=None, lines=lines, line_range=line_range)
+    return RangeNode(from_=ts[0], to_=None)
 
 
 ###########################

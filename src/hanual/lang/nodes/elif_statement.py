@@ -34,4 +34,5 @@ class ElifStatement(BaseNode):
         raise NotImplementedError
 
     def prepare(self) -> PREPARE_RET:
-        raise NotImplementedError
+        yield from self._condition.prepare()
+        yield from self._block.prepare()

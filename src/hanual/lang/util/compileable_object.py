@@ -16,6 +16,7 @@ class CompilableObject:
     INPLACE = Intent('INPLACE')
 
     def prepare(self) -> PREPARE_RET:
+        return
         raise NotImplementedError
 
     @overload

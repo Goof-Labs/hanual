@@ -14,7 +14,7 @@ from hanual.lang.nodes import (AlgebraicExpression, AlgebraicFunc,
                                ReturnStatement, SGetattr, ShoutNode,
                                StrongField, StrongFieldList, StructDefinition,
                                UsingStatement, UsingStatementWithAltName,
-                               VarChange, WhileStatement)
+                               VarChange, WhileStatement, RangeForLoop)
 from hanual.lang.pparser import PParser
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.util.line_range import LineRange
@@ -143,6 +143,21 @@ def for_loop(
 
     return ForLoop(ts[3], ts[1], ts[5], ts[7])
 
+
+@par.rule(
+    "FOR ID OF h_range LCB RCB",
+    "FOR ID OF h_range LCB line RCB",
+    "FOR ID OF h_range LCB lines RCB",
+    types={
+        "FOR ID OF h_range LCB RCB": True,
+        "_": False
+    }
+)
+def for_loop(ts: DefaultProduction, no_body: bool):
+    if no_body:
+        return RangeForLoop(name=ts[1], iterator=ts[3], body=CodeBlock([]))
+
+    return RangeForLoop(name=ts[1], iterator=ts[3], body=ts[5])
 
 ###########################
 # LOOP LOOPS
@@ -758,7 +773,7 @@ def shout(ts: DefaultProduction[Token], lines: str, line_range: LineRange) -> Sh
 
 @par.rule("FN f_call")
 def function_marker(
-    ts: DefaultProduction[FunctionCall], lines: str = "", line_range: int = 0
+    ts: DefaultProduction[FunctionCall]
 ):
     # If the params is part of a function definition it should behave differently from when it is not
     return ts[1]
@@ -866,10 +881,15 @@ def anon_function(
 @par.rule(
     "NUM DOT DOT",
     "ID DOT DOT",
+    unless_ends=["NUM"]
 )
-def h_range(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return RangeNode(from_=ts[0], to_=None)
+def h_range(ts: DefaultProduction):
+    return RangeNode(start=ts[0], end=None)
 
+
+@par.rule("NUM DOT DOT NUM")
+def h_range(ts: DefaultProduction):
+    return RangeNode(start=ts[0], end=ts[3])
 
 ###########################
 # CODE BLOCKS

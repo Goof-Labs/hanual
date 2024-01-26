@@ -8,4 +8,8 @@ fn main() {
     else {
         print("Hi", inp)
     }
+
+    for num of 1..5 {
+        print(num)
+    }
 }

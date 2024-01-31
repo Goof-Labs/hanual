@@ -62,7 +62,9 @@ class Compiler:
 
         while True:
             try:
-                val: Response[Instr] | Response[Label] | Request[REQUEST_TYPE] = instructions.send(reply)
+                val: Response[Instr] | Response[Label] | Request[REQUEST_TYPE] = (
+                    instructions.send(reply)
+                )
 
             except StopIteration:
                 break

@@ -23,9 +23,7 @@ class WhileStatement(BaseNode):
         "_line_range",
     )
 
-    def __init__(
-        self, condition: Condition, body: CodeBlock
-    ) -> None:
+    def __init__(self, condition: Condition, body: CodeBlock) -> None:
         self._while: Condition = condition
         self._body: CodeBlock = body
 

@@ -25,17 +25,17 @@ class LoopLoop(BaseNode):
         return self._inner
 
     def gen_code(self) -> GENCODE_RET:
-            start_label = Label()  # for the start of the loop; jumped to if we continue
-            end_label = Label()  # end label; jumped to if we break
+        start_label = Label()  # for the start of the loop; jumped to if we continue
+        end_label = Label()  # end label; jumped to if we break
 
-            ctx.add(parent=self)
-            ctx.add(end_label=end_label)
-            ctx.add(start_label=start_label)
+        ctx.add(parent=self)
+        ctx.add(end_label=end_label)
+        ctx.add(start_label=start_label)
 
-            yield Response(start_label)
-            yield from self._inner.gen_code()
-            yield Response(Instr("JUMP_BACKWARD", start_label))
-            yield Response(end_label)
+        yield Response(start_label)
+        yield from self._inner.gen_code()
+        yield Response(Instr("JUMP_BACKWARD", start_label))
+        yield Response(end_label)
 
     def prepare(self) -> PREPARE_RET:
         yield from self._inner.prepare()

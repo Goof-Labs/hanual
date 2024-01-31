@@ -3,18 +3,44 @@ from __future__ import annotations
 from typing import Any
 
 from hanual.lang.builtin_lexer import Token
-from hanual.lang.nodes import (AlgebraicExpression, AlgebraicFunc,
-                               AnonymousFunction, Arguments, AssignmentNode,
-                               BinOpNode, BreakStatement, CodeBlock, Condition,
-                               DotChain, ElifStatement, ElseStatement, ForLoop,
-                               FunctionCall, FunctionDefinition, HanualList,
-                               IfChain, IfStatement, ImplicitBinOp,
-                               ImplicitCondition, LoopLoop, NamespaceAccessor,
-                               NewStruct, Parameters, RangeNode,
-                               ReturnStatement, SGetattr, ShoutNode,
-                               StrongField, StrongFieldList, StructDefinition,
-                               UsingStatement, UsingStatementWithAltName,
-                               VarChange, WhileStatement, RangeForLoop)
+from hanual.lang.nodes import (
+    AlgebraicExpression,
+    AlgebraicFunc,
+    AnonymousFunction,
+    Arguments,
+    AssignmentNode,
+    BinOpNode,
+    BreakStatement,
+    CodeBlock,
+    Condition,
+    DotChain,
+    ElifStatement,
+    ElseStatement,
+    ForLoop,
+    FunctionCall,
+    FunctionDefinition,
+    HanualList,
+    IfChain,
+    IfStatement,
+    ImplicitBinOp,
+    ImplicitCondition,
+    LoopLoop,
+    NamespaceAccessor,
+    NewStruct,
+    Parameters,
+    RangeNode,
+    ReturnStatement,
+    SGetattr,
+    ShoutNode,
+    StrongField,
+    StrongFieldList,
+    StructDefinition,
+    UsingStatement,
+    UsingStatementWithAltName,
+    VarChange,
+    WhileStatement,
+    RangeForLoop,
+)
 from hanual.lang.pparser import PParser
 from hanual.lang.productions import DefaultProduction
 from hanual.lang.util.line_range import LineRange
@@ -148,16 +174,14 @@ def for_loop(
     "FOR ID OF h_range LCB RCB",
     "FOR ID OF h_range LCB line RCB",
     "FOR ID OF h_range LCB lines RCB",
-    types={
-        "FOR ID OF h_range LCB RCB": True,
-        "_": False
-    }
+    types={"FOR ID OF h_range LCB RCB": True, "_": False},
 )
 def for_loop(ts: DefaultProduction, no_body: bool):
     if no_body:
         return RangeForLoop(name=ts[1], iterator=ts[3], body=CodeBlock([]))
 
     return RangeForLoop(name=ts[1], iterator=ts[3], body=ts[5])
+
 
 ###########################
 # LOOP LOOPS
@@ -502,9 +526,7 @@ def new_struct(
     "expr OP algebraic_op",
 )
 def algebraic_op(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return AlgebraicExpression(
-        operator=ts[1], left=ts[0], right=ts[2]
-    )
+    return AlgebraicExpression(operator=ts[1], left=ts[0], right=ts[2])
 
 
 @par.rule("LET ID EQ algebraic_op")
@@ -661,23 +683,17 @@ def if_statement(ts: DefaultProduction, type_: int):
         "if_statement EIF": 3,
     },
 )
-def if_chain_start(
-    ts: DefaultProduction, type_: int, lines: str = "", line_range: LineRange = 0
-):
-    chain = IfChain(lines=lines, line_range=line_range)
+def if_chain_start(ts: DefaultProduction, type_: int):
+    chain = IfChain()
 
     if type_ == 1:
-        return chain.add_node(
-            IfStatement(ts[1], ts[3])
-        )
+        return chain.add_node(IfStatement(ts[1], ts[3]))
 
     elif type_ == 2:
         return chain.add_node(
             IfStatement(
                 ts[1],
                 CodeBlock([]),
-                lines=lines,
-                line_range=line_range,
             )
         )
 
@@ -687,9 +703,7 @@ def if_chain_start(
     raise Exception
 
 
-@par.rule(
-    "if_statement ELS LCB line RCB"
-)
+@par.rule("if_statement ELS LCB line RCB")
 def if_chain(ts: DefaultProduction, lines: str = "", line_range: int = 0) -> IfChain:
     return IfChain().add_node(ts[0]).add_else(ElseStatement(ts[3]))
 
@@ -704,33 +718,32 @@ def if_chain(ts: DefaultProduction, lines: str = "", line_range: int = 0) -> IfC
         "if_chain_start condition LCB line RCB": 3,
     },
 )
-def if_chain(
-    ts: DefaultProduction, type_: int, lines: str = "", line_range: int = 0
-) -> IfChain:
+def if_chain(ts: DefaultProduction, type_: int) -> IfChain:
     if type_ == 1:
-        return ts[0].add_node(
-            ElifStatement(ts[1], ts[3])
-        )
+        return ts[0].add_node(ElifStatement(ts[1], ts[3]))
 
     elif type_ == 2:
         return ts[0].add_node(
             ElifStatement(
                 ts[1],
                 CodeBlock([]),
-                lines=lines,
-                line_range=line_range,
             )
         )
 
     elif type_ == 3:
         return ts[0].add_node(
             ElifStatement(ts[1], ts[3]),
-            lines=lines,
-            line_range=line_range,
         )
 
     raise Exception
 
+
+@par.rule(
+    "if_chain ELS LCB line RCB",
+    "if_chain ELS LCB lines RCB",
+)
+def if_chain(ts: DefaultProduction):
+    return ts[0].add_else(ElseStatement(ts[3]))
 
 ###########################
 # WHILE LOOPS
@@ -772,9 +785,7 @@ def shout(ts: DefaultProduction[Token], lines: str, line_range: LineRange) -> Sh
 
 
 @par.rule("FN f_call")
-def function_marker(
-    ts: DefaultProduction[FunctionCall]
-):
+def function_marker(ts: DefaultProduction[FunctionCall]):
     # If the params is part of a function definition it should behave differently from when it is not
     return ts[1]
 
@@ -867,9 +878,7 @@ def using(
 def anon_function(
     ts: DefaultProduction, lines: str = "", line_range: int = 0
 ) -> AnonymousFunction:
-    return AnonymousFunction(
-        args=ts[0], inner=ts[2]
-    )
+    return AnonymousFunction(args=ts[0], inner=ts[2])
 
 
 ###########################
@@ -878,11 +887,7 @@ def anon_function(
 
 
 # ranges `x..`
-@par.rule(
-    "NUM DOT DOT",
-    "ID DOT DOT",
-    unless_ends=["NUM"]
-)
+@par.rule("NUM DOT DOT", "ID DOT DOT", unless_ends=["NUM"])
 def h_range(ts: DefaultProduction):
     return RangeNode(start=ts[0], end=None)
 
@@ -890,6 +895,7 @@ def h_range(ts: DefaultProduction):
 @par.rule("NUM DOT DOT NUM")
 def h_range(ts: DefaultProduction):
     return RangeNode(start=ts[0], end=ts[3])
+
 
 ###########################
 # CODE BLOCKS

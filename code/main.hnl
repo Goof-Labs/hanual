@@ -1,14 +1,4 @@
 fn main() {
-    let inp = input("what is your name? ")
-
-    if inp == "han" {
-        print("you are cool")
-    }
-
-    else {
-        print("Hi", inp)
-    }
-
     for num of 1..5 {
         print(num)
     }

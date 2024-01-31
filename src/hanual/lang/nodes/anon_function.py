@@ -19,10 +19,7 @@ class AnonymousFunction(BaseNode, ABC):
     __slots__ = ("_args", "_inner", "fn_name", "_lines", "_line_no", "_return")
 
     def __init__(
-        self,
-        args: Parameters,
-        inner: CodeBlock,
-        ret: Token | BinOpNode | RangeNode
+        self, args: Parameters, inner: CodeBlock, ret: Token | BinOpNode | RangeNode
     ) -> None:
         self._inner = inner
         self._args = args

@@ -17,8 +17,8 @@ class Arguments[T: (BaseNode, Token)](BaseNode):
     )
 
     def __init__(
-            self,
-            children: T | Iterable[T],
+        self,
+        children: T | Iterable[T],
     ) -> None:
         self._children: list[T] = []
         self.add_child(children)

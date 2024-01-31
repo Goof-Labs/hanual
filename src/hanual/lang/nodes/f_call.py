@@ -47,7 +47,13 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
             yield from self._name.gen_code()
 
         else:
-            yield Response(Instr("LOAD_NAME", str(self._name.value), location=self._name.get_location()))
+            yield Response(
+                Instr(
+                    "LOAD_NAME",
+                    str(self._name.value),
+                    location=self._name.get_location(),
+                )
+            )
 
         yield from self._args.gen_code()
 
@@ -60,7 +66,9 @@ class FunctionCall[N: (Token, DotChain)](BaseNode):
             yield Response(Instr("POP_TOP", location=self.get_location()))
 
         else:
-            raise Exception(f"Intent wasn't provided, either CAPTURE_RESULT or IGNORE_RESULT ( {intents} )")
+            raise Exception(
+                f"Intent wasn't provided, either CAPTURE_RESULT or IGNORE_RESULT ( {intents} )"
+            )
 
     def prepare(self) -> PREPARE_RET:
         yield from self._name.prepare()

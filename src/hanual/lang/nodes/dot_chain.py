@@ -8,6 +8,7 @@ from hanual.lang.util.line_range import LineRange
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 from hanual.lang.util.node_utils import Intent
 
+
 class DotChain(BaseNode):
     __slots__ = ("_chain", "_lines", "_line_range")
 

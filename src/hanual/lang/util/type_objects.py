@@ -15,12 +15,10 @@ type REQUEST_TYPE = int
 type GENCODE_RET = Generator[
     Response[Instr] | Response[Label],  # yield
     Reply | None,  # send type
-    None  # return type
+    None,  # return type
 ]
 type PREPARE_RET = Generator[
-    Request[object],  # yield
-    Reply[object] | None,  # send type
-    None  # return type
+    Request[object], Reply[object] | None, None  # yield  # send type  # return type
 ]
 
 type GENCODE_INTENTS = ItemEqualList[Intent]

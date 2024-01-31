@@ -53,7 +53,9 @@ class ImplicitBinOp[O: Token, R: (Token, FunctionCall)](BaseNode):
             pass
 
         else:
-            raise Exception(f"No relevant intents: Inplace, IGNORE_RESULT, CAPTURE_RESULT passed, ( {intents} )")
+            raise Exception(
+                f"No relevant intents: Inplace, IGNORE_RESULT, CAPTURE_RESULT passed, ( {intents} )"
+            )
 
     def prepare(self) -> PREPARE_RET:
         yield from self._right.prepare()

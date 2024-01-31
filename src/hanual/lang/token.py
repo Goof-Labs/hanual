@@ -11,10 +11,17 @@ from hanual.util.protocalls import Request, Response
 
 
 class Token(CompilableObject):
-    GET_VARIABLE = Intent('GET_VARIABLE')
-    SET_VARIABLE = Intent('SET_VARIABLE')
+    GET_VARIABLE = Intent("GET_VARIABLE")
+    SET_VARIABLE = Intent("SET_VARIABLE")
 
-    def __init__(self, token_type: str, value: str | int | float, line_range: LineRange, colm: int, lines: str) -> None:
+    def __init__(
+        self,
+        token_type: str,
+        value: str | int | float,
+        line_range: LineRange,
+        colm: int,
+        lines: str,
+    ) -> None:
         self._value: str | int | float = value
         self._line_range: LineRange = line_range
         self._token_type: str = token_type
@@ -39,13 +46,19 @@ class Token(CompilableObject):
 
         if self._token_type == "ID":
             if self.GET_VARIABLE in intents:
-                yield Response[Instr](Instr("LOAD_FAST", str(self._value), location=self.get_location()))
+                yield Response[Instr](
+                    Instr("LOAD_FAST", str(self._value), location=self.get_location())
+                )
 
             elif self.SET_VARIABLE in intents:
-                yield Response[Instr](Instr("STORE_FAST", str(self._value), location=self.get_location()))
+                yield Response[Instr](
+                    Instr("STORE_FAST", str(self._value), location=self.get_location())
+                )
 
             else:
-                raise Exception(f"Neither GET_VARIABLE or SET_VARIABLE was passed as an intent, ( {intents} )")
+                raise Exception(
+                    f"Neither GET_VARIABLE or SET_VARIABLE was passed as an intent, ( {intents} )"
+                )
 
         elif self._token_type == "STR":
             yield Response[Instr](Instr("LOAD_CONST", str(self._value)))

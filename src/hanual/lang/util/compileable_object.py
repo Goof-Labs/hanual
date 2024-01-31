@@ -11,9 +11,13 @@ from hanual.util.equal_list import ItemEqualList
 
 
 class CompilableObject:
-    CAPTURE_RESULT = Intent('CAPTURE_RESULT')  # If the node evaluates to something, keep it on the stack
-    IGNORE_RESULT = Intent('IGNORE_RESULT')  # Ignore the result of the operation, pop it off the stack
-    INPLACE = Intent('INPLACE')
+    CAPTURE_RESULT = Intent(
+        "CAPTURE_RESULT"
+    )  # If the node evaluates to something, keep it on the stack
+    IGNORE_RESULT = Intent(
+        "IGNORE_RESULT"
+    )  # Ignore the result of the operation, pop it off the stack
+    INPLACE = Intent("INPLACE")
 
     def prepare(self) -> PREPARE_RET:
         return

@@ -13,5 +13,5 @@ __all__ = [
     "RuleHook",
     "new_rule",
     "PreProcessorHook",
-    "new_preprocessor"
+    "new_preprocessor",
 ]

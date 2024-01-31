@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     ...
 
 
-
 class IfChain(BaseNode):
     __slots__ = (
         "_statements",
@@ -44,14 +43,19 @@ class IfChain(BaseNode):
 
         for stmt in self.statements:
             if isinstance(stmt, (IfStatement, ElifStatement)):
-                yield from stmt.gen_code(true_jump=true_jump)
+                next_jump = Label()
+
+                yield from stmt.gen_code(true_jump=true_jump, false_jump=next_jump)
+
+                yield Response(next_jump)
 
             else:
-                assert isinstance(stmt, ElseStatement), f"Last statement must be an else go a {stmt}"
+                assert isinstance(
+                    stmt, ElseStatement
+                ), f"Last statement must be an else go a {stmt}"
                 yield from stmt.gen_code()
 
         yield Response(true_jump)
-
 
     def prepare(self) -> PREPARE_RET:
         for statement in self._statements:

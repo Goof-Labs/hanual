@@ -17,7 +17,9 @@ class Intent:
 
     def __eq__(self, other: object):
         if not isinstance(other, Intent):
-            raise Exception(f"other in op == must be an intent, got {type(other).__name__}")
+            raise Exception(
+                f"other in op == must be an intent, got {type(other).__name__}"
+            )
 
         return self.name == other.name
 

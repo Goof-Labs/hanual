@@ -31,9 +31,9 @@ class IfStatement(BaseNode):
     def block(self) -> CodeBlock:
         return self._block
 
-    def gen_code(self,
-                 intents: ItemEqualList[Intent],
-                 **options: IF_STATEMENT_KWARGS) -> GENCODE_RET:
+    def gen_code(
+        self, intents: ItemEqualList[Intent], **options: IF_STATEMENT_KWARGS
+    ) -> GENCODE_RET:
 
         if (fj := options.get("end_jump", None)) is not None:
             false_jump = fj

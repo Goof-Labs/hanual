@@ -22,11 +22,11 @@ class ForLoop(BaseNode):
     __slots__ = "_while", "_init", "_action", "_body", "_lines", "_line_range"
 
     def __init__(
-            self,
-            condition: Condition | ImplicitCondition,
-            init: AssignmentNode,
-            action: ImplicitBinOp,
-            body: CodeBlock,
+        self,
+        condition: Condition | ImplicitCondition,
+        init: AssignmentNode,
+        action: ImplicitBinOp,
+        body: CodeBlock,
     ) -> None:
         self._while: Condition | ImplicitCondition = condition
         self._init: AssignmentNode = init
@@ -56,11 +56,17 @@ class ForLoop(BaseNode):
         yield from self._init.gen_code(self.IGNORE_RESULT)
         yield Response(loop_start)
 
-        yield from self._action.gen_code(self.IGNORE_RESULT, self.INPLACE, imply_var=self._init.target)
+        yield from self._action.gen_code(
+            self.IGNORE_RESULT, self.INPLACE, imply_var=self._init.target
+        )
         yield from self._body.gen_code(self.IGNORE_RESULT)
-        yield from self._while.gen_code(self.CAPTURE_RESULT, imply_var=self._init.target)
+        yield from self._while.gen_code(
+            self.CAPTURE_RESULT, imply_var=self._init.target
+        )
 
-        yield Response(Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location()))
+        yield Response(
+            Instr("POP_JUMP_IF_FALSE", loop_end, location=self.get_location())
+        )
 
         yield Response(Instr("JUMP_BACKWARD", loop_start, location=self.get_location()))
         yield Response(loop_end)

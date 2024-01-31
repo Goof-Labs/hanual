@@ -18,10 +18,10 @@ class BinOpNode(BaseNode):
     __slots__ = "_right", "_left", "_op", "_lines", "_line_range"
 
     def __init__(
-            self,
-            op: Token,
-            left: CompilableObject,
-            right: CompilableObject,
+        self,
+        op: Token,
+        left: CompilableObject,
+        right: CompilableObject,
     ) -> None:
         self._right: CompilableObject = right
         self._left: CompilableObject = left
@@ -56,9 +56,7 @@ class BinOpNode(BaseNode):
 
         elif self._op.value == "/":
             yield Response(
-                Instr(
-                    "BINARY_OP", BinaryOp.TRUE_DIVIDE, location=self.get_location()
-                )
+                Instr("BINARY_OP", BinaryOp.TRUE_DIVIDE, location=self.get_location())
             )
 
         elif self._op.value == "*":

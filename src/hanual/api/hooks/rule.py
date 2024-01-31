@@ -71,12 +71,10 @@ class RuleHook(GenericHook):
     __slots__ = "_proxy", "_pattern", "_name"
 
     @overload
-    def create_rule(self, ts: DefaultProduction, types: dict[str, Any]):
-        ...
+    def create_rule(self, ts: DefaultProduction, types: dict[str, Any]): ...
 
     @overload
-    def create_rule(self, ts: DefaultProduction):
-        ...
+    def create_rule(self, ts: DefaultProduction): ...
 
     def create_rule(self, *args, **kwargs):
         raise NotImplementedError

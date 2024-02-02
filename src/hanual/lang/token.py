@@ -67,7 +67,7 @@ class Token(CompilableObject):
             yield Response[Instr](Instr("LOAD_CONST", int(self._value)))
 
         else:
-            raise NotImplementedError
+            raise NotImplementedError(self._token_type)
 
     def get_location(self) -> InstrLocation:
         return InstrLocation(

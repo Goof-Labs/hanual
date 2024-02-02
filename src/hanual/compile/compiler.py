@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from bytecode import Bytecode, Instr, Label
 
@@ -12,11 +12,10 @@ if TYPE_CHECKING:
 
 
 class Compiler:
-    def __init__(self):
-        self._instructions = []
-        self._constants: list[Any] = []
-        self._names: list[str] = []
-        self._context: list = []
+    def __init__(self, instructions: Optional[list]=None, constants: Optional[list[object]]=None, names: list[str]=None):
+        self._instructions = instructions or []
+        self._constants: list[object] = constants or []
+        self._names: list[str] = names or []
 
     def prepare_nodes(self, node: BaseNode):
         reply: Reply[list] | None = None
@@ -80,7 +79,7 @@ class Compiler:
     def instructions(self):
         return self._instructions
 
-    def gen_code(self, block):
+    def gen_code(self, block: BaseNode) -> Bytecode:
         self._instructions.append(Instr("RESUME", 0))
         self.prepare_nodes(block)
         self.compile_body(block)

@@ -1,5 +1,9 @@
-fn main() {
+fn main(a, b, c) {
     for num of 1..5 {
         print(num)
     }
+}
+
+fn abc() {
+    print("ABC")
 }

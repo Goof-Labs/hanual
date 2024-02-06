@@ -22,7 +22,6 @@ class _BaseNodeMeta(ABCMeta):
         instance.gen_code = cls.__overload_gen_code(instance, instance.gen_code)
 
         for attr_name, attr_value in attrs.items():
-
             if not isinstance(attr_value, Intent):
                 continue
 

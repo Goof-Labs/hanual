@@ -3,8 +3,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Generator, Iterable, Literal, LiteralString
 
-from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
-
+from hanual.errors.error import HanualSyntaxError
 from .token import Token
 from .util.line_range import LineRange
 
@@ -117,23 +116,11 @@ class Lexer:
                 raise Exception("kind is None")
 
             if kind == "MISMATCH":
-                print(
-                    HanualError(
-                        pos=LineRange(line_no, line_no),
-                        line=text,
-                        name=ErrorType.illegal_character,
-                        reason=f"{value!r} is not recognised as a symbol or valid character",
-                        tb=TraceBack().add_frame(
-                            Frame(
-                                "Lexing",
-                                line=text,
-                                line_range=LineRange(start=line_no, end=line_no),
-                            )
-                        ),
-                        tip=f"try removing that character",
-                    ).as_string()
-                )
-                exit()
+                HanualSyntaxError(
+                    line_str=text,
+                    line_range=LineRange(line_no, line_no),
+                    hint=f"Character {value!r} is not a recognised character"
+                ).display()
 
             hook: TokenHook | None = self._hooks.get(kind, None)
 

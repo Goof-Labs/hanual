@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from bytecode import Bytecode, Instr, Label
 
@@ -64,7 +64,6 @@ class Compiler:
                 val: Response[Instr] | Response[Label] | Request[REQUEST_TYPE] = (
                     instructions.send(reply)
                 )
-
             except StopIteration:
                 break
 

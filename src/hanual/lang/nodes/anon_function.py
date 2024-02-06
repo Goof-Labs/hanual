@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
 from typing import TYPE_CHECKING
 
 from hanual.lang.lexer import Token
@@ -15,15 +14,22 @@ if TYPE_CHECKING:
     from hanual.lang.nodes.range_node import RangeNode
 
 
-class AnonymousFunction(BaseNode, ABC):
-    __slots__ = ("_args", "_inner", "fn_name", "_lines", "_line_no", "_return")
+class AnonymousFunction(BaseNode):
+    """
+    The anonymous function is a function with no name. The function is defined
+    like so:
+
+    ```
+    """
+
+    __slots__ = ("_args", "_inner", "_lines", "_line_range", "_return")
 
     def __init__(
-        self, args: Parameters, inner: CodeBlock, ret: Token | BinOpNode | RangeNode
+        self, args: Parameters,
+        inner: CodeBlock,
     ) -> None:
         self._inner = inner
         self._args = args
-        self._return = ret
 
     def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
         raise NotImplementedError

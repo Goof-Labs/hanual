@@ -12,6 +12,18 @@ if TYPE_CHECKING:
 
 
 class AlgebraicExpression(BaseNode):
+    r"""
+    The algebraic expression is similar to a normal binop node; however this node includes an algebraic symbol.
+    This node too has a left and right operator.
+
+    ```
+    let expression = \x + 1
+    ```
+
+    In this example the left node is an algebraic symbol, `\x`, the right operator is `1`, and the operator is
+    a `+`. Also note how the left and right values of the operator can also be other expressions.
+    """
+
     __slots__ = (
         "_op",
         "_left",
@@ -25,15 +37,10 @@ class AlgebraicExpression(BaseNode):
         operator: Token,
         left: AlgebraicExpression | Token,
         right: AlgebraicExpression | Token,
-        lines: str,
-        line_range: LineRange,
     ) -> None:
         self._op: Token = operator
         self._left = left
         self._right = right
-
-        self._lines = lines
-        self._line_range = line_range
 
     def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
         raise NotImplementedError

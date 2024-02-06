@@ -875,9 +875,7 @@ def using(
     "par_args LCB line expr RCB",
     "par_args LCB lines expr RCB",
 )
-def anon_function(
-    ts: DefaultProduction, lines: str = "", line_range: int = 0
-) -> AnonymousFunction:
+def anon_function(ts: DefaultProduction) -> AnonymousFunction:
     return AnonymousFunction(args=ts[0], inner=ts[2])
 
 
@@ -904,6 +902,7 @@ def h_range(ts: DefaultProduction):
 
 @par.rule(
     "function_definition",
+    "algebraic_fn",
     "if_statement",
     "assignment",
     "while_stmt",

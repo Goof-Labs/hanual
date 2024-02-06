@@ -15,6 +15,7 @@ from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET, REQUEST_TYPE
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
+    from hanual.lang.util.node_utils import Intent
 
     from .block import CodeBlock
     from .parameters import Parameters

@@ -1,15 +1,10 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Callable, Generator, NamedTuple, Optional, Type
 
 from .util.compileable_object import CompilableObject
 from .util.proxy import Proxy
 from .productions import DefaultProduction
-
-if TYPE_CHECKING:
-    from hanual.api.hooks import RuleHook
-
 
 class _StackFrame[T: CompilableObject](NamedTuple):
     name: str
@@ -29,37 +24,6 @@ class PParser:
         self.rules: dict[str, tuple[str, Proxy]] = {}
         self._always: list = []
         self.debug = False
-
-        logging.basicConfig(level=logging.DEBUG)
-
-    def check_redundancy(self: PParser) -> None:
-        """
-        This function checks for redundancy. It
-        will warn the user about any tokens not
-        used, and this can be used to keep the
-        codebase clean.
-        """
-        def_tokens = []  # tokens defined by the user
-        use_tokens = []  # tokens actually used
-
-        for token in self.rules:
-            def_tokens.extend(token.split(" "))
-
-        for rule in self.rules:
-            use_tokens.extend(rule.split(" "))
-
-        unused_tokens = set(use_tokens) - set(def_tokens)
-        undef_tokens = set(def_tokens) - set(use_tokens)
-        remainder = []
-        remainder.extend(undef_tokens)
-        remainder.extend(unused_tokens)
-
-        if not set(remainder):
-            logging.debug("No clashes found :)")
-
-        elif unused_tokens and undef_tokens:
-            logging.warning("unused tokens: %s", unused_tokens)
-            logging.critical("undefined tokens: %s", undef_tokens)
 
     def rule(
         self: PParser,
@@ -125,43 +89,6 @@ class PParser:
                 self.rules[rule] = func.__name__, prox
 
         return inner
-
-    def add_rule(
-        self,
-        rules,
-        func,
-        types,
-        prod,
-        unless_starts,
-        unless_ends,
-        name: Optional[str] = None,
-    ):
-        for rule in rules:
-            prox = Proxy(func, types, prod, unless_starts, unless_ends)
-            self.rules[rule] = name or func.__name__, prox
-
-    def add_hooks(self, hooks: list[RuleHook]) -> None:
-        for hook in hooks:
-            for rule in hook.patterns:
-                self.rules[rule] = hook.name, hook.proxy
-
-    def always(self: PParser):
-        """
-        This will always run on each reduction of the stack or after every check.
-        This is very useful when you want to change the tokens while the code is
-        represented as a partial tree or stream of tokens.
-
-        WARNING: this can really mess up the stack if you are not careful so be carefull
-        """
-
-        def inner(func):
-            self._always.append(func)
-
-        return inner
-
-    ######################
-    # PARSING THE TOKENS #
-    ######################
 
     def parse(self: PParser, stream: Generator[CompilableObject, None, None]):
         stack: list[_StackFrame[CompilableObject]] = []

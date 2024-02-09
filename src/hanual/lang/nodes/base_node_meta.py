@@ -13,10 +13,18 @@ if TYPE_CHECKING:
 
 
 class _BaseNodeMeta(ABCMeta):
+    """A class that validates the atributes of all sub-classes
+
+    This class checks overrides the `__init__` and `gen_code` method. The
+    `__init__` method now validates the input, the arguments that where given to
+    it and sets the `_lines` and `_line_range`. The `gen_code` method converts
+    the input arguments to an `ItemEqualList` and adds a try/except statement to
+    better describe any stack traces.
+    """
     def __new__(cls, *args, **kwargs) -> Type:
         instance = super().__new__(cls, *args, **kwargs)
 
-        name, base, attrs = args
+        name, _, attrs = args
 
         instance.__init__ = cls.__override_init(instance, method=instance.__init__)
         instance.gen_code = cls.__overload_gen_code(instance, instance.gen_code)

@@ -54,7 +54,7 @@ class RangeNode(BaseNode):
                 yield from self._end.gen_code(self.CAPTURE_RESULT)
 
             case _:
-                raise NotImplementedError
+                raise NotImplementedError(f"pattern {self._start!s} {self._end!s} was not implemented.")
 
         yield Response(Instr("CALL", 2))
         yield Response(Instr("GET_ITER"))

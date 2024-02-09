@@ -7,10 +7,6 @@ from hanual.errors.error import HanualSyntaxError
 from .token import Token
 from .util.line_range import LineRange
 
-if TYPE_CHECKING:
-    from hanual.api.hooks import TokenHook
-
-
 def kw(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
     """Used to define a keyword in the lexer.
 
@@ -44,12 +40,11 @@ def rx(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
 
 
 class Lexer:
-    __slots__ = "last", "rules", "_rules", "_key_words", "_hooks"
+    __slots__ = "last", "rules", "_rules", "_key_words"
 
     def __init__(self):
         self._rules = []
         self._key_words = []
-        self._hooks: dict[str, TokenHook] = {}
         self.update_rules()
 
     def update_rules(self, rules=None):
@@ -63,21 +58,6 @@ class Lexer:
             else:
                 raise ValueError(
                     f"{rule[1][1]!r} is not recognised as a regex or keyword"
-                )
-
-    def add_hooks(self, hooks: Iterable[TokenHook]):
-        for hook in hooks:
-            self._hooks[hook.name] = hook
-
-            if hook.type == "kw":
-                self._key_words.append((hook.name, hook.regex))
-
-            elif hook.type == "rx":
-                self._rules.append((hook.name, hook.regex))
-
-            else:
-                raise ValueError(
-                    f"{hook.type!r} is not recognised as a regex or keyword"
                 )
 
     def tokenize(
@@ -122,14 +102,8 @@ class Lexer:
                     hint=f"Character {value!r} is not a recognised character"
                 ).display()
 
-            hook: TokenHook | None = self._hooks.get(kind, None)
-
-            if hook is not None:
-                yield hook.gen_token(
-                    kind, value, LineRange(line_no, line_no), col, text
-                )
-
-            elif hasattr(self, f"t_{mode}_{kind}"):
+            # create the token
+            if hasattr(self, f"t_{mode}_{kind}"):
                 yield getattr(self, f"t_{mode}_{kind}")(kind, value, line_no, col, text)
 
             else:

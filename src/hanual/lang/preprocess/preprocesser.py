@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generator, Iterable, Optional
 
-if TYPE_CHECKING:
-    from hanual.api.hooks import PreProcessorHook
-
 
 class Preprocessor:
     """
@@ -25,9 +22,7 @@ class Preprocessor:
         self,
         pre_defs: Optional[list[str]] = None,
         prefix: Optional[str] = "@",
-        hooks: Optional[list[PreProcessorHook]] = None,
     ) -> None:
-        self._hooks: list[PreProcessorHook] = hooks or []
         self._definitions: list[str] = pre_defs or []
         self._prefix: str = prefix or "@"
 
@@ -77,9 +72,6 @@ class Preprocessor:
             text = hook.scan_lines(self._skip_lines(text, ignore))
 
         return text
-
-    def add_hook(self, hook: PreProcessorHook) -> None:
-        self._hooks.append(hook)
 
     def process(
         self,

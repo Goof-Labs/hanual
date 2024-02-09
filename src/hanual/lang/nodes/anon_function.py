@@ -9,9 +9,7 @@ from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 from hanual.lang.util.node_utils import Intent
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.binop import BinOpNode
     from hanual.lang.nodes.parameters import Parameters
-    from hanual.lang.nodes.range_node import RangeNode
 
 
 class AnonymousFunction(BaseNode):

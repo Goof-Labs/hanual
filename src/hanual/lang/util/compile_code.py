@@ -20,8 +20,8 @@ def compile_code(code):
 
     mod = ModuleWrapper()
 
-    for frame in frames:
-        print(frame)
+#    for frame in frames:
+#        print(frame)
 
     for node in frames[0].value.children:
         mod.add(FunctionWrapper(node.gen_py_code()))

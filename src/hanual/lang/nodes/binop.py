@@ -15,6 +15,10 @@ if TYPE_CHECKING:
 
 
 class BinOpNode(BaseNode):
+    """Implements a binary (arithmatic) operation.
+
+    This node implements arithmatic operations in the language of any two nodes.
+    """
     __slots__ = "_right", "_left", "_op", "_lines", "_line_range"
 
     def __init__(
@@ -23,24 +27,55 @@ class BinOpNode(BaseNode):
         left: CompilableObject,
         right: CompilableObject,
     ) -> None:
+        """Initializes the BinOpNode class.
+
+        Args:
+            op (Token): The operator as a token, e.g `+`, `-`.
+            left (CompilableObject): The left operator in operang.
+            right (CompilableObject): The right operator in operang.
+        """
         self._right: CompilableObject = right
         self._left: CompilableObject = left
-
         self._op: Token = op
 
     @property
     def left(self) -> CompilableObject:
+        """The left operang.
+
+        Returns:
+            CompilableObject: The left operang.
+        """
         return self._left
 
     @property
     def right(self) -> CompilableObject:
+        """The right operang.
+
+        Returns:
+            CompilableObject: The right operang.
+        """
         return self._right
 
     @property
     def op(self) -> Token:
+        """The operator.
+
+        Returns:
+            Token: The operator as a token.
+        """
         return self._op
 
     def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
+        """Genorates the the instructions for the operation.
+
+        The method takes not intentions or options.
+
+        Raises:
+            NotImplementedError: If the operator has not been implemented.
+
+        Returns:
+            GENCODE_RET: The instructions.
+        """
         yield from self._left.gen_code()
         yield from self._right.gen_code()
 

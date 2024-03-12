@@ -1,7 +1,7 @@
 # Hanual language
 
 The hanual langauge is a programming language created by two CS (Computer Science) students. The language aims to fill
-the gap of a cross platform low level language.
+the gap of a cross-platform, low level language.
 
 ```
 fn main() {
@@ -11,5 +11,5 @@ fn main() {
 }
 ```
 
-The language aims to be simple and cut out unnecessery abstractions like classes. And stay quite "down to earth" with
+The language aims to be simple and cut out unnecessery abstractions like classes, as well as staying quite "down to earth" with
 it's syntax.

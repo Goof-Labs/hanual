@@ -3,9 +3,3 @@ fn main(a, b, c) {
         print(num)
     }
 }
-
-fn abc() {
-    let func = (abc, def) {
-        print("abc = ", abc, " def = ", def)
-    }
-}

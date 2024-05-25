@@ -16,8 +16,8 @@ class FunctionWrapper:
         def _f():
             ...
 
-        _f.__code__ = self.__cocode.__code__
-        _f.__name__ = self._fn_node.name
+        _f.__code__ = self._co_code.__code__
+        _f.__name__ = self._fn_node.name.value
         self._func = _f
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:

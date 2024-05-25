@@ -546,16 +546,16 @@ def algebraic_fn(ts, lines: str = "", line_range: int = 0):
     "LET ID EQ new_struct",
     "LET ID EQ h_list",
     "LET ID EQ anon_function",
+    "LET ID EQ h_range",
     unless_ends=["DOT"],
 )
 def assignment(ts: DefaultProduction):
     return AssignmentNode(target=ts[1], value=ts[3])
 
 
-@par.rule("LET ID EQ h_range")
-def assignment(ts: DefaultProduction, lines: str = "", line_range: int = 0):
-    return AssignmentNode(target=ts[1], value=ts[3])
-
+@par.rule("EQ anon_function")
+def anon_function(ts):
+    return None
 
 ###########################
 # CHANGING AND MODDING VARS

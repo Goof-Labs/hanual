@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Generator, NamedTuple, Optional, Type
+from typing import Callable, Generator, NamedTuple, Optional, Type
 
 from .util.compileable_object import CompilableObject
 from .util.proxy import Proxy
@@ -13,13 +13,22 @@ class _StackFrame[T: CompilableObject](NamedTuple):
 
 
 class PParser:
-    """
-    The PParser class is used to create a parser.
-    The class is initialized with no params.
-    A decorator syntax is then used to create new rules for the parser.
-    Finally, parser function is called to parse the input.
-    """
+    """An implementation of a LR (left right) parser.
 
+    The parser has rules defined using the decorator syntax. Afterwards a token
+    stream can be passed to the parser's `parse` method to create a syntax tree.
+
+    Typical usag example:
+
+        parser = PParser()
+
+        @parser.rule("token1 pattern2")
+        def new_symbol(token_stream):
+            return ...
+
+        parser.parser(...)
+
+    """
     def __init__(self) -> None:
         self.rules: dict[str, tuple[str, Proxy]] = {}
         self._always: list = []
@@ -27,13 +36,14 @@ class PParser:
 
     def rule(
         self: PParser,
-        *rules,
+        *rules: str,
         prod: Optional[Type] = DefaultProduction,
-        types: Optional[dict[str, Any]] = None,
+        types: Optional[dict[str, object]] = None,
         unless_starts: Optional[list[str]] = None,
         unless_ends: Optional[list[str]] = None,
     ) -> Callable:
-        """
+        """Defines a rule on the parser with the decorator syntax.
+
         This function is a decorator, so it can be used with the following syntax
 
         >>> parser = PParser()
@@ -80,6 +90,14 @@ class PParser:
         This rule will now evaluate [NAME LPAR RPAR] to a function call if and only
         if the pattern is not prefixed with an FN, else it will skip this pattern
         and a different rule can take care of it.
+
+        Args:
+            rules (str): The cases in which the rule (decorated function) should mach.
+            func (Callable): The function that should be invoked if such a match is detected.
+            prod (optional[Type]): The class that will represent the match.
+            types (Optional[dict[str, Any]]): The cases and value that will be passed to the function.
+            unless_starts (Optional[list[str]]): Will not allow the pattern to match if the specified token(s) prefixes it.
+            unless_ends (Optional[list]): Will not match if the any of the specified tokens are next.
         """
 
         def inner(func):
@@ -90,7 +108,15 @@ class PParser:
 
         return inner
 
-    def parse(self: PParser, stream: Generator[CompilableObject, None, None]):
+    def parse(self: PParser, stream: Generator[CompilableObject, None, None]) -> list[_StackFrame[CompilableObject]]:
+        """Parses the given token string into an ast using the class defined rules.
+
+        Args:
+            stream (Generator[CompilableObject, None, None]): The stream of tokens that are going to be parsed into an ast
+
+        Returns:
+            list[_StackFrame[CompilableObject]]: The stack that the parser operated on.
+        """
         stack: list[_StackFrame[CompilableObject]] = []
 
         while True:

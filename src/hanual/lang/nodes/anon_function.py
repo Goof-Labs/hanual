@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from hanual.lang.lexer import Token
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.nodes.block import CodeBlock
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET

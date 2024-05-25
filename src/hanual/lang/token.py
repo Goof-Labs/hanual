@@ -11,6 +11,7 @@ from hanual.util.protocalls import Request, Response
 
 
 class Token(CompilableObject):
+    """Representation of a token; used for lexical analysis and parsing."""
     GET_VARIABLE = Intent("GET_VARIABLE")
     SET_VARIABLE = Intent("SET_VARIABLE")
 
@@ -22,6 +23,15 @@ class Token(CompilableObject):
         colm: int,
         lines: str,
     ) -> None:
+        """Initializer for a new token.
+
+        Args:
+            token_type (str): The type of the token.
+            value (str | int | float): The value of the token
+            line_range (LineRange): The position of the token as line numbers only.
+            colm (int): The comumn of the token in the source code.
+            lines (str): The lines that contain the token.
+        """
         self._value: str | int | float = value
         self._line_range: LineRange = line_range
         self._token_type: str = token_type
@@ -29,6 +39,17 @@ class Token(CompilableObject):
         self._lines: str = lines
 
     def prepare(self) -> PREPARE_RET:
+        """Prepares the token before it is compiled.
+
+        A token is internally a CompilableObject so it can be compiled. (This is done to reduce code repition.)
+        This method needs to be overwritten to allow for this.
+
+        Raises:
+            NotImplementedError: If the token is not one of the specified types then the logic has not been implemented yet.
+
+        Yields:
+            Iterator[PREPARE_RET]: _description_
+        """
         if self._token_type == "ID":
             yield Request(Request.ADD_NAME, str(self._value))
 

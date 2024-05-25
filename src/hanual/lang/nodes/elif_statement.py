@@ -13,8 +13,8 @@ from hanual.util.equal_list import ItemEqualList
 
 
 if TYPE_CHECKING:
-    from .block import CodeBlock
-    from .conditions import Condition
+    from . import CodeBlock
+    from . import Condition
 
 
 class ElifStatement(BaseNode):

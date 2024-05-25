@@ -5,7 +5,6 @@ from .algebraic_fn import AlgebraicFunc
 from .anon_function import AnonymousFunction
 from .arguments import Arguments
 from .assignment import AssignmentNode
-from .base_node import BaseNode
 from .binop import BinOpNode
 from .block import CodeBlock
 from .break_statement import BreakStatement

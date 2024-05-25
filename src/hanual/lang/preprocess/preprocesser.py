@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generator, Iterable, Optional
+from typing import TYPE_CHECKING, Generator, Optional
 
 
 class Preprocessor:
@@ -51,28 +51,6 @@ class Preprocessor:
 
         self._definitions.append(name)
 
-    @staticmethod
-    def _skip_lines(
-        text: Iterable[str], ignore: list[str]
-    ) -> Generator[str, None, None]:
-        for line in text:
-            if line in ignore:
-                continue
-
-            yield line
-
-    def _process_hooks(self, text: str | Iterable[str]):
-        if isinstance(text, str):
-            text = text.split("\n")
-
-        for hook in self._hooks:
-            # same function
-            ignore = hook.props.skip
-
-            text = hook.scan_lines(self._skip_lines(text, ignore))
-
-        return text
-
     def process(
         self,
         text: str,
@@ -98,7 +76,7 @@ class Preprocessor:
             self._definitions.extend(starting_defs)
 
         # run our own preprocessors
-        for line in self._process_hooks(text):
+        for line in text.splitlines():
             # each preprocessor starts with a prefix
             if line.startswith(self.prefix):
                 # check all pre procs both possible aliases and run a corresponding function

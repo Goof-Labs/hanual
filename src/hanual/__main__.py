@@ -41,7 +41,8 @@ def main():
     if len(namespace.script) > 1:
         with open(namespace.script[1], "r") as f:
             out = compile_code(f.read())
-            print(out)
+            out.main()
+            print(out.main)
 
     else:
         print("No file inputted")

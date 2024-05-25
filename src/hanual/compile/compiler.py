@@ -8,7 +8,7 @@ from hanual.util import Reply, Request, Response
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET, REQUEST_TYPE
 
 if TYPE_CHECKING:
-    from hanual.lang.nodes.base_node import BaseNode
+    from hanual.lang.nodes import BaseNode
 
 
 class Compiler:

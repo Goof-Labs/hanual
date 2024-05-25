@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from hanual.lang.nodes.base_node import BaseNode
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
-from hanual.util import Request
+from hanual.lang.util.node_utils import Intent
+
+if TYPE_CHECKING:
+    ...
 
 
 class CodeBlock(BaseNode):
@@ -33,16 +38,9 @@ class CodeBlock(BaseNode):
 
         return self
 
-    def gen_code(self) -> GENCODE_RET:
-        reply = yield Request(Request.CREATE_CONTEXT)
-
-        assert reply is not None
-
-        with reply.response as ctx:
-            ctx.add(parent=self)
-
-            for child in self._children:
-                yield from child.gen_code()
+    def gen_code(self, intents: list[Intent], **options) -> GENCODE_RET:
+        for child in self._children:
+            yield from child.gen_code(self.IGNORE_RESULT)
 
     def prepare(self) -> PREPARE_RET:
         for child in self._children:

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Self
-
-from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
-
+from bytecode import Instr
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET, GENCODE_INTENTS
+from hanual.lang.lexer import Token
+from hanual.util.protocalls import Response
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.lexer import Token
+    pass
 
 
 class RangeNode(BaseNode):
@@ -15,24 +16,52 @@ class RangeNode(BaseNode):
         "_from",
         "_to",
         "_lines",
-        "_line_no",
+        "_line_range",
     )
 
     def __init__(
         self: Self,
-        from_: Optional[Token] = None,
-        to_: Optional[Token] = None,
-        lines: str = "",
-        line_no: int = 0,
+        start: Optional[Token] = None,
+        end: Optional[Token] = None,
     ) -> None:
-        self._from = from_
-        self._to = to_
+        self._start = start
+        self._end = end
 
-        self._line_no = line_no
-        self._lines = lines
+    @property
+    def start(self) -> Token | None:
+        return self._start
 
-    def gen_code(self) -> GENCODE_RET:
-        raise NotImplementedError
+    @property
+    def end(self) -> Token | None:
+        return self._end
+
+    def gen_code(self, intents: GENCODE_INTENTS, **options) -> GENCODE_RET:
+        yield Response(Instr("PUSH_NULL"))
+        yield Response(Instr("LOAD_NAME", "range"))
+
+        match self._start, self._end:
+            case None, None:
+                raise NotImplementedError
+
+            case None, Token():
+                raise NotImplementedError
+
+            case Token(), None:
+                raise NotImplementedError
+
+            case Token(), Token():
+                yield from self._start.gen_code(self.CAPTURE_RESULT)
+                yield from self._end.gen_code(self.CAPTURE_RESULT)
+
+            case _:
+                raise NotImplementedError(f"pattern {self._start!s} {self._end!s} was not implemented.")
+
+        yield Response(Instr("CALL", 2))
+        yield Response(Instr("GET_ITER"))
 
     def prepare(self) -> PREPARE_RET:
-        raise NotImplementedError
+        if self._start is not None:
+            yield from self._start.prepare()
+
+        if self._end is not None:
+            yield from self._end.prepare()

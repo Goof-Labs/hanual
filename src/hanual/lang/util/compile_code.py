@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import dis
-
-from hanual.compile.hanual_function import HanualFunction
 from hanual.lang.builtin_lexer import HanualLexer
 from hanual.lang.builtin_parser import get_parser
 from hanual.lang.preprocess.preprocesser import Preprocessor
+from hanual.lang.util.dump_tree import dump_tree
+from hanual.wrappers.modle_wrapper import ModuleWrapper
+from hanual.wrappers.function_wrapper import FunctionWrapper
 
 
 def compile_code(code):
@@ -16,21 +16,11 @@ def compile_code(code):
     tokens = lexer.tokenize(lines, mode="compile")
 
     parser = get_parser()
-    frame = parser.parse(tokens)
+    frames = parser.parse(tokens)
 
-    # print(dump_tree(frame, depth=1000))
-    func = HanualFunction.from_func(frame[0].value.children[0])
+    mod = ModuleWrapper()
 
-    out = func.compile()
+    for node in frames[0].value.children:
+        mod.add(FunctionWrapper(node.gen_py_code()))
 
-    for n in out:
-        print(n)
-
-    code = out.to_code()
-
-    dis.dis(code)
-
-    res = eval(code)
-    print(res)
-
-    return
+    return mod

@@ -7,7 +7,6 @@ from hanual.lang.util.compileable_object import CompilableObject
 from hanual.lang.util.line_range import LineRange
 
 if TYPE_CHECKING:
-    from hanual.api.hooks import RuleHook
     from hanual.lang.pparser import _StackFrame
 
 """
@@ -165,18 +164,3 @@ class Proxy[F: Callable]:
             raise e
 
         return res
-
-
-class HookProxy(Proxy):
-    def __init__(
-        self,
-        cls: Type[RuleHook],
-        types: dict[str, Any] | None = None,
-        prod: type | None = None,
-        unless_start: list[str] | None = None,
-        unless_end: list[str] | None = None,
-    ):
-        raise NotImplementedError
-
-    def call(self: Proxy, args):
-        raise NotImplementedError

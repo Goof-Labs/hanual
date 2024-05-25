@@ -1,18 +1,37 @@
 from __future__ import annotations
 
-from typing import Generator
+from typing import overload
 
 from bytecode.instr import InstrLocation
 
 from hanual.lang.util.line_range import LineRange
-from hanual.util import Reply, Request, Response
+from hanual.lang.util.node_utils import Intent
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
+from hanual.util.equal_list import ItemEqualList
 
 
 class CompilableObject:
-    def prepare(self) -> Generator[Request[object], Reply[object] | None, None]:
+    CAPTURE_RESULT = Intent(
+        "CAPTURE_RESULT"
+    )  # If the node evaluates to something, keep it on the stack
+    IGNORE_RESULT = Intent(
+        "IGNORE_RESULT"
+    )  # Ignore the result of the operation, pop it off the stack
+    INPLACE = Intent("INPLACE")
+
+    def prepare(self) -> PREPARE_RET:
         raise NotImplementedError
 
-    def gen_code(self) -> Generator[Response | Request, Reply | None, None]:
+    @overload
+    def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
+        """Generates the code for the compiler to omit."""
+        raise NotImplementedError
+
+    @overload
+    def gen_code(self, intent: ItemEqualList[Intent], **options) -> GENCODE_RET:
+        raise NotImplementedError
+
+    def gen_code(self, *args, **kwargs):
         raise NotImplementedError
 
     def get_location(self) -> InstrLocation:

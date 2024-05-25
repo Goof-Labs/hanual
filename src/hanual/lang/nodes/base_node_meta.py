@@ -1,19 +1,40 @@
 from __future__ import annotations
 
 from abc import ABCMeta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
 from hanual.lang.util.line_range import LineRange
+from hanual.lang.util.node_utils import Intent
+from hanual.util.equal_list import ItemEqualList
 from hanual.util import ArgumentError
 
 if TYPE_CHECKING:
-    from .base_node import BaseNode
+    from hanual.lang.nodes.base_node import BaseNode
 
 
 class _BaseNodeMeta(ABCMeta):
-    def __new__(cls, *args, **kwargs):
+    """A class that validates the atributes of all sub-classes
+
+    This class checks overrides the `__init__` and `gen_code` method. The
+    `__init__` method now validates the input, the arguments that where given to
+    it and sets the `_lines` and `_line_range`. The `gen_code` method converts
+    the input arguments to an `ItemEqualList` and adds a try/except statement to
+    better describe any stack traces.
+    """
+    def __new__(cls, *args, **kwargs) -> Type:
         instance = super().__new__(cls, *args, **kwargs)
+
+        name, _, attrs = args
+
         instance.__init__ = cls.__override_init(instance, method=instance.__init__)
+        instance.gen_code = cls.__overload_gen_code(instance, instance.gen_code)
+
+        for attr_name, attr_value in attrs.items():
+            if not isinstance(attr_value, Intent):
+                continue
+
+            attr_value.set_attrs(attr_name, 0)
+
         return instance
 
     def __override_init(cls, method):
@@ -23,7 +44,7 @@ class _BaseNodeMeta(ABCMeta):
         # floating around
         def __init__(self, *args, **kwargs):
             cls.__validate_input(method, args, kwargs)
-            cls.__validate(self, method)
+            cls.__validate_method(self, method)
 
             self._lines = ""
             self._line_range = LineRange(start=float("inf"), end=float("-inf"))
@@ -32,7 +53,20 @@ class _BaseNodeMeta(ABCMeta):
 
         return __init__
 
-    def __validate(cls, instance: BaseNode, constructor):
+    def __overload_gen_code(cls, method):
+        def decor(self, *args, **kwargs):
+            try:
+                yield from method(self, ItemEqualList(tuple(args)), **kwargs)
+
+            except Exception as e:
+                e.add_note(
+                    f"^ occurred in {method.__name__} (mod: {method.__module__})"
+                )
+                raise e
+
+        return decor
+
+    def __validate_method(cls, instance: BaseNode, constructor):
         exceptions: list[Exception] = []
 
         # check class attributes

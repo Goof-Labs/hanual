@@ -6,7 +6,7 @@ from warnings import warn_explicit
 
 if TYPE_CHECKING:
     from hanual.lang.lexer import Token
-    from hanual.lang.nodes.base_node import BaseNode
+    from hanual.lang.nodes import BaseNode
 
 
 class DefaultProduction[T: Token | BaseNode]:

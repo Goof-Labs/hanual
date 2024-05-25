@@ -1,9 +1,5 @@
-fn main() {
-    let inp = input("input something: ")
-
-    if inp == "no" {
-        print("no you")
+fn main(a, b, c) {
+    for num of 1..5 {
+        print(num)
     }
-
-    print(inp)
 }

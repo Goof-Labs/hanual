@@ -17,6 +17,7 @@ class HanualLexer(Lexer):
         ("AS", kw("as")),
         ("IF", kw("if")),
         ("DO", kw("do")),
+        ("OF", kw("of")),
         ("FOR", kw("for")),
         ("LET", kw("let")),
         # ("END", kw("end")),

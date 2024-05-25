@@ -3,27 +3,20 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Generator, Iterable, Literal, LiteralString
 
-from hanual.lang.errors import ErrorType, Frame, HanualError, TraceBack
-
-from .token import Token
+from hanual.errors.error import HanualSyntaxError
 from .util.line_range import LineRange
-
-if TYPE_CHECKING:
-    from hanual.api.hooks import TokenHook
+from .token import Token
 
 
 def kw(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
     """Used to define a keyword in the lexer.
 
-    > The function us used with in the lexer. This function lets the user define keywords. For example, if you want to
-    > make a keyword called `let` you could use this function.
-    >
-    > ```py
-    > kw("let")
-    > ```
+    The function us used with in the lexer. This function lets the user define keywords. For example, if you want to
+    make a keyword called `let` you could use this function.
 
-    @reg^LiteralString>Name of the keyword.
-    | The value of the keyword, e.g. `let`, `if`
+    >>> ```
+    >>> kw("let")
+    >>> ```
     """
     return reg, "kw"
 
@@ -31,29 +24,44 @@ def kw(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
 def rx(reg: LiteralString) -> tuple[LiteralString, LiteralString]:
     """Used to define a token in the lexer.
 
-    > The function us used with in the lexer. This function lets the user define patterns/tokens. For example, if you
-    > want to make a symbol, `|>` you could use this function with a regular expression that matches the token.
-    >
-    > ```py
-    > rx(r"\\|\\>")
-    > ```
-
-    @reg^LiteralString>Value of the regex.
-    | The pattern of the token, e.g. [a-zA-Z_][a-zA-Z0-9_]+
+    The function us used with in the lexer. This function lets the user define patterns/tokens. For example, if you
+    want to make a symbol, `|>` you could use this function with a regular expression that matches the token.
+    
+    >>> ```
+    >>> rx(r"\\|\\>")
+    >>> ```
     """
     return reg, "rx"
 
 
 class Lexer:
+    __slots__ = "last", "rules", "_rules", "_key_words"
+
+    """A class that lazily performs lexical analysis on a piece of text.
+
+    Raises:
+        ValueError: Occurs when a token is identified as neither a keyword or regex.
+        ValueError: Occurs when a token is identified as neither a keyword or regex.
+        Exception: The provided token type was "None"
+    """
+
     __slots__ = "last", "rules", "_rules", "_key_words", "_hooks"
 
     def __init__(self):
         self._rules = []
         self._key_words = []
-        self._hooks: dict[str, TokenHook] = {}
         self.update_rules()
 
-    def update_rules(self, rules=None):
+    def update_rules(self, rules: Iterable[tuple[str, str]]=None):
+        """Categorises the class's rules and updates them.
+
+        Args:
+            rules (Iterable[tuple[str]], optional): The rules that are going to be added to the lexer. Defaults to None.
+
+        Raises:
+            ValueError: The token can't be identified as being a keyword 'kw' or regex 'rk'.
+        """
+
         for rule in self.rules if not rules else rules:
             if rule[1][1] == "kw":
                 self._key_words.append((rule[0], rule[1][0]))
@@ -66,26 +74,20 @@ class Lexer:
                     f"{rule[1][1]!r} is not recognised as a regex or keyword"
                 )
 
-    def add_hooks(self, hooks: Iterable[TokenHook]):
-        for hook in hooks:
-            self._hooks[hook.name] = hook
-
-            if hook.type == "kw":
-                self._key_words.append((hook.name, hook.regex))
-
-            elif hook.type == "rx":
-                self._rules.append((hook.name, hook.regex))
-
-            else:
-                raise ValueError(
-                    f"{hook.type!r} is not recognised as a regex or keyword"
-                )
-
     def tokenize(
         self,
         stream: Generator[str, None, None],
         mode: Literal["exec"] | Literal["compile"],
     ) -> Generator[Token, None, None]:
+        """Tokenizes the passed string into the tokens in the class.
+
+        Args:
+            stream (Generator[str, None, None]): The text to be tokenized (input should be lines of code).
+            mode (Literal[&quot;exec&quot;] | Literal[&quot;compile&quot;]): The compiler mode.
+
+        Yields:
+            Generator[Token, None, None]: The pipeline of tokens.
+        """
         # TODO allow rules to ble cleared
         self.update_rules(self.last)
 
@@ -101,6 +103,20 @@ class Lexer:
         line_no: int,
         mode: Literal["exec"] | Literal["compile"] | Literal["both"] = "both",
     ) -> Generator[Token, None, None]:
+        """Does the behind-the-sceens tokenization of the text.
+
+        Args:
+            tok_reg (str): The regular expression of all language tokens.
+            text (str): The line of code to be analysed.
+            line_no (int): The line number of the source code.
+            mode (Literal[&quot;exec&quot;] | Literal[&quot;compile&quot;] | Literal[&quot;both&quot;], optional): The compiler mode. Defaults to "both".
+
+        Raises:
+            Exception: When the current token type is None.
+
+        Yields:
+            Generator[Token, None, None]: The token stream.
+        """
         for pat in re.finditer(tok_reg, text):
             kind = pat.lastgroup
             value = pat.group()
@@ -117,32 +133,14 @@ class Lexer:
                 raise Exception("kind is None")
 
             if kind == "MISMATCH":
-                print(
-                    HanualError(
-                        pos=LineRange(line_no, line_no),
-                        line=text,
-                        name=ErrorType.illegal_character,
-                        reason=f"{value!r} is not recognised as a symbol or valid character",
-                        tb=TraceBack().add_frame(
-                            Frame(
-                                "Lexing",
-                                line=text,
-                                line_range=LineRange(start=line_no, end=line_no),
-                            )
-                        ),
-                        tip=f"try removing that character",
-                    ).as_string()
-                )
-                exit()
+                HanualSyntaxError(
+                    line_str=text,
+                    line_range=LineRange(line_no, line_no),
+                    hint=f"Character {value!r} is not a recognised character"
+                ).display()
 
-            hook: TokenHook | None = self._hooks.get(kind, None)
-
-            if hook is not None:
-                yield hook.gen_token(
-                    kind, value, LineRange(line_no, line_no), col, text
-                )
-
-            elif hasattr(self, f"t_{mode}_{kind}"):
+            # create the token
+            if hasattr(self, f"t_{mode}_{kind}"):
                 yield getattr(self, f"t_{mode}_{kind}")(kind, value, line_no, col, text)
 
             else:

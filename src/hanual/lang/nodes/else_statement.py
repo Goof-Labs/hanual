@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
 from hanual.lang.nodes.base_node import BaseNode
-from hanual.lang.util.type_objects import GENCODE_RET
+from hanual.lang.util.node_utils import Intent
 
 if TYPE_CHECKING:
     from .block import CodeBlock
@@ -23,8 +24,8 @@ class ElseStatement(BaseNode):
     def body(self) -> CodeBlock:
         return self._body
 
-    def gen_code(self) -> GENCODE_RET:
-        raise NotImplementedError
+    def gen_code(self, *intents: Intent, **options) -> GENCODE_RET:
+        yield from self._body.gen_code()
 
-    def prepare(self) -> GENCODE_RET:
-        raise NotImplementedError
+    def prepare(self) -> PREPARE_RET:
+        yield from self._body.prepare()

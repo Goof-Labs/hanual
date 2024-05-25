@@ -40,6 +40,11 @@ class Parameters(BaseNode):
     def children(self) -> list[Token]:
         return self._children
 
+    def __str__(self) -> str:
+        txt = ',\t'.join(c.value for c in self.children)
+
+        return f"({txt})"
+
     def gen_code(self) -> GENCODE_RET:
         raise NotImplementedError
 

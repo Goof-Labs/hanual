@@ -1,15 +1,10 @@
 from __future__ import annotations
 
-import logging
-from typing import (TYPE_CHECKING, Any, Callable, Generator, NamedTuple,
-                    Optional, Type)
+from typing import Callable, Generator, NamedTuple, Optional, Type
 
 from .util.compileable_object import CompilableObject
 from .util.proxy import Proxy
 from .productions import DefaultProduction
-
-if TYPE_CHECKING:
-    from hanual.api.hooks import RuleHook
 
 class _StackFrame[T: CompilableObject](NamedTuple):
     name: str
@@ -18,58 +13,37 @@ class _StackFrame[T: CompilableObject](NamedTuple):
 
 
 class PParser:
-    """
-    The PParser class is used to create a parser.
-    The class is initialized with no params.
-    A decorator syntax is then used to create new rules for the parser.
-    Finally, parser function is called to parse the input.
-    """
+    """An implementation of a LR (left right) parser.
 
+    The parser has rules defined using the decorator syntax. Afterwards a token
+    stream can be passed to the parser's `parse` method to create a syntax tree.
+
+    Typical usag example:
+
+        parser = PParser()
+
+        @parser.rule("token1 pattern2")
+        def new_symbol(token_stream):
+            return ...
+
+        parser.parser(...)
+
+    """
     def __init__(self) -> None:
         self.rules: dict[str, tuple[str, Proxy]] = {}
         self._always: list = []
         self.debug = False
 
-        logging.basicConfig(level=logging.DEBUG)
-
-    def check_redundancy(self: PParser) -> None:
-        """
-        This function checks for redundancy. It
-        will warn the user about any tokens not
-        used, and this can be used to keep the
-        codebase clean.
-        """
-        def_tokens = []  # tokens defined by the user
-        use_tokens = []  # tokens actually used
-
-        for token in self.rules:
-            def_tokens.extend(token.split(" "))
-
-        for rule in self.rules:
-            use_tokens.extend(rule.split(" "))
-
-        unused_tokens = set(use_tokens) - set(def_tokens)
-        undef_tokens = set(def_tokens) - set(use_tokens)
-        remainder = []
-        remainder.extend(undef_tokens)
-        remainder.extend(unused_tokens)
-
-        if not set(remainder):
-            logging.debug("No clashes found :)")
-
-        elif unused_tokens and undef_tokens:
-            logging.warning("unused tokens: %s", unused_tokens)
-            logging.critical("undefined tokens: %s", undef_tokens)
-
     def rule(
         self: PParser,
-        *rules,
+        *rules: str,
         prod: Optional[Type] = DefaultProduction,
-        types: Optional[dict[str, Any]] = None,
+        types: Optional[dict[str, object]] = None,
         unless_starts: Optional[list[str]] = None,
         unless_ends: Optional[list[str]] = None,
     ) -> Callable:
-        """
+        """Defines a rule on the parser with the decorator syntax.
+
         This function is a decorator, so it can be used with the following syntax
 
         >>> parser = PParser()
@@ -116,6 +90,14 @@ class PParser:
         This rule will now evaluate [NAME LPAR RPAR] to a function call if and only
         if the pattern is not prefixed with an FN, else it will skip this pattern
         and a different rule can take care of it.
+
+        Args:
+            rules (str): The cases in which the rule (decorated function) should mach.
+            func (Callable): The function that should be invoked if such a match is detected.
+            prod (optional[Type]): The class that will represent the match.
+            types (Optional[dict[str, Any]]): The cases and value that will be passed to the function.
+            unless_starts (Optional[list[str]]): Will not allow the pattern to match if the specified token(s) prefixes it.
+            unless_ends (Optional[list]): Will not match if the any of the specified tokens are next.
         """
 
         def inner(func):
@@ -126,44 +108,15 @@ class PParser:
 
         return inner
 
-    def add_rule(
-        self,
-        rules,
-        func,
-        types,
-        prod,
-        unless_starts,
-        unless_ends,
-        name: Optional[str] = None,
-    ):
-        for rule in rules:
-            prox = Proxy(func, types, prod, unless_starts, unless_ends)
-            self.rules[rule] = name or func.__name__, prox
+    def parse(self: PParser, stream: Generator[CompilableObject, None, None]) -> list[_StackFrame[CompilableObject]]:
+        """Parses the given token string into an ast using the class defined rules.
 
-    def add_hooks(self, hooks: list[RuleHook]) -> None:
-        for hook in hooks:
-            for rule in hook.patterns:
-                self.rules[rule] = hook.name, hook.proxy
+        Args:
+            stream (Generator[CompilableObject, None, None]): The stream of tokens that are going to be parsed into an ast
 
-    def always(self: PParser):
+        Returns:
+            list[_StackFrame[CompilableObject]]: The stack that the parser operated on.
         """
-        This will always run on each reduction of the stack or after every check.
-        This is very useful when you want to change the tokens while the code is
-        represented as a partial tree or stream of tokens.
-
-        WARNING: this can really mess up the stack if you are not careful so be carefull
-        """
-
-        def inner(func):
-            self._always.append(func)
-
-        return inner
-
-    ######################
-    # PARSING THE TOKENS #
-    ######################
-
-    def parse(self: PParser, stream: Generator[CompilableObject, None, None]):
         stack: list[_StackFrame[CompilableObject]] = []
 
         while True:

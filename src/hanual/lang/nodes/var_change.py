@@ -4,11 +4,12 @@ from typing import TYPE_CHECKING
 
 from hanual.lang.lexer import Token
 from hanual.lang.util.type_objects import GENCODE_RET, PREPARE_RET
-
+from hanual.lang.util.node_utils import Intent
+from hanual.util.equal_list import ItemEqualList
 from .base_node import BaseNode
 
 if TYPE_CHECKING:
-    from hanual.lang.util.line_range import LineRange
+    ...
 
 
 class VarChange[V: (BaseNode, Token)](BaseNode):
@@ -19,14 +20,9 @@ class VarChange[V: (BaseNode, Token)](BaseNode):
         "_line_range",
     )
 
-    def __init__(
-        self, name: Token, value: V, lines: str, line_range: LineRange
-    ) -> None:
+    def __init__(self, name: Token, value: V) -> None:
         self._name: Token = name
         self._value: V = value
-
-        self._line_range = line_range
-        self._lines = lines
 
     @property
     def name(self) -> Token:
@@ -36,8 +32,10 @@ class VarChange[V: (BaseNode, Token)](BaseNode):
     def value(self) -> V:
         return self._value
 
-    def gen_code(self) -> GENCODE_RET:
-        raise NotImplementedError
+    def gen_code(self, intents: ItemEqualList[Intent], **options) -> GENCODE_RET:
+        yield from self._value.gen_code(self.CAPTURE_RESULT)
+        yield from self._name.gen_code(Token.SET_VARIABLE)
 
     def prepare(self) -> PREPARE_RET:
-        raise NotImplementedError
+        yield from self._name.prepare()
+        yield from self._value.prepare()

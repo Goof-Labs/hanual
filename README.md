@@ -1,8 +1,13 @@
 # The Hanual language
 
+The hanual langauge is a programming language created by two CS (Computer Science) students. The language aims to fill
+the gap of a cross-platform, low level language.
 The hanual language is a compiled language that aims to provide full interopability with CPython. Hanual achives this by compiling all hanual code to CPython's bytecode allowing it to run nativley on the python virtual machine.
 
 ## State/Status
+
+The language aims to be simple and cut out unnecessery abstractions like classes, as well as staying quite "down to earth" with
+it's syntax.
 
 At the moment the language is not ready for production at all, to this point there have been no announced versions of the language, however I am planning to push the language forward. Below you can read a checklist, I want in the language before I am declaring a version `0.0.0`
 

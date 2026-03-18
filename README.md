@@ -1,3 +1,5 @@
+> For examiners: this repo is property of candidate: 3069 from centre 64930
+
 # The Hanual language
 
 The hanual language is a compiled language that aims to provide full interopability with CPython. Hanual achives this by compiling all hanual code to CPython's bytecode allowing it to run nativley on the python virtual machine.
